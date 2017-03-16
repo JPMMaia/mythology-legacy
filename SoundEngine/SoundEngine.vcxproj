@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{387ADC0E-CFD7-46BC-9243-8E7C942237BB}</ProjectGuid>
-    <RootNamespace>Mythology</RootNamespace>
+    <ProjectGuid>{79E40BE2-D44C-4E31-8A9C-AE18CD09B9B2}</ProjectGuid>
+    <RootNamespace>SoundEngine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -111,9 +111,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GameEngine\GameEngine.vcxproj">
-      <Project>{c303b4ab-d7c7-4189-97aa-eb2ebf3f0986}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
