@@ -20,6 +20,12 @@
     <ClCompile Include="TasksComponent.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="PerformanceTimer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -40,6 +46,12 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="TasksComponent.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="PerformanceTimer.h">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

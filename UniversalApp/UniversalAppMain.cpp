@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "UniversalAppMain.h"
-#include "Common\DirectXHelper.h"
 
+#include <functional>
+
+using namespace GraphicsEngine;
 using namespace UniversalApp;
 using namespace Windows::Foundation;
 using namespace Windows::System::Threading;
@@ -30,26 +32,15 @@ void UniversalAppMain::CreateRenderers(const std::shared_ptr<GraphicsEngine::Dev
 }
 
 // Updates the application state once per frame.
-void UniversalAppMain::Update()
+void UniversalAppMain::Update(const Common::Timer& timer)
 {
-	// Update scene objects.
-	m_timer.Tick([&]()
-	{
-		// TODO: Replace this with your app's content update functions.
-		m_sceneRenderer->Update(m_timer);
-	});
+	m_sceneRenderer->Update(timer);
 }
 
 // Renders the current frame according to the current application state.
 // Returns true if the frame was rendered and is ready to be displayed.
-bool UniversalAppMain::Render()
+bool UniversalAppMain::Render(const Common::Timer& timer)
 {
-	// Don't try to render anything before the first Update.
-	if (m_timer.GetFrameCount() == 0)
-	{
-		return false;
-	}
-
 	// Render the scene objects.
 	// TODO: Replace this with your app's content rendering functions.
 	return m_sceneRenderer->Render();

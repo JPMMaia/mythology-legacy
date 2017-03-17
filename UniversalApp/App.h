@@ -44,6 +44,7 @@ namespace UniversalApp
 		std::unique_ptr<UniversalAppMain> m_main;
 		bool m_windowClosed;
 		bool m_windowVisible;
+		Common::Timer m_timer;
 	};
 }
 

@@ -1,27 +1,31 @@
 ﻿#pragma once
 
-#include "GraphicsEngine\DeviceResources.h"
+#include "GraphicsEngine/DeviceResources.h"
 #include "ShaderStructures.h"
-#include "..\Common\StepTimer.h"
 
-namespace UniversalApp
+namespace Common
+{
+	class Timer;
+}
+
+namespace GraphicsEngine
 {
 	// This sample renderer instantiates a basic rendering pipeline.
 	class Sample3DSceneRenderer
 	{
 	public:
-		Sample3DSceneRenderer(const std::shared_ptr<GraphicsEngine::DeviceResources>& deviceResources);
+		explicit Sample3DSceneRenderer(const std::shared_ptr<GraphicsEngine::DeviceResources>& deviceResources);
 		~Sample3DSceneRenderer();
 		void CreateDeviceDependentResources();
 		void CreateWindowSizeDependentResources();
-		void Update(DX::StepTimer const& timer);
+		void Update(const Common::Timer& timer);
 		bool Render();
 		void SaveState();
 
 		void StartTracking();
 		void TrackingUpdate(float positionX);
 		void StopTracking();
-		bool IsTracking() { return m_tracking; }
+		bool IsTracking() const { return m_tracking; }
 
 	private:
 		void LoadState();

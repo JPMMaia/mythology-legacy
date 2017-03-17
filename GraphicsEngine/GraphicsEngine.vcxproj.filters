@@ -20,6 +20,9 @@
     <ClCompile Include="DeviceResources.cpp">
       <Filter>DirectX12</Filter>
     </ClCompile>
+    <ClCompile Include="Sample3DSceneRenderer.cpp">
+      <Filter>DirectX12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -54,5 +57,19 @@
     <ClInclude Include="DirectXHelper.h">
       <Filter>DirectX12</Filter>
     </ClInclude>
+    <ClInclude Include="Sample3DSceneRenderer.h">
+      <Filter>DirectX12</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderStructures.h">
+      <Filter>DirectX12</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="SamplePixelShader.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="SampleVertexShader.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

@@ -15,6 +15,7 @@ using namespace Windows::UI::Input;
 using namespace Windows::System;
 using namespace Windows::Foundation;
 using namespace Windows::Graphics::Display;
+using namespace Common;
 
 using Microsoft::WRL::ComPtr;
 
@@ -36,7 +37,8 @@ IFrameworkView^ Direct3DApplicationSource::CreateView()
 
 App::App() :
 	m_windowClosed(false),
-	m_windowVisible(true)
+	m_windowVisible(true),
+	m_timer(12.0f)
 {
 }
 
@@ -91,27 +93,48 @@ void App::Load(Platform::String^ entryPoint)
 // This method is called after the window becomes active.
 void App::Run()
 {
+	auto update = [this](const Timer& timer)
+	{
+		auto commandQueue = GetDeviceResources()->GetCommandQueue();
+
+		PIXBeginEvent(commandQueue, 0, L"Update");
+		{
+			m_main->Update(timer);
+		}
+		PIXEndEvent(commandQueue);
+	};
+
+	auto render = [this](const Timer& timer)
+	{
+		auto commandQueue = GetDeviceResources()->GetCommandQueue();
+
+		PIXBeginEvent(commandQueue, 0, L"Render");
+		{
+			if (m_main->Render(timer))
+			{
+				GetDeviceResources()->Present();
+			}
+		}
+		PIXEndEvent(commandQueue);
+	};
+
+	auto processInput = []()
+	{
+		return true;
+	};
+
+	auto processFrameStatistics = [this](const Timer& timer)
+	{
+	};
+
+	m_timer.Reset();
 	while (!m_windowClosed)
 	{
 		if (m_windowVisible)
 		{
 			CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
 
-			auto commandQueue = GetDeviceResources()->GetCommandQueue();
-			PIXBeginEvent(commandQueue, 0, L"Update");
-			{
-				m_main->Update();
-			}
-			PIXEndEvent(commandQueue);
-
-			PIXBeginEvent(commandQueue, 0, L"Render");
-			{
-				if (m_main->Render())
-				{
-					GetDeviceResources()->Present();
-				}
-			}
-			PIXEndEvent(commandQueue);
+			m_timer.UpdateAndRender(update, render, processInput, processFrameStatistics);
 		}
 		else
 		{

@@ -25,8 +25,10 @@ namespace Common
 		{
 			using namespace std;
 
+			using ValueType = typename ContainerType::value_type;
+
 			// Open file for reading in binary mode, and seek to the end of file immediately:
-			ifstream file(filename, ios::in | ios::binary | ios::ate);
+			basic_ifstream<ValueType> file(filename, ios::in | ios::binary | ios::ate);
 			if (!file.good())
 				throw runtime_error("Couldn't open file " + Helpers::WStringToString(filename));
 
