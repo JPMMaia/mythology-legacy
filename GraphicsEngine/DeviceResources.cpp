@@ -1,15 +1,17 @@
 ﻿#include "pch.h"
 #include "DeviceResources.h"
 #include "DirectXHelper.h"
-
+#include <ppltasks.h>
+#include <windows.ui.xaml.media.dxinterop.h>
+#include "DirectXHelper.h"
 #include "Common/Helpers.h"
 #include "Common/EngineException.h"
 
-using namespace Common::Helpers;
+using namespace Common;
+using namespace GraphicsEngine;
 using namespace DirectX;
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
-using namespace GraphicsEngine;
 
 namespace DisplayMetrics
 {
@@ -23,7 +25,7 @@ namespace DisplayMetrics
 	// The default thresholds that define a "high resolution" display. If the thresholds
 	// are exceeded and SupportHighResolutions is false, the dimensions will be scaled
 	// by 50%.
-	static const float DpiThreshold = 192.0f;		// 200% of standard desktop display.
+	static const float DpiThreshold = 96.0f;		// 200% of standard desktop display.
 	static const float WidthThreshold = 1920.0f;	// 1080p width.
 	static const float HeightThreshold = 1080.0f;	// 1080p height.
 };
@@ -37,7 +39,7 @@ namespace ScreenRotation
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
-		);
+	);
 
 	// 90-degree Z-rotation
 	static const XMFLOAT4X4 Rotation90(
@@ -45,7 +47,7 @@ namespace ScreenRotation
 		-1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
-		);
+	);
 
 	// 180-degree Z-rotation
 	static const XMFLOAT4X4 Rotation180(
@@ -53,7 +55,7 @@ namespace ScreenRotation
 		0.0f, -1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
-		);
+	);
 
 	// 270-degree Z-rotation
 	static const XMFLOAT4X4 Rotation270(
@@ -61,34 +63,32 @@ namespace ScreenRotation
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
-		);
+	);
 };
 
 // Constructor for DeviceResources.
 DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT depthBufferFormat) :
 	m_currentFrame(0),
-	m_backBufferFormat(backBufferFormat),
-	m_depthBufferFormat(depthBufferFormat),
 	m_screenViewport(),
 	m_rtvDescriptorSize(0),
-	m_deviceRemoved(false),
+	m_fenceEvent(0),
+	m_backBufferFormat(backBufferFormat),
+	m_depthBufferFormat(depthBufferFormat),
 	m_fenceValues{},
-	m_fenceEvent(nullptr),
 	m_d3dRenderTargetSize(),
 	m_outputSize(),
 	m_logicalSize(),
-	m_nativeOrientation(IWindow::DisplayOrientations::None),
-	m_currentOrientation(IWindow::DisplayOrientations::None),
+	m_nativeOrientation(DisplayOrientations::None),
+	m_currentOrientation(DisplayOrientations::None),
 	m_dpi(-1.0f),
-	m_effectiveDpi(-1.0f)
+	m_effectiveDpi(-1.0f),
+	m_deviceRemoved(false)
 {
 	CreateDeviceIndependentResources();
 	CreateDeviceResources();
 }
 
 // Configures resources that don't depend on the Direct3D device.
-// ReSharper disable once CppMemberFunctionMayBeStatic
-// ReSharper disable once CppMemberFunctionMayBeConst
 void DeviceResources::CreateDeviceIndependentResources()
 {
 }
@@ -107,7 +107,7 @@ void DeviceResources::CreateDeviceResources()
 	}
 #endif
 
-	ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&m_dxgiFactory)));
+	Helpers::ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&m_dxgiFactory)));
 
 	ComPtr<IDXGIAdapter1> adapter;
 	GetHardwareAdapter(&adapter);
@@ -117,30 +117,30 @@ void DeviceResources::CreateDeviceResources()
 		adapter.Get(),					// The hardware adapter.
 		D3D_FEATURE_LEVEL_11_0,			// Minimum feature level this app can support.
 		IID_PPV_ARGS(&m_d3dDevice)		// Returns the Direct3D device created.
-		);
+	);
 
 #if defined(_DEBUG)
 	if (FAILED(hr))
 	{
 		// If the initialization fails, fall back to the WARP device.
 		// For more information on WARP, see: 
-		// https://go.microsoft.com/fwlink/?LinkId=286690
+		// http://go.microsoft.com/fwlink/?LinkId=286690
 
 		ComPtr<IDXGIAdapter> warpAdapter;
-		ThrowIfFailed(m_dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter)));
+		Helpers::ThrowIfFailed(m_dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter)));
 
 		hr = D3D12CreateDevice(warpAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_d3dDevice));
 	}
 #endif
 
-	ThrowIfFailed(hr);
+	Helpers::ThrowIfFailed(hr);
 
 	// Create the command queue.
 	D3D12_COMMAND_QUEUE_DESC queueDesc = {};
 	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 
-	ThrowIfFailed(m_d3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_commandQueue)));
+	Helpers::ThrowIfFailed(m_d3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_commandQueue)));
 	NAME_D3D12_OBJECT(m_commandQueue);
 
 	// Create descriptor heaps for render target views and depth stencil views.
@@ -148,7 +148,7 @@ void DeviceResources::CreateDeviceResources()
 	rtvHeapDesc.NumDescriptors = c_frameCount;
 	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 	rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
+	Helpers::ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
 	NAME_D3D12_OBJECT(m_rtvHeap);
 
 	m_rtvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
@@ -157,25 +157,21 @@ void DeviceResources::CreateDeviceResources()
 	dsvHeapDesc.NumDescriptors = 1;
 	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&m_dsvHeap)));
+	Helpers::ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&m_dsvHeap)));
 	NAME_D3D12_OBJECT(m_dsvHeap);
 
 	for (UINT n = 0; n < c_frameCount; n++)
 	{
-		ThrowIfFailed(
+		Helpers::ThrowIfFailed(
 			m_d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocators[n]))
-			);
+		);
 	}
 
 	// Create synchronization objects.
-	ThrowIfFailed(m_d3dDevice->CreateFence(m_fenceValues[m_currentFrame], D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
+	Helpers::ThrowIfFailed(m_d3dDevice->CreateFence(m_fenceValues[m_currentFrame], D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
 	m_fenceValues[m_currentFrame]++;
 
-	m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
-	if (m_fenceEvent == nullptr)
-	{
-		ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()));
-	}
+	m_fenceEvent = CreateEventEx(nullptr, FALSE, FALSE, EVENT_ALL_ACCESS);
 }
 
 // These resources need to be recreated every time the window size is changed.
@@ -213,20 +209,19 @@ void DeviceResources::CreateWindowSizeDependentResources()
 		if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
 		{
 			// If the device was removed for any reason, a new device and swap chain will need to be created.
-			m_deviceRemoved = true;
+			RemoveDevice();
 
 			// Do not continue execution of this method. DeviceResources will be destroyed and re-created.
 			return;
 		}
 		else
 		{
-			ThrowIfFailed(hr);
+			Helpers::ThrowIfFailed(hr);
 		}
 	}
 	else
 	{
 		// Otherwise, create a new one using the same adapter as the existing Direct3D device.
-		// ReSharper disable once CppUnreachableCode
 		DXGI_SCALING scaling = DisplayMetrics::SupportHighResolutions ? DXGI_SCALING_NONE : DXGI_SCALING_STRETCH;
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
 
@@ -238,23 +233,24 @@ void DeviceResources::CreateWindowSizeDependentResources()
 		swapChainDesc.SampleDesc.Quality = 0;
 		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		swapChainDesc.BufferCount = c_frameCount;					// Use triple-buffering to minimize latency.
-		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;	// All Windows Universal apps must use _FLIP_ SwapEffects.
+		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;	// All Universal Windows apps must use _FLIP_ SwapEffects.
 		swapChainDesc.Flags = 0;
 		swapChainDesc.Scaling = scaling;
 		swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
 
 		ComPtr<IDXGISwapChain1> swapChain;
-		ThrowIfFailed(
-			m_dxgiFactory->CreateSwapChainForCoreWindow(
-				m_commandQueue.Get(),								// Swap chains need a reference to the command queue in DirectX 12.
-				reinterpret_cast<IUnknown*>(m_window->Get()),
+		Helpers::ThrowIfFailed(
+			m_dxgiFactory->CreateSwapChainForComposition(
+				m_commandQueue.Get(),		// Swap chains need a reference to the command queue in DirectX 12.
 				&swapChainDesc,
 				nullptr,
 				&swapChain
-				)
-			);
+			)
+		);
 
-		ThrowIfFailed(swapChain.As(&m_swapChain));
+		Helpers::ThrowIfFailed(swapChain.As(&m_swapChain));
+
+		SetSwapChainOnPanelAsync(m_swapChain.Get());
 	}
 
 	// Set the proper orientation for the swap chain, and generate
@@ -280,12 +276,23 @@ void DeviceResources::CreateWindowSizeDependentResources()
 		break;
 
 	default:
-		throw Common::EngineException("Unspecified rotation.");
+		throw EngineException("Rotation undefined.");
+		break;
 	}
 
-	ThrowIfFailed(
+	Helpers::ThrowIfFailed(
 		m_swapChain->SetRotation(displayRotation)
-		);
+	);
+
+	// Setup inverse scale on the swap chain.
+	DXGI_MATRIX_3X2_F inverseScale = {};
+	float dpiScale = m_effectiveDpi / m_dpi;
+	inverseScale._11 = 1.0f / (m_compositionScaleX * dpiScale);
+	inverseScale._22 = 1.0f / (m_compositionScaleY * dpiScale);
+
+	Helpers::ThrowIfFailed(
+		m_swapChain->SetMatrixTransform(&inverseScale)
+	);
 
 	// Create render target views of the swap chain back buffer.
 	{
@@ -293,7 +300,7 @@ void DeviceResources::CreateWindowSizeDependentResources()
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvDescriptor(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
 		for (UINT n = 0; n < c_frameCount; n++)
 		{
-			ThrowIfFailed(m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_renderTargets[n])));
+			Helpers::ThrowIfFailed(m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_renderTargets[n])));
 			m_d3dDevice->CreateRenderTargetView(m_renderTargets[n].Get(), nullptr, rtvDescriptor);
 			rtvDescriptor.Offset(m_rtvDescriptorSize);
 
@@ -309,19 +316,19 @@ void DeviceResources::CreateWindowSizeDependentResources()
 	{
 		D3D12_HEAP_PROPERTIES depthHeapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 
-		D3D12_RESOURCE_DESC depthResourceDesc = CD3DX12_RESOURCE_DESC::Tex2D(m_depthBufferFormat, backBufferWidth, backBufferHeight, 1, 1);
+		D3D12_RESOURCE_DESC depthResourceDesc = CD3DX12_RESOURCE_DESC::Tex2D(m_depthBufferFormat, backBufferWidth, backBufferHeight);
 		depthResourceDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
 
 		CD3DX12_CLEAR_VALUE depthOptimizedClearValue(m_depthBufferFormat, 1.0f, 0);
 
-		ThrowIfFailed(m_d3dDevice->CreateCommittedResource(
+		Helpers::ThrowIfFailed(m_d3dDevice->CreateCommittedResource(
 			&depthHeapProperties,
 			D3D12_HEAP_FLAG_NONE,
 			&depthResourceDesc,
 			D3D12_RESOURCE_STATE_DEPTH_WRITE,
 			&depthOptimizedClearValue,
 			IID_PPV_ARGS(&m_depthStencil)
-			));
+		));
 
 		NAME_D3D12_OBJECT(m_depthStencil);
 
@@ -344,7 +351,6 @@ void DeviceResources::UpdateRenderTargetSize()
 
 	// To improve battery life on high resolution devices, render to a smaller render target
 	// and allow the GPU to scale the output when it is presented.
-	// ReSharper disable once CppRedundantBooleanExpressionArgument
 	if (!DisplayMetrics::SupportHighResolutions && m_dpi > DisplayMetrics::DpiThreshold)
 	{
 		float width = DX::ConvertDipsToPixels(m_logicalSize.x, m_dpi);
@@ -369,14 +375,23 @@ void DeviceResources::UpdateRenderTargetSize()
 	m_outputSize.y = max(m_outputSize.y, 1);
 }
 
-// This method is called when the CoreWindow is created (or re-created).
-void DeviceResources::SetWindow(std::unique_ptr<IWindow>&& window)
+// This private method associates a DXGI swap chain to the XAML SwapChainPanel.
+void DeviceResources::SetSwapChainOnPanelAsync(IDXGISwapChain3* swapChain)
 {
-	m_logicalSize = window->Size();
-	m_nativeOrientation = window->NativeOrientation();
-	m_currentOrientation = window->CurrentOrientation();
-	m_dpi = window->LogicalDpi();
-	m_window = std::move(window);
+	m_swapChainPanel->SetSwapChainOnPanelAsync(swapChain);
+}
+
+// Store a reference to the SwapChainPanel.
+// This method is called when the XAML panel is created (or re-created).
+void DeviceResources::SetSwapChainPanel(std::unique_ptr<ISwapChainPanel>&& swapChainPanel)
+{
+	m_logicalSize = swapChainPanel->Size();
+	m_nativeOrientation = swapChainPanel->NativeOrientation();
+	m_currentOrientation = swapChainPanel->CurrentOrientation();
+	m_compositionScaleX = swapChainPanel->CompositionScaleX();
+	m_compositionScaleY = swapChainPanel->CompositionScaleY();
+	m_dpi = swapChainPanel->LogicalDpi();
+	m_swapChainPanel = std::move(swapChainPanel);
 
 	CreateWindowSizeDependentResources();
 }
@@ -384,7 +399,7 @@ void DeviceResources::SetWindow(std::unique_ptr<IWindow>&& window)
 // This method is called in the event handler for the SizeChanged event.
 void DeviceResources::SetLogicalSize(const XMFLOAT2& logicalSize)
 {
-	if (m_logicalSize.x != logicalSize.x && m_logicalSize.y != logicalSize.y)
+	if (m_logicalSize.x != logicalSize.x || m_logicalSize.y != logicalSize.y)
 	{
 		m_logicalSize = logicalSize;
 		CreateWindowSizeDependentResources();
@@ -397,20 +412,28 @@ void DeviceResources::SetDpi(float dpi)
 	if (dpi != m_dpi)
 	{
 		m_dpi = dpi;
-
-		// When the display DPI changes, the logical size of the window (measured in Dips) also changes and needs to be updated.
-		m_logicalSize = m_window->Size();
-
 		CreateWindowSizeDependentResources();
 	}
 }
 
 // This method is called in the event handler for the OrientationChanged event.
-void DeviceResources::SetCurrentOrientation(IWindow::DisplayOrientations currentOrientation)
+void DeviceResources::SetCurrentOrientation(DisplayOrientations currentOrientation)
 {
 	if (m_currentOrientation != currentOrientation)
 	{
 		m_currentOrientation = currentOrientation;
+		CreateWindowSizeDependentResources();
+	}
+}
+
+// This method is called in the event handler for the CompositionScaleChanged event.
+void DeviceResources::SetCompositionScale(float compositionScaleX, float compositionScaleY)
+{
+	if (m_compositionScaleX != compositionScaleX ||
+		m_compositionScaleY != compositionScaleY)
+	{
+		m_compositionScaleX = compositionScaleX;
+		m_compositionScaleY = compositionScaleY;
 		CreateWindowSizeDependentResources();
 	}
 }
@@ -426,9 +449,9 @@ void DeviceResources::ValidateDevice()
 	DXGI_ADAPTER_DESC previousDesc;
 	{
 		ComPtr<IDXGIAdapter1> previousDefaultAdapter;
-		ThrowIfFailed(m_dxgiFactory->EnumAdapters1(0, &previousDefaultAdapter));
+		Helpers::ThrowIfFailed(m_dxgiFactory->EnumAdapters1(0, &previousDefaultAdapter));
 
-		ThrowIfFailed(previousDefaultAdapter->GetDesc(&previousDesc));
+		Helpers::ThrowIfFailed(previousDefaultAdapter->GetDesc(&previousDesc));
 	}
 
 	// Next, get the information for the current default adapter.
@@ -436,12 +459,12 @@ void DeviceResources::ValidateDevice()
 	DXGI_ADAPTER_DESC currentDesc;
 	{
 		ComPtr<IDXGIFactory4> currentDxgiFactory;
-		ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&currentDxgiFactory)));
+		Helpers::ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&currentDxgiFactory)));
 
 		ComPtr<IDXGIAdapter1> currentDefaultAdapter;
-		ThrowIfFailed(currentDxgiFactory->EnumAdapters1(0, &currentDefaultAdapter));
+		Helpers::ThrowIfFailed(currentDxgiFactory->EnumAdapters1(0, &currentDefaultAdapter));
 
-		ThrowIfFailed(currentDefaultAdapter->GetDesc(&currentDesc));
+		Helpers::ThrowIfFailed(currentDefaultAdapter->GetDesc(&currentDesc));
 	}
 
 	// If the adapter LUIDs don't match, or if the device reports that it has been removed,
@@ -451,7 +474,7 @@ void DeviceResources::ValidateDevice()
 		previousDesc.AdapterLuid.HighPart != currentDesc.AdapterLuid.HighPart ||
 		FAILED(m_d3dDevice->GetDeviceRemovedReason()))
 	{
-		m_deviceRemoved = true;
+		RemoveDevice();
 	}
 }
 
@@ -467,24 +490,36 @@ void DeviceResources::Present()
 	// must recreate all device resources.
 	if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
 	{
-		m_deviceRemoved = true;
+		RemoveDevice();
 	}
 	else
 	{
-		ThrowIfFailed(hr);
+		Helpers::ThrowIfFailed(hr);
 
 		MoveToNextFrame();
 	}
+}
+
+// Mark the device as removed and disassociate the DXGI swap chain from the XAML SwapChainPanel.
+void DeviceResources::RemoveDevice()
+{
+	m_deviceRemoved = true;
+
+	// There's currently no good way to coordinate when the reference to the DXGI swap chain
+	// is removed from the panel. DeviceResources needs to be destroyed and re-created as
+	// part of the device recovery process but if the SwapChainPanel is still holding a
+	// reference to the DXGI swap chain, a new D3D12 device cannot be created.
+	SetSwapChainOnPanelAsync(nullptr);
 }
 
 // Wait for pending GPU work to complete.
 void DeviceResources::WaitForGpu()
 {
 	// Schedule a Signal command in the queue.
-	ThrowIfFailed(m_commandQueue->Signal(m_fence.Get(), m_fenceValues[m_currentFrame]));
+	Helpers::ThrowIfFailed(m_commandQueue->Signal(m_fence.Get(), m_fenceValues[m_currentFrame]));
 
 	// Wait until the fence has been crossed.
-	ThrowIfFailed(m_fence->SetEventOnCompletion(m_fenceValues[m_currentFrame], m_fenceEvent));
+	Helpers::ThrowIfFailed(m_fence->SetEventOnCompletion(m_fenceValues[m_currentFrame], m_fenceEvent));
 	WaitForSingleObjectEx(m_fenceEvent, INFINITE, FALSE);
 
 	// Increment the fence value for the current frame.
@@ -496,7 +531,15 @@ void DeviceResources::MoveToNextFrame()
 {
 	// Schedule a Signal command in the queue.
 	const UINT64 currentFenceValue = m_fenceValues[m_currentFrame];
-	ThrowIfFailed(m_commandQueue->Signal(m_fence.Get(), currentFenceValue));
+	HRESULT hr = m_commandQueue->Signal(m_fence.Get(), currentFenceValue);
+
+	if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
+	{
+		RemoveDevice();
+		return;
+	}
+
+	Helpers::ThrowIfFailed(hr);
 
 	// Advance the frame index.
 	m_currentFrame = m_swapChain->GetCurrentBackBufferIndex();
@@ -504,7 +547,7 @@ void DeviceResources::MoveToNextFrame()
 	// Check to see if the next frame is ready to start.
 	if (m_fence->GetCompletedValue() < m_fenceValues[m_currentFrame])
 	{
-		ThrowIfFailed(m_fence->SetEventOnCompletion(m_fenceValues[m_currentFrame], m_fenceEvent));
+		Helpers::ThrowIfFailed(m_fence->SetEventOnCompletion(m_fenceValues[m_currentFrame], m_fenceEvent));
 		WaitForSingleObjectEx(m_fenceEvent, INFINITE, FALSE);
 	}
 
@@ -514,65 +557,54 @@ void DeviceResources::MoveToNextFrame()
 
 // This method determines the rotation between the display device's native Orientation and the
 // current display orientation.
-DXGI_MODE_ROTATION DeviceResources::ComputeDisplayRotation() const
+DXGI_MODE_ROTATION DeviceResources::ComputeDisplayRotation()
 {
-	DXGI_MODE_ROTATION rotation;
+	DXGI_MODE_ROTATION rotation = DXGI_MODE_ROTATION_UNSPECIFIED;
 
 	// Note: NativeOrientation can only be Landscape or Portrait even though
-	// the IWindow::DisplayOrientations enum has other values.
+	// the DisplayOrientations enum has other values.
 	switch (m_nativeOrientation)
 	{
-	case IWindow::DisplayOrientations::Landscape:
+	case DisplayOrientations::Landscape:
 		switch (m_currentOrientation)
 		{
-		case IWindow::DisplayOrientations::Landscape:
+		case DisplayOrientations::Landscape:
 			rotation = DXGI_MODE_ROTATION_IDENTITY;
 			break;
 
-		case IWindow::DisplayOrientations::Portrait:
+		case DisplayOrientations::Portrait:
 			rotation = DXGI_MODE_ROTATION_ROTATE270;
 			break;
 
-		case IWindow::DisplayOrientations::LandscapeFlipped:
+		case DisplayOrientations::LandscapeFlipped:
 			rotation = DXGI_MODE_ROTATION_ROTATE180;
 			break;
 
-		case IWindow::DisplayOrientations::PortraitFlipped:
+		case DisplayOrientations::PortraitFlipped:
 			rotation = DXGI_MODE_ROTATION_ROTATE90;
-			break;
-
-		default:
-			rotation = DXGI_MODE_ROTATION_UNSPECIFIED;
 			break;
 		}
 		break;
 
-	case IWindow::DisplayOrientations::Portrait:
+	case DisplayOrientations::Portrait:
 		switch (m_currentOrientation)
 		{
-		case IWindow::DisplayOrientations::Landscape:
+		case DisplayOrientations::Landscape:
 			rotation = DXGI_MODE_ROTATION_ROTATE90;
 			break;
 
-		case IWindow::DisplayOrientations::Portrait:
+		case DisplayOrientations::Portrait:
 			rotation = DXGI_MODE_ROTATION_IDENTITY;
 			break;
 
-		case IWindow::DisplayOrientations::LandscapeFlipped:
+		case DisplayOrientations::LandscapeFlipped:
 			rotation = DXGI_MODE_ROTATION_ROTATE270;
 			break;
 
-		case IWindow::DisplayOrientations::PortraitFlipped:
+		case DisplayOrientations::PortraitFlipped:
 			rotation = DXGI_MODE_ROTATION_ROTATE180;
 			break;
-
-		default:
-			rotation = DXGI_MODE_ROTATION_UNSPECIFIED;
-			break;
 		}
-		break;
-	default:
-		rotation = DXGI_MODE_ROTATION_UNSPECIFIED;
 		break;
 	}
 	return rotation;
@@ -580,7 +612,7 @@ DXGI_MODE_ROTATION DeviceResources::ComputeDisplayRotation() const
 
 // This method acquires the first available hardware adapter that supports Direct3D 12.
 // If no such adapter can be found, *ppAdapter will be set to nullptr.
-void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter) const
+void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter)
 {
 	ComPtr<IDXGIAdapter1> adapter;
 	*ppAdapter = nullptr;

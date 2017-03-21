@@ -11,6 +11,9 @@
     <Filter Include="DirectX12">
       <UniqueIdentifier>{392ea5ec-a69d-4ef5-a65c-d12a53e1b3b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Enums">
+      <UniqueIdentifier>{7c6940f1-c5ed-469e-8c75-167bb7960eee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -62,6 +65,12 @@
     </ClInclude>
     <ClInclude Include="ShaderStructures.h">
       <Filter>DirectX12</Filter>
+    </ClInclude>
+    <ClInclude Include="ISwapChainPanel.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayOrientations.h">
+      <Filter>Enums</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

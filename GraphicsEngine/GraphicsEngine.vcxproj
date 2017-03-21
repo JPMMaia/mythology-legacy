@@ -215,11 +215,13 @@
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="DeviceResources.h" />
     <ClInclude Include="DirectXHelper.h" />
+    <ClInclude Include="DisplayOrientations.h" />
     <ClInclude Include="IGeometry.h" />
     <ClInclude Include="IGraphics.h" />
     <ClInclude Include="IMaterial.h" />
     <ClInclude Include="IRenderItem.h" />
     <ClInclude Include="IScene.h" />
+    <ClInclude Include="ISwapChainPanel.h" />
     <ClInclude Include="IWindow.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Sample3DSceneRenderer.h" />
