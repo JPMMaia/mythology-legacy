@@ -8,7 +8,7 @@
 
 #include <wrl.h>
 #include <wrl/client.h>
-#include <dxgi1_4.h>
+#include <dxgi1_5.h>
 #include <d3d12.h>
 #include <pix.h>
 #include <DirectXColors.h>
@@ -16,6 +16,7 @@
 #include <memory>
 #include <vector>
 #include <concrt.h>
+#include <cstdint>
 
 #if defined(_DEBUG)
 #include <dxgidebug.h>

@@ -1,7 +1,8 @@
 ﻿#pragma once
 
-#include "GraphicsEngine/DeviceResources.h"
+#include "GraphicsEngine/DirectX12/DeviceResources.h"
 #include "ShaderStructures.h"
+#include "Interfaces/IScene.h"
 
 namespace Common
 {
@@ -11,16 +12,21 @@ namespace Common
 namespace GraphicsEngine
 {
 	// This sample renderer instantiates a basic rendering pipeline.
-	class Sample3DSceneRenderer
+	class Sample3DSceneRenderer : IScene
 	{
 	public:
 		explicit Sample3DSceneRenderer(const std::shared_ptr<GraphicsEngine::DeviceResources>& deviceResources);
 		~Sample3DSceneRenderer();
-		void CreateDeviceDependentResources();
-		void CreateWindowSizeDependentResources();
-		void Update(const Common::Timer& timer);
+
+	public:
+		void CreateDeviceDependentResources() override;
+		void CreateWindowSizeDependentResources() override;
+		void SaveState() override;
+		void LoadState() override;
+		void FrameUpdate(const Common::Timer& timer) override;
+		void FixedUpdate(const Common::Timer& timer) override;
+
 		bool Render();
-		void SaveState();
 
 		void StartTracking();
 		void TrackingUpdate(float positionX);
@@ -28,7 +34,7 @@ namespace GraphicsEngine
 		bool IsTracking() const { return m_tracking; }
 
 	private:
-		void LoadState();
+		
 		void Rotate(float radians);
 
 	private:

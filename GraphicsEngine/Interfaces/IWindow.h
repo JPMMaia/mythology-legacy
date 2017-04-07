@@ -1,11 +1,11 @@
 ﻿#pragma once
 
-#include "DisplayOrientations.h"
-
 #include <DirectXMath.h>
 
 namespace GraphicsEngine
 {
+	enum class DisplayOrientations;
+
 	class IWindow
 	{
 	public:

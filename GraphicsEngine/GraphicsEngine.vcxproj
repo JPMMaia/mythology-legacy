@@ -193,6 +193,9 @@
     <FxCompile>
       <ShaderModel>5.1</ShaderModel>
     </FxCompile>
+    <Lib>
+      <AdditionalOptions>/ignore:4221</AdditionalOptions>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -211,26 +214,44 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="D3DBase.h" />
-    <ClInclude Include="d3dx12.h" />
-    <ClInclude Include="DeviceResources.h" />
-    <ClInclude Include="DirectXHelper.h" />
-    <ClInclude Include="DisplayOrientations.h" />
-    <ClInclude Include="IGeometry.h" />
-    <ClInclude Include="IGraphics.h" />
-    <ClInclude Include="IMaterial.h" />
-    <ClInclude Include="IRenderItem.h" />
-    <ClInclude Include="IScene.h" />
-    <ClInclude Include="ISwapChainPanel.h" />
-    <ClInclude Include="IWindow.h" />
+    <ClInclude Include="DirectX12\Geometry\Buffers\BaseGeometryBuffer.h" />
+    <ClInclude Include="DirectX12\Geometry\Buffers\IndexBuffer.h" />
+    <ClInclude Include="DirectX12\Geometry\Buffers\VertexBuffer.h" />
+    <ClInclude Include="DirectX12\Geometry\MeshGenerator.h" />
+    <ClInclude Include="DirectX12\Geometry\SubMesh.h" />
+    <ClInclude Include="DirectX12\Material\StandardMaterial.h" />
+    <ClInclude Include="DirectX12\RenderItem\StandardRenderItem.h" />
+    <ClInclude Include="DirectX12\Scene\StandardScene.h" />
+    <ClInclude Include="DirectX12\Utilities\d3dx12.h" />
+    <ClInclude Include="DirectX12\DeviceResources.h" />
+    <ClInclude Include="DirectX12\Utilities\DirectXHelper.h" />
+    <ClInclude Include="Enums\DisplayOrientations.h" />
+    <ClInclude Include="Interfaces\IGeometry.h" />
+    <ClInclude Include="Interfaces\IRenderer.h" />
+    <ClInclude Include="Interfaces\IMaterial.h" />
+    <ClInclude Include="Interfaces\IRenderItem.h" />
+    <ClInclude Include="Interfaces\IScene.h" />
+    <ClInclude Include="Interfaces\ISwapChainPanel.h" />
+    <ClInclude Include="Interfaces\IWindow.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Sample3DSceneRenderer.h" />
-    <ClInclude Include="ShaderStructures.h" />
+    <ClInclude Include="DirectX12\Sample3DSceneRenderer.h" />
+    <ClInclude Include="DirectX12\ShaderStructures.h" />
+    <ClInclude Include="DirectX12\Geometry\ImmutableMesh.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="DirectX12\Utilities\UploadBuffer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="D3DBase.cpp" />
-    <ClCompile Include="DeviceResources.cpp" />
+    <ClCompile Include="DirectX12\DeviceResources.cpp" />
+    <ClCompile Include="DirectX12\Geometry\Buffers\BaseGeometryBuffer.cpp" />
+    <ClCompile Include="DirectX12\Geometry\Buffers\IndexBuffer.cpp" />
+    <ClCompile Include="DirectX12\Geometry\Buffers\VertexBuffer.cpp" />
+    <ClCompile Include="DirectX12\Geometry\MeshGenerator.cpp" />
+    <ClCompile Include="DirectX12\Geometry\SubMesh.cpp" />
+    <ClCompile Include="DirectX12\Material\StandardMaterial.cpp" />
+    <ClCompile Include="DirectX12\RenderItem\StandardRenderItem.cpp" />
+    <ClCompile Include="DirectX12\Scene\StandardScene.cpp" />
+    <ClCompile Include="DirectX12\Utilities\DirectXHelper.cpp" />
+    <ClCompile Include="DirectX12\Utilities\UploadBuffer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -239,7 +260,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Sample3DSceneRenderer.cpp" />
+    <ClCompile Include="DirectX12\Sample3DSceneRenderer.cpp" />
+    <ClCompile Include="DirectX12\Geometry\ImmutableMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">
@@ -247,32 +269,20 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="SamplePixelShader.hlsl">
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.1</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">5.1</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">5.1</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Pixel</ShaderType>
+    <FxCompile Include="Shaders\SamplePixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="SampleVertexShader.hlsl">
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.1</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">5.1</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">5.1</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Vertex</ShaderType>
+    <FxCompile Include="Shaders\SampleVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
   </ItemGroup>

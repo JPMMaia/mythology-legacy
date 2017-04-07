@@ -1,11 +1,12 @@
 ﻿#pragma once
 
-#include "d3dx12.h"
-#include "IWindow.h"
-#include "ISwapChainPanel.h"
+#include "GraphicsEngine/DirectX12/Utilities/d3dx12.h"
+#include "GraphicsEngine/Interfaces/IWindow.h"
+#include "GraphicsEngine/Interfaces/ISwapChainPanel.h"
 
 namespace GraphicsEngine
 {
+	enum class DisplayOrientations;
 	static const UINT c_frameCount = 3;		// Use triple buffering.
 
 	// Controls all the DirectX device resources.

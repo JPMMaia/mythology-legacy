@@ -1,13 +1,12 @@
 #pragma once
 
-#include "DisplayOrientations.h"
-
 #include <DirectXMath.h>
-#include <unknwn.h>
 #include <dxgi1_5.h>
 
 namespace GraphicsEngine
 {
+	enum class DisplayOrientations;
+
 	class ISwapChainPanel
 	{
 	public:

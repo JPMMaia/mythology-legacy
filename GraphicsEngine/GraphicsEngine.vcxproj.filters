@@ -14,71 +14,94 @@
     <Filter Include="Enums">
       <UniqueIdentifier>{7c6940f1-c5ed-469e-8c75-167bb7960eee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DirectX12\Geometry">
+      <UniqueIdentifier>{7a0c1a19-470e-4f1d-928d-42ca5b0f0291}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DirectX12\Utils">
+      <UniqueIdentifier>{e6b1be4b-a591-49f5-9d2b-93b977dcfafe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="D3DBase.cpp">
+    <ClCompile Include="DirectX12\DeviceResources.cpp">
       <Filter>DirectX12</Filter>
     </ClCompile>
-    <ClCompile Include="DeviceResources.cpp">
+    <ClCompile Include="DirectX12\Sample3DSceneRenderer.cpp">
       <Filter>DirectX12</Filter>
     </ClCompile>
-    <ClCompile Include="Sample3DSceneRenderer.cpp">
-      <Filter>DirectX12</Filter>
+    <ClCompile Include="DirectX12\Geometry\Buffers\BaseGeometryBuffer.cpp" />
+    <ClCompile Include="DirectX12\Geometry\Buffers\IndexBuffer.cpp" />
+    <ClCompile Include="DirectX12\Geometry\Buffers\VertexBuffer.cpp" />
+    <ClCompile Include="DirectX12\Utilities\UploadBuffer.cpp" />
+    <ClCompile Include="DirectX12\Utilities\DirectXHelper.cpp" />
+    <ClCompile Include="DirectX12\RenderItem\StandardRenderItem.cpp" />
+    <ClCompile Include="DirectX12\Material\StandardMaterial.cpp" />
+    <ClCompile Include="DirectX12\Scene\StandardScene.cpp" />
+    <ClCompile Include="DirectX12\Geometry\SubMesh.cpp" />
+    <ClCompile Include="DirectX12\Geometry\MeshGenerator.cpp" />
+    <ClCompile Include="DirectX12\Geometry\ImmutableMesh.cpp">
+      <Filter>DirectX12\Geometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="IGeometry.h">
+    <ClInclude Include="Interfaces\IGeometry.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="IGraphics.h">
+    <ClInclude Include="Interfaces\IMaterial.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="IMaterial.h">
+    <ClInclude Include="Interfaces\IRenderItem.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="IRenderItem.h">
+    <ClInclude Include="Interfaces\IScene.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="IScene.h">
+    <ClInclude Include="Interfaces\ISwapChainPanel.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="IWindow.h">
+    <ClInclude Include="Interfaces\IWindow.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="D3DBase.h">
+    <ClInclude Include="DirectX12\DeviceResources.h">
       <Filter>DirectX12</Filter>
     </ClInclude>
-    <ClInclude Include="d3dx12.h">
-      <Filter>DirectX12</Filter>
-    </ClInclude>
-    <ClInclude Include="DeviceResources.h">
-      <Filter>DirectX12</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXHelper.h">
-      <Filter>DirectX12</Filter>
-    </ClInclude>
-    <ClInclude Include="Sample3DSceneRenderer.h">
-      <Filter>DirectX12</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderStructures.h">
-      <Filter>DirectX12</Filter>
-    </ClInclude>
-    <ClInclude Include="ISwapChainPanel.h">
-      <Filter>Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="DisplayOrientations.h">
+    <ClInclude Include="Enums\DisplayOrientations.h">
       <Filter>Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12\Utilities\UploadBuffer.h">
+      <Filter>DirectX12\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12\Utilities\d3dx12.h">
+      <Filter>DirectX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12\Sample3DSceneRenderer.h">
+      <Filter>DirectX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12\Utilities\DirectXHelper.h">
+      <Filter>DirectX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12\Geometry\Buffers\BaseGeometryBuffer.h" />
+    <ClInclude Include="DirectX12\Geometry\Buffers\IndexBuffer.h" />
+    <ClInclude Include="DirectX12\Geometry\Buffers\VertexBuffer.h" />
+    <ClInclude Include="DirectX12\ShaderStructures.h">
+      <Filter>DirectX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Interfaces\IRenderer.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12\RenderItem\StandardRenderItem.h" />
+    <ClInclude Include="DirectX12\Material\StandardMaterial.h" />
+    <ClInclude Include="DirectX12\Scene\StandardScene.h" />
+    <ClInclude Include="DirectX12\Geometry\SubMesh.h" />
+    <ClInclude Include="DirectX12\Geometry\MeshGenerator.h" />
+    <ClInclude Include="DirectX12\Geometry\ImmutableMesh.h">
+      <Filter>DirectX12\Geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="SamplePixelShader.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
-    <FxCompile Include="SampleVertexShader.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
+    <FxCompile Include="Shaders\SampleVertexShader.hlsl" />
+    <FxCompile Include="Shaders\SamplePixelShader.hlsl" />
   </ItemGroup>
 </Project>

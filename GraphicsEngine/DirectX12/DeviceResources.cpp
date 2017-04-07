@@ -1,11 +1,11 @@
 ﻿#include "pch.h"
 #include "DeviceResources.h"
-#include "DirectXHelper.h"
+#include "DirectX12/Utilities/DirectXHelper.h"
 #include <ppltasks.h>
 #include <windows.ui.xaml.media.dxinterop.h>
-#include "DirectXHelper.h"
 #include "Common/Helpers.h"
 #include "Common/EngineException.h"
+#include "Enums/DisplayOrientations.h"
 
 using namespace Common;
 using namespace GraphicsEngine;

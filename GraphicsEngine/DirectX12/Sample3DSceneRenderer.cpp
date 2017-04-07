@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "Sample3DSceneRenderer.h"
-#include "DirectXHelper.h"
+#include "GraphicsEngine/DirectX12/Utilities/DirectXHelper.h"
 
 #include <ppltasks.h>
 #include <synchapi.h>
@@ -28,13 +28,12 @@ Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<GraphicsEngin
 	m_angle(0),
 	m_tracking(false)
 {
-	LoadState();
+	Sample3DSceneRenderer::LoadState();
 	ZeroMemory(&m_constantBufferData, sizeof(m_constantBufferData));
 
-	CreateDeviceDependentResources();
-	CreateWindowSizeDependentResources();
+	Sample3DSceneRenderer::CreateDeviceDependentResources();
+	Sample3DSceneRenderer::CreateWindowSizeDependentResources();
 }
-
 Sample3DSceneRenderer::~Sample3DSceneRenderer()
 {
 	m_constantBuffer->Unmap(0, nullptr);
@@ -293,8 +292,6 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 
 	m_loadingComplete = true;
 }
-
-// Initializes view parameters when the window size changes.
 void Sample3DSceneRenderer::CreateWindowSizeDependentResources()
 {
 	auto outputSize = m_deviceResources->GetOutputSize();
@@ -340,9 +337,38 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources()
 
 	XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixLookAtRH(eye, at, up)));
 }
+void Sample3DSceneRenderer::SaveState()
+{
+	/*auto state = ApplicationData::Current->LocalSettings->Values;
 
-// Called once per frame, rotates the cube and calculates the model and view matrices.
-void Sample3DSceneRenderer::Update(const Common::Timer& timer)
+	if (state->HasKey(AngleKey))
+	{
+	state->Remove(AngleKey);
+	}
+	if (state->HasKey(TrackingKey))
+	{
+	state->Remove(TrackingKey);
+	}
+
+	state->Insert(AngleKey, PropertyValue::CreateSingle(m_angle));
+	state->Insert(TrackingKey, PropertyValue::CreateBoolean(m_tracking));*/
+}
+void Sample3DSceneRenderer::LoadState()
+{
+	/*auto state = ApplicationData::Current->LocalSettings->Values;
+	if (state->HasKey(AngleKey))
+	{
+	m_angle = safe_cast<IPropertyValue^>(state->Lookup(AngleKey))->GetSingle();
+	state->Remove(AngleKey);
+	}
+	if (state->HasKey(TrackingKey))
+	{
+	m_tracking = safe_cast<IPropertyValue^>(state->Lookup(TrackingKey))->GetBoolean();
+	state->Remove(TrackingKey);
+	}*/
+}
+
+void Sample3DSceneRenderer::FrameUpdate(const Common::Timer& timer)
 {
 	if (m_loadingComplete)
 	{
@@ -359,69 +385,10 @@ void Sample3DSceneRenderer::Update(const Common::Timer& timer)
 		memcpy(destination, &m_constantBufferData, sizeof(m_constantBufferData));
 	}
 }
-
-// Saves the current state of the renderer.
-void Sample3DSceneRenderer::SaveState()
+void Sample3DSceneRenderer::FixedUpdate(const Common::Timer& timer)
 {
-	/*auto state = ApplicationData::Current->LocalSettings->Values;
-
-	if (state->HasKey(AngleKey))
-	{
-		state->Remove(AngleKey);
-	}
-	if (state->HasKey(TrackingKey))
-	{
-		state->Remove(TrackingKey);
-	}
-
-	state->Insert(AngleKey, PropertyValue::CreateSingle(m_angle));
-	state->Insert(TrackingKey, PropertyValue::CreateBoolean(m_tracking));*/
 }
 
-// Restores the previous state of the renderer.
-void Sample3DSceneRenderer::LoadState()
-{
-	/*auto state = ApplicationData::Current->LocalSettings->Values;
-	if (state->HasKey(AngleKey))
-	{
-		m_angle = safe_cast<IPropertyValue^>(state->Lookup(AngleKey))->GetSingle();
-		state->Remove(AngleKey);
-	}
-	if (state->HasKey(TrackingKey))
-	{
-		m_tracking = safe_cast<IPropertyValue^>(state->Lookup(TrackingKey))->GetBoolean();
-		state->Remove(TrackingKey);
-	}*/
-}
-
-// Rotate the 3D cube model a set amount of radians.
-void Sample3DSceneRenderer::Rotate(float radians)
-{
-	// Prepare to pass the updated model matrix to the shader.
-	XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(radians)));
-}
-
-void Sample3DSceneRenderer::StartTracking()
-{
-	m_tracking = true;
-}
-
-// When tracking, the 3D cube can be rotated around its Y axis by tracking pointer position relative to the output screen width.
-void Sample3DSceneRenderer::TrackingUpdate(float positionX)
-{
-	if (m_tracking)
-	{
-		float radians = XM_2PI * 2.0f * positionX / m_deviceResources->GetOutputSize().x;
-		Rotate(radians);
-	}
-}
-
-void Sample3DSceneRenderer::StopTracking()
-{
-	m_tracking = false;
-}
-
-// Renders one frame using the vertex and pixel shaders.
 bool Sample3DSceneRenderer::Render()
 {
 	// Loading is asynchronous. Only draw geometry after it's loaded.
@@ -483,4 +450,26 @@ bool Sample3DSceneRenderer::Render()
 	m_deviceResources->GetCommandQueue()->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
 	return true;
+}
+
+void Sample3DSceneRenderer::Rotate(float radians)
+{
+	// Prepare to pass the updated model matrix to the shader.
+	XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(radians)));
+}
+void Sample3DSceneRenderer::StartTracking()
+{
+	m_tracking = true;
+}
+void Sample3DSceneRenderer::TrackingUpdate(float positionX)
+{
+	if (m_tracking)
+	{
+		float radians = XM_2PI * 2.0f * positionX / m_deviceResources->GetOutputSize().x;
+		Rotate(radians);
+	}
+}
+void Sample3DSceneRenderer::StopTracking()
+{
+	m_tracking = false;
 }
