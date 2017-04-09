@@ -37,11 +37,11 @@
     <ClCompile Include="DirectX12\RenderItem\StandardRenderItem.cpp" />
     <ClCompile Include="DirectX12\Material\StandardMaterial.cpp" />
     <ClCompile Include="DirectX12\Scene\StandardScene.cpp" />
-    <ClCompile Include="DirectX12\Geometry\SubMesh.cpp" />
     <ClCompile Include="DirectX12\Geometry\MeshGenerator.cpp" />
     <ClCompile Include="DirectX12\Geometry\ImmutableMesh.cpp">
       <Filter>DirectX12\Geometry</Filter>
     </ClCompile>
+    <ClCompile Include="DirectX12\Geometry\Submesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -94,11 +94,11 @@
     <ClInclude Include="DirectX12\RenderItem\StandardRenderItem.h" />
     <ClInclude Include="DirectX12\Material\StandardMaterial.h" />
     <ClInclude Include="DirectX12\Scene\StandardScene.h" />
-    <ClInclude Include="DirectX12\Geometry\SubMesh.h" />
     <ClInclude Include="DirectX12\Geometry\MeshGenerator.h" />
     <ClInclude Include="DirectX12\Geometry\ImmutableMesh.h">
       <Filter>DirectX12\Geometry</Filter>
     </ClInclude>
+    <ClInclude Include="DirectX12\Geometry\Submesh.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\SampleVertexShader.hlsl" />

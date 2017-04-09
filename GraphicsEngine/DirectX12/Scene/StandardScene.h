@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Interfaces/IScene.h"
+#include "Interfaces/IRenderItem.h"
 
 namespace GraphicsEngine
 {
@@ -21,5 +22,6 @@ namespace GraphicsEngine
 		void FixedUpdate(const Common::Timer& timer) override;
 
 	private:
+		
 	};
 }

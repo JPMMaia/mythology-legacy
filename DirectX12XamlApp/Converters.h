@@ -1,6 +1,7 @@
 #pragma once
 
-#include "GraphicsEngine/ISwapChainPanel.h"
+#include "GraphicsEngine/Interfaces/ISwapChainPanel.h"
+#include "GraphicsEngine/Enums/DisplayOrientations.h"
 #include "Common/Helpers.h"
 
 #include <agile.h>

@@ -1,7 +1,9 @@
 ﻿#pragma once
 
-#include "GraphicsEngine\DeviceResources.h"
-#include "GraphicsEngine\Sample3DSceneRenderer.h"
+#include "GraphicsEngine/DirectX12/DeviceResources.h"
+#include "GraphicsEngine/DirectX12/Sample3DSceneRenderer.h"
+#include "GraphicsEngine/Interfaces/IScene.h"
+#include "GraphicsEngine/Interfaces/IRenderer.h"
 #include "Common\Timer.h"
 
 // Renders Direct3D content on the screen.
@@ -30,7 +32,8 @@ namespace DirectX12XamlApp
 		void Update(const Common::Timer& timer);
 		bool Render(const Common::Timer& timer);
 
-		std::unique_ptr<GraphicsEngine::Sample3DSceneRenderer> m_sceneRenderer;
+		std::unique_ptr<GraphicsEngine::IScene> m_scene;
+		std::unique_ptr<GraphicsEngine::IRenderer> m_renderer;
 
 		Windows::Foundation::IAsyncAction^ m_renderLoopWorker;
 		Concurrency::critical_section m_criticalSection;

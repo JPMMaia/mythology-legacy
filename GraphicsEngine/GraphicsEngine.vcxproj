@@ -218,7 +218,7 @@
     <ClInclude Include="DirectX12\Geometry\Buffers\IndexBuffer.h" />
     <ClInclude Include="DirectX12\Geometry\Buffers\VertexBuffer.h" />
     <ClInclude Include="DirectX12\Geometry\MeshGenerator.h" />
-    <ClInclude Include="DirectX12\Geometry\SubMesh.h" />
+    <ClInclude Include="DirectX12\Geometry\Submesh.h" />
     <ClInclude Include="DirectX12\Material\StandardMaterial.h" />
     <ClInclude Include="DirectX12\RenderItem\StandardRenderItem.h" />
     <ClInclude Include="DirectX12\Scene\StandardScene.h" />
@@ -246,7 +246,7 @@
     <ClCompile Include="DirectX12\Geometry\Buffers\IndexBuffer.cpp" />
     <ClCompile Include="DirectX12\Geometry\Buffers\VertexBuffer.cpp" />
     <ClCompile Include="DirectX12\Geometry\MeshGenerator.cpp" />
-    <ClCompile Include="DirectX12\Geometry\SubMesh.cpp" />
+    <ClCompile Include="DirectX12\Geometry\Submesh.cpp" />
     <ClCompile Include="DirectX12\Material\StandardMaterial.cpp" />
     <ClCompile Include="DirectX12\RenderItem\StandardRenderItem.cpp" />
     <ClCompile Include="DirectX12\Scene\StandardScene.cpp" />
