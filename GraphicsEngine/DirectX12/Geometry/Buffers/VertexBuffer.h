@@ -12,9 +12,11 @@ namespace GraphicsEngine
 		VertexBuffer(const VertexBuffer& rhs) = default;
 		VertexBuffer& operator=(const VertexBuffer& rhs) = default;
 
-		uint32_t GetVertexByteStride() const;
+		const D3D12_VERTEX_BUFFER_VIEW& View() const;
+		uint32_t VertexByteStride() const;
 
 	private:
 		uint32_t m_vertexByteStride = 0;
+		D3D12_VERTEX_BUFFER_VIEW m_view;
 	};
 }

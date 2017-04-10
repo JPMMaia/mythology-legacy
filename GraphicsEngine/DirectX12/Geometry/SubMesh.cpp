@@ -4,7 +4,7 @@
 using namespace GraphicsEngine;
 
 Submesh::Submesh(const MeshGenerator::MeshData& meshData) :
-	m_indexCount(meshData.Indices.size()),
+	m_indexCount(static_cast<uint32_t>(meshData.Indices.size())),
 	m_startIndexLocation(0),
 	m_baseVertexLocation(0),
 	m_bounds(CreateBoundingBoxFromMesh(meshData.Vertices))

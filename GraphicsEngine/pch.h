@@ -17,6 +17,7 @@
 #include <vector>
 #include <concrt.h>
 #include <cstdint>
+#include <string>
 
 #if defined(_DEBUG)
 #include <dxgidebug.h>

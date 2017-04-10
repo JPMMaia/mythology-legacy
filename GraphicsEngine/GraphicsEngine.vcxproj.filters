@@ -42,13 +42,17 @@
       <Filter>DirectX12\Geometry</Filter>
     </ClCompile>
     <ClCompile Include="DirectX12\Geometry\Submesh.cpp" />
+    <ClCompile Include="DirectX12\Geometry\VertexTypes.cpp" />
+    <ClCompile Include="DirectX12\Material\ColorMaterial.cpp" />
+    <ClCompile Include="DirectX12\RenderItem\ColorRenderItem.cpp" />
+    <ClCompile Include="DirectX12\Renderer.cpp" />
+    <ClCompile Include="DirectX12\Shader\Shader.cpp" />
+    <ClCompile Include="DirectX12\Pipeline\PipelineStateManager.cpp" />
+    <ClCompile Include="DirectX12\Pipeline\RootSignatureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="Interfaces\IGeometry.h">
-      <Filter>Interfaces</Filter>
-    </ClInclude>
     <ClInclude Include="Interfaces\IMaterial.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
@@ -99,6 +103,16 @@
       <Filter>DirectX12\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="DirectX12\Geometry\Submesh.h" />
+    <ClInclude Include="DirectX12\Geometry\VertexTypes.h" />
+    <ClInclude Include="DirectX12\Material\ColorMaterial.h" />
+    <ClInclude Include="DirectX12\RenderItem\ColorRenderItem.h" />
+    <ClInclude Include="Interfaces\IMesh.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12\Renderer.h" />
+    <ClInclude Include="DirectX12\Shader\Shader.h" />
+    <ClInclude Include="DirectX12\Pipeline\PipelineStateManager.h" />
+    <ClInclude Include="DirectX12\Pipeline\RootSignatureManager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\SampleVertexShader.hlsl" />

@@ -16,5 +16,6 @@ namespace GraphicsEngine
 
 	private:
 		DXGI_FORMAT m_indexFormat = DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
+		D3D12_INDEX_BUFFER_VIEW m_view;
 	};
 }
