@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "GraphicsEngine/DirectX12/DeviceResources.h"
-#include "GraphicsEngine/DirectX12/Sample3DSceneRenderer.h"
+#include "GraphicsEngine/DirectX12/Scene/StandardScene.h"
 #include "GraphicsEngine/Interfaces/IScene.h"
 #include "GraphicsEngine/Interfaces/IRenderer.h"
 #include "Common\Timer.h"
@@ -14,10 +14,10 @@ namespace DirectX12XamlApp
 	public:
 		DirectX12XamlAppMain();
 		void CreateRenderers(const std::shared_ptr<GraphicsEngine::DeviceResources>& deviceResources);
-		void StartTracking()					{ m_sceneRenderer->StartTracking(); }
+		void StartTracking() { int i = 0; }
 		void TrackingUpdate(float positionX)	{ m_pointerLocationX = positionX; }
-		void StopTracking()						{ m_sceneRenderer->StopTracking(); }
-		bool IsTracking()						{ return m_sceneRenderer->IsTracking(); }
+		void StopTracking() { int i = 0; }
+		bool IsTracking()						{ return false; }
 		void StartRenderLoop(const std::shared_ptr<GraphicsEngine::DeviceResources>& deviceResources);
 		void StopRenderLoop();
 		Concurrency::critical_section& GetCriticalSection() { return m_criticalSection; }
@@ -32,7 +32,6 @@ namespace DirectX12XamlApp
 		void Update(const Common::Timer& timer);
 		bool Render(const Common::Timer& timer);
 
-		std::unique_ptr<GraphicsEngine::IScene> m_scene;
 		std::unique_ptr<GraphicsEngine::IRenderer> m_renderer;
 
 		Windows::Foundation::IAsyncAction^ m_renderLoopWorker;

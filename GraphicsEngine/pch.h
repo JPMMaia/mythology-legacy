@@ -18,6 +18,7 @@
 #include <concrt.h>
 #include <cstdint>
 #include <string>
+#include <array>
 
 #if defined(_DEBUG)
 #include <dxgidebug.h>

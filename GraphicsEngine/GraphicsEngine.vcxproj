@@ -214,6 +214,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DirectX12\Command\CommandListManager.h" />
     <ClInclude Include="DirectX12\Geometry\Buffers\BaseGeometryBuffer.h" />
     <ClInclude Include="DirectX12\Geometry\Buffers\IndexBuffer.h" />
     <ClInclude Include="DirectX12\Geometry\Buffers\VertexBuffer.h" />
@@ -221,19 +222,25 @@
     <ClInclude Include="DirectX12\Geometry\Submesh.h" />
     <ClInclude Include="DirectX12\Geometry\VertexTypes.h" />
     <ClInclude Include="DirectX12\Material\ColorMaterial.h" />
+    <ClInclude Include="DirectX12\Material\MaterialInstance.h" />
     <ClInclude Include="DirectX12\Material\StandardMaterial.h" />
+    <ClInclude Include="DirectX12\Pipeline\DescriptorHeap.h" />
     <ClInclude Include="DirectX12\Pipeline\PipelineStateManager.h" />
     <ClInclude Include="DirectX12\Pipeline\RootSignatureManager.h" />
     <ClInclude Include="DirectX12\Renderer.h" />
     <ClInclude Include="DirectX12\RenderItem\ColorRenderItem.h" />
     <ClInclude Include="DirectX12\RenderItem\StandardRenderItem.h" />
+    <ClInclude Include="DirectX12\Resources\FrameResource.h" />
+    <ClInclude Include="DirectX12\Resources\Resource.h" />
+    <ClInclude Include="DirectX12\Resources\ResourceInstance.h" />
     <ClInclude Include="DirectX12\Scene\StandardScene.h" />
     <ClInclude Include="DirectX12\Shader\Shader.h" />
+    <ClInclude Include="DirectX12\Shader\ShaderBufferTypes.h" />
     <ClInclude Include="DirectX12\Utilities\d3dx12.h" />
     <ClInclude Include="DirectX12\DeviceResources.h" />
     <ClInclude Include="DirectX12\Utilities\DirectXHelper.h" />
     <ClInclude Include="Enums\DisplayOrientations.h" />
-    <ClInclude Include="Interfaces\IMesh.h" />
+    <ClInclude Include="DirectX12\Geometry\IMesh.h" />
     <ClInclude Include="Interfaces\IRenderer.h" />
     <ClInclude Include="Interfaces\IMaterial.h" />
     <ClInclude Include="Interfaces\IRenderItem.h" />
@@ -248,6 +255,7 @@
     <ClInclude Include="DirectX12\Utilities\UploadBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DirectX12\Command\CommandListManager.cpp" />
     <ClCompile Include="DirectX12\DeviceResources.cpp" />
     <ClCompile Include="DirectX12\Geometry\Buffers\BaseGeometryBuffer.cpp" />
     <ClCompile Include="DirectX12\Geometry\Buffers\IndexBuffer.cpp" />
@@ -256,12 +264,17 @@
     <ClCompile Include="DirectX12\Geometry\Submesh.cpp" />
     <ClCompile Include="DirectX12\Geometry\VertexTypes.cpp" />
     <ClCompile Include="DirectX12\Material\ColorMaterial.cpp" />
+    <ClCompile Include="DirectX12\Material\MaterialInstance.cpp" />
     <ClCompile Include="DirectX12\Material\StandardMaterial.cpp" />
+    <ClCompile Include="DirectX12\Pipeline\DescriptorHeap.cpp" />
     <ClCompile Include="DirectX12\Pipeline\PipelineStateManager.cpp" />
     <ClCompile Include="DirectX12\Pipeline\RootSignatureManager.cpp" />
     <ClCompile Include="DirectX12\Renderer.cpp" />
     <ClCompile Include="DirectX12\RenderItem\ColorRenderItem.cpp" />
     <ClCompile Include="DirectX12\RenderItem\StandardRenderItem.cpp" />
+    <ClCompile Include="DirectX12\Resources\FrameResource.cpp" />
+    <ClCompile Include="DirectX12\Resources\Resource.cpp" />
+    <ClCompile Include="DirectX12\Resources\ResourceInstance.cpp" />
     <ClCompile Include="DirectX12\Scene\StandardScene.cpp" />
     <ClCompile Include="DirectX12\Shader\Shader.cpp" />
     <ClCompile Include="DirectX12\Utilities\DirectXHelper.cpp" />
@@ -290,6 +303,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </FxCompile>
     <FxCompile Include="Shaders\SampleVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -298,7 +317,39 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\InstanceData.hlsli">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </None>
+    <None Include="Shaders\MaterialData.hlsli">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </None>
+    <None Include="Shaders\PassData.hlsli">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,43 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Interfaces">
-      <UniqueIdentifier>{207f9765-7a5c-48f1-adee-1911db02a260}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameEngine">
-      <UniqueIdentifier>{d3da4752-ca13-4a73-8b27-51eba3b9bdd5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameEngine\Components">
-      <UniqueIdentifier>{adf4a445-8685-4688-8052-fd24489c9de3}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IComponent.h">
-      <Filter>Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>GameEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsComponent.h">
-      <Filter>GameEngine\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="TransformComponent.h">
-      <Filter>GameEngine\Components</Filter>
-    </ClInclude>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="Component\GraphicsComponent.cpp" />
+    <ClCompile Include="GameObject\GameObject.cpp" />
+    <ClCompile Include="Component\TransformComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>GameEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsComponent.cpp">
-      <Filter>GameEngine\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="TransformComponent.cpp">
-      <Filter>GameEngine\Components</Filter>
-    </ClCompile>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Component\GraphicsComponent.h" />
+    <ClInclude Include="Component\IComponent.h" />
+    <ClInclude Include="GameObject\GameObject.h" />
+    <ClInclude Include="Component\TransformComponent.h" />
   </ItemGroup>
 </Project>

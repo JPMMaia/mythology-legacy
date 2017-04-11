@@ -5,6 +5,12 @@
 #include "Pipeline/RootSignatureManager.h"
 #include "Pipeline/PipelineStateManager.h"
 #include "Interfaces/IScene.h"
+#include "Pipeline/DescriptorHeap.h"
+#include "Utilities/UploadBuffer.h"
+#include "Command/CommandListManager.h"
+#include "Shader/ShaderBufferTypes.h"
+#include "Resources/ResourceInstance.h"
+#include "RenderItem/StandardRenderItem.h"
 
 namespace GraphicsEngine
 {
@@ -27,7 +33,8 @@ namespace GraphicsEngine
 		std::shared_ptr<DeviceResources> m_deviceResources;
 		RootSignatureManager m_rootSignatureManager;
 		PipelineStateManager m_pipelineStateManager;
-		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> m_commandList;
+		CommandListManager m_commandListManager;
 		std::shared_ptr<IScene> m_scene;
+		D3D12_RECT m_scissorRect;
 	};
 }

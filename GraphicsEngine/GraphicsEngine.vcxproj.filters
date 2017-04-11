@@ -49,6 +49,12 @@
     <ClCompile Include="DirectX12\Shader\Shader.cpp" />
     <ClCompile Include="DirectX12\Pipeline\PipelineStateManager.cpp" />
     <ClCompile Include="DirectX12\Pipeline\RootSignatureManager.cpp" />
+    <ClCompile Include="DirectX12\Pipeline\DescriptorHeap.cpp" />
+    <ClCompile Include="DirectX12\Command\CommandListManager.cpp" />
+    <ClCompile Include="DirectX12\Resources\FrameResource.cpp" />
+    <ClCompile Include="DirectX12\Resources\Resource.cpp" />
+    <ClCompile Include="DirectX12\Material\MaterialInstance.cpp" />
+    <ClCompile Include="DirectX12\Resources\ResourceInstance.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -106,16 +112,28 @@
     <ClInclude Include="DirectX12\Geometry\VertexTypes.h" />
     <ClInclude Include="DirectX12\Material\ColorMaterial.h" />
     <ClInclude Include="DirectX12\RenderItem\ColorRenderItem.h" />
-    <ClInclude Include="Interfaces\IMesh.h">
-      <Filter>Interfaces</Filter>
-    </ClInclude>
     <ClInclude Include="DirectX12\Renderer.h" />
     <ClInclude Include="DirectX12\Shader\Shader.h" />
     <ClInclude Include="DirectX12\Pipeline\PipelineStateManager.h" />
     <ClInclude Include="DirectX12\Pipeline\RootSignatureManager.h" />
+    <ClInclude Include="DirectX12\Pipeline\DescriptorHeap.h" />
+    <ClInclude Include="DirectX12\Command\CommandListManager.h" />
+    <ClInclude Include="DirectX12\Geometry\IMesh.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12\Shader\ShaderBufferTypes.h" />
+    <ClInclude Include="DirectX12\Resources\FrameResource.h" />
+    <ClInclude Include="DirectX12\Resources\Resource.h" />
+    <ClInclude Include="DirectX12\Material\MaterialInstance.h" />
+    <ClInclude Include="DirectX12\Resources\ResourceInstance.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\SampleVertexShader.hlsl" />
     <FxCompile Include="Shaders\SamplePixelShader.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\MaterialData.hlsli" />
+    <None Include="Shaders\PassData.hlsli" />
+    <None Include="Shaders\InstanceData.hlsli" />
   </ItemGroup>
 </Project>

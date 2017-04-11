@@ -7,7 +7,7 @@
 namespace GraphicsEngine
 {
 	enum class DisplayOrientations;
-	static const UINT c_frameCount = 3;		// Use triple buffering.
+	static const UINT c_frameCount = 3;		// TODO Use triple buffering.
 
 	// Controls all the DirectX device resources.
 	class DeviceResources
@@ -44,8 +44,10 @@ namespace GraphicsEngine
 		D3D12_VIEWPORT              GetScreenViewport() const { return m_screenViewport; }
 		DirectX::XMFLOAT4X4         GetOrientationTransform3D() const { return m_orientationTransform3D; }
 		UINT                        GetCurrentFrameIndex() const { return m_currentFrame; }
-		UINT						GetSampleCount() const { return 1; }
-		UINT						GetSampleQuality() const { return 0; }
+		static UINT					GetFrameCount() { return 3; }
+		UINT						GetSampleCount() const { return m_sampleCount; }
+		UINT						GetSampleQuality() const { return m_sampleQuality; }
+		UINT						GetCbvSrvUavDescriptorSize() const { return m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV); }
 
 		CD3DX12_CPU_DESCRIPTOR_HANDLE GetRenderTargetView() const
 		{
@@ -84,6 +86,8 @@ namespace GraphicsEngine
 		D3D12_VIEWPORT m_screenViewport;
 		UINT m_rtvDescriptorSize;
 		bool m_deviceRemoved;
+		UINT m_sampleCount = 1;
+		UINT m_sampleQuality = 0;
 
 		// CPU/GPU Synchronization.
 		Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;

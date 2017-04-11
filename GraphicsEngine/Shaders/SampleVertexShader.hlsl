@@ -1,39 +1,33 @@
-// A constant buffer that stores the three basic column-major matrices for composing geometry.
-cbuffer ModelViewProjectionConstantBuffer : register(b0)
+#include "InstanceData.hlsli"
+#include "PassData.hlsli"
+#include "MaterialData.hlsli"
+
+struct VertexInput
 {
-	matrix model;
-	matrix view;
-	matrix projection;
+	float3 PositionL : POSITION;
+};
+struct VertexOutput
+{
+	float4 PositionH : SV_POSITION;
+	nointerpolation uint MaterialIndex : MATERIAL_INDEX;
 };
 
-// Per-vertex data used as input to the vertex shader.
-struct VertexShaderInput
+ConstantBuffer<PassData> gPassData : register(b0);
+StructuredBuffer<InstanceData> gInstanceData : register(t0, space1);
+StructuredBuffer<MaterialData> gMaterialData : register(t1, space1);
+
+VertexOutput main(VertexInput input, uint instanceID : SV_InstanceID)
 {
-	float3 pos : POSITION;
-	float3 color : COLOR0;
-};
+	VertexOutput output;
 
-// Per-pixel color data passed through the pixel shader.
-struct PixelShaderInput
-{
-	float4 pos : SV_POSITION;
-	float3 color : COLOR0;
-};
+	InstanceData instanceData = gInstanceData[instanceID];
 
-// Simple shader to do vertex processing on the GPU.
-PixelShaderInput main(VertexShaderInput input)
-{
-	PixelShaderInput output;
-	float4 pos = float4(input.pos, 1.0f);
+	float4 positionW = mul(float4(input.PositionL, 1.0f), instanceData.ModelMatrix);
+	float4 positionV = mul(positionW, gPassData.ViewMatrix);
+	output.PositionH = mul(positionW, gPassData.ProjectionMatrix);
+	//output.PositionH = mul(positionW, gPassData.ViewProjectionMatrix);
 
-	// Transform the vertex position into projected space.
-	pos = mul(pos, model);
-	pos = mul(pos, view);
-	pos = mul(pos, projection);
-	output.pos = pos;
-
-	// Pass the color through without modification.
-	output.color = input.color;
+	output.MaterialIndex = instanceData.MaterialIndex;
 
 	return output;
 }

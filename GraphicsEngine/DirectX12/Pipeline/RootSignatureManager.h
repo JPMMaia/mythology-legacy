@@ -11,6 +11,9 @@ namespace GraphicsEngine
 
 		void CreateDeviceDependentResources();
 
+		void SetGraphicsRootSignature(ID3D12GraphicsCommandList* commandList, const std::string& name) const;
+		static void SetGraphicsRootDescriptorTable(ID3D12GraphicsCommandList* commandList, UINT rootParameterIndex, CD3DX12_GPU_DESCRIPTOR_HANDLE baseDescriptor);
+
 		ID3D12RootSignature* GetRootSignature(const std::string& name) const;
 				
 	private:

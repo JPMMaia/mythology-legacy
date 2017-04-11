@@ -35,8 +35,8 @@ void PipelineStateManager::InitializeShadersAndInputLayout()
 		m_inputLayouts.emplace("PositionInputLayout", std::move(inputLayout));
 	}
 
-	m_shaders["SampleVS"] = Shader::CompileShader(L"GraphicsEngine/SampleVertexShader.hlsl", nullptr, "main", "vs_5_1");
-	m_shaders["SamplePS"] = Shader::CompileShader(L"GraphicsEngine/SamplePixelShader.hlsl", nullptr, "main", "vs_5_1");
+	m_shaders["SampleVS"] = Shader::CompileShader(L"GraphicsEngine/Shaders/SampleVertexShader.hlsl", nullptr, "main", "vs_5_1");
+	m_shaders["SamplePS"] = Shader::CompileShader(L"GraphicsEngine/Shaders/SamplePixelShader.hlsl", nullptr, "main", "ps_5_1");
 }
 
 void PipelineStateManager::InitializePipelineStateObjects(const RootSignatureManager& rootSignatureManager)

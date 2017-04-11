@@ -12,6 +12,7 @@ namespace GraphicsEngine
 		IndexBuffer(const IndexBuffer& rhs) = default;
 		IndexBuffer& operator=(const IndexBuffer& rhs) = default;
 
+		const D3D12_INDEX_BUFFER_VIEW& View() const;
 		DXGI_FORMAT GetIndexFormat() const;
 
 	private:

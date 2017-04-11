@@ -10,6 +10,10 @@ IndexBuffer::IndexBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* comman
 {
 }
 
+const D3D12_INDEX_BUFFER_VIEW& IndexBuffer::View() const
+{
+	return m_view;
+}
 DXGI_FORMAT IndexBuffer::GetIndexFormat() const
 {
 	return m_indexFormat;

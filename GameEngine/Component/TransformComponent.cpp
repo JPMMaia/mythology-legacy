@@ -1,4 +1,5 @@
-﻿#include "TransformComponent.h"
+﻿#include "pch.h"
+#include "TransformComponent.h"
 
 using namespace DirectX;
 using namespace GameEngine;

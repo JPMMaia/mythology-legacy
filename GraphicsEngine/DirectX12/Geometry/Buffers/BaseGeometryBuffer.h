@@ -4,8 +4,6 @@
 
 namespace GraphicsEngine
 {
-	class D3DBase;
-
 	class BaseGeometryBuffer
 	{
 	protected:

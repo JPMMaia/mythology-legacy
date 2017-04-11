@@ -9,6 +9,6 @@ namespace GraphicsEngine
 		virtual ~IMesh() = default;
 
 	public:
-		
+		virtual void DisposeUploadBuffers() = 0;
 	};
 }

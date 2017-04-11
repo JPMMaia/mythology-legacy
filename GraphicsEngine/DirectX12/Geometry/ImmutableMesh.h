@@ -1,12 +1,11 @@
 ﻿#pragma once
 
-#include "Interfaces/IMesh.h"
+#include "IMesh.h"
 #include "DirectX12/Geometry/Buffers/VertexBuffer.h"
 #include "DirectX12/Geometry/Buffers/IndexBuffer.h"
 #include "DirectX12/Geometry/Submesh.h"
 
 #include <unordered_map>
-#include "MeshGenerator.h"
 
 namespace GraphicsEngine
 {
@@ -17,9 +16,11 @@ namespace GraphicsEngine
 
 		void AddSubmesh(const std::string& name, const Submesh& submesh);
 
+		void Render(ID3D12GraphicsCommandList* commandList, const std::string& submeshName) const;
+
+		void DisposeUploadBuffers() override;
+
 		const std::string& Name() const;
-
-
 
 	private:
 		std::string m_name;

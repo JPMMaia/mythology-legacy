@@ -9,4 +9,5 @@ using namespace std;
 EngineException::EngineException(const std::string& message) :
 	std::exception(message.c_str())
 {
+	OutputDebugStringA(message.c_str());
 }

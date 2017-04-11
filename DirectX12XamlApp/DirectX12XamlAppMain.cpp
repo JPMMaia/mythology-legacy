@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "DirectX12XamlAppMain.h"
+#include "DirectX12\Renderer.h"
 
 using namespace Common;
 using namespace DirectX12XamlApp;
@@ -17,7 +18,7 @@ DirectX12XamlAppMain::DirectX12XamlAppMain() :
 // Creates and initializes the renderers.
 void DirectX12XamlAppMain::CreateRenderers(const std::shared_ptr<GraphicsEngine::DeviceResources>& deviceResources)
 {
-	m_sceneRenderer = std::unique_ptr<GraphicsEngine::Sample3DSceneRenderer>(new GraphicsEngine::Sample3DSceneRenderer(deviceResources));
+	m_renderer = std::make_unique<GraphicsEngine::Renderer>(deviceResources);
 
 	OnWindowSizeChanged();
 }
@@ -31,6 +32,7 @@ void DirectX12XamlAppMain::StartRenderLoop(const std::shared_ptr<GraphicsEngine:
 	}
 
 	m_timer.Reset();
+	Update(m_timer);
 
 	// Create a task that will be run on a background thread.
 	auto workItemHandler = ref new WorkItemHandler([this, deviceResources](IAsyncAction ^ action)
@@ -96,7 +98,7 @@ void DirectX12XamlAppMain::StopRenderLoop()
 
 void DirectX12XamlAppMain::Update(const Common::Timer& timer)
 {
-	m_scene->FrameUpdate(m_timer);
+	m_renderer->FrameUpdate(m_timer);
 }
 void DirectX12XamlAppMain::ProcessInput()
 {
@@ -108,17 +110,17 @@ bool DirectX12XamlAppMain::Render(const Common::Timer& timer)
 
 void DirectX12XamlAppMain::OnWindowSizeChanged()
 {
-	m_scene->CreateWindowSizeDependentResources();
+	m_renderer->CreateWindowSizeDependentResources();
 }
 void DirectX12XamlAppMain::OnSuspending()
 {
-	m_scene->OnSuspending();
+	m_renderer->SaveState();
 }
 void DirectX12XamlAppMain::OnResuming()
 {
-	m_scene->OnResuming();
+	m_renderer->LoadState();
 }
 void DirectX12XamlAppMain::OnDeviceRemoved()
 {
-	m_scene = nullptr;
+	m_renderer = nullptr;
 }
