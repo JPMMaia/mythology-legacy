@@ -1,14 +1,13 @@
 ﻿#include "pch.h"
 #include "DeviceResources.h"
-#include "DirectXHelper.h"
+#include "Core/Utilities/DirectXHelper.h"
+#include "GraphicsEngineInterfaces/DisplayOrientations.h"
 
 using namespace DirectX;
+using namespace DirectX12Engine;
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
-using namespace Windows::Graphics::Display;
-using namespace Windows::UI::Core;
-using namespace Windows::UI::Xaml::Controls;
-using namespace Platform;
+using namespace GraphicsEngine;
 
 namespace DisplayMetrics
 {
@@ -64,34 +63,36 @@ namespace ScreenRotation
 };
 
 // Constructor for DeviceResources.
-DX::DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT depthBufferFormat) :
+DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT depthBufferFormat) :
 	m_currentFrame(0),
-	m_screenViewport(),
-	m_rtvDescriptorSize(0),
-	m_fenceEvent(0),
 	m_backBufferFormat(backBufferFormat),
 	m_depthBufferFormat(depthBufferFormat),
+	m_screenViewport(),
+	m_rtvDescriptorSize(0),
+	m_deviceRemoved(false),
 	m_fenceValues{},
+	m_fenceEvent(nullptr),
 	m_d3dRenderTargetSize(),
 	m_outputSize(),
 	m_logicalSize(),
 	m_nativeOrientation(DisplayOrientations::None),
 	m_currentOrientation(DisplayOrientations::None),
 	m_dpi(-1.0f),
-	m_effectiveDpi(-1.0f),
-	m_deviceRemoved(false)
+	m_effectiveDpi(-1.0f)
 {
 	CreateDeviceIndependentResources();
 	CreateDeviceResources();
 }
 
 // Configures resources that don't depend on the Direct3D device.
-void DX::DeviceResources::CreateDeviceIndependentResources()
+// ReSharper disable once CppMemberFunctionMayBeStatic
+// ReSharper disable once CppMemberFunctionMayBeConst
+void DeviceResources::CreateDeviceIndependentResources()
 {
 }
 
 // Configures the Direct3D device, and stores handles to it and the device context.
-void DX::DeviceResources::CreateDeviceResources()
+void DeviceResources::CreateDeviceResources()
 {
 #if defined(_DEBUG)
 	// If the project is in a debug build, enable debugging via SDK Layers.
@@ -154,7 +155,7 @@ void DX::DeviceResources::CreateDeviceResources()
 	dsvHeapDesc.NumDescriptors = 1;
 	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&m_dsvHeap)));
+	DX::ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&m_dsvHeap)));
 	NAME_D3D12_OBJECT(m_dsvHeap);
 
 	for (UINT n = 0; n < c_frameCount; n++)
@@ -176,7 +177,7 @@ void DX::DeviceResources::CreateDeviceResources()
 }
 
 // These resources need to be recreated every time the window size is changed.
-void DX::DeviceResources::CreateWindowSizeDependentResources()
+void DeviceResources::CreateWindowSizeDependentResources()
 {
 	// Wait until all previous GPU work is complete.
 	WaitForGpu();
@@ -196,11 +197,11 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 	DXGI_MODE_ROTATION displayRotation = ComputeDisplayRotation();
 
 	bool swapDimensions = displayRotation == DXGI_MODE_ROTATION_ROTATE90 || displayRotation == DXGI_MODE_ROTATION_ROTATE270;
-	m_d3dRenderTargetSize.Width = swapDimensions ? m_outputSize.Height : m_outputSize.Width;
-	m_d3dRenderTargetSize.Height = swapDimensions ? m_outputSize.Width : m_outputSize.Height;
+	m_d3dRenderTargetSize.x = swapDimensions ? m_outputSize.y : m_outputSize.x;
+	m_d3dRenderTargetSize.y = swapDimensions ? m_outputSize.x : m_outputSize.y;
 
-	UINT backBufferWidth = lround(m_d3dRenderTargetSize.Width);
-	UINT backBufferHeight = lround(m_d3dRenderTargetSize.Height);
+	UINT backBufferWidth = lround(m_d3dRenderTargetSize.x);
+	UINT backBufferHeight = lround(m_d3dRenderTargetSize.y);
 
 	if (m_swapChain != nullptr)
 	{
@@ -223,6 +224,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 	else
 	{
 		// Otherwise, create a new one using the same adapter as the existing Direct3D device.
+		// ReSharper disable once CppUnreachableCode
 		DXGI_SCALING scaling = DisplayMetrics::SupportHighResolutions ? DXGI_SCALING_NONE : DXGI_SCALING_STRETCH;
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
 
@@ -243,7 +245,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 		DX::ThrowIfFailed(
 			m_dxgiFactory->CreateSwapChainForCoreWindow(
 				m_commandQueue.Get(),								// Swap chains need a reference to the command queue in DirectX 12.
-				reinterpret_cast<IUnknown*>(m_window.Get()),
+				reinterpret_cast<IUnknown*>(m_window->Get()),
 				&swapChainDesc,
 				nullptr,
 				&swapChain
@@ -276,7 +278,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 		break;
 
 	default:
-		throw ref new FailureException();
+		throw std::exception();
 	}
 
 	DX::ThrowIfFailed(
@@ -310,7 +312,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 
 		CD3DX12_CLEAR_VALUE depthOptimizedClearValue(m_depthBufferFormat, 1.0f, 0);
 
-		ThrowIfFailed(m_d3dDevice->CreateCommittedResource(
+		DX::ThrowIfFailed(m_d3dDevice->CreateCommittedResource(
 			&depthHeapProperties,
 			D3D12_HEAP_FLAG_NONE,
 			&depthResourceDesc,
@@ -330,20 +332,21 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 	}
 
 	// Set the 3D rendering viewport to target the entire window.
-	m_screenViewport = { 0.0f, 0.0f, m_d3dRenderTargetSize.Width, m_d3dRenderTargetSize.Height, 0.0f, 1.0f };
+	m_screenViewport = { 0.0f, 0.0f, m_d3dRenderTargetSize.x, m_d3dRenderTargetSize.y, 0.0f, 1.0f };
 }
 
 // Determine the dimensions of the render target and whether it will be scaled down.
-void DX::DeviceResources::UpdateRenderTargetSize()
+void DeviceResources::UpdateRenderTargetSize()
 {
 	m_effectiveDpi = m_dpi;
 
 	// To improve battery life on high resolution devices, render to a smaller render target
 	// and allow the GPU to scale the output when it is presented.
+	// ReSharper disable once CppRedundantBooleanExpressionArgument
 	if (!DisplayMetrics::SupportHighResolutions && m_dpi > DisplayMetrics::DpiThreshold)
 	{
-		float width = DX::ConvertDipsToPixels(m_logicalSize.Width, m_dpi);
-		float height = DX::ConvertDipsToPixels(m_logicalSize.Height, m_dpi);
+		float width = DX::ConvertDipsToPixels(m_logicalSize.x, m_dpi);
+		float height = DX::ConvertDipsToPixels(m_logicalSize.y, m_dpi);
 
 		// When the device is in portrait orientation, height > width. Compare the
 		// larger dimension against the width threshold and the smaller dimension
@@ -356,32 +359,30 @@ void DX::DeviceResources::UpdateRenderTargetSize()
 	}
 
 	// Calculate the necessary render target size in pixels.
-	m_outputSize.Width = DX::ConvertDipsToPixels(m_logicalSize.Width, m_effectiveDpi);
-	m_outputSize.Height = DX::ConvertDipsToPixels(m_logicalSize.Height, m_effectiveDpi);
+	m_outputSize.x = DX::ConvertDipsToPixels(m_logicalSize.x, m_effectiveDpi);
+	m_outputSize.y = DX::ConvertDipsToPixels(m_logicalSize.y, m_effectiveDpi);
 
 	// Prevent zero size DirectX content from being created.
-	m_outputSize.Width = max(m_outputSize.Width, 1);
-	m_outputSize.Height = max(m_outputSize.Height, 1);
+	m_outputSize.x = max(m_outputSize.x, 1);
+	m_outputSize.y = max(m_outputSize.y, 1);
 }
 
 // This method is called when the CoreWindow is created (or re-created).
-void DX::DeviceResources::SetWindow(CoreWindow^ window)
+void DeviceResources::SetWindow(const std::shared_ptr<IWindow>& window)
 {
-	DisplayInformation^ currentDisplayInformation = DisplayInformation::GetForCurrentView();
-
 	m_window = window;
-	m_logicalSize = Windows::Foundation::Size(window->Bounds.Width, window->Bounds.Height);
-	m_nativeOrientation = currentDisplayInformation->NativeOrientation;
-	m_currentOrientation = currentDisplayInformation->CurrentOrientation;
-	m_dpi = currentDisplayInformation->LogicalDpi;
+	m_logicalSize = window->Size();
+	m_nativeOrientation = window->NativeOrientation();
+	m_currentOrientation = window->CurrentOrientation();
+	m_dpi = window->LogicalDpi();
 
 	CreateWindowSizeDependentResources();
 }
 
 // This method is called in the event handler for the SizeChanged event.
-void DX::DeviceResources::SetLogicalSize(Windows::Foundation::Size logicalSize)
+void DeviceResources::SetLogicalSize(const DirectX::XMFLOAT2& logicalSize)
 {
-	if (m_logicalSize != logicalSize)
+	if (m_logicalSize.x != logicalSize.x || m_logicalSize.y != logicalSize.y)
 	{
 		m_logicalSize = logicalSize;
 		CreateWindowSizeDependentResources();
@@ -389,21 +390,21 @@ void DX::DeviceResources::SetLogicalSize(Windows::Foundation::Size logicalSize)
 }
 
 // This method is called in the event handler for the DpiChanged event.
-void DX::DeviceResources::SetDpi(float dpi)
+void DeviceResources::SetDpi(float dpi)
 {
 	if (dpi != m_dpi)
 	{
 		m_dpi = dpi;
 
 		// When the display DPI changes, the logical size of the window (measured in Dips) also changes and needs to be updated.
-		m_logicalSize = Windows::Foundation::Size(m_window->Bounds.Width, m_window->Bounds.Height);
+		m_logicalSize = m_window->Size();
 
 		CreateWindowSizeDependentResources();
 	}
 }
 
 // This method is called in the event handler for the OrientationChanged event.
-void DX::DeviceResources::SetCurrentOrientation(DisplayOrientations currentOrientation)
+void DeviceResources::SetCurrentOrientation(DisplayOrientations currentOrientation)
 {
 	if (m_currentOrientation != currentOrientation)
 	{
@@ -413,7 +414,7 @@ void DX::DeviceResources::SetCurrentOrientation(DisplayOrientations currentOrien
 }
 
 // This method is called in the event handler for the DisplayContentsInvalidated event.
-void DX::DeviceResources::ValidateDevice()
+void DeviceResources::ValidateDevice()
 {
 	// The D3D Device is no longer valid if the default adapter changed since the device
 	// was created or if the device has been removed.
@@ -453,7 +454,7 @@ void DX::DeviceResources::ValidateDevice()
 }
 
 // Present the contents of the swap chain to the screen.
-void DX::DeviceResources::Present()
+void DeviceResources::Present()
 {
 	// The first argument instructs DXGI to block until VSync, putting the application
 	// to sleep until the next VSync. This ensures we don't waste any cycles rendering
@@ -475,7 +476,7 @@ void DX::DeviceResources::Present()
 }
 
 // Wait for pending GPU work to complete.
-void DX::DeviceResources::WaitForGpu()
+void DeviceResources::WaitForGpu()
 {
 	// Schedule a Signal command in the queue.
 	DX::ThrowIfFailed(m_commandQueue->Signal(m_fence.Get(), m_fenceValues[m_currentFrame]));
@@ -489,7 +490,7 @@ void DX::DeviceResources::WaitForGpu()
 }
 
 // Prepare to render the next frame.
-void DX::DeviceResources::MoveToNextFrame()
+void DeviceResources::MoveToNextFrame()
 {
 	// Schedule a Signal command in the queue.
 	const UINT64 currentFenceValue = m_fenceValues[m_currentFrame];
@@ -511,15 +512,19 @@ void DX::DeviceResources::MoveToNextFrame()
 
 // This method determines the rotation between the display device's native Orientation and the
 // current display orientation.
-DXGI_MODE_ROTATION DX::DeviceResources::ComputeDisplayRotation()
+DXGI_MODE_ROTATION DeviceResources::ComputeDisplayRotation() const
 {
-	DXGI_MODE_ROTATION rotation = DXGI_MODE_ROTATION_UNSPECIFIED;
+	auto rotation = DXGI_MODE_ROTATION_UNSPECIFIED;
 
 	// Note: NativeOrientation can only be Landscape or Portrait even though
 	// the DisplayOrientations enum has other values.
+	// ReSharper disable once CppIncompleteSwitchStatement
+	// ReSharper disable once CppDefaultCaseNotHandledInSwitchStatement
 	switch (m_nativeOrientation)
 	{
 	case DisplayOrientations::Landscape:
+		// ReSharper disable once CppIncompleteSwitchStatement
+		// ReSharper disable once CppDefaultCaseNotHandledInSwitchStatement
 		switch (m_currentOrientation)
 		{
 		case DisplayOrientations::Landscape:
@@ -541,6 +546,8 @@ DXGI_MODE_ROTATION DX::DeviceResources::ComputeDisplayRotation()
 		break;
 
 	case DisplayOrientations::Portrait:
+		// ReSharper disable once CppIncompleteSwitchStatement
+		// ReSharper disable once CppDefaultCaseNotHandledInSwitchStatement
 		switch (m_currentOrientation)
 		{
 		case DisplayOrientations::Landscape:
@@ -566,7 +573,7 @@ DXGI_MODE_ROTATION DX::DeviceResources::ComputeDisplayRotation()
 
 // This method acquires the first available hardware adapter that supports Direct3D 12.
 // If no such adapter can be found, *ppAdapter will be set to nullptr.
-void DX::DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter)
+void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter) const
 {
 	ComPtr<IDXGIAdapter1> adapter;
 	*ppAdapter = nullptr;

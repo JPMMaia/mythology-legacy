@@ -6,7 +6,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Common\PerformanceTimer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Common\TasksComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Common\Timer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\GraphicsComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\TransformComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.cpp" />
   </ItemGroup>
@@ -24,7 +23,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IRenderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IRenderItem.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IScene.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\GraphicsComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\IComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\TransformComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.h" />

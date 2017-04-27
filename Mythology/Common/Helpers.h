@@ -1,6 +1,5 @@
 #pragma once
 
-#include <codecvt>
 #include <future>
 #include <fstream>
 
@@ -15,8 +14,6 @@ namespace Common
 
 		std::wstring StringToWString(const std::string& str);
 		std::string WStringToString(const std::wstring& wstr);
-
-		std::chrono::system_clock::time_point ParseTime(const std::string& time, const std::string& format);
 
 		template<typename ContainerType>
 		void ReadData(const std::wstring& filename, ContainerType& buffer)
@@ -46,7 +43,7 @@ namespace Common
 			using namespace std;
 
 			// Open file for writing in binary mode:
-			ofstream file(filename, ios::out | ios::binary);
+			ofstream file(WStringToString(filename), ios::out | ios::binary);
 			if (!file.good())
 				throw runtime_error("Couldn't open file " + Helpers::WStringToString(filename));
 

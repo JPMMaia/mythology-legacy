@@ -1,6 +1,9 @@
 ﻿#pragma once
 
-namespace DX
+#include "Core/Utilities/d3dx12.h"
+#include "GraphicsEngineInterfaces/IWindow.h"
+
+namespace DirectX12Engine
 {
 	static const UINT c_frameCount = 3;		// Use triple buffering.
 
@@ -8,20 +11,20 @@ namespace DX
 	class DeviceResources
 	{
 	public:
-		DeviceResources(DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D32_FLOAT);
-		void SetWindow(Windows::UI::Core::CoreWindow^ window);
-		void SetLogicalSize(Windows::Foundation::Size logicalSize);
-		void SetCurrentOrientation(Windows::Graphics::Display::DisplayOrientations currentOrientation);
+		explicit DeviceResources(DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D32_FLOAT);
+		void SetWindow(const std::shared_ptr<GraphicsEngine::IWindow>& window);
+		void SetLogicalSize(const DirectX::XMFLOAT2& logicalSize);
+		void SetCurrentOrientation(GraphicsEngine::DisplayOrientations currentOrientation);
 		void SetDpi(float dpi);
 		void ValidateDevice();
 		void Present();
 		void WaitForGpu();
 
 		// The size of the render target, in pixels.
-		Windows::Foundation::Size	GetOutputSize() const				{ return m_outputSize; }
+		const DirectX::XMFLOAT2&	GetOutputSize() const				{ return m_outputSize; }
 
 		// The size of the render target, in dips.
-		Windows::Foundation::Size	GetLogicalSize() const				{ return m_logicalSize; }
+		const DirectX::XMFLOAT2&	GetLogicalSize() const				{ return m_logicalSize; }
 
 		float						GetDpi() const						{ return m_effectiveDpi; }
 		bool						IsDeviceRemoved() const				{ return m_deviceRemoved; }
@@ -54,8 +57,8 @@ namespace DX
 		void CreateWindowSizeDependentResources();
 		void UpdateRenderTargetSize();
 		void MoveToNextFrame();
-		DXGI_MODE_ROTATION ComputeDisplayRotation();
-		void GetHardwareAdapter(IDXGIAdapter1** ppAdapter);
+		DXGI_MODE_ROTATION ComputeDisplayRotation() const;
+		void GetHardwareAdapter(IDXGIAdapter1** ppAdapter) const;
 
 		UINT											m_currentFrame;
 
@@ -81,14 +84,14 @@ namespace DX
 		HANDLE											m_fenceEvent;
 
 		// Cached reference to the Window.
-		Platform::Agile<Windows::UI::Core::CoreWindow>	m_window;
+		std::shared_ptr<GraphicsEngine::IWindow>		m_window;
 
 		// Cached device properties.
-		Windows::Foundation::Size						m_d3dRenderTargetSize;
-		Windows::Foundation::Size						m_outputSize;
-		Windows::Foundation::Size						m_logicalSize;
-		Windows::Graphics::Display::DisplayOrientations	m_nativeOrientation;
-		Windows::Graphics::Display::DisplayOrientations	m_currentOrientation;
+		DirectX::XMFLOAT2								m_d3dRenderTargetSize;
+		DirectX::XMFLOAT2								m_outputSize;
+		DirectX::XMFLOAT2								m_logicalSize;
+		GraphicsEngine::DisplayOrientations				m_nativeOrientation;
+		GraphicsEngine::DisplayOrientations				m_currentOrientation;
 		float											m_dpi;
 
 		// This is the DPI that will be reported back to the app. It takes into account whether the app supports high resolution screens or not.

@@ -19,7 +19,7 @@ static const std::string c_AngleKey = "Angle";
 static const std::string TrackingKey = "Tracking";
 
 // Loads vertex and pixel shaders from files and instantiates the cube geometry.
-Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<GraphicsEngine::DeviceResources>& deviceResources) :
+Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DirectX12Engine::DeviceResources>& deviceResources) :
 	m_deviceResources(deviceResources),
 	m_mappedConstantBuffer(nullptr),	// rotate 45 degrees per second
 	m_loadingComplete(false),
@@ -227,7 +227,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 		// Create a descriptor heap for the constant buffers.
 		{
 			D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-			heapDesc.NumDescriptors = GraphicsEngine::c_frameCount;
+			heapDesc.NumDescriptors = DirectX12Engine::c_frameCount;
 			heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 			// This flag indicates that this descriptor heap can be bound to the pipeline and that descriptors contained in it can be referenced by a root table.
 			heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
@@ -236,7 +236,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 			NAME_D3D12_OBJECT(m_cbvHeap);
 		}
 
-		CD3DX12_RESOURCE_DESC constantBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(GraphicsEngine::c_frameCount * c_alignedConstantBufferSize);
+		CD3DX12_RESOURCE_DESC constantBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(DirectX12Engine::c_frameCount * c_alignedConstantBufferSize);
 		DX::ThrowIfFailed(d3dDevice->CreateCommittedResource(
 			&uploadHeapProperties,
 			D3D12_HEAP_FLAG_NONE,
@@ -252,7 +252,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 		CD3DX12_CPU_DESCRIPTOR_HANDLE cbvCpuHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
 		m_cbvDescriptorSize = d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-		for (int n = 0; n < GraphicsEngine::c_frameCount; n++)
+		for (int n = 0; n < DirectX12Engine::c_frameCount; n++)
 		{
 			D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
 			desc.BufferLocation = cbvGpuAddress;
@@ -266,7 +266,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 		// Map the constant buffers.
 		CD3DX12_RANGE readRange(0, 0);		// We do not intend to read from this resource on the CPU.
 		DX::ThrowIfFailed(m_constantBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_mappedConstantBuffer)));
-		ZeroMemory(m_mappedConstantBuffer, GraphicsEngine::c_frameCount * c_alignedConstantBufferSize);
+		ZeroMemory(m_mappedConstantBuffer, DirectX12Engine::c_frameCount * c_alignedConstantBufferSize);
 		// We don't unmap this until the app closes. Keeping things mapped for the lifetime of the resource is okay.
 
 		// Close the command list and execute it to begin the vertex/index buffer copy into the GPU's default heap.
@@ -384,7 +384,7 @@ void Sample3DSceneRenderer::FrameUpdate(const Common::Timer& timer)
 	}
 }
 
-bool Sample3DSceneRenderer::Render()
+bool Sample3DSceneRenderer::Render() const
 {
 	// Loading is asynchronous. Only draw geometry after it's loaded.
 	if (!m_loadingComplete)

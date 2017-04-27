@@ -1,7 +1,5 @@
-﻿#include "pch.h"
-#include "TransformComponent.h"
+﻿#include "TransformComponent.h"
 
-using namespace DirectX;
 using namespace GameEngine;
 /*
 void TransformComponent::Update()

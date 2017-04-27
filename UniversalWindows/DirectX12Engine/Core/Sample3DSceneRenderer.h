@@ -26,7 +26,7 @@ namespace DirectX12Engine
 		void LoadState() override;
 		void FrameUpdate(const Common::Timer& timer) override;
 
-		bool Render();
+		bool Render() const;
 
 		void StartTracking();
 		void TrackingUpdate(float positionX);

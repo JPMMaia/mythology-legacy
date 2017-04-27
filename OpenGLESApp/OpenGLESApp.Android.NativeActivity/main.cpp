@@ -213,6 +213,8 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 	}
 }
 
+#include "GameEngine/GameObject/GameObject.h"
+
 /**
 * This is the main entry point of a native application that is using
 * android_native_app_glue.  It runs in its own thread, with its own
@@ -241,8 +243,9 @@ void android_main(struct android_app* state) {
 
 	engine.animating = 1;
 
-	// loop waiting for stuff to do.
+	GameEngine::GameObject x;
 
+	// loop waiting for stuff to do.
 	while (1) {
 		// Read all pending events.
 		int ident;
