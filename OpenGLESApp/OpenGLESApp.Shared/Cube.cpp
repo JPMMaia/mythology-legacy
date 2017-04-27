@@ -1,40 +1,12 @@
 #include "Cube.h"
 
+#include "Geometry/MeshData.h"
+
 float _rotation;
 
-static GLint vertices[][3] =
-{
-    { -0x10000, -0x10000, -0x10000 },
-    { 0x10000, -0x10000, -0x10000 },
-    { 0x10000,  0x10000, -0x10000 },
-    { -0x10000,  0x10000, -0x10000 },
-    { -0x10000, -0x10000,  0x10000 },
-    { 0x10000, -0x10000,  0x10000 },
-    { 0x10000,  0x10000,  0x10000 },
-    { -0x10000,  0x10000,  0x10000 }
-};
-
-static GLint colors[][4] =
-{
-    { 0x00000, 0x00000, 0x00000, 0x10000 },
-    { 0x10000, 0x00000, 0x00000, 0x10000 },
-    { 0x10000, 0x10000, 0x00000, 0x10000 },
-    { 0x00000, 0x10000, 0x00000, 0x10000 },
-    { 0x00000, 0x00000, 0x10000, 0x10000 },
-    { 0x10000, 0x00000, 0x10000, 0x10000 },
-    { 0x10000, 0x10000, 0x10000, 0x10000 },
-    { 0x00000, 0x10000, 0x10000, 0x10000 }
-};
-
-GLubyte indices[] =
-{
-    0, 4, 5,    0, 5, 1,
-    1, 5, 6,    1, 6, 2,
-    2, 6, 7,    2, 7, 3,
-    3, 7, 4,    3, 4, 0,
-    4, 7, 6,    4, 6, 5,
-    3, 0, 1,    3, 1, 2
-};
+std::vector<tue::fvec3> c_vertices;
+std::vector<tue::fvec4> c_colors;
+std::vector<std::uint8_t> c_indices;
 
 void Cube_setupGL(double width, double height)
 {
@@ -51,6 +23,34 @@ void Cube_setupGL(double width, double height)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glFrustumf(-ratio, ratio, -1, 1, 1, 10);
+
+	// Setup cube:
+    {
+		auto meshData = TueMeshGenerator::CreateBox(1.0f, 1.0f, 1.0f, 0);
+
+		// Vertices:
+		{
+			const auto& vertices = meshData.Vertices;
+			c_vertices.resize(vertices.size());
+			for (std::size_t i = 0; i < vertices.size(); ++i)
+				c_vertices[i] = vertices[i].Position;
+		}
+
+		// Colors
+		{
+			c_colors.resize(meshData.Vertices.size());
+			for (std::size_t i = 0; i < c_colors.size(); ++i)
+				c_colors[i] = { 0.0f, 0.0f, 1.0f, 1.0f };
+		}
+
+		// Indices
+		{
+			const auto& indices = meshData.Indices;
+			c_indices.resize(indices.size());
+			for (std::size_t i = 0; i < indices.size(); ++i)
+				c_indices[i] = indices[i];
+		}
+    }
 }
 
 void Cube_tearDownGL()
@@ -79,7 +79,7 @@ void Cube_draw()
     glEnableClientState(GL_COLOR_ARRAY);
 
     glFrontFace(GL_CW);
-    glVertexPointer(3, GL_FIXED, 0, vertices);
-    glColorPointer(4, GL_FIXED, 0, colors);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, indices);
+	glVertexPointer(3, GL_FLOAT, 0, c_vertices.data());
+	glColorPointer(4, GL_FLOAT, 0, c_colors.data());
+	glDrawElements(GL_TRIANGLES, c_indices.size(), GL_UNSIGNED_BYTE, c_indices.data());
 }

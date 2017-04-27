@@ -6,7 +6,7 @@ namespace Common
 {
 	class Timer
 	{
-	private:
+	public:
 		using ClockType = std::chrono::high_resolution_clock;
 		using TimePointType = ClockType::time_point;
 		using DurationType = ClockType::duration;

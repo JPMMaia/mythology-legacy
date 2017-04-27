@@ -14,9 +14,12 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Cube.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Cube.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Cube.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Geometry\MeshData.h" />
   </ItemGroup>
 </Project>

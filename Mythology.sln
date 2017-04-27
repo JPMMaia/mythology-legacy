@@ -25,14 +25,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectX12Engine", "Universa
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WindowsApp", "UniversalWindows\WindowsApp\WindowsApp.vcxproj", "{E5640350-6929-4593-8C7C-50BD85225414}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MythologyTestProject", "MythologyTestProject\MythologyTestProject.vcxproj", "{E22339CA-8731-4729-A8D6-711F06B083C2}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Mythology\Mythology.vcxitems*{013d0b39-e219-4e07-afe5-ddab959d4810}*SharedItemsImports = 4
-		OpenGLESApp\OpenGLESApp.Shared\OpenGLESApp.Shared.vcxitems*{2bb5cbc6-59a7-495a-afeb-7365e27a8c15}*SharedItemsImports = 4
 		Mythology\Mythology.vcxitems*{2d4a62c9-c855-4ec5-8a41-9f82154e2537}*SharedItemsImports = 9
 		Mythology\Mythology.vcxitems*{5ce344d7-e5ba-4ab8-9851-4cdd1ed19fbc}*SharedItemsImports = 4
 		OpenGLESApp\OpenGLESApp.Shared\OpenGLESApp.Shared.vcxitems*{5ce344d7-e5ba-4ab8-9851-4cdd1ed19fbc}*SharedItemsImports = 4
 		OpenGLESApp\OpenGLESApp.Shared\OpenGLESApp.Shared.vcxitems*{7e3b0827-8043-4813-9288-c25efb7a21b3}*SharedItemsImports = 9
+		Mythology\Mythology.vcxitems*{e22339ca-8731-4729-a8d6-711f06b083c2}*SharedItemsImports = 4
 		Mythology\Mythology.vcxitems*{e5640350-6929-4593-8c7c-50bd85225414}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -160,6 +162,18 @@ Global
 		{E5640350-6929-4593-8C7C-50BD85225414}.Release|x86.ActiveCfg = Release|Win32
 		{E5640350-6929-4593-8C7C-50BD85225414}.Release|x86.Build.0 = Release|Win32
 		{E5640350-6929-4593-8C7C-50BD85225414}.Release|x86.Deploy.0 = Release|Win32
+		{E22339CA-8731-4729-A8D6-711F06B083C2}.Debug|ARM.ActiveCfg = Debug|Win32
+		{E22339CA-8731-4729-A8D6-711F06B083C2}.Debug|ARM64.ActiveCfg = Debug|Win32
+		{E22339CA-8731-4729-A8D6-711F06B083C2}.Debug|x64.ActiveCfg = Debug|x64
+		{E22339CA-8731-4729-A8D6-711F06B083C2}.Debug|x64.Build.0 = Debug|x64
+		{E22339CA-8731-4729-A8D6-711F06B083C2}.Debug|x86.ActiveCfg = Debug|Win32
+		{E22339CA-8731-4729-A8D6-711F06B083C2}.Debug|x86.Build.0 = Debug|Win32
+		{E22339CA-8731-4729-A8D6-711F06B083C2}.Release|ARM.ActiveCfg = Release|Win32
+		{E22339CA-8731-4729-A8D6-711F06B083C2}.Release|ARM64.ActiveCfg = Release|Win32
+		{E22339CA-8731-4729-A8D6-711F06B083C2}.Release|x64.ActiveCfg = Release|x64
+		{E22339CA-8731-4729-A8D6-711F06B083C2}.Release|x64.Build.0 = Release|x64
+		{E22339CA-8731-4729-A8D6-711F06B083C2}.Release|x86.ActiveCfg = Release|Win32
+		{E22339CA-8731-4729-A8D6-711F06B083C2}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,29 +2,38 @@
 
 #include "IComponent.h"
 
+#include "Libraries/tue/vec.hpp"
+#include "Libraries/tue/quat.hpp"
+#include "Libraries/tue/mat.hpp"
+
 namespace GameEngine
 {
 	class TransformComponent : public IComponent
 	{
-	/*public:
-		void Update();
+	public:
+		using ThreeDType = tue::fvec3;
+		using QuaternionType = tue::fquat;
+		using MatrixType = tue::fmat4x4;
 
 	public:
-		const DirectX::XMFLOAT3& Translation() const;
-		void SetTranslation(const DirectX::XMFLOAT3& translation);
+		void FixedUpdate(const Common::Timer& timer) override;
 
-		const DirectX::XMFLOAT4& Rotation() const;
-		void SetRotation(const DirectX::XMFLOAT4& rotation);
+	public:
+		const ThreeDType& Translation() const;
+		void SetTranslation(const ThreeDType& translation);
 
-		const DirectX::XMFLOAT3& Scale() const;
-		void SetScale(const DirectX::XMFLOAT3& scale);
+		const QuaternionType& Rotation() const;
+		void SetRotation(const QuaternionType& rotation);
+
+		const ThreeDType& Scale() const;
+		void SetScale(const ThreeDType& scale);
 
 	private:
-		DirectX::XMMATRIX m_transform;
+		MatrixType m_transform;
 		bool m_dirty = true;
 
-		DirectX::XMFLOAT3 m_translation;
-		DirectX::XMFLOAT4 m_rotation;
-		DirectX::XMFLOAT3 m_scale;*/
+		ThreeDType m_translation;
+		QuaternionType m_rotation;
+		ThreeDType m_scale;
 	};
 }

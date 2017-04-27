@@ -237,7 +237,6 @@
     <ClInclude Include="Core\Utilities\d3dx12.h" />
     <ClInclude Include="Core\Utilities\DirectXHelper.h" />
     <ClInclude Include="Core\Utilities\UploadBuffer.h" />
-    <ClInclude Include="DeviceResources.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -268,7 +267,6 @@
     <ClCompile Include="Core\Shader\Shader.cpp" />
     <ClCompile Include="Core\Utilities\DirectXHelper.cpp" />
     <ClCompile Include="Core\Utilities\UploadBuffer.cpp" />
-    <ClCompile Include="DeviceResources.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

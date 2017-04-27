@@ -8,7 +8,7 @@
 
 namespace DirectX12Engine
 {
-	class StandardMaterial : public IMaterial
+	class StandardMaterial : public GraphicsEngine::IMaterial
 	{
 	/*public:
 		explicit StandardMaterial(const std::shared_ptr<DeviceResources>& deviceResources, size_t initialCapacity, bool isConstantBuffer) : 

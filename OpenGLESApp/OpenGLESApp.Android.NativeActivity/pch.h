@@ -13,6 +13,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/resource.h>
+#include <cstddef>
 
 #include <EGL/egl.h>
 #include <GLES/gl.h>

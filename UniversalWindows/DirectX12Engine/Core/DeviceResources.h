@@ -11,7 +11,7 @@ namespace DirectX12Engine
 	class DeviceResources
 	{
 	public:
-		DeviceResources(DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D32_FLOAT);
+		explicit DeviceResources(DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D32_FLOAT);
 		void SetWindow(const std::shared_ptr<GraphicsEngine::IWindow>& window);
 		void SetLogicalSize(const DirectX::XMFLOAT2& logicalSize);
 		void SetCurrentOrientation(GraphicsEngine::DisplayOrientations currentOrientation);
@@ -51,6 +51,15 @@ namespace DirectX12Engine
 			return CD3DX12_CPU_DESCRIPTOR_HANDLE(m_dsvHeap->GetCPUDescriptorHandleForHeapStart());
 		}
 
+		UINT GetCbvSrvUavDescriptorSize() const { return m_cbvSrvUavDescriptorSize; }
+		UINT GetDsvDescriptorSize() const { return m_dsvDescriptorSize; }
+		UINT GetRtvDescriptorSize() const { return m_rtvDescriptorSize; }
+
+		UINT GetSampleCount() const { return m_sampleCount; }
+		UINT GetSampleQuality() const { return m_sampleQuality; }
+
+		static constexpr UINT GetFrameCount() { return c_frameCount; }
+
 	private:
 		void CreateDeviceIndependentResources();
 		void CreateDeviceResources();
@@ -75,7 +84,6 @@ namespace DirectX12Engine
 		DXGI_FORMAT										m_backBufferFormat;
 		DXGI_FORMAT										m_depthBufferFormat;
 		D3D12_VIEWPORT									m_screenViewport;
-		UINT											m_rtvDescriptorSize;
 		bool											m_deviceRemoved;
 
 		std::shared_ptr<GraphicsEngine::IWindow>		m_window;
@@ -98,5 +106,12 @@ namespace DirectX12Engine
 
 		// Transforms used for display orientation.
 		DirectX::XMFLOAT4X4								m_orientationTransform3D;
+
+		UINT m_cbvSrvUavDescriptorSize = 0;
+		UINT m_dsvDescriptorSize = 0;
+		UINT m_rtvDescriptorSize = 0;
+
+		UINT m_sampleCount = 1;
+		UINT m_sampleQuality = 0;
 	};
 }

@@ -1,37 +1,103 @@
-// !$*UTF8*$!
 {
 	archiveVersion = 1;
+	objectVersion = 46;
 	classes = {
 	};
-	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D732ADFC1AD8974300D69854 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D732ADFB1AD8974300D69854 /* main.m */; };
-		D732AE0B1AD8974300D69854 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D732AE0A1AD8974300D69854 /* Images.xcassets */; };
-		D732AE2A1AD89BDB00D69854 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D732AE241AD89BDB00D69854 /* AppDelegate.m */; };
-		D732AE2B1AD89BDB00D69854 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = D732AE251AD89BDB00D69854 /* Base */; };
-		D732AE2C1AD89BDB00D69854 /* GameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D732AE271AD89BDB00D69854 /* GameViewController.m */; };
+		D732ADFC1AD8974300D69854 = {
+			isa = PBXBuildFile;
+			fileRef = D732ADFB1AD8974300D69854;
+		};
+		D732AE0B1AD8974300D69854 = {
+			isa = PBXBuildFile;
+			fileRef = D732AE0A1AD8974300D69854;
+		};
+		D732AE2A1AD89BDB00D69854 = {
+			isa = PBXBuildFile;
+			fileRef = D732AE241AD89BDB00D69854;
+		};
+		D732AE2B1AD89BDB00D69854 = {
+			isa = PBXBuildFile;
+			fileRef = D732AE251AD89BDB00D69854;
+		};
+		D732AE2C1AD89BDB00D69854 = {
+			isa = PBXBuildFile;
+			fileRef = D732AE271AD89BDB00D69854;
+		};
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		D732ADF61AD8974300D69854 /* OpenGLESApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenGLESApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D732ADFB1AD8974300D69854 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		D732AE0A1AD8974300D69854 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		D732AE231AD89BDB00D69854 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		D732AE241AD89BDB00D69854 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		D732AE251AD89BDB00D69854 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		D732AE261AD89BDB00D69854 /* GameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameViewController.h; sourceTree = "<group>"; };
-		D732AE271AD89BDB00D69854 /* GameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameViewController.m; sourceTree = "<group>"; };
-		D732AE291AD89BDB00D69854 /* vcreference.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ../vcreference.xcconfig; sourceTree = "<group>"; };
+		D732ADF61AD8974300D69854 = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.application;
+			path = OpenGLESApp.app;
+			sourceTree = BUILT_PRODUCTS_DIR;
+			includeInIndex = 0;
+		};
+		D732ADFB1AD8974300D69854 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = main.m;
+			sourceTree = "<group>";
+		};
+		D732AE0A1AD8974300D69854 = {
+			isa = PBXFileReference;
+			lastKnownFileType = folder.assetcatalog;
+			path = Images.xcassets;
+			sourceTree = "<group>";
+		};
+		D732AE231AD89BDB00D69854 = {
+			isa = PBXFileReference;
+			fileEncoding = 4;
+			lastKnownFileType = sourcecode.c.h;
+			path = AppDelegate.h;
+			sourceTree = "<group>";
+		};
+		D732AE241AD89BDB00D69854 = {
+			isa = PBXFileReference;
+			fileEncoding = 4;
+			lastKnownFileType = sourcecode.c.objc;
+			path = AppDelegate.m;
+			sourceTree = "<group>";
+		};
+		D732AE251AD89BDB00D69854 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file.storyboard;
+			name = Base;
+			path = Base.lproj/Main.storyboard;
+			sourceTree = "<group>";
+		};
+		D732AE261AD89BDB00D69854 = {
+			isa = PBXFileReference;
+			fileEncoding = 4;
+			lastKnownFileType = sourcecode.c.h;
+			path = GameViewController.h;
+			sourceTree = "<group>";
+		};
+		D732AE271AD89BDB00D69854 = {
+			isa = PBXFileReference;
+			fileEncoding = 4;
+			lastKnownFileType = sourcecode.c.objc;
+			path = GameViewController.m;
+			sourceTree = "<group>";
+		};
+		D732AE291AD89BDB00D69854 = {
+			isa = PBXFileReference;
+			fileEncoding = 4;
+			lastKnownFileType = text.xcconfig;
+			path = ../vcreference.xcconfig;
+			sourceTree = "<group>";
+		};
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		D732ADF31AD8974300D69854 /* Frameworks */ = {
+		D732ADF31AD8974300D69854 = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
+			buildActionMask = 2147483647;
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -39,83 +105,69 @@
 /* Begin PBXGroup section */
 		D732ADED1AD8974300D69854 = {
 			isa = PBXGroup;
-			children = (
-				D732ADF81AD8974300D69854 /* OpenGLESApp.iOS */,
-				D732ADF71AD8974300D69854 /* Products */,
-			);
 			sourceTree = "<group>";
-		};
-		D732ADF71AD8974300D69854 /* Products */ = {
-			isa = PBXGroup;
 			children = (
-				D732ADF61AD8974300D69854 /* OpenGLESApp.app */,
+				D732ADF81AD8974300D69854,
+				D732ADF71AD8974300D69854,
 			);
+		};
+		D732ADF71AD8974300D69854 = {
+			isa = PBXGroup;
 			name = Products;
 			sourceTree = "<group>";
-		};
-		D732ADF81AD8974300D69854 /* OpenGLESApp.iOS */ = {
-			isa = PBXGroup;
 			children = (
-				D732AE231AD89BDB00D69854 /* AppDelegate.h */,
-				D732AE241AD89BDB00D69854 /* AppDelegate.m */,
-				D732AE251AD89BDB00D69854 /* Base */,
-				D732AE261AD89BDB00D69854 /* GameViewController.h */,
-				D732AE271AD89BDB00D69854 /* GameViewController.m */,
-				D732AE291AD89BDB00D69854 /* vcreference.xcconfig */,
-				D732AE0A1AD8974300D69854 /* Images.xcassets */,
-				D732ADF91AD8974300D69854 /* Supporting Files */,
+				D732ADF61AD8974300D69854,
 			);
+		};
+		D732ADF81AD8974300D69854 = {
+			isa = PBXGroup;
 			path = OpenGLESApp.iOS;
 			sourceTree = "<group>";
-		};
-		D732ADF91AD8974300D69854 /* Supporting Files */ = {
-			isa = PBXGroup;
 			children = (
-				D732ADFB1AD8974300D69854 /* main.m */,
+				D732AE231AD89BDB00D69854,
+				D732AE241AD89BDB00D69854,
+				D732AE251AD89BDB00D69854,
+				D732AE261AD89BDB00D69854,
+				D732AE271AD89BDB00D69854,
+				D732AE291AD89BDB00D69854,
+				D732AE0A1AD8974300D69854,
+				D732ADF91AD8974300D69854,
 			);
+		};
+		D732ADF91AD8974300D69854 = {
+			isa = PBXGroup;
 			name = "Supporting Files";
 			sourceTree = "<group>";
+			children = (
+				D732ADFB1AD8974300D69854,
+			);
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		D732ADF51AD8974300D69854 /* OpenGLESApp */ = {
+		D732ADF51AD8974300D69854 = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D732AE1D1AD8974300D69854 /* Build configuration list for PBXNativeTarget "OpenGLESApp" */;
 			buildPhases = (
-				D732ADF21AD8974300D69854 /* Sources */,
-				D732ADF31AD8974300D69854 /* Frameworks */,
-				D732ADF41AD8974300D69854 /* Resources */,
-			);
-			buildRules = (
+				D732ADF21AD8974300D69854,
+				D732ADF31AD8974300D69854,
+				D732ADF41AD8974300D69854,
 			);
 			dependencies = (
 			);
 			name = OpenGLESApp;
 			productName = OpenGLESApp;
-			productReference = D732ADF61AD8974300D69854 /* OpenGLESApp.app */;
+			productReference = D732ADF61AD8974300D69854;
 			productType = "com.apple.product-type.application";
+			buildConfigurationList = D732AE1D1AD8974300D69854;
+			buildRules = (
+			);
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		D732ADEE1AD8974300D69854 /* Project object */ = {
+		D732ADEE1AD8974300D69854 = {
 			isa = PBXProject;
-			attributes = {
-				LastUpgradeCheck = 0610;
-				TargetAttributes = {
-					D732ADF51AD8974300D69854 = {
-						CreatedOnToolsVersion = 6.1;
-					};
-				};
-                VC_Properties = {
-                    VC_ProjectGuid = 0121c9e7-02e4-45dc-8a4f-d077ebd82e6f;
-                    VC_ProjectReferences = {
-                        2bb5cbc6-59a7-495a-afeb-7365e27a8c15="..\\OpenGLESApp.iOS.StaticLibrary\\OpenGLESApp.iOS.StaticLibrary.vcxproj";
-                    };
-                };
-			};
-			buildConfigurationList = D732ADF11AD8974300D69854 /* Build configuration list for PBXProject "OpenGLESApp" */;
+			buildConfigurationList = D732ADF11AD8974300D69854;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -124,45 +176,57 @@
 				Base,
 			);
 			mainGroup = D732ADED1AD8974300D69854;
-			productRefGroup = D732ADF71AD8974300D69854 /* Products */;
+			productRefGroup = D732ADF71AD8974300D69854;
 			projectDirPath = "";
+			attributes = {
+				LastUpgradeCheck = 0610;
+				TargetAttributes = {
+					D732ADF51AD8974300D69854 = {
+						CreatedOnToolsVersion = 6.1;
+					};
+				};
+				VC_Properties = {
+					VC_ProjectGuid = 0121c9e7-02e4-45dc-8a4f-d077ebd82e6f;
+					VC_ProjectReferences = {
+						2bb5cbc6-59a7-495a-afeb-7365e27a8c15 = "..\\OpenGLESApp.iOS.StaticLibrary\\OpenGLESApp.iOS.StaticLibrary.vcxproj";
+					};
+				};
+			};
 			projectRoot = "";
 			targets = (
-				D732ADF51AD8974300D69854 /* OpenGLESApp */,
+				D732ADF51AD8974300D69854,
 			);
-	
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		D732ADF41AD8974300D69854 /* Resources */ = {
+		D732ADF41AD8974300D69854 = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
-				D732AE2B1AD89BDB00D69854 /* Base in Resources */,
-				D732AE0B1AD8974300D69854 /* Images.xcassets in Resources */,
+				D732AE2B1AD89BDB00D69854,
+				D732AE0B1AD8974300D69854,
 			);
+			buildActionMask = 2147483647;
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		D732ADF21AD8974300D69854 /* Sources */ = {
+		D732ADF21AD8974300D69854 = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
-				D732AE2A1AD89BDB00D69854 /* AppDelegate.m in Sources */,
-				D732AE2C1AD89BDB00D69854 /* GameViewController.m in Sources */,
-				D732ADFC1AD8974300D69854 /* main.m in Sources */,
+				D732AE2A1AD89BDB00D69854,
+				D732AE2C1AD89BDB00D69854,
+				D732ADFC1AD8974300D69854,
 			);
+			buildActionMask = 2147483647;
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		D732AE1B1AD8974300D69854 /* Debug */ = {
+		D732AE1B1AD8974300D69854 = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D732AE291AD89BDB00D69854 /* vcreference.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -202,10 +266,10 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
+			baseConfigurationReference = D732AE291AD89BDB00D69854;
 		};
-		D732AE1C1AD8974300D69854 /* Release */ = {
+		D732AE1C1AD8974300D69854 = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D732AE291AD89BDB00D69854 /* vcreference.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -239,49 +303,54 @@
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
+			baseConfigurationReference = D732AE291AD89BDB00D69854;
 		};
-		D732AE1E1AD8974300D69854 /* Debug */ = {
+		D732AE1E1AD8974300D69854 = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = OpenGLESApp.iOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = gnu++14;
 			};
 			name = Debug;
 		};
-		D732AE1F1AD8974300D69854 /* Release */ = {
+		D732AE1F1AD8974300D69854 = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = OpenGLESApp.iOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = gnu++14;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D732ADF11AD8974300D69854 /* Build configuration list for PBXProject "OpenGLESApp" */ = {
+		D732ADF11AD8974300D69854 = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D732AE1B1AD8974300D69854 /* Debug */,
-				D732AE1C1AD8974300D69854 /* Release */,
+				D732AE1B1AD8974300D69854,
+				D732AE1C1AD8974300D69854,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		D732AE1D1AD8974300D69854 /* Build configuration list for PBXNativeTarget "OpenGLESApp" */ = {
+		D732AE1D1AD8974300D69854 = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D732AE1E1AD8974300D69854 /* Debug */,
-				D732AE1F1AD8974300D69854 /* Release */,
+				D732AE1E1AD8974300D69854,
+				D732AE1F1AD8974300D69854,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = D732ADEE1AD8974300D69854 /* Project object */;
+	rootObject = D732ADEE1AD8974300D69854;
 }

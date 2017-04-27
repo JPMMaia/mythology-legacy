@@ -8,7 +8,7 @@ namespace DirectX12Engine
 {
 	class ImmutableMesh;
 
-	class StandardRenderItem : public IRenderItem
+	class StandardRenderItem : public GraphicsEngine::IRenderItem
 	{
 	public:
 		using InstanceType = ResourceInstance<ShaderBufferTypes::InstanceData>;

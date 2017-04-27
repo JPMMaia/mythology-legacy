@@ -1,5 +1,10 @@
 ﻿#pragma once
 
+namespace Common 
+{
+	class Timer;
+}
+
 namespace GameEngine
 {
 	class IComponent
@@ -9,6 +14,6 @@ namespace GameEngine
 		virtual ~IComponent() = default;
 
 	public:
-		
+		virtual void FixedUpdate(const Common::Timer& timer) = 0;
 	};
 }

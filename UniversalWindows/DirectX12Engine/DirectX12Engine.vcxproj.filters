@@ -33,7 +33,6 @@
     <ClCompile Include="Core\Utilities\UploadBuffer.cpp" />
     <ClCompile Include="Core\Renderer.cpp" />
     <ClCompile Include="Core\Sample3DSceneRenderer.cpp" />
-    <ClCompile Include="DeviceResources.cpp" />
     <ClCompile Include="Core\DeviceResources.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -68,7 +67,6 @@
     <ClInclude Include="Core\Renderer.h" />
     <ClInclude Include="Core\Sample3DSceneRenderer.h" />
     <ClInclude Include="Core\ShaderStructures.h" />
-    <ClInclude Include="DeviceResources.h" />
     <ClInclude Include="Core\DeviceResources.h" />
   </ItemGroup>
   <ItemGroup>

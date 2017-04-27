@@ -67,7 +67,6 @@ DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT depth
 	m_backBufferFormat(backBufferFormat),
 	m_depthBufferFormat(depthBufferFormat),
 	m_screenViewport(),
-	m_rtvDescriptorSize(0),
 	m_deviceRemoved(false),
 	m_fenceValues{},
 	m_fenceEvent(nullptr),
@@ -77,7 +76,8 @@ DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT depth
 	m_nativeOrientation(GraphicsEngine::DisplayOrientations::None),
 	m_currentOrientation(GraphicsEngine::DisplayOrientations::None),
 	m_dpi(-1.0f),
-	m_effectiveDpi(-1.0f)
+	m_effectiveDpi(-1.0f),
+	m_rtvDescriptorSize(0)
 {
 	CreateDeviceIndependentResources();
 	CreateDeviceResources();
@@ -172,6 +172,13 @@ void DeviceResources::CreateDeviceResources()
 	if (m_fenceEvent == nullptr)
 	{
 		DX::ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()));
+	}
+
+	// Query descriptor sizes:
+	{
+		m_rtvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+		m_dsvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+		m_cbvSrvUavDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	}
 }
 
@@ -515,9 +522,13 @@ DXGI_MODE_ROTATION DeviceResources::ComputeDisplayRotation() const
 
 	// Note: NativeOrientation can only be Landscape or Portrait even though
 	// the DisplayOrientations enum has other values.
+	// ReSharper disable once CppIncompleteSwitchStatement
+	// ReSharper disable once CppDefaultCaseNotHandledInSwitchStatement
 	switch (m_nativeOrientation)
 	{
 	case GraphicsEngine::DisplayOrientations::Landscape:
+		// ReSharper disable once CppDefaultCaseNotHandledInSwitchStatement
+		// ReSharper disable once CppIncompleteSwitchStatement
 		switch (m_currentOrientation)
 		{
 		case GraphicsEngine::DisplayOrientations::Landscape:
@@ -539,6 +550,8 @@ DXGI_MODE_ROTATION DeviceResources::ComputeDisplayRotation() const
 		break;
 
 	case GraphicsEngine::DisplayOrientations::Portrait:
+		// ReSharper disable once CppIncompleteSwitchStatement
+		// ReSharper disable once CppDefaultCaseNotHandledInSwitchStatement
 		switch (m_currentOrientation)
 		{
 		case GraphicsEngine::DisplayOrientations::Landscape:

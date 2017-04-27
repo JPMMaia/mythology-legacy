@@ -1,8 +1,7 @@
 ﻿#pragma once
 
-#include "Common\StepTimer.h"
-#include "Common\DeviceResources.h"
-#include "Content\Sample3DSceneRenderer.h"
+#include "Common/Timer.h"
+#include "../DirectX12Engine/Core/DeviceResources.h"
 
 // Renders Direct3D content on the screen.
 namespace WindowsApp
@@ -11,7 +10,7 @@ namespace WindowsApp
 	{
 	public:
 		WindowsAppMain();
-		void CreateRenderers(const std::shared_ptr<DX::DeviceResources>& deviceResources);
+		void CreateRenderers(const std::shared_ptr<DirectX12Engine::DeviceResources>& deviceResources);
 		void Update();
 		bool Render();
 
@@ -21,10 +20,7 @@ namespace WindowsApp
 		void OnDeviceRemoved();
 
 	private:
-		// TODO: Replace with your own content renderers.
-		std::unique_ptr<Sample3DSceneRenderer> m_sceneRenderer;
-
 		// Rendering loop timer.
-		DX::StepTimer m_timer;
+		Common::Timer m_timer;
 	};
 }
