@@ -16,8 +16,8 @@ namespace Common
 
 		void Reset();
 
-		template <typename UpdateFunctionType, typename RenderFunctionType, typename ProcessInputFunctionType, typename ProcessFrameStatisticsFunctionType>
-		bool UpdateAndRender(UpdateFunctionType&& update, RenderFunctionType&& render, ProcessInputFunctionType&& processInput, ProcessFrameStatisticsFunctionType&& processFrameStatistics);
+		template <typename FixedUpdateFunctionType, typename FrameUpdateFunctionType, typename RenderFunctionType, typename ProcessInputFunctionType, typename ProcessFrameStatisticsFunctionType>
+		bool UpdateAndRender(FixedUpdateFunctionType&& fixedUpdate, FrameUpdateFunctionType&& frameUpdate, RenderFunctionType&& render, ProcessInputFunctionType&& processInput, ProcessFrameStatisticsFunctionType&& processFrameStatistics);
 
 		void SetTotalTime(DurationType totalTime);
 
@@ -46,8 +46,8 @@ namespace Common
 		DurationType m_timePerFrame;
 	};
 
-	template <typename UpdateFunctionType, typename RenderFunctionType, typename ProcessInputFunctionType, typename ProcessFrameStatisticsFunctionType>
-	bool Timer::UpdateAndRender(UpdateFunctionType&& update, RenderFunctionType&& render, ProcessInputFunctionType&& processInput, ProcessFrameStatisticsFunctionType&& processFrameStatistics)
+	template <typename FixedUpdateFunctionType, typename FrameUpdateFunctionType, typename RenderFunctionType, typename ProcessInputFunctionType, typename ProcessFrameStatisticsFunctionType>
+	bool Timer::UpdateAndRender(FixedUpdateFunctionType&& fixedUpdate, FrameUpdateFunctionType&& frameUpdate, RenderFunctionType&& render, ProcessInputFunctionType&& processInput, ProcessFrameStatisticsFunctionType&& processFrameStatistics)
 	{
 		m_currentTimePoint = ClockType::now();
 		
@@ -64,11 +64,12 @@ namespace Common
 		// Update the times needed to catchup:
 		while (m_lag >= m_timePerUpdate)
 		{
-			update(*this);
+			fixedUpdate(*this);
 			m_lag -= m_timePerUpdate;
 		}
 
 		// Render:
+		frameUpdate(*this);
 		render(*this);
 
 		// Calculate frames statistics (frames per second, milliseconds per frame):

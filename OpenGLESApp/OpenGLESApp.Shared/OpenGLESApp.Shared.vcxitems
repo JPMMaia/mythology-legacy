@@ -17,9 +17,11 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Cube.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Cube.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Geometry\MeshData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Renderer.h" />
   </ItemGroup>
 </Project>

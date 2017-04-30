@@ -15,7 +15,13 @@
 *
 */
 
+
 #include "Cube.h"
+#include "Mythology/MythologyGame.h"
+#include "Common/Timer.h"
+
+#include <chrono>
+#include "Renderer.h"
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "AndroidProject1.NativeActivity", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "AndroidProject1.NativeActivity", __VA_ARGS__))
@@ -243,11 +249,18 @@ void android_main(struct android_app* state) {
 
 	engine.animating = 1;
 
-	GameEngine::GameObject x;
+	Common::Timer timer(std::chrono::milliseconds(20));
+	timer.Reset();
+
+	Mythology::MythologyGame mythologyGame;
+	mythologyGame.Initialize();
+
+	OpenGLESRenderer::Renderer renderer(mythologyGame.GetGameManager().lock());
 
 	// loop waiting for stuff to do.
-	while (1) {
-		// Read all pending events.
+	while (true)
+	{
+		// Read all pending events:
 		int ident;
 		int events;
 		struct android_poll_source* source;
@@ -255,20 +268,20 @@ void android_main(struct android_app* state) {
 		// If not animating, we will block forever waiting for events.
 		// If animating, we loop until all events are read, then continue
 		// to draw the next frame of animation.
-		while ((ident = ALooper_pollAll(engine.animating ? 0 : -1, NULL, &events,
-			(void**)&source)) >= 0) {
-
+		while ((ident = ALooper_pollAll(engine.animating ? 0 : -1, nullptr, &events, reinterpret_cast<void**>(&source))) >= 0)
+		{
 			// Process this event.
-			if (source != NULL) {
+			if (source != nullptr)
 				source->process(state, source);
-			}
 
 			// If a sensor has data, process it now.
-			if (ident == LOOPER_ID_USER) {
-				if (engine.accelerometerSensor != NULL) {
+			if (ident == LOOPER_ID_USER)
+			{
+				if (engine.accelerometerSensor != nullptr)
+				{
 					ASensorEvent event;
-					while (ASensorEventQueue_getEvents(engine.sensorEventQueue,
-						&event, 1) > 0) {
+					while (ASensorEventQueue_getEvents(engine.sensorEventQueue, &event, 1) > 0)
+					{
 						LOGI("accelerometer: x=%f y=%f z=%f",
 							event.acceleration.x, event.acceleration.y,
 							event.acceleration.z);
@@ -277,18 +290,43 @@ void android_main(struct android_app* state) {
 			}
 
 			// Check if we are exiting.
-			if (state->destroyRequested != 0) {
+			if (state->destroyRequested != 0) 
+			{
 				engine_term_display(&engine);
 				return;
 			}
 		}
 
-		if (engine.animating) {
+		if (engine.animating)
+		{
+			auto fixedUpdate = [&mythologyGame](const Common::Timer& timer)
+			{
+				mythologyGame.FixedUpdate(timer);
+			};
+
+			auto frameUpdate = [&mythologyGame, &renderer](const Common::Timer& timer)
+			{
+				mythologyGame.FrameUpdate(timer);
+				renderer.FrameUpdate(timer);
+			};
+
+			auto render = [&renderer](const Common::Timer& timer)
+			{
+				renderer.Render(timer);
+			};
+
+			auto processInput = []()
+			{
+			};
+
+			auto processFrameStatistics = [](const Common::Timer& timer)
+			{
+			};
+
+			timer.UpdateAndRender(fixedUpdate, frameUpdate, render, processInput, processFrameStatistics);
+
 			// Done with events; draw next animation frame.
 			Cube_update();
-			//if (engine.state.angle > 1) {
-			//	engine.state.angle = 0;
-			//}
 
 			// Drawing is throttled to the screen update rate, so there
 			// is no need to do timing here.

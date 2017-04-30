@@ -35,7 +35,11 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\TransformComponent.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\GameManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\MythologyGame.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
@@ -43,17 +47,23 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Event.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EventsComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\Event.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Helpers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Common\MemoryPool\MemoryPool.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Common\MemoryPool\MemoryPoolElement.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\PerformanceTimer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Task.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\TasksComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Timer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\IComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\MeshComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\PhysicsComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\TransformComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\MeshData.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\MeshGenerator.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Primitives\BoxGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\VertexData.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\DisplayOrientations.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IMaterial.h" />
@@ -101,5 +111,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\transform.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\unused.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\vec.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\MythologyGame.h" />
   </ItemGroup>
 </Project>

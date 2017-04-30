@@ -2,9 +2,11 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Cube.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Cube.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Geometry\MeshData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Renderer.h" />
   </ItemGroup>
 </Project>

@@ -10,11 +10,11 @@ namespace GameEngine
 	class GameObject
 	{
 	public:
-		void AddComponent(const std::string& name, const std::weak_ptr<IComponent>& component);
+		void AddComponent(const std::string& name, IComponent& component);
 		void RemoveComponent(const std::string& name);
-		std::weak_ptr<IComponent> GetComponent(const std::string& name) const;
+		IComponent* GetComponent(const std::string& name) const;
 
 	private:
-		std::unordered_map<std::string, std::weak_ptr<IComponent>> m_components;
+		std::unordered_map<std::string, IComponent*> m_components;
 	};
 }
