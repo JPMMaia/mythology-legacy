@@ -6,6 +6,7 @@ namespace GameEngine
 	class BoxGeometry
 	{
 	public:
+		BoxGeometry() = default;
 		BoxGeometry(float width, float height, float depth, std::size_t numberOfSubdivisions) :
 			m_width(width),
 			m_height(height),

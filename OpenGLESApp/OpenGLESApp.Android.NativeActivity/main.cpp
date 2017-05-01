@@ -317,6 +317,7 @@ void android_main(struct android_app* state) {
 
 			auto processInput = []()
 			{
+				return true;
 			};
 
 			auto processFrameStatistics = [](const Common::Timer& timer)

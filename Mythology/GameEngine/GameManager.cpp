@@ -22,5 +22,5 @@ TransformComponent& GameManager::CreateTransform()
 MeshComponent<BoxGeometry>& GameManager::CreateBox(const BoxGeometry& geometry)
 {
 	auto& transform = m_transforms.NewElement();
-	return m_boxes.NewElement(transform, geometry);
+	return m_boxes.NewElement(&transform, geometry);
 }
