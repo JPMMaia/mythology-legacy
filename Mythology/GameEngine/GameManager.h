@@ -1,10 +1,9 @@
 #pragma once
 
-#include "GameObject/GameObject.h"
 #include "Common/MemoryPool/MemoryPool.h"
 #include "Component/MeshComponent.h"
 #include "Geometry/Primitives/BoxGeometry.h"
-#include "Common/Events/Event.h"
+#include "Common/Events/Delegate.h"
 
 namespace Common 
 {
@@ -16,8 +15,7 @@ namespace GameEngine
 	class GameManager
 	{
 	public:
-		
-		//Events::Event<>;
+		Common::Delegate<void*, const MeshComponent<BoxGeometry>&> OnBoxCreated;
 
 	public:
 		void Initialize();

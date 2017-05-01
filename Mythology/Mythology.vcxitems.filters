@@ -14,8 +14,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Common\Event.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Common\EventsComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Helpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\PerformanceTimer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Task.h" />
@@ -80,6 +78,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\MemoryPool\MemoryPool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Primitives\BoxGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\MeshComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\Delegate.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\InternalEvent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\InternalEventsComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\Event.h" />
   </ItemGroup>
 </Project>

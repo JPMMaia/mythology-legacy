@@ -3,10 +3,10 @@
 namespace Common
 {
 	template<typename SenderType>
-	class Event
+	class InternalEvent
 	{
 	public:
-		virtual ~Event() = default;
+		virtual ~InternalEvent() = default;
 
 		virtual void Handle(SenderType& sender) = 0;
 	};

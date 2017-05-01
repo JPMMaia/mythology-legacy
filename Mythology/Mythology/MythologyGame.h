@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameEngine/GameManager.h"
+#include "GameEngine/GameObject/GameObject.h"
 
 namespace Common 
 {

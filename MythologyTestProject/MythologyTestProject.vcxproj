@@ -153,6 +153,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Common\Events\EventTests.cpp" />
     <ClCompile Include="GameEngine\Geometry\MeshDataTests.cpp" />
     <ClCompile Include="GameEngine\Geometry\MeshGeneratorTests.cpp" />
     <ClCompile Include="stdafx.cpp">

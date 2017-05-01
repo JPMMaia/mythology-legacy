@@ -3,12 +3,12 @@
 #include <deque>
 #include <mutex>
 
-#include "Event.h"
+#include "InternalEvent.h"
 
 namespace Common
 {
 	template<typename SenderType>
-	class EventsComponent
+	class InternalEventsComponent
 	{
 	public:
 		void HandleEvents(SenderType& sender)
@@ -22,7 +22,7 @@ namespace Common
 			}
 		}
 
-		void AddEvent(std::unique_ptr<Event<SenderType>>&& event)
+		void AddEvent(std::unique_ptr<InternalEvent<SenderType>>&& event)
 		{
 			std::lock_guard<std::mutex> lock(m_eventsMutex);
 			m_events.emplace_back(std::move(event));
@@ -30,6 +30,6 @@ namespace Common
 
 	private:
 		std::mutex m_eventsMutex;
-		std::deque<std::unique_ptr<Event<SenderType>>> m_events;
+		std::deque<std::unique_ptr<InternalEvent<SenderType>>> m_events;
 	};
 }

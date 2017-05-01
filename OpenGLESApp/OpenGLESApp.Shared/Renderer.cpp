@@ -7,6 +7,10 @@ Renderer::Renderer(const std::shared_ptr<GameEngine::GameManager>& gameManager) 
 {	
 }
 
+void Function(void* sender, const GameEngine::MeshComponent<GameEngine::BoxGeometry>& box)
+{
+}
+
 void Renderer::Initialize(float width, float height)
 {
 	// Initialize GL state.
@@ -24,6 +28,9 @@ void Renderer::Initialize(float width, float height)
 	glFrustumf(-ratio, ratio, -1, 1, 1, 10);
 
 	// TODO subsribe to events and create 
+	m_gameManager->OnBoxCreated.Subscribe(std::bind(&Renderer::OnBoxCreated, this, std::placeholders::_1, std::placeholders::_2));
+	m_gameManager->OnBoxCreated.Unsubscribe(std::bind(Function, std::placeholders::_1, std::placeholders::_2));
+	
 }
 void Renderer::Shutdown()
 {

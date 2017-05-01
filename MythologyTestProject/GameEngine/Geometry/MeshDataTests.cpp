@@ -45,7 +45,7 @@ TueMeshData::VertexType TueMeshData::CalculateMidlleVertex(const VertexType& ver
 
 namespace MythologyTestProject
 {
-	TEST_CLASS(MeshDataTest)
+	TEST_CLASS(MeshDataTests)
 	{
 	public:
 

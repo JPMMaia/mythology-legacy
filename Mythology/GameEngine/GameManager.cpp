@@ -1,4 +1,5 @@
 #include "GameManager.h"
+#include "GameObject/GameObject.h"
 
 using namespace GameEngine;
 
@@ -22,5 +23,7 @@ TransformComponent& GameManager::CreateTransform()
 MeshComponent<BoxGeometry>& GameManager::CreateBox(const BoxGeometry& geometry)
 {
 	auto& transform = m_transforms.NewElement();
-	return m_boxes.NewElement(&transform, geometry);
+	auto& box = m_boxes.NewElement(&transform, geometry);
+	OnBoxCreated(this, box);
+	return box;
 }
