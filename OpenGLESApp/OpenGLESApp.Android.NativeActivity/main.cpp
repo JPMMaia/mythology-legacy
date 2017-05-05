@@ -113,9 +113,6 @@ static int engine_init_display(struct engine* engine) {
 	engine->height = h;
 	engine->state.angle = 0;
 
-	// Initialize GL state.
-	Cube_setupGL(w, h);
-
 	return 0;
 }
 
@@ -156,6 +153,7 @@ static void engine_term_display(struct engine* engine) {
 	engine->context = EGL_NO_CONTEXT;
 	engine->surface = EGL_NO_SURFACE;
 
+	// TODO clean up:
 	Cube_tearDownGL();
 }
 
@@ -249,13 +247,15 @@ void android_main(struct android_app* state) {
 
 	engine.animating = 1;
 
-	Common::Timer timer(std::chrono::milliseconds(20));
-	timer.Reset();
-
 	Mythology::MythologyGame mythologyGame;
+	OpenGLESRenderer::Renderer renderer(mythologyGame.GetGameManager().lock());
+
+	// Initialize:
+	renderer.Initialize(engine.width, engine.height);
 	mythologyGame.Initialize();
 
-	OpenGLESRenderer::Renderer renderer(mythologyGame.GetGameManager().lock());
+	Common::Timer timer(std::chrono::milliseconds(20));
+	timer.Reset();
 
 	// loop waiting for stuff to do.
 	while (true)
@@ -310,9 +310,11 @@ void android_main(struct android_app* state) {
 				renderer.FrameUpdate(timer);
 			};
 
-			auto render = [&renderer](const Common::Timer& timer)
+			auto render = [&renderer, &engine](const Common::Timer& timer)
 			{
 				renderer.Render(timer);
+
+				eglSwapBuffers(engine.display, engine.surface);
 			};
 
 			auto processInput = []()
@@ -325,13 +327,6 @@ void android_main(struct android_app* state) {
 			};
 
 			timer.UpdateAndRender(fixedUpdate, frameUpdate, render, processInput, processFrameStatistics);
-
-			// Done with events; draw next animation frame.
-			Cube_update();
-
-			// Drawing is throttled to the screen update rate, so there
-			// is no need to do timing here.
-			engine_draw_frame(&engine);
 		}
 	}
 }

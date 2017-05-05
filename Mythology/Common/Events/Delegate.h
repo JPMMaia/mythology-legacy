@@ -162,12 +162,14 @@ namespace Common
 	}
 }
 
-#define DefineEvent(DelegateType, EventName)					\
-public:															\
-	DelegateType ## ::PublicInterface& SumEvent()					\
-	{															\
-		return e_SumEvent.GetPublicInterface();				\
-	}															\
-																\
-private:														\
-	Common::Delegate<void*, int> e_SumEvent;
+#define DefineEvent(EventName, ...)											\
+public:																		\
+	using EventName##Type = Common::Delegate<__VA_ARGS__>;					\
+																			\
+	EventName##Type::PublicInterface& EventName()							\
+	{																		\
+		return e_##EventName.GetPublicInterface();							\
+	}																		\
+																			\
+private:																	\
+	EventName##Type e_##EventName;

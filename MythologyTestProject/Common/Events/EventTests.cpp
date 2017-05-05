@@ -12,21 +12,14 @@ namespace MythologyTestProject
 	private:
 		class TestClass
 		{
+			DefineEvent(SumEvent, void*, int)
+
 		public:
 
 			void RaiseEvent(int number)
 			{
-				m_sumEvent(this, number);
+				e_SumEvent(this, number);
 			}
-
-		public:
-			Common::Delegate<void*, int>::PublicInterface& SumEvent()
-			{
-				return m_sumEvent.GetPublicInterface();
-			}
-
-		private:
-			Common::Delegate<void*, int> m_sumEvent;
 		};
 
 	private:

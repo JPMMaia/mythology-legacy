@@ -5,7 +5,7 @@
 #include "Geometry/Primitives/BoxGeometry.h"
 #include "Common/Events/Delegate.h"
 
-namespace Common 
+namespace Common
 {
 	class Timer;
 }
@@ -15,7 +15,7 @@ namespace GameEngine
 	class GameManager
 	{
 	public:
-		Common::Delegate<void*, const MeshComponent<BoxGeometry>&> OnBoxCreated;
+		DefineEvent(OnBoxCreated, void*, const MeshComponent<BoxGeometry>&)
 
 	public:
 		void Initialize();

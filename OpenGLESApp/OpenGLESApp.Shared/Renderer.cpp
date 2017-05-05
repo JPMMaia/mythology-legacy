@@ -2,13 +2,15 @@
 
 using namespace OpenGLESRenderer;
 
+float m_rotation = 0.0f;
+
 Renderer::Renderer(const std::shared_ptr<GameEngine::GameManager>& gameManager) :
 	m_gameManager(gameManager)
 {	
 }
-
-void Function(void* sender, const GameEngine::MeshComponent<GameEngine::BoxGeometry>& box)
+Renderer::~Renderer()
 {
+	Shutdown();
 }
 
 void Renderer::Initialize(float width, float height)
@@ -27,25 +29,33 @@ void Renderer::Initialize(float width, float height)
 	glLoadIdentity();
 	glFrustumf(-ratio, ratio, -1, 1, 1, 10);
 
-	// TODO subsribe to events and create 
-	m_gameManager->OnBoxCreated.Subscribe(std::bind(&Renderer::OnBoxCreated, this, std::placeholders::_1, std::placeholders::_2));
-	m_gameManager->OnBoxCreated.Unsubscribe(std::bind(Function, std::placeholders::_1, std::placeholders::_2));
-	
+	m_gameManager->OnBoxCreated() += Common::MemberCallback(*this, &Renderer::OnBoxCreated);
 }
 void Renderer::Shutdown()
 {
+	m_gameManager->OnBoxCreated() -= Common::MemberCallback(*this, &Renderer::OnBoxCreated);
 }
 
 void Renderer::FrameUpdate(const Common::Timer& timer)
 {
+	m_rotation += 1.f;
 }
 void Renderer::Render(const Common::Timer& timer) const
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslatef(0, 0, -3.0f);
+	glRotatef(m_rotation * 0.25f, 1, 0, 0);  // X
+	glRotatef(m_rotation, 0, 1, 0);          // Y
+
+	for(const auto& renderItem : m_colorRenderItems)
+		renderItem.Draw();
+
 }
 
 void Renderer::OnBoxCreated(void* sender, const GameEngine::MeshComponent<GameEngine::BoxGeometry>& box)
 {
+	m_colorRenderItems.emplace_back(ColorRenderItem(box.Geometry()->GenerateMeshData<TueMeshData>()));
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "GameEngine/GameManager.h"
+#include "RenderItems/ColorRenderItem.h"
 
 namespace OpenGLESRenderer
 {
@@ -7,6 +8,7 @@ namespace OpenGLESRenderer
 	{
 	public:
 		explicit Renderer(const std::shared_ptr<GameEngine::GameManager>& gameManager);
+		~Renderer();
 
 		void Initialize(float width, float height);
 		void Shutdown();
@@ -19,5 +21,7 @@ namespace OpenGLESRenderer
 
 	private:
 		std::shared_ptr<GameEngine::GameManager> m_gameManager;
+
+		std::list<ColorRenderItem> m_colorRenderItems;
 	};
 }

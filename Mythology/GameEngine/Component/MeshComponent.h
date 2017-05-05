@@ -21,6 +21,11 @@ namespace GameEngine
 		{
 		}
 
+		const GeometryType* Geometry() const
+		{
+			return &m_geometry;
+		}
+
 	private:
 		TransformComponent* m_transform = nullptr;
 		GeometryType m_geometry;
