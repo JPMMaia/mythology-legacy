@@ -13,13 +13,15 @@ namespace Mythology
 	class MythologyGame
 	{
 	public:
+		MythologyGame();
+
 		void Initialize();
 
 		void FixedUpdate(const Common::Timer& timer) const;
 		void FrameUpdate(const Common::Timer& timer) const;
 
 	public:
-		std::weak_ptr<GameEngine::GameManager> GetGameManager() const;
+		std::shared_ptr<GameEngine::GameManager> GameManager() const;
 
 	private:
 		std::shared_ptr<GameEngine::GameManager> m_gameManager;

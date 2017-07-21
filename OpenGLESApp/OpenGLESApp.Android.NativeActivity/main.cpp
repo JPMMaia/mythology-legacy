@@ -248,7 +248,7 @@ void android_main(struct android_app* state) {
 	engine.animating = 1;
 
 	Mythology::MythologyGame mythologyGame;
-	OpenGLESRenderer::Renderer renderer(mythologyGame.GetGameManager().lock());
+	OpenGLESRenderer::Renderer renderer(mythologyGame.GameManager());
 
 	// Initialize:
 	renderer.Initialize(engine.width, engine.height);

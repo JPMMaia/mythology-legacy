@@ -1,4 +1,7 @@
 #pragma once
+
+#include <list>
+
 #include "GameEngine/GameManager.h"
 #include "RenderItems/ColorRenderItem.h"
 

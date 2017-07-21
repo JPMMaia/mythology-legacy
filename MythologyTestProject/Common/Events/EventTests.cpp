@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "Common/Events/Delegate.h"
+#include "Common/Events/Event.h"
 
 using namespace std;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -12,13 +12,13 @@ namespace MythologyTestProject
 	private:
 		class TestClass
 		{
-			DefineEvent(SumEvent, void*, int)
+		public:
+			Common::Event<TestClass, string, void*, int> OnSumEvent;
 
 		public:
-
 			void RaiseEvent(int number)
 			{
-				e_SumEvent(this, number);
+				OnSumEvent(this, number);
 			}
 		};
 
@@ -30,30 +30,30 @@ namespace MythologyTestProject
 
 		TEST_METHOD(EventTest1)
 		{
-			m_testClass.SumEvent() += Common::MemberCallback(*this, &EventTests::OnTestEventRaised);
+			m_testClass.OnSumEvent += {"First", this, &EventTests::OnTestEventRaised};
 			Assert::AreEqual(0, m_count);
 
 			m_testClass.RaiseEvent(1);
 			Assert::AreEqual(1, m_count);
 
-			m_testClass.SumEvent() += Common::MemberCallback(*this, &EventTests::OnTestEventRaised);
+			m_testClass.OnSumEvent += {"Second", this, &EventTests::OnTestEventRaised};
 			m_testClass.RaiseEvent(1);
 			Assert::AreEqual(3, m_count);
-			m_testClass.SumEvent() -= Common::MemberCallback(*this, &EventTests::OnTestEventRaised);
+			m_testClass.OnSumEvent -= "First";
 
-			m_testClass.SumEvent() += Common::MemberCallback(*this, &EventTests::OnTestEventRaised2);
+			m_testClass.OnSumEvent += {"Third", this, &EventTests::OnTestEventRaised2};
 			m_testClass.RaiseEvent(1);
 			Assert::AreEqual(6, m_count);
 
-			m_testClass.SumEvent() -= Common::MemberCallback(*this, &EventTests::OnTestEventRaised2);
+			m_testClass.OnSumEvent -= "Third";
 			m_testClass.RaiseEvent(1);
 			Assert::AreEqual(7, m_count);
 
-			m_testClass.SumEvent() -= Common::MemberCallback(*this, &EventTests::OnTestEventRaised);
+			m_testClass.OnSumEvent -= "Second";
 			m_testClass.RaiseEvent(1);
 			Assert::AreEqual(7, m_count);
 
-			m_testClass.SumEvent() -= Common::MemberCallback(*this, &EventTests::OnTestEventRaised);
+			m_testClass.OnSumEvent -= "Second";
 		}
 
 	public:

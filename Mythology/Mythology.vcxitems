@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\Delegate.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\Event.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\InternalEventsComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Helpers.h" />

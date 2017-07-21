@@ -3,6 +3,11 @@
 using namespace Mythology;
 using namespace GameEngine;
 
+MythologyGame::MythologyGame() :
+	m_gameManager(std::make_shared<GameEngine::GameManager>())
+{
+}
+
 void MythologyGame::Initialize()
 {
 	m_gameManager = std::make_shared<GameEngine::GameManager>();
@@ -20,7 +25,7 @@ void MythologyGame::FrameUpdate(const Common::Timer& timer) const
 	m_gameManager->FrameUpdate(timer);
 }
 
-std::weak_ptr<GameManager> MythologyGame::GetGameManager() const
+std::shared_ptr<GameManager> MythologyGame::GameManager() const
 {
 	return m_gameManager;
 }

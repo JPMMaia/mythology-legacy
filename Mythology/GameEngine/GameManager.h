@@ -3,7 +3,7 @@
 #include "Common/MemoryPool/MemoryPool.h"
 #include "Component/MeshComponent.h"
 #include "Geometry/Primitives/BoxGeometry.h"
-#include "Common/Events/Delegate.h"
+#include "Common/Events/Event.h"
 
 namespace Common
 {
@@ -15,7 +15,7 @@ namespace GameEngine
 	class GameManager
 	{
 	public:
-		DefineEvent(OnBoxCreated, void*, const MeshComponent<BoxGeometry>&)
+		Common::Event<GameManager, std::string, void*, const MeshComponent<BoxGeometry>&> OnBoxCreatedEvent;
 
 	public:
 		void Initialize();

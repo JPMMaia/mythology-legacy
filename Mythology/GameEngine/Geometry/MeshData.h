@@ -31,7 +31,7 @@ namespace GameEngine
 					auto vertex0 = meshData.Vertices[meshData.Indices[triangleIndexOffset + 0]];
 					auto vertex1 = meshData.Vertices[meshData.Indices[triangleIndexOffset + 1]];
 					auto vertex2 = meshData.Vertices[meshData.Indices[triangleIndexOffset + 2]];
-
+					 
 					// Calculate middle vertices:
 					auto middleVertex0 = CalculateMidlleVertex(vertex0, vertex1);
 					auto middleVertex1 = CalculateMidlleVertex(vertex1, vertex2);
@@ -48,7 +48,7 @@ namespace GameEngine
 
 				// Indices:
 				{
-					auto triangleIndexOffset = i * 6;
+					auto triangleIndexOffset = static_cast<IndexType>(i * 6);
 					output.Indices.push_back(triangleIndexOffset + 0);
 					output.Indices.push_back(triangleIndexOffset + 3);
 					output.Indices.push_back(triangleIndexOffset + 5);

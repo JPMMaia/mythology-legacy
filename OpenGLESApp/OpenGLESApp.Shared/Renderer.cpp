@@ -28,12 +28,12 @@ void Renderer::Initialize(float width, float height)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glFrustumf(-ratio, ratio, -1, 1, 1, 10);
-
-	m_gameManager->OnBoxCreated() += Common::MemberCallback(*this, &Renderer::OnBoxCreated);
+	
+	m_gameManager->OnBoxCreatedEvent += {"Renderer", this, &Renderer::OnBoxCreated };
 }
 void Renderer::Shutdown()
 {
-	m_gameManager->OnBoxCreated() -= Common::MemberCallback(*this, &Renderer::OnBoxCreated);
+	m_gameManager->OnBoxCreatedEvent -= "Renderer";
 }
 
 void Renderer::FrameUpdate(const Common::Timer& timer)
@@ -52,7 +52,6 @@ void Renderer::Render(const Common::Timer& timer) const
 
 	for(const auto& renderItem : m_colorRenderItems)
 		renderItem.Draw();
-
 }
 
 void Renderer::OnBoxCreated(void* sender, const GameEngine::MeshComponent<GameEngine::BoxGeometry>& box)
