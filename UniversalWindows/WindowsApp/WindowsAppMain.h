@@ -1,7 +1,8 @@
 ﻿#pragma once
 
 #include "Common/Timer.h"
-#include "../DirectX12Engine/Core/DeviceResources.h"
+#include "Core/DeviceResources.h"
+#include "Core/Renderer.h"
 
 // Renders Direct3D content on the screen.
 namespace WindowsApp
@@ -11,8 +12,7 @@ namespace WindowsApp
 	public:
 		WindowsAppMain();
 		void CreateRenderers(const std::shared_ptr<DirectX12Engine::DeviceResources>& deviceResources);
-		void Update();
-		bool Render();
+		bool UpdateAndRender();
 
 		void OnWindowSizeChanged();
 		void OnSuspending();
@@ -20,7 +20,15 @@ namespace WindowsApp
 		void OnDeviceRemoved();
 
 	private:
+		bool ProcessInput();
+		void FixedUpdate(const Common::Timer& timer);
+		void FrameUpdate(const Common::Timer& timer);
+		void Render(const Common::Timer& timer);
+		void ProcessFrameStatistics(const Common::Timer& timer);
+
+	private:
 		// Rendering loop timer.
 		Common::Timer m_timer;
+		std::unique_ptr<DirectX12Engine::Renderer> m_renderer;
 	};
 }

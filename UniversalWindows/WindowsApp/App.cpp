@@ -98,15 +98,9 @@ void App::Run()
 			CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
 
 			auto commandQueue = GetDeviceResources()->GetCommandQueue();
-			PIXBeginEvent(commandQueue, 0, L"Update");
+			PIXBeginEvent(commandQueue, 0, L"Update and render");
 			{
-				m_main->Update();
-			}
-			PIXEndEvent(commandQueue);
-
-			PIXBeginEvent(commandQueue, 0, L"Render");
-			{
-				if (m_main->Render())
+				if (m_main->UpdateAndRender())
 				{
 					GetDeviceResources()->Present();
 				}

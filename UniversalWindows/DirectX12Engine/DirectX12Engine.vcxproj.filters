@@ -77,5 +77,6 @@
     <None Include="Shaders\PassData.hlsli" />
     <None Include="Shaders\InstanceData.hlsli" />
     <None Include="Shaders\MaterialData.hlsli" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

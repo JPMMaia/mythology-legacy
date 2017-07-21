@@ -9,7 +9,8 @@
 using namespace Common;
 using namespace std;
 
-EngineException::EngineException(const std::string& message)
+EngineException::EngineException(const std::string& message) :
+	m_message(message)
 {
 #ifdef _DEBUG
 	OutputDebugStringA(message.c_str());

@@ -1,4 +1,5 @@
 ﻿#pragma once
+
 #include <unordered_map>
 #include "Core/DeviceResources.h"
 

@@ -15,7 +15,9 @@ void DX::ThrowIfFailed(HRESULT hr)
 			static_cast<DWORD>(buffer.size()),
 			nullptr);
 
+		Common::EngineException exception(buffer.data());
+
 		// Set a breakpoint on this line to catch Win32 API errors.
-		throw Common::EngineException(buffer.data());
+		throw exception;
 	}
 }
