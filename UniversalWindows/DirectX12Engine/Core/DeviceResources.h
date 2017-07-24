@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include <d3d12.h>
+#include <dxgi1_4.h>
+
 #include "GraphicsEngineInterfaces/IWindow.h"
 #include "Utilities/d3dx12.h"
 

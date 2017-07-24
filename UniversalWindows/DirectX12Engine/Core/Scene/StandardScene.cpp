@@ -133,6 +133,7 @@ void StandardScene::FrameUpdate(const Common::Timer& timer)
 
 	m_materialsDataBuffer->FrameUpdate(d3dDevice);
 
+
 	m_cubeRenderItem->FrameUpdate();
 	m_instancesDataBuffer->FrameUpdate(d3dDevice);
 	m_passDataBuffer->FrameUpdate(d3dDevice);
