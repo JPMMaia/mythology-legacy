@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="OpenGLESApp.iOS">
+      <UniqueIdentifier>{432c0290-c1b9-4dfd-a965-258c54b994f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenGLESApp.iOS\Images.xcassets">
+      <UniqueIdentifier>{41229311-870f-4fea-9b62-f4fa600a0468}</UniqueIdentifier>
+      <Extensions>OpenGLESApp.iOS\Images.xcassets\*</Extensions>
+    </Filter>
+    <Filter Include="OpenGLESApp.iOS\Images.xcassets\AppIcon.appiconset">
+      <UniqueIdentifier>{91151c18-eeea-435b-8d2a-74c0972e22ed}</UniqueIdentifier>
+      <Extensions>OpenGLESApp.iOS\Images.xcassets\AppIcon.appiconset\*</Extensions>
+    </Filter>
+    <Filter Include="OpenGLESApp.iOS\Supporting Files">
+      <UniqueIdentifier>{36bcb553-c08e-46a4-8abe-e1f3ea80fafd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="OpenGLESApp.iOS\AppDelegate.m">
+      <Filter>OpenGLESApp.iOS</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGLESApp.iOS\GameViewController.m">
+      <Filter>OpenGLESApp.iOS</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGLESApp.iOS\main.m">
+      <Filter>OpenGLESApp.iOS\Supporting Files</Filter>
+    </ClCompile>
+    <ClInclude Include="OpenGLESApp.iOS\AppDelegate.h">
+      <Filter>OpenGLESApp.iOS</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGLESApp.iOS\GameViewController.h">
+      <Filter>OpenGLESApp.iOS</Filter>
+    </ClInclude>
+    <Content Include="OpenGLESApp.iOS\Base.lproj\Main.storyboard">
+      <Filter>OpenGLESApp.iOS</Filter>
+    </Content>
+    <Content Include="OpenGLESApp.iOS\Images.xcassets\AppIcon.appiconset\Contents.json">
+      <Filter>OpenGLESApp.iOS\Images.xcassets\AppIcon.appiconset</Filter>
+    </Content>
+    <InfoPlist Include="OpenGLESApp.iOS\Info.plist">
+      <Filter>OpenGLESApp.iOS\Supporting Files</Filter>
+    </InfoPlist>
+  </ItemGroup>
+</Project>
