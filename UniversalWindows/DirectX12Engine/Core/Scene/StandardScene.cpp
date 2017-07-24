@@ -104,9 +104,10 @@ void StandardScene::CreateWindowSizeDependentResources()
 	{
 		ShaderBufferTypes::PassData passData;
 
+		auto projectionMatrix = perspectiveMatrix * orientationMatrix;
 		XMStoreFloat4x4(
 			&passData.ProjectionMatrix,
-			XMMatrixTranspose(perspectiveMatrix * orientationMatrix)
+			XMMatrixTranspose(projectionMatrix)
 		);
 
 		// Eye is at (0,0.7,1.5), looking at point (0,-0.1,0) with the up-vector along the y-axis.
@@ -114,7 +115,11 @@ void StandardScene::CreateWindowSizeDependentResources()
 		static const DirectX::XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
 		static const DirectX::XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 
-		XMStoreFloat4x4(&passData.ViewMatrix, XMMatrixTranspose(XMMatrixLookAtRH(eye, at, up)));
+		auto viewMatrix = XMMatrixLookAtRH(eye, at, up);
+		XMStoreFloat4x4(&passData.ViewMatrix, XMMatrixTranspose(viewMatrix));
+
+		auto viewProjectionMatrix = viewMatrix * projectionMatrix;
+		XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
 
 		m_passGPUBuffer[0] = passData;
 	}
