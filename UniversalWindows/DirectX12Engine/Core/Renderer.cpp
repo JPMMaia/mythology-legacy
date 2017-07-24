@@ -103,7 +103,7 @@ void Renderer::BeginRender()
 		auto depthStencilView = m_deviceResources->GetDepthStencilView();
 
 		// Clear render target view:
-		commandList->ClearRenderTargetView(renderTargetView, Colors::CornflowerBlue, 0, nullptr);
+		commandList->ClearRenderTargetView(renderTargetView, Colors::Black, 0, nullptr);
 
 		// Clear depth stencil view:
 		commandList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);

@@ -65,7 +65,7 @@ void StandardScene::CreateDeviceDependentResources()
 		{
 			// Make a material:
 			ShaderBufferTypes::MaterialData materialData;
-			materialData.BaseColor = DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 0.0f);
+			materialData.BaseColor = DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 			m_materialsGPUBuffer.push_back(materialData);
 
 			// Make an instance:
