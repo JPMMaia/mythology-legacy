@@ -20,12 +20,15 @@ namespace DirectX12Engine
 
 		template <class U>
 		constexpr GPUAllocator(const GPUAllocator<U>& other) noexcept :
-			m_d3dDevice(other.D3DDevice())
+			m_d3dDevice(other.D3DDevice()),
+			m_isConstantBuffer(other.IsConstantBuffer())
+			
 		{
 		}
 
-		explicit GPUAllocator(ID3D12Device* d3dDevice) :
-			m_d3dDevice(d3dDevice)
+		explicit GPUAllocator(ID3D12Device* d3dDevice, bool isConstantBuffer) :
+			m_d3dDevice(d3dDevice),
+			m_isConstantBuffer(isConstantBuffer)
 		{
 		}
 
@@ -47,15 +50,24 @@ namespace DirectX12Engine
 			}
 		}
 
-		inline ID3D12Device* D3DDevice() const
+		ID3D12Device* D3DDevice() const
 		{
 			return m_d3dDevice;
+		}
+		bool IsConstantBuffer() const
+		{
+			return m_isConstantBuffer;
+		}
+
+		D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress(std::size_t index) const
+		{
+			return m_uploadBuffer->GetGPUVirtualAddress() + static_cast<D3D12_GPU_VIRTUAL_ADDRESS>(index * sizeof(T));
 		}
 
 	private:
 		T* CreateUploadBuffer(std::size_t size)
 		{
-			auto bufferSize = size * sizeof(T);
+			auto bufferSize = m_isConstantBuffer ? DX::CalculateConstantBufferByteSize(sizeof(T)) : size * sizeof(T);
 
 			auto uploadHeapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_UPLOAD);
 			auto bufferDescription = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
@@ -81,6 +93,7 @@ namespace DirectX12Engine
 	private:
 		ID3D12Device* m_d3dDevice;
 		Microsoft::WRL::ComPtr<ID3D12Resource> m_uploadBuffer;
+		bool m_isConstantBuffer;
 	};
 
 	template <class T, class U>

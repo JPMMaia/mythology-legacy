@@ -7,9 +7,9 @@
 #include "Core/Command/CommandListManager.h"
 #include "Core/Geometry/IMesh.h"
 #include "Core/RenderItem/StandardRenderItem.h"
-#include "Core/Renderer.h"
 
 #include <unordered_map>
+#include "Core/Resources/GPUAllocator.h"
 
 namespace DirectX12Engine
 {
@@ -29,17 +29,29 @@ namespace DirectX12Engine
 
 		bool Render(const Common::Timer& timer) override;
 
-		StandardRenderItem* GetCubeRenderItem() const;
+		StandardRenderItem& GetCubeRenderItem();
 
 	private:
 		std::shared_ptr<DeviceResources> m_deviceResources;
 		CommandListManager& m_commandListManager;
-		size_t m_commandListIndex = 0;
+		std::size_t m_commandListIndex = 0;
 
 		std::unordered_map<std::string, std::shared_ptr<IMesh>> m_meshes;
 		std::unordered_map<std::string, std::shared_ptr<GraphicsEngine::IMaterial>> m_materials;
 		std::unordered_map<std::string, std::shared_ptr<GraphicsEngine::IRenderItem>> m_renderItems;
 
+		StandardRenderItem m_cubeRenderItem;
+
+		
+
+		template<class DataType>
+		using GPUUploadBuffer = std::vector<DataType, GPUAllocator<DataType>>;
+
+		GPUUploadBuffer<ShaderBufferTypes::InstanceData> m_instancesGPUBuffer;
+		GPUUploadBuffer<ShaderBufferTypes::MaterialData> m_materialsGPUBuffer;
+		GPUUploadBuffer<ShaderBufferTypes::PassData> m_passGPUBuffer;
+
+		/*
 		std::unique_ptr<StandardRenderItem> m_cubeRenderItem;
 		std::shared_ptr<ResourceInstance<ShaderBufferTypes::PassData>> m_passInstance;
 
@@ -51,5 +63,6 @@ namespace DirectX12Engine
 
 		using PassDataFrameResources = FrameResource<ResourceInstance<ShaderBufferTypes::PassData>, ShaderBufferTypes::PassData>;
 		std::unique_ptr<PassDataFrameResources> m_passDataBuffer;
+		*/
 	};
 }

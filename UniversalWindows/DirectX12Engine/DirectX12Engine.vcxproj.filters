@@ -34,6 +34,7 @@
     <ClCompile Include="Core\Renderer.cpp" />
     <ClCompile Include="Core\Sample3DSceneRenderer.cpp" />
     <ClCompile Include="Core\DeviceResources.cpp" />
+    <ClCompile Include="Core\Resources\FrameResources.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -69,7 +70,7 @@
     <ClInclude Include="Core\ShaderStructures.h" />
     <ClInclude Include="Core\DeviceResources.h" />
     <ClInclude Include="Core\Resources\GPUAllocator.h" />
-    <ClInclude Include="Core\Resources\GPUVector.h" />
+    <ClInclude Include="Core\Resources\FrameResources.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\SamplePixelShader.hlsl" />

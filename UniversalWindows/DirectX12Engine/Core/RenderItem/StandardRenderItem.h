@@ -15,6 +15,7 @@ namespace DirectX12Engine
 		using MaterialType = ResourceInstance<ShaderBufferTypes::MaterialData>;
 
 	public:
+		StandardRenderItem() = default;
 		StandardRenderItem(std::shared_ptr<ImmutableMesh> mesh, const std::string& submeshName);
 
 		void AddInstance(const std::shared_ptr<InstanceType>& instance, const std::shared_ptr<MaterialType>& material);

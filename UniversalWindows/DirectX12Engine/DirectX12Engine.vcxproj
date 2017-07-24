@@ -229,8 +229,8 @@
     <ClInclude Include="Core\RenderItem\ColorRenderItem.h" />
     <ClInclude Include="Core\RenderItem\StandardRenderItem.h" />
     <ClInclude Include="Core\Resources\FrameResource.h" />
+    <ClInclude Include="Core\Resources\FrameResources.h" />
     <ClInclude Include="Core\Resources\GPUAllocator.h" />
-    <ClInclude Include="Core\Resources\GPUVector.h" />
     <ClInclude Include="Core\Resources\Resource.h" />
     <ClInclude Include="Core\Resources\ResourceInstance.h" />
     <ClInclude Include="Core\Sample3DSceneRenderer.h" />
@@ -264,6 +264,7 @@
     <ClCompile Include="Core\RenderItem\ColorRenderItem.cpp" />
     <ClCompile Include="Core\RenderItem\StandardRenderItem.cpp" />
     <ClCompile Include="Core\Resources\FrameResource.cpp" />
+    <ClCompile Include="Core\Resources\FrameResources.cpp" />
     <ClCompile Include="Core\Resources\Resource.cpp" />
     <ClCompile Include="Core\Resources\ResourceInstance.cpp" />
     <ClCompile Include="Core\Sample3DSceneRenderer.cpp" />

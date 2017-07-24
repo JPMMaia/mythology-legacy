@@ -11,7 +11,10 @@ using namespace DirectX12Engine;
 
 StandardScene::StandardScene(const std::shared_ptr<DeviceResources>& deviceResources, CommandListManager& commandListManager) :
 	m_deviceResources(deviceResources),
-	m_commandListManager(commandListManager)
+	m_commandListManager(commandListManager),
+	m_instancesGPUBuffer(GPUAllocator<ShaderBufferTypes::InstanceData>(m_deviceResources->GetD3DDevice(), false)),
+	m_materialsGPUBuffer(GPUAllocator<ShaderBufferTypes::MaterialData>(m_deviceResources->GetD3DDevice(), false)),
+	m_passGPUBuffer(GPUAllocator<ShaderBufferTypes::PassData>(m_deviceResources->GetD3DDevice(), false))
 {
 }
 StandardScene::~StandardScene()
@@ -44,7 +47,7 @@ void StandardScene::CreateDeviceDependentResources()
 		material->SetColor({ 0.0f, 0.0f, 1.0f });
 		m_materials.emplace(material->Name(), material);
 
-		m_cubeRenderItem = std::make_unique<StandardRenderItem>(mesh, "CubeSubmesh");
+		m_cubeRenderItem = StandardRenderItem(mesh, "CubeSubmesh");
 	}
 
 	{
@@ -60,24 +63,21 @@ void StandardScene::CreateDeviceDependentResources()
 
 	{
 		{
-			m_materialsDataBuffer = std::make_unique<MaterialDataFrameResources>(m_deviceResources, 1, false);
+			// Make a material:
 			ShaderBufferTypes::MaterialData materialData;
 			materialData.BaseColor = DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 0.0f);
-			auto materialInstance = m_materialsDataBuffer->AddResource(std::move(materialData));
+			m_materialsGPUBuffer.push_back(materialData);
 
-			m_instancesDataBuffer = std::make_unique<InstanceDataFrameResources>(m_deviceResources, 1, false);
+			// Make an instance:
 			ShaderBufferTypes::InstanceData instanceData;
+			instanceData.MaterialIndex = 0;
 			XMStoreFloat4x4(&instanceData.ModelMatrix, DirectX::XMMatrixIdentity());
-			instanceData.MaterialIndex = 0; // TODO
-			auto cubeInstance = m_instancesDataBuffer->AddResource(std::move(instanceData));
-
-			m_cubeRenderItem->AddInstance(cubeInstance, materialInstance);
+			m_instancesGPUBuffer.push_back(instanceData);
 		}
-
-		m_passDataBuffer = std::make_unique<PassDataFrameResources>(m_deviceResources, 1, true);
-		ShaderBufferTypes::PassData passData;
-		m_passInstance = m_passDataBuffer->AddResource(std::move(passData));
 	}
+
+	m_passGPUBuffer.reserve(1);
+	m_passGPUBuffer.push_back(ShaderBufferTypes::PassData());
 }
 void StandardScene::CreateWindowSizeDependentResources()
 {
@@ -116,7 +116,7 @@ void StandardScene::CreateWindowSizeDependentResources()
 
 		XMStoreFloat4x4(&passData.ViewMatrix, XMMatrixTranspose(XMMatrixLookAtRH(eye, at, up)));
 
-		m_passInstance->Update(passData);
+		m_passGPUBuffer[0] = passData;
 	}
 }
 
@@ -129,14 +129,6 @@ void StandardScene::LoadState()
 
 void StandardScene::FrameUpdate(const Common::Timer& timer)
 {
-	auto d3dDevice = m_deviceResources->GetD3DDevice();
-
-	m_materialsDataBuffer->FrameUpdate(d3dDevice);
-
-
-	m_cubeRenderItem->FrameUpdate();
-	m_instancesDataBuffer->FrameUpdate(d3dDevice);
-	m_passDataBuffer->FrameUpdate(d3dDevice);
 }
 
 bool StandardScene::Render(const Common::Timer& timer)
@@ -144,21 +136,21 @@ bool StandardScene::Render(const Common::Timer& timer)
 	auto commandList = m_commandListManager.GetGraphicsCommandList(0);
 
 	// Bind pass buffer:
-	commandList->SetGraphicsRootConstantBufferView(2, m_passDataBuffer->GetCurrentFrameBufferGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(2, m_passGPUBuffer.get_allocator().GetGPUVirtualAddress(0));
 
 	// Bind materials buffer:
-	commandList->SetGraphicsRootShaderResourceView(1, m_materialsDataBuffer->GetCurrentFrameBufferGPUVirtualAddress());
+	commandList->SetGraphicsRootShaderResourceView(1, m_materialsGPUBuffer.get_allocator().GetGPUVirtualAddress(0));
 
 	// Bind instances buffer:
-	commandList->SetGraphicsRootShaderResourceView(0, m_instancesDataBuffer->GetCurrentFrameBufferGPUVirtualAddress());
+	commandList->SetGraphicsRootShaderResourceView(0, m_instancesGPUBuffer.get_allocator().GetGPUVirtualAddress(0));
 
 	// Render cube:
-	m_cubeRenderItem->Render(commandList);
+	m_cubeRenderItem.Render(commandList);
 	
 	return true;
 }
 
-StandardRenderItem* StandardScene::GetCubeRenderItem() const
+StandardRenderItem& StandardScene::GetCubeRenderItem()
 {
-	return m_cubeRenderItem.get();
+	return m_cubeRenderItem;
 }
