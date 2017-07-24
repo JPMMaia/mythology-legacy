@@ -181,6 +181,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
+      <AdditionalOptions>/D_ITERATOR_DEBUG_LEVEL=1 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -196,6 +197,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
+      <AdditionalOptions>/D_ITERATOR_DEBUG_LEVEL=1 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -227,6 +229,8 @@
     <ClInclude Include="Core\RenderItem\ColorRenderItem.h" />
     <ClInclude Include="Core\RenderItem\StandardRenderItem.h" />
     <ClInclude Include="Core\Resources\FrameResource.h" />
+    <ClInclude Include="Core\Resources\GPUAllocator.h" />
+    <ClInclude Include="Core\Resources\GPUVector.h" />
     <ClInclude Include="Core\Resources\Resource.h" />
     <ClInclude Include="Core\Resources\ResourceInstance.h" />
     <ClInclude Include="Core\Sample3DSceneRenderer.h" />

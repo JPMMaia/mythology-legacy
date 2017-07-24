@@ -34,8 +34,7 @@ namespace DirectX12TestProject
 		{
 			auto deviceResources = std::make_shared<DeviceResources>();
 
-			//std::vector<float, GPUAllocator<float>> numbers(4, GPUAllocator<float>(deviceResources->GetD3DDevice()));
-			std::vector<float> numbers(4);
+			std::vector<float, GPUAllocator<float>> numbers(4, GPUAllocator<float>(deviceResources->GetD3DDevice()));
 
 			std::iota(numbers.begin(), numbers.end(), 1.0f);
 

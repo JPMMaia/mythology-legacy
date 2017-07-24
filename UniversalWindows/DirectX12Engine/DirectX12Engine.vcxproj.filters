@@ -68,6 +68,8 @@
     <ClInclude Include="Core\Sample3DSceneRenderer.h" />
     <ClInclude Include="Core\ShaderStructures.h" />
     <ClInclude Include="Core\DeviceResources.h" />
+    <ClInclude Include="Core\Resources\GPUAllocator.h" />
+    <ClInclude Include="Core\Resources\GPUVector.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\SamplePixelShader.hlsl" />

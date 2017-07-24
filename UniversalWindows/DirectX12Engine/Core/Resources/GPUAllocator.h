@@ -2,6 +2,7 @@
 
 #include <new>
 #include <minwinbase.h>
+#include <wrl/client.h>
 
 #include "Core/Utilities/d3dx12.h"
 #include "Core/Utilities/DirectXHelper.h"
@@ -85,11 +86,11 @@ namespace DirectX12Engine
 	template <class T, class U>
 	bool operator==(const GPUAllocator<T>& a, const GPUAllocator<U>& b)
 	{
-		return &a == &b;
+		return false;
 	}
 
 	template <class T, class U>
-	bool operator!=(const GPUAllocator<T>&, const GPUAllocator<U>&)
+	bool operator!=(const GPUAllocator<T>& a, const GPUAllocator<U>& b)
 	{
 		return !(a == b);
 	}
