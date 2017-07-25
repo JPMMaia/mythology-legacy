@@ -1,9 +1,28 @@
 ﻿#include "pch.h"
 #include "Mouse.h"
 
-#include <sstream>
-
+using namespace DirectX;
 using namespace DirectX12Engine;
+
+Mouse::Mouse() :
+m_position(XMFLOAT2(0.0f, 0.0f)),
+m_lastPosition(m_position)
+
+{
+}
+
+void Mouse::ProcessInput()
+{
+	if(m_isPositionDirty)
+	{
+		m_deltaPosition.x = m_position.x - m_lastPosition.x;
+		m_deltaPosition.y = m_position.y - m_lastPosition.y;
+
+		m_lastPosition = m_position;
+
+		m_isPositionDirty = false;
+	}
+}
 
 void Mouse::SetKeysState(bool left, bool middle, bool right)
 {
@@ -45,6 +64,18 @@ void Mouse::SetMousePosition(float x, float y)
 {
 	m_position.x = x;
 	m_position.y = y;
+
+	if(m_isPositionDirty)
+	{
+		m_lastPosition = m_position;
+	}
+
+	m_isPositionDirty = true;
+}
+
+const DirectX::XMFLOAT2& Mouse::DeltaPosition() const
+{
+	return m_deltaPosition;
 }
 
 bool Mouse::IsKeyDown(std::uint8_t key) const

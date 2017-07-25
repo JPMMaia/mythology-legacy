@@ -36,7 +36,7 @@
   <ItemGroup>
     <AppxPackagedFile Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\x64\Debug\WindowsApp\WindowsApp.exe">
       <PackagePath>WindowsApp.exe</PackagePath>
-      <Modified>2017-07-25T13:52:23.535</Modified>
+      <Modified>2017-07-25T14:38:31.885</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\x64\Debug\WindowsApp\WindowsApp.winmd">
       <PackagePath>WindowsApp.winmd</PackagePath>

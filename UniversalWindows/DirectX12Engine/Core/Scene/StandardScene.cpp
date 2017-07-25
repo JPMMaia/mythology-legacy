@@ -111,8 +111,9 @@ void StandardScene::FrameUpdate(const Common::Timer& timer)
 {
 	static constexpr auto movementSensibility = 0.125f;
 	static constexpr auto tiltSensibility = 0.0625f;
+	static constexpr auto mouseSensibility = 1.0f / 1024.0f;
 
-	auto keyboard = m_deviceResources->Keyboard();
+	auto& keyboard = m_deviceResources->Keyboard();
 	if (keyboard.IsKeyDown('W'))
 		m_camera.MoveForward(movementSensibility);
 	if (keyboard.IsKeyDown('S'))
@@ -125,6 +126,11 @@ void StandardScene::FrameUpdate(const Common::Timer& timer)
 		m_camera.RotateLocalZ(tiltSensibility);
 	if (keyboard.IsKeyDown('E'))
 		m_camera.RotateLocalZ(-tiltSensibility);
+
+	auto& mouse = m_deviceResources->Mouse();
+	const auto& deltaPosition = mouse.DeltaPosition();
+	m_camera.RotateLocalX(-mouseSensibility * deltaPosition.y);
+	m_camera.RotateLocalY(-mouseSensibility * deltaPosition.x);
 
 	m_camera.Update();
 

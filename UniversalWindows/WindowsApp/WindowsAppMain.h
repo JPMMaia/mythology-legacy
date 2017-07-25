@@ -27,7 +27,7 @@ namespace WindowsApp
 		void ProcessFrameStatistics(const Common::Timer& timer);
 
 	private:
-		// Rendering loop timer.
+		std::shared_ptr<DirectX12Engine::DeviceResources> m_deviceResources;
 		Common::Timer m_timer;
 		std::unique_ptr<DirectX12Engine::Renderer> m_renderer;
 	};
