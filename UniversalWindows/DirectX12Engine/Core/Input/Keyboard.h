@@ -8,12 +8,12 @@ namespace DirectX12Engine
 	class Keyboard
 	{
 	public:
-		Common::Event<Keyboard, std::string, std::uint8_t> OnKeyDown;
-		Common::Event<Keyboard, std::string, std::uint8_t> OnKeyUp;
+		Common::Event<Keyboard, std::string, std::uint8_t> OnKeyPress;
+		Common::Event<Keyboard, std::string, std::uint8_t> OnKeyRelease;
 
 	public:
-		void KeyDown(std::uint8_t virtualKey);
-		void KeyUp(std::uint8_t virtualKey);
+		void PressKey(std::uint8_t virtualKey);
+		void ReleaseKey(std::uint8_t virtualKey);
 
 		bool IsKeyDown(std::uint8_t virtualKey) const;
 

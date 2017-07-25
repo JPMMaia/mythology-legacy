@@ -3,17 +3,17 @@
 
 using namespace DirectX12Engine;
 
-void Keyboard::KeyDown(std::uint8_t virtualKey)
+void Keyboard::PressKey(std::uint8_t virtualKey)
 {
 	m_keysState.set(static_cast<std::size_t>(virtualKey));
 
-	OnKeyDown(virtualKey);
+	OnKeyPress(virtualKey);
 }
-void Keyboard::KeyUp(std::uint8_t virtualKey)
+void Keyboard::ReleaseKey(std::uint8_t virtualKey)
 {
 	m_keysState.reset(static_cast<std::size_t>(virtualKey));
 
-	OnKeyUp(virtualKey);
+	OnKeyRelease(virtualKey);
 }
 
 bool Keyboard::IsKeyDown(std::uint8_t virtualKey) const

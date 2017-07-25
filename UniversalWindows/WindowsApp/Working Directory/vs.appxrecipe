@@ -10,14 +10,14 @@
     <PackageArchitecture>x64</PackageArchitecture>
     <PackageIdentityName>23c4cd91-d59b-4300-8725-21541ebfd595</PackageIdentityName>
     <PackageIdentityPublisher>CN=JPMMa</PackageIdentityPublisher>
-    <IntermediateOutputPath>C:\Users\JPMMa\Documents\Visual Studio 2017\Projects\Mythology\UniversalWindows\WindowsApp\x64\Debug\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\UniversalWindows\WindowsApp\x64\Debug\</IntermediateOutputPath>
     <RemoteDeploymentType>CopyToDevice</RemoteDeploymentType>
     <PackageRegistrationPath>
     </PackageRegistrationPath>
     <RemoveNonLayoutFiles>false</RemoveNonLayoutFiles>
     <DeployOptionalPackages>false</DeployOptionalPackages>
     <WindowsSdkPath>C:\Program Files %28x86%29\Windows Kits\10\</WindowsSdkPath>
-    <LayoutDir>C:\Users\JPMMa\Documents\Visual Studio 2017\Projects\Mythology\UniversalWindows\WindowsApp\Working Directory</LayoutDir>
+    <LayoutDir>C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\UniversalWindows\WindowsApp\Working Directory</LayoutDir>
     <RegisteredManifestChecksum>98451FBE0CABDE46A47D8E3F363D476FA37928DA798A4E0200AF58D6A96ADB0E</RegisteredManifestChecksum>
     <RegisteredPackageMoniker>23c4cd91-d59b-4300-8725-21541ebfd595_1.0.0.0_x64__8er5hvhmv5rnm</RegisteredPackageMoniker>
     <RegisteredUserModeAppID>23c4cd91-d59b-4300-8725-21541ebfd595_8er5hvhmv5rnm!App</RegisteredUserModeAppID>
@@ -27,71 +27,71 @@
     <JitOptimizationSuppressed>True</JitOptimizationSuppressed>
   </PropertyGroup>
   <ItemGroup>
-    <AppXManifest Include="C:\Users\JPMMa\Documents\Visual Studio 2017\Projects\Mythology\x64\Debug\WindowsApp\AppxManifest.xml">
+    <AppXManifest Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\x64\Debug\WindowsApp\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-07-25T01:20:02.351</Modified>
+      <Modified>2017-07-25T13:09:10.885</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
-    <AppxPackagedFile Include="C:\Users\JPMMa\Documents\Visual Studio 2017\Projects\Mythology\x64\Debug\WindowsApp\WindowsApp.exe">
+    <AppxPackagedFile Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\x64\Debug\WindowsApp\WindowsApp.exe">
       <PackagePath>WindowsApp.exe</PackagePath>
-      <Modified>2017-07-25T01:28:16.248</Modified>
+      <Modified>2017-07-25T13:52:23.535</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\JPMMa\Documents\Visual Studio 2017\Projects\Mythology\x64\Debug\WindowsApp\WindowsApp.winmd">
+    <AppxPackagedFile Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\x64\Debug\WindowsApp\WindowsApp.winmd">
       <PackagePath>WindowsApp.winmd</PackagePath>
       <Modified>2017-04-25T00:06:34.273</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\JPMMa\Documents\Visual Studio 2017\Projects\Mythology\UniversalWindows\WindowsApp\Assets\LockScreenLogo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\UniversalWindows\WindowsApp\Assets\LockScreenLogo.scale-200.png">
       <PackagePath>Assets\LockScreenLogo.scale-200.png</PackagePath>
       <Modified>2017-07-24T23:49:55.968</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\JPMMa\Documents\Visual Studio 2017\Projects\Mythology\UniversalWindows\WindowsApp\Assets\SplashScreen.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\UniversalWindows\WindowsApp\Assets\SplashScreen.scale-200.png">
       <PackagePath>Assets\SplashScreen.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>2017-07-24T23:49:55.970</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\JPMMa\Documents\Visual Studio 2017\Projects\Mythology\UniversalWindows\WindowsApp\Assets\Square150x150Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\UniversalWindows\WindowsApp\Assets\Square150x150Logo.scale-200.png">
       <PackagePath>Assets\Square150x150Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>2017-07-24T23:49:55.971</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\JPMMa\Documents\Visual Studio 2017\Projects\Mythology\UniversalWindows\WindowsApp\Assets\Square44x44Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\UniversalWindows\WindowsApp\Assets\Square44x44Logo.scale-200.png">
       <PackagePath>Assets\Square44x44Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>2017-07-24T23:49:55.972</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\JPMMa\Documents\Visual Studio 2017\Projects\Mythology\UniversalWindows\WindowsApp\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+    <AppxPackagedFile Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\UniversalWindows\WindowsApp\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
       <PackagePath>Assets\Square44x44Logo.targetsize-24_altform-unplated.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>2017-07-24T23:49:55.973</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\JPMMa\Documents\Visual Studio 2017\Projects\Mythology\UniversalWindows\WindowsApp\Assets\StoreLogo.png">
+    <AppxPackagedFile Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\UniversalWindows\WindowsApp\Assets\StoreLogo.png">
       <PackagePath>Assets\StoreLogo.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>2017-07-24T23:49:55.974</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\JPMMa\Documents\Visual Studio 2017\Projects\Mythology\UniversalWindows\WindowsApp\Assets\Wide310x150Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\UniversalWindows\WindowsApp\Assets\Wide310x150Logo.scale-200.png">
       <PackagePath>Assets\Wide310x150Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>2017-07-24T23:49:55.975</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\JPMMa\Documents\Visual Studio 2017\Projects\Mythology\x64\Debug\DirectX12Engine\SamplePixelShader.cso">
+    <AppxPackagedFile Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\x64\Debug\DirectX12Engine\SamplePixelShader.cso">
       <PackagePath>DirectX12Engine\SamplePixelShader.cso</PackagePath>
-      <Modified>2017-07-24T23:51:39.013</Modified>
+      <Modified>2017-07-25T13:08:55.561</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\JPMMa\Documents\Visual Studio 2017\Projects\Mythology\x64\Debug\DirectX12Engine\SampleVertexShader.cso">
+    <AppxPackagedFile Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\x64\Debug\DirectX12Engine\SampleVertexShader.cso">
       <PackagePath>DirectX12Engine\SampleVertexShader.cso</PackagePath>
-      <Modified>2017-07-24T23:55:43.817</Modified>
+      <Modified>2017-07-25T13:08:55.696</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.UniversalCRT.Debug\10.0.15063.0\\redist\Debug\X64\ucrtbased.dll">
       <PackagePath>ucrtbased.dll</PackagePath>
       <Modified>2017-03-30T00:07:24.000</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\JPMMa\Documents\Visual Studio 2017\Projects\Mythology\x64\Debug\WindowsApp\resources.pri">
+    <AppxPackagedFile Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\x64\Debug\WindowsApp\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-07-25T01:20:02.214</Modified>
+      <Modified>2017-07-25T13:09:10.693</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

@@ -38,6 +38,7 @@
     <ClCompile Include="Core\Camera\Camera.cpp" />
     <ClCompile Include="Core\Camera\Ray.cpp" />
     <ClCompile Include="Core\Input\Keyboard.cpp" />
+    <ClCompile Include="Core\Input\Mouse.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -77,6 +78,7 @@
     <ClInclude Include="Core\Camera\Camera.h" />
     <ClInclude Include="Core\Camera\Ray.h" />
     <ClInclude Include="Core\Input\Keyboard.h" />
+    <ClInclude Include="Core\Input\Mouse.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\SamplePixelShader.hlsl" />

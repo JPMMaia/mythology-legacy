@@ -4,6 +4,8 @@
 
 #include <ppltasks.h>
 
+#include <sstream>
+
 using namespace WindowsApp;
 
 using namespace concurrency;
@@ -80,6 +82,10 @@ void App::SetWindow(CoreWindow^ window)
 
 	window->KeyDown += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(this, &WindowsApp::App::OnKeyDown);
 	window->KeyUp += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(this, &WindowsApp::App::OnKeyUp);
+	window->PointerPressed += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(this, &WindowsApp::App::OnPointerPressed);
+	window->PointerReleased += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(this, &WindowsApp::App::OnPointerReleased);
+	window->PointerMoved += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(this, &WindowsApp::App::OnPointerMoved);
+	window->PointerWheelChanged += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(this, &WindowsApp::App::OnPointerWheelChanged);
 }
 
 // Initializes scene resources, or loads a previously saved app state.
@@ -228,9 +234,60 @@ std::shared_ptr<DirectX12Engine::DeviceResources> App::GetDeviceResources()
 
 void App::OnKeyDown(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::KeyEventArgs^ args)
 {
-	m_deviceResources->Keyboard().KeyDown(static_cast<std::uint8_t>(args->VirtualKey));
+	m_deviceResources->Keyboard().PressKey(static_cast<std::uint8_t>(args->VirtualKey));
+
+	args->Handled = true;
 }
 void WindowsApp::App::OnKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args)
 {
-	m_deviceResources->Keyboard().KeyUp(static_cast<std::uint8_t>(args->VirtualKey));
+	m_deviceResources->Keyboard().ReleaseKey(static_cast<std::uint8_t>(args->VirtualKey));
+
+	args->Handled = true;
 }
+
+void WindowsApp::App::HandleMouseButtons(Windows::UI::Core::PointerEventArgs ^args)
+{
+	using namespace Windows::Devices::Input;
+
+	auto currentPoint = args->CurrentPoint;
+	auto pointerDevice = currentPoint->PointerDevice;
+	if (pointerDevice->PointerDeviceType == PointerDeviceType::Mouse)
+	{
+		auto properties = currentPoint->Properties;
+
+		auto& mouse = m_deviceResources->Mouse();
+		mouse.SetKeysState(properties->IsLeftButtonPressed, properties->IsMiddleButtonPressed, properties->IsRightButtonPressed);
+	}
+}
+void WindowsApp::App::HandleMouseMovement(Windows::UI::Core::PointerEventArgs ^args)
+{
+	auto position = args->CurrentPoint->Position;
+	auto& mouse = m_deviceResources->Mouse();
+	mouse.SetMousePosition(position.X, position.Y);
+}
+void WindowsApp::App::OnPointerPressed(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args)
+{
+	HandleMouseButtons(args);
+
+	args->Handled = true;
+}
+void WindowsApp::App::OnPointerReleased(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args)
+{
+	HandleMouseButtons(args);
+
+	args->Handled = true;
+}
+void WindowsApp::App::OnPointerMoved(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args)
+{
+	HandleMouseButtons(args);
+	HandleMouseMovement(args);
+
+	args->Handled = true;
+}
+void WindowsApp::App::OnPointerWheelChanged(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args)
+{
+
+	args->Handled = true;
+}
+
+
