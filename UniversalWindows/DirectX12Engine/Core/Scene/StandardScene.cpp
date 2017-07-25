@@ -90,35 +90,22 @@ void StandardScene::CreateWindowSizeDependentResources()
 		fovAngleY *= 2.0f;
 	}
 
-	// This sample makes use of a right-handed coordinate system using row-major matrices.
-	auto perspectiveMatrix = DirectX::XMMatrixPerspectiveFovRH(
-		fovAngleY,
-		aspectRatio,
-		0.01f,
-		100.0f
-	);
-
 	auto orientation = m_deviceResources->GetOrientationTransform3D();
 	auto orientationMatrix = XMLoadFloat4x4(&orientation);
+
+	m_camera = Camera(aspectRatio, fovAngleY, 0.25f, 50.0f, orientationMatrix);
+	m_camera.SetPosition(0.0f, 0.0f, -5.0f);
+	m_camera.Update();
 
 	{
 		ShaderBufferTypes::PassData passData;
 
-		auto projectionMatrix = perspectiveMatrix * orientationMatrix;
-		XMStoreFloat4x4(
-			&passData.ProjectionMatrix,
-			XMMatrixTranspose(projectionMatrix)
-		);
-
-		// Eye is at (0,0.7,1.5), looking at point (0,-0.1,0) with the up-vector along the y-axis.
-		static const DirectX::XMVECTORF32 eye = { 0.0f, 0.7f, 1.5f, 0.0f };
-		static const DirectX::XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
-		static const DirectX::XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
-
-		auto viewMatrix = XMMatrixLookAtRH(eye, at, up);
-		XMStoreFloat4x4(&passData.ViewMatrix, XMMatrixTranspose(viewMatrix));
-
+		const auto& viewMatrix = m_camera.GetViewMatrix();
+		const auto& projectionMatrix = m_camera.GetProjectionMatrix();
 		auto viewProjectionMatrix = viewMatrix * projectionMatrix;
+
+		XMStoreFloat4x4(&passData.ViewMatrix, XMMatrixTranspose(viewMatrix));
+		XMStoreFloat4x4(&passData.ProjectionMatrix, XMMatrixTranspose(projectionMatrix));
 		XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
 
 		m_passGPUBuffer[0] = passData;
@@ -134,6 +121,7 @@ void StandardScene::LoadState()
 
 void StandardScene::FrameUpdate(const Common::Timer& timer)
 {
+	m_camera.Update();
 }
 
 bool StandardScene::Render(const Common::Timer& timer)

@@ -25,6 +25,7 @@ namespace DirectX12Engine
 
 		// The size of the render target, in pixels.
 		DirectX::XMFLOAT2	GetOutputSize() const				{ return m_outputSize; }
+		float	GetAspectRatio() const { return m_outputSize.x / m_outputSize.y; }
 
 		// The size of the render target, in dips.
 		DirectX::XMFLOAT2	GetLogicalSize() const				{ return m_logicalSize; }

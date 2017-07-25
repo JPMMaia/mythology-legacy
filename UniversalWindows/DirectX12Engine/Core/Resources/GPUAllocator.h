@@ -107,4 +107,7 @@ namespace DirectX12Engine
 	{
 		return !(a == b);
 	}
+
+	template<class DataType>
+	using GPUUploadBuffer = std::vector<DataType, GPUAllocator<DataType>>;
 }

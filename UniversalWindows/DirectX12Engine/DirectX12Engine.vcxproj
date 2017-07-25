@@ -209,6 +209,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Core\Camera\Camera.h" />
+    <ClInclude Include="Core\Camera\Ray.h" />
     <ClInclude Include="Core\Command\CommandListManager.h" />
     <ClInclude Include="Core\DeviceResources.h" />
     <ClInclude Include="Core\Geometry\Buffers\BaseGeometryBuffer.h" />
@@ -245,6 +247,8 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Camera\Camera.cpp" />
+    <ClCompile Include="Core\Camera\Ray.cpp" />
     <ClCompile Include="Core\Command\CommandListManager.cpp" />
     <ClCompile Include="Core\DeviceResources.cpp" />
     <ClCompile Include="Core\Geometry\Buffers\BaseGeometryBuffer.cpp" />

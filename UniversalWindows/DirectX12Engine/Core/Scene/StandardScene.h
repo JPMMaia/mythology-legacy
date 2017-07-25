@@ -7,9 +7,10 @@
 #include "Core/Command/CommandListManager.h"
 #include "Core/Geometry/IMesh.h"
 #include "Core/RenderItem/StandardRenderItem.h"
+#include "Core/Resources/GPUAllocator.h"
+#include "Core/Camera/Camera.h"
 
 #include <unordered_map>
-#include "Core/Resources/GPUAllocator.h"
 
 namespace DirectX12Engine
 {
@@ -36,33 +37,15 @@ namespace DirectX12Engine
 		CommandListManager& m_commandListManager;
 		std::size_t m_commandListIndex = 0;
 
+		Camera m_camera;
 		std::unordered_map<std::string, std::shared_ptr<IMesh>> m_meshes;
 		std::unordered_map<std::string, std::shared_ptr<GraphicsEngine::IMaterial>> m_materials;
 		std::unordered_map<std::string, std::shared_ptr<GraphicsEngine::IRenderItem>> m_renderItems;
-
-		StandardRenderItem m_cubeRenderItem;
-
-		
-
-		template<class DataType>
-		using GPUUploadBuffer = std::vector<DataType, GPUAllocator<DataType>>;
 
 		GPUUploadBuffer<ShaderBufferTypes::InstanceData> m_instancesGPUBuffer;
 		GPUUploadBuffer<ShaderBufferTypes::MaterialData> m_materialsGPUBuffer;
 		GPUUploadBuffer<ShaderBufferTypes::PassData> m_passGPUBuffer;
 
-		/*
-		std::unique_ptr<StandardRenderItem> m_cubeRenderItem;
-		std::shared_ptr<ResourceInstance<ShaderBufferTypes::PassData>> m_passInstance;
-
-		using InstanceDataFrameResources = FrameResource<ResourceInstance<ShaderBufferTypes::InstanceData>, ShaderBufferTypes::InstanceData>;
-		std::unique_ptr<InstanceDataFrameResources> m_instancesDataBuffer;
-
-		using MaterialDataFrameResources = FrameResource<ResourceInstance<ShaderBufferTypes::MaterialData>, ShaderBufferTypes::MaterialData>;
-		std::unique_ptr<MaterialDataFrameResources> m_materialsDataBuffer;;
-
-		using PassDataFrameResources = FrameResource<ResourceInstance<ShaderBufferTypes::PassData>, ShaderBufferTypes::PassData>;
-		std::unique_ptr<PassDataFrameResources> m_passDataBuffer;
-		*/
+		StandardRenderItem m_cubeRenderItem;
 	};
 }
