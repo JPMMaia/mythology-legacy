@@ -35,6 +35,9 @@ namespace WindowsApp
 		void OnOrientationChanged(Windows::Graphics::Display::DisplayInformation^ sender, Platform::Object^ args);
 		void OnDisplayContentsInvalidated(Windows::Graphics::Display::DisplayInformation^ sender, Platform::Object^ args);
 
+		void OnKeyDown(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::KeyEventArgs^ args);
+		void OnKeyUp(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::KeyEventArgs^ args);
+
 	private:
 		// Private accessor for m_deviceResources, protects against device removed errors.
 		std::shared_ptr<DirectX12Engine::DeviceResources> GetDeviceResources();

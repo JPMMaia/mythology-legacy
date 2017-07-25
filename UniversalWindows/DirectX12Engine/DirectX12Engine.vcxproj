@@ -221,6 +221,7 @@
     <ClInclude Include="Core\Geometry\MeshGenerator.h" />
     <ClInclude Include="Core\Geometry\Submesh.h" />
     <ClInclude Include="Core\Geometry\VertexTypes.h" />
+    <ClInclude Include="Core\Input\Keyboard.h" />
     <ClInclude Include="Core\Material\ColorMaterial.h" />
     <ClInclude Include="Core\Material\MaterialInstance.h" />
     <ClInclude Include="Core\Material\StandardMaterial.h" />
@@ -258,6 +259,7 @@
     <ClCompile Include="Core\Geometry\MeshGenerator.cpp" />
     <ClCompile Include="Core\Geometry\Submesh.cpp" />
     <ClCompile Include="Core\Geometry\VertexTypes.cpp" />
+    <ClCompile Include="Core\Input\Keyboard.cpp" />
     <ClCompile Include="Core\Material\ColorMaterial.cpp" />
     <ClCompile Include="Core\Material\MaterialInstance.cpp" />
     <ClCompile Include="Core\Material\StandardMaterial.cpp" />

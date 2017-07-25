@@ -37,6 +37,7 @@
     <ClCompile Include="Core\Resources\FrameResources.cpp" />
     <ClCompile Include="Core\Camera\Camera.cpp" />
     <ClCompile Include="Core\Camera\Ray.cpp" />
+    <ClCompile Include="Core\Input\Keyboard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -75,6 +76,7 @@
     <ClInclude Include="Core\Resources\FrameResources.h" />
     <ClInclude Include="Core\Camera\Camera.h" />
     <ClInclude Include="Core\Camera\Ray.h" />
+    <ClInclude Include="Core\Input\Keyboard.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\SamplePixelShader.hlsl" />

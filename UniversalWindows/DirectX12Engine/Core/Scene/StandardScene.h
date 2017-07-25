@@ -33,6 +33,9 @@ namespace DirectX12Engine
 		StandardRenderItem& GetCubeRenderItem();
 
 	private:
+		void UpdatePassBuffer();
+
+	private:
 		std::shared_ptr<DeviceResources> m_deviceResources;
 		CommandListManager& m_commandListManager;
 		std::size_t m_commandListIndex = 0;

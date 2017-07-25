@@ -5,6 +5,7 @@
 
 #include "GraphicsEngineInterfaces/IWindow.h"
 #include "Utilities/d3dx12.h"
+#include "Input/Keyboard.h"
 
 namespace DirectX12Engine
 {
@@ -64,6 +65,8 @@ namespace DirectX12Engine
 
 		static constexpr UINT GetFrameCount() { return c_frameCount; }
 
+		Keyboard& Keyboard() { return m_keyboard; }
+
 	private:
 		void CreateDeviceIndependentResources();
 		void CreateDeviceResources();
@@ -117,5 +120,7 @@ namespace DirectX12Engine
 
 		UINT m_sampleCount = 1;
 		UINT m_sampleQuality = 0;
+
+		DirectX12Engine::Keyboard m_keyboard;
 	};
 }

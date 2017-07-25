@@ -97,19 +97,7 @@ void StandardScene::CreateWindowSizeDependentResources()
 	m_camera.SetPosition(0.0f, 0.0f, -5.0f);
 	m_camera.Update();
 
-	{
-		ShaderBufferTypes::PassData passData;
-
-		const auto& viewMatrix = m_camera.GetViewMatrix();
-		const auto& projectionMatrix = m_camera.GetProjectionMatrix();
-		auto viewProjectionMatrix = viewMatrix * projectionMatrix;
-
-		XMStoreFloat4x4(&passData.ViewMatrix, XMMatrixTranspose(viewMatrix));
-		XMStoreFloat4x4(&passData.ProjectionMatrix, XMMatrixTranspose(projectionMatrix));
-		XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
-
-		m_passGPUBuffer[0] = passData;
-	}
+	UpdatePassBuffer();
 }
 
 void StandardScene::SaveState()
@@ -121,7 +109,26 @@ void StandardScene::LoadState()
 
 void StandardScene::FrameUpdate(const Common::Timer& timer)
 {
+	static constexpr auto movementSensibility = 0.125f;
+	static constexpr auto tiltSensibility = 0.0625f;
+
+	auto keyboard = m_deviceResources->Keyboard();
+	if (keyboard.IsKeyDown('W'))
+		m_camera.MoveForward(movementSensibility);
+	if (keyboard.IsKeyDown('S'))
+		m_camera.MoveForward(-movementSensibility);
+	if (keyboard.IsKeyDown('D'))
+		m_camera.MoveRight(movementSensibility);
+	if (keyboard.IsKeyDown('A'))
+		m_camera.MoveRight(-movementSensibility);
+	if (keyboard.IsKeyDown('Q'))
+		m_camera.RotateLocalZ(tiltSensibility);
+	if (keyboard.IsKeyDown('E'))
+		m_camera.RotateLocalZ(-tiltSensibility);
+
 	m_camera.Update();
+
+	UpdatePassBuffer();
 }
 
 bool StandardScene::Render(const Common::Timer& timer)
@@ -146,4 +153,19 @@ bool StandardScene::Render(const Common::Timer& timer)
 StandardRenderItem& StandardScene::GetCubeRenderItem()
 {
 	return m_cubeRenderItem;
+}
+
+void StandardScene::UpdatePassBuffer()
+{
+	ShaderBufferTypes::PassData passData;
+
+	const auto& viewMatrix = m_camera.GetViewMatrix();
+	const auto& projectionMatrix = m_camera.GetProjectionMatrix();
+	auto viewProjectionMatrix = viewMatrix * projectionMatrix;
+
+	XMStoreFloat4x4(&passData.ViewMatrix, XMMatrixTranspose(viewMatrix));
+	XMStoreFloat4x4(&passData.ProjectionMatrix, XMMatrixTranspose(projectionMatrix));
+	XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
+
+	m_passGPUBuffer[0] = passData;
 }

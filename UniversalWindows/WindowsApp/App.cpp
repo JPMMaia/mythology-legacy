@@ -77,6 +77,9 @@ void App::SetWindow(CoreWindow^ window)
 
 	DisplayInformation::DisplayContentsInvalidated +=
 		ref new TypedEventHandler<DisplayInformation^, Object^>(this, &App::OnDisplayContentsInvalidated);
+
+	window->KeyDown += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(this, &WindowsApp::App::OnKeyDown);
+	window->KeyUp += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(this, &WindowsApp::App::OnKeyUp);
 }
 
 // Initializes scene resources, or loads a previously saved app state.
@@ -220,4 +223,14 @@ std::shared_ptr<DirectX12Engine::DeviceResources> App::GetDeviceResources()
 		m_main->CreateRenderers(m_deviceResources);
 	}
 	return m_deviceResources;
+}
+
+
+void App::OnKeyDown(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::KeyEventArgs^ args)
+{
+	m_deviceResources->Keyboard().KeyDown(static_cast<std::uint8_t>(args->VirtualKey));
+}
+void WindowsApp::App::OnKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args)
+{
+	m_deviceResources->Keyboard().KeyUp(static_cast<std::uint8_t>(args->VirtualKey));
 }
