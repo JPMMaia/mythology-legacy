@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "Core/Shader/ShaderBufferTypes.h"
-#include "Core/Resources/FrameResource.h"
 
 namespace DirectX12Engine
 {

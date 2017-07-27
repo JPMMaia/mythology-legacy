@@ -21,8 +21,8 @@ void RWTexture::CreateRenderTargetView(const DeviceResources& deviceResources, D
 	rtvDescription.Texture2D.MipSlice = 0;
 
 	auto heapIndex = descriptorHeap.CreateRenderTargetView(deviceResources, m_resource.Get(), &rtvDescription);
-	m_cpuDescriptorHandles.emplace(name, descriptorHeap.Get()->GetCPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize());
-	m_gpuDescriptorHandles.emplace(name, descriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize());
+	m_cpuDescriptorHandles.emplace(name, CD3DX12_CPU_DESCRIPTOR_HANDLE(descriptorHeap.Get()->GetCPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize()));
+	m_gpuDescriptorHandles.emplace(name, CD3DX12_GPU_DESCRIPTOR_HANDLE(descriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize()));
 }
 void RWTexture::CreateShaderResourceView(const DeviceResources& deviceResources, DescriptorHeap& descriptorHeap, const std::string& name)
 {
@@ -34,8 +34,8 @@ void RWTexture::CreateShaderResourceView(const DeviceResources& deviceResources,
 	srvDescription.Texture2D.MipLevels = 1;
 
 	auto heapIndex = descriptorHeap.CreateShaderResourceView(deviceResources, m_resource.Get(), &srvDescription);
-	m_cpuDescriptorHandles.emplace(name, descriptorHeap.Get()->GetCPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize());
-	m_gpuDescriptorHandles.emplace(name, descriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize());
+	m_cpuDescriptorHandles.emplace(name, CD3DX12_CPU_DESCRIPTOR_HANDLE(descriptorHeap.Get()->GetCPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize()));
+	m_gpuDescriptorHandles.emplace(name, CD3DX12_GPU_DESCRIPTOR_HANDLE(descriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize()));
 }
 void RWTexture::CreateUnorderedAccessView(const DeviceResources& deviceResources, DescriptorHeap& descriptorHeap, const std::string& name)
 {
@@ -46,7 +46,7 @@ void RWTexture::CreateUnorderedAccessView(const DeviceResources& deviceResources
 
 	auto heapIndex = descriptorHeap.CreateUnorderedAccessView(deviceResources, m_resource.Get(), nullptr, &uavDescription);
 	m_cpuDescriptorHandles.emplace(name, CD3DX12_CPU_DESCRIPTOR_HANDLE(descriptorHeap.Get()->GetCPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize()));
-	m_gpuDescriptorHandles.emplace(CD3DX12_GPU_DESCRIPTOR_HANDLE(descriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize()));
+	m_gpuDescriptorHandles.emplace(name, CD3DX12_GPU_DESCRIPTOR_HANDLE(descriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize()));
 }
 
 void RWTexture::CreateResource(const DeviceResources& deviceResources, UINT64 width, UINT64 height, DXGI_FORMAT format)

@@ -9,6 +9,7 @@
 #include "Core/RenderItem/StandardRenderItem.h"
 #include "Core/Resources/GPUAllocator.h"
 #include "Core/Camera/Camera.h"
+#include "Core/Shader/ShaderBufferTypes.h"
 
 #include <unordered_map>
 

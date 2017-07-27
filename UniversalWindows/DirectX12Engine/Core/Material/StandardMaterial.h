@@ -3,7 +3,6 @@
 #include "GraphicsEngineInterfaces/IMaterial.h"
 #include "Core/Utilities/UploadBuffer.h"
 #include "Core/Shader/ShaderBufferTypes.h"
-#include "Core/Resources/FrameResource.h"
 #include "MaterialInstance.h"
 
 namespace DirectX12Engine

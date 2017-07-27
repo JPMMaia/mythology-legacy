@@ -19,14 +19,10 @@
     <ClCompile Include="Core\Material\ColorMaterial.cpp" />
     <ClCompile Include="Core\Material\MaterialInstance.cpp" />
     <ClCompile Include="Core\Material\StandardMaterial.cpp" />
-    <ClCompile Include="Core\Pipeline\DescriptorHeap.cpp" />
     <ClCompile Include="Core\Pipeline\PipelineStateManager.cpp" />
     <ClCompile Include="Core\Pipeline\RootSignatureManager.cpp" />
     <ClCompile Include="Core\RenderItem\ColorRenderItem.cpp" />
     <ClCompile Include="Core\RenderItem\StandardRenderItem.cpp" />
-    <ClCompile Include="Core\Resources\FrameResource.cpp" />
-    <ClCompile Include="Core\Resources\Resource.cpp" />
-    <ClCompile Include="Core\Resources\ResourceInstance.cpp" />
     <ClCompile Include="Core\Scene\StandardScene.cpp" />
     <ClCompile Include="Core\Shader\Shader.cpp" />
     <ClCompile Include="Core\Utilities\DirectXHelper.cpp" />
@@ -34,12 +30,13 @@
     <ClCompile Include="Core\Renderer.cpp" />
     <ClCompile Include="Core\Sample3DSceneRenderer.cpp" />
     <ClCompile Include="Core\DeviceResources.cpp" />
-    <ClCompile Include="Core\Resources\FrameResources.cpp" />
     <ClCompile Include="Core\Camera\Camera.cpp" />
     <ClCompile Include="Core\Camera\Ray.cpp" />
     <ClCompile Include="Core\Input\Keyboard.cpp" />
     <ClCompile Include="Core\Input\Mouse.cpp" />
     <ClCompile Include="Core\D3DBase.cpp" />
+    <ClCompile Include="Core\Textures\RWTexture.cpp" />
+    <ClCompile Include="Core\Resources\DescriptorHeap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -56,14 +53,10 @@
     <ClInclude Include="Core\Material\ColorMaterial.h" />
     <ClInclude Include="Core\Material\MaterialInstance.h" />
     <ClInclude Include="Core\Material\StandardMaterial.h" />
-    <ClInclude Include="Core\Pipeline\DescriptorHeap.h" />
     <ClInclude Include="Core\Pipeline\PipelineStateManager.h" />
     <ClInclude Include="Core\Pipeline\RootSignatureManager.h" />
     <ClInclude Include="Core\RenderItem\ColorRenderItem.h" />
     <ClInclude Include="Core\RenderItem\StandardRenderItem.h" />
-    <ClInclude Include="Core\Resources\FrameResource.h" />
-    <ClInclude Include="Core\Resources\Resource.h" />
-    <ClInclude Include="Core\Resources\ResourceInstance.h" />
     <ClInclude Include="Core\Scene\StandardScene.h" />
     <ClInclude Include="Core\Shader\Shader.h" />
     <ClInclude Include="Core\Shader\ShaderBufferTypes.h" />
@@ -75,12 +68,13 @@
     <ClInclude Include="Core\ShaderStructures.h" />
     <ClInclude Include="Core\DeviceResources.h" />
     <ClInclude Include="Core\Resources\GPUAllocator.h" />
-    <ClInclude Include="Core\Resources\FrameResources.h" />
     <ClInclude Include="Core\Camera\Camera.h" />
     <ClInclude Include="Core\Camera\Ray.h" />
     <ClInclude Include="Core\Input\Keyboard.h" />
     <ClInclude Include="Core\Input\Mouse.h" />
     <ClInclude Include="Core\D3DBase.h" />
+    <ClInclude Include="Core\Textures\RWTexture.h" />
+    <ClInclude Include="Core\Resources\DescriptorHeap.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\SamplePixelShader.hlsl" />

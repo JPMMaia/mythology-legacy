@@ -5,7 +5,7 @@
 #include "DeviceResources.h"
 #include "Pipeline/RootSignatureManager.h"
 #include "Pipeline/PipelineStateManager.h"
-#include "Pipeline/DescriptorHeap.h"
+#include "Resources/DescriptorHeap.h"
 #include "Utilities/UploadBuffer.h"
 #include "Command/CommandListManager.h"
 
@@ -37,5 +37,6 @@ namespace DirectX12Engine
 		CommandListManager m_commandListManager;
 		D3D12_RECT m_scissorRect;
 		std::shared_ptr<GraphicsEngine::IScene> m_scene;
+		DescriptorHeap m_rtvDescriptorHeap;
 	};
 }

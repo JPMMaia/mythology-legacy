@@ -24,6 +24,7 @@ void Renderer::CreateDeviceDependentResources()
 	m_rootSignatureManager.CreateDeviceDependentResources();
 	m_pipelineStateManager.CreateDeviceDependentResources(m_rootSignatureManager);
 	m_scene->CreateDeviceDependentResources();
+	m_rtvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 1, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
 }
 void Renderer::CreateWindowSizeDependentResources()
 {

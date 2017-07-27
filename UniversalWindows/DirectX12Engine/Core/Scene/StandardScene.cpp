@@ -4,9 +4,9 @@
 #include "Core/Geometry/MeshGenerator.h"
 #include "Core/Geometry/VertexTypes.h"
 #include "Core/Material/ColorMaterial.h"
+#include "Core/Shader/ShaderBufferTypes.h"
 #include "Common/Helpers.h"
 
-#include <sstream>
 
 using namespace Common;
 using namespace DirectX12Engine;

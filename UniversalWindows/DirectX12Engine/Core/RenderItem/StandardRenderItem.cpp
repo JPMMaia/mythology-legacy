@@ -10,20 +10,6 @@ StandardRenderItem::StandardRenderItem(std::shared_ptr<ImmutableMesh> mesh, cons
 {
 }
 
-void StandardRenderItem::AddInstance(const std::shared_ptr<InstanceType>& instance, const std::shared_ptr<MaterialType>& material)
-{
-	m_instance = instance;
-	m_material = material;
-}
-
-void StandardRenderItem::FrameUpdate() const
-{
-	ShaderBufferTypes::InstanceData data;
-	XMStoreFloat4x4(&data.ModelMatrix, DirectX::XMMatrixIdentity());
-	data.MaterialIndex = static_cast<uint32_t>(m_material->GetShaderIndex());
-	m_instance->Update(data);
-}
-
 void StandardRenderItem::Render(ID3D12GraphicsCommandList* commandList) const
 {
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
