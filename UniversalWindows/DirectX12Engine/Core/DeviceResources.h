@@ -78,43 +78,57 @@ namespace DirectX12Engine
 		DXGI_MODE_ROTATION ComputeDisplayRotation() const;
 		void GetHardwareAdapter(IDXGIAdapter1** ppAdapter) const;
 
-		UINT											m_currentFrame;
+	private:
+		void CreateDevice();
+		void CreateSynchronizationObjects();
+		void QueryDescriptorSizes();
+		void QueryMultisampleQualityLevels();
+		void CreateCommandObjects();
+		void CreateSwapChain();
+		void CreateDescriptorHeaps();
+		void CreateRenderTargetView();
+		void CreateDepthStencilBufferAndView();
+		void SetViewportAndScissorRectangles();
 
-		// Direct3D objects.
-		Microsoft::WRL::ComPtr<ID3D12Device>			m_d3dDevice;
-		Microsoft::WRL::ComPtr<IDXGIFactory4>			m_dxgiFactory;
-		Microsoft::WRL::ComPtr<IDXGISwapChain3>			m_swapChain;
-		Microsoft::WRL::ComPtr<ID3D12Resource>			m_renderTargets[c_frameCount];
-		Microsoft::WRL::ComPtr<ID3D12Resource>			m_depthStencil;
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	m_rtvHeap;
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	m_dsvHeap;
-		Microsoft::WRL::ComPtr<ID3D12CommandQueue>		m_commandQueue;
-		Microsoft::WRL::ComPtr<ID3D12CommandAllocator>	m_commandAllocators[c_frameCount];
-		DXGI_FORMAT										m_backBufferFormat;
-		DXGI_FORMAT										m_depthBufferFormat;
-		D3D12_VIEWPORT									m_screenViewport;
-		bool											m_deviceRemoved;
+	private:
+		UINT m_currentFrame;
 
-		std::shared_ptr<GraphicsEngine::IWindow>		m_window;
+		Microsoft::WRL::ComPtr<ID3D12Device> m_d3dDevice;
+		Microsoft::WRL::ComPtr<IDXGIFactory4> m_dxgiFactory;
+		Microsoft::WRL::ComPtr<IDXGISwapChain3>	m_swapChain;
+		Microsoft::WRL::ComPtr<ID3D12Resource>	m_renderTargets[c_frameCount];
+		Microsoft::WRL::ComPtr<ID3D12Resource>	m_depthStencil;
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_rtvHeap;
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_dsvHeap;
+		Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_commandQueue;
+		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocators[c_frameCount];
+		DXGI_FORMAT	m_backBufferFormat;
+		DXGI_FORMAT	m_depthBufferFormat;
+		D3D12_VIEWPORT m_screenViewport;
+		D3D12_RECT m_scissorRect;
+		UINT m_numMultisampleQualityLevels;
+		bool m_deviceRemoved;
+
+		std::shared_ptr<GraphicsEngine::IWindow> m_window;
 
 		// CPU/GPU Synchronization.
-		Microsoft::WRL::ComPtr<ID3D12Fence>				m_fence;
-		UINT64											m_fenceValues[c_frameCount];
-		HANDLE											m_fenceEvent;
+		Microsoft::WRL::ComPtr<ID3D12Fence>	m_fence;
+		UINT64 m_fenceValues[c_frameCount];
+		HANDLE m_fenceEvent;
 
 		// Cached device properties.
-		DirectX::XMFLOAT2						m_d3dRenderTargetSize;
-		DirectX::XMFLOAT2						m_outputSize;
-		DirectX::XMFLOAT2						m_logicalSize;
+		DirectX::XMFLOAT2 m_d3dRenderTargetSize;
+		DirectX::XMFLOAT2 m_outputSize;
+		DirectX::XMFLOAT2 m_logicalSize;
 		GraphicsEngine::DisplayOrientations	m_nativeOrientation;
 		GraphicsEngine::DisplayOrientations	m_currentOrientation;
-		float											m_dpi;
+		float m_dpi;
 
 		// This is the DPI that will be reported back to the app. It takes into account whether the app supports high resolution screens or not.
-		float											m_effectiveDpi;
+		float m_effectiveDpi;
 
 		// Transforms used for display orientation.
-		DirectX::XMFLOAT4X4								m_orientationTransform3D;
+		DirectX::XMFLOAT4X4	m_orientationTransform3D;
 
 		UINT m_cbvSrvUavDescriptorSize = 0;
 		UINT m_dsvDescriptorSize = 0;

@@ -1,6 +1,6 @@
-#include "Common/InstanceData.hlsli"
-#include "Common/PassData.hlsli"
-#include "Common/MaterialData.hlsli"
+#include "../Common/InstanceData.hlsli"
+#include "../Common/PassData.hlsli"
+#include "../Common/MaterialData.hlsli"
 
 struct VertexInput
 {

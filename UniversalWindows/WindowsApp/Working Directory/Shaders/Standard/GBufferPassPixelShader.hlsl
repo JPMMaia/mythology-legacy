@@ -1,4 +1,4 @@
-#include "Common/MaterialData.hlsli"
+#include "../Common/MaterialData.hlsli"
 
 struct PixelInput
 {

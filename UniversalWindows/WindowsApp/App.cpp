@@ -270,7 +270,7 @@ void WindowsApp::App::OnMouseMoved(Windows::Devices::Input::MouseDevice ^sender,
 		return;
 
 	auto& mouse = m_deviceResources->Mouse();
-	mouse.ProcessMouseDelta(args->MouseDelta.X, args->MouseDelta.Y);
+	mouse.ProcessMouseDelta(static_cast<float>(args->MouseDelta.X), static_cast<float>(args->MouseDelta.Y));
 }
 
 void WindowsApp::App::RelativeMouseHandling(bool value)
