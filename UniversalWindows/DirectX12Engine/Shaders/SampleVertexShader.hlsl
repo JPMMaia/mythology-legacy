@@ -23,9 +23,7 @@ VertexOutput main(VertexInput input, uint instanceID : SV_InstanceID)
 	InstanceData instanceData = gInstanceData[instanceID];
 
 	float4 positionW = mul(float4(input.PositionL, 1.0f), instanceData.ModelMatrix);
-	float4 positionV = mul(positionW, gPassData.ViewMatrix);
-	output.PositionH = mul(positionW, gPassData.ProjectionMatrix);
-	//output.PositionH = mul(positionW, gPassData.ViewProjectionMatrix);
+	output.PositionH = mul(positionW, gPassData.ViewProjectionMatrix);
 
 	output.MaterialIndex = instanceData.MaterialIndex;
 

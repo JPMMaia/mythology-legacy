@@ -35,14 +35,23 @@ namespace WindowsApp
 		void OnOrientationChanged(Windows::Graphics::Display::DisplayInformation^ sender, Platform::Object^ args);
 		void OnDisplayContentsInvalidated(Windows::Graphics::Display::DisplayInformation^ sender, Platform::Object^ args);
 
+		void OnKeyDown(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::KeyEventArgs^ args);
+		void OnKeyUp(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::KeyEventArgs^ args);
+		void OnPointerMoved(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args);
+		void OnMouseMoved(Windows::Devices::Input::MouseDevice ^sender, Windows::Devices::Input::MouseEventArgs ^args);
+
 	private:
+		void RelativeMouseHandling(bool value);
+
 		// Private accessor for m_deviceResources, protects against device removed errors.
 		std::shared_ptr<DirectX12Engine::DeviceResources> GetDeviceResources();
 
+	private:
 		std::shared_ptr<DirectX12Engine::DeviceResources> m_deviceResources;
 		std::unique_ptr<WindowsAppMain> m_main;
 		bool m_windowClosed;
 		bool m_windowVisible;
+		bool m_relativeMouseHandling;
 	};
 }
 

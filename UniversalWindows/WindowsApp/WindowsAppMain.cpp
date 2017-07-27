@@ -15,6 +15,7 @@ WindowsAppMain::WindowsAppMain() :
 // Creates and initializes the renderers.
 void WindowsAppMain::CreateRenderers(const std::shared_ptr<DirectX12Engine::DeviceResources>& deviceResources)
 {
+	m_deviceResources = deviceResources;
 	m_renderer = std::make_unique<DirectX12Engine::Renderer>(deviceResources);
 
 	OnWindowSizeChanged();
@@ -74,6 +75,10 @@ void WindowsAppMain::OnDeviceRemoved()
 
 bool WindowsAppMain::ProcessInput()
 {
+	m_deviceResources->Mouse().Update();
+
+	m_renderer->ProcessInput();
+
 	return true;
 }
 void WindowsAppMain::FixedUpdate(const Common::Timer& timer)

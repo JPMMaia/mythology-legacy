@@ -209,6 +209,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Core\Camera\Camera.h" />
+    <ClInclude Include="Core\Camera\Ray.h" />
     <ClInclude Include="Core\Command\CommandListManager.h" />
     <ClInclude Include="Core\DeviceResources.h" />
     <ClInclude Include="Core\Geometry\Buffers\BaseGeometryBuffer.h" />
@@ -219,6 +221,8 @@
     <ClInclude Include="Core\Geometry\MeshGenerator.h" />
     <ClInclude Include="Core\Geometry\Submesh.h" />
     <ClInclude Include="Core\Geometry\VertexTypes.h" />
+    <ClInclude Include="Core\Input\Keyboard.h" />
+    <ClInclude Include="Core\Input\Mouse.h" />
     <ClInclude Include="Core\Material\ColorMaterial.h" />
     <ClInclude Include="Core\Material\MaterialInstance.h" />
     <ClInclude Include="Core\Material\StandardMaterial.h" />
@@ -245,6 +249,8 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Camera\Camera.cpp" />
+    <ClCompile Include="Core\Camera\Ray.cpp" />
     <ClCompile Include="Core\Command\CommandListManager.cpp" />
     <ClCompile Include="Core\DeviceResources.cpp" />
     <ClCompile Include="Core\Geometry\Buffers\BaseGeometryBuffer.cpp" />
@@ -254,6 +260,8 @@
     <ClCompile Include="Core\Geometry\MeshGenerator.cpp" />
     <ClCompile Include="Core\Geometry\Submesh.cpp" />
     <ClCompile Include="Core\Geometry\VertexTypes.cpp" />
+    <ClCompile Include="Core\Input\Keyboard.cpp" />
+    <ClCompile Include="Core\Input\Mouse.cpp" />
     <ClCompile Include="Core\Material\ColorMaterial.cpp" />
     <ClCompile Include="Core\Material\MaterialInstance.cpp" />
     <ClCompile Include="Core\Material\StandardMaterial.cpp" />
