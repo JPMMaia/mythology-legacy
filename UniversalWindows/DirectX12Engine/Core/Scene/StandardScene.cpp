@@ -138,8 +138,6 @@ void StandardScene::ProcessInput()
 }
 void StandardScene::FrameUpdate(const Common::Timer& timer)
 {
-	
-
 	UpdatePassBuffer();
 }
 

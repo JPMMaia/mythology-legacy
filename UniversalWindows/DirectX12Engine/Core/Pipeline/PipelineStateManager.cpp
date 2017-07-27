@@ -37,8 +37,8 @@ void PipelineStateManager::InitializeShadersAndInputLayout()
 		m_inputLayouts.emplace("PositionInputLayout", std::move(inputLayout));
 	}
 
-	m_shaders["SampleVS"] = Shader::CompileShader(L"Shaders/SampleVertexShader.hlsl", nullptr, "main", "vs_5_1");
-	m_shaders["SamplePS"] = Shader::CompileShader(L"Shaders/SamplePixelShader.hlsl", nullptr, "main", "ps_5_1");
+	m_shaders["GBufferPassVS"] = Shader::CompileShader(L"Shaders/Standard/GBufferPassVertexShader.hlsl", nullptr, "main", "vs_5_1");
+	m_shaders["GBufferPassPS"] = Shader::CompileShader(L"Shaders/Standard/GBufferPassPixelShader.hlsl", nullptr, "main", "ps_5_1");
 }
 
 void PipelineStateManager::InitializePipelineStateObjects(const RootSignatureManager& rootSignatureManager)
@@ -50,8 +50,8 @@ void PipelineStateManager::InitializePipelineStateObjects(const RootSignatureMan
 		const auto& inputLayout = m_inputLayouts.at("PositionInputLayout");
 		state.InputLayout = { inputLayout.data(), static_cast<uint32_t>(inputLayout.size()) };
 		state.pRootSignature = rootSignatureManager.GetRootSignature("RootSignature");
-		state.VS = m_shaders["SampleVS"].GetShaderBytecode();
-		state.PS = m_shaders["SamplePS"].GetShaderBytecode();
+		state.VS = m_shaders["GBufferPassVS"].GetShaderBytecode();
+		state.PS = m_shaders["GBufferPassPS"].GetShaderBytecode();
 		state.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 		state.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		state.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
@@ -65,6 +65,6 @@ void PipelineStateManager::InitializePipelineStateObjects(const RootSignatureMan
 
 		Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState;
 		DX::ThrowIfFailed(d3dDevice->CreateGraphicsPipelineState(&state, IID_PPV_ARGS(&pipelineState)));
-		m_pipelineStateObjects.emplace("Sample", std::move(pipelineState));
+		m_pipelineStateObjects.emplace("GBufferPass", std::move(pipelineState));
 	}
 }

@@ -61,7 +61,7 @@ bool Renderer::Render(const Common::Timer& timer)
 		m_rootSignatureManager.SetGraphicsRootSignature(commandList, "RootSignature");
 
 		// Set pipeline state:
-		m_pipelineStateManager.SetPipelineState(commandList, "Sample");
+		m_pipelineStateManager.SetPipelineState(commandList, "GBufferPass");
 
 		// Render scene:
 		m_scene->Render(timer);
