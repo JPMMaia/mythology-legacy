@@ -88,7 +88,7 @@ namespace DirectX12Engine
 		void CreateDescriptorHeaps();
 		void CreateRenderTargetView();
 		void CreateDepthStencilBufferAndView();
-		void SetViewportAndScissorRectangles();
+		void SetViewport();
 
 	private:
 		UINT m_currentFrame;
@@ -105,7 +105,6 @@ namespace DirectX12Engine
 		DXGI_FORMAT	m_backBufferFormat;
 		DXGI_FORMAT	m_depthBufferFormat;
 		D3D12_VIEWPORT m_screenViewport;
-		D3D12_RECT m_scissorRect;
 		UINT m_numMultisampleQualityLevels;
 		bool m_deviceRemoved;
 

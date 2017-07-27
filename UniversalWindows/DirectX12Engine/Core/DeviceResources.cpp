@@ -119,10 +119,9 @@ void DeviceResources::CreateWindowSizeDependentResources()
 	CreateSwapChain();
 	CreateRenderTargetView();
 	CreateDepthStencilBufferAndView();
-	SetViewportAndScissorRectangles();
+	SetViewport();
 }
 
-// Determine the dimensions of the render target and whether it will be scaled down.
 void DeviceResources::UpdateRenderTargetSize()
 {
 	m_effectiveDpi = m_dpi;
@@ -153,8 +152,6 @@ void DeviceResources::UpdateRenderTargetSize()
 	m_outputSize.x = max(m_outputSize.x, 1.0f);
 	m_outputSize.y = max(m_outputSize.y, 1.0f);
 }
-
-// This method is called when the CoreWindow is created (or re-created).
 void DeviceResources::SetWindow(const std::shared_ptr<GraphicsEngine::IWindow>& window)
 {
 	m_window = window;
@@ -166,7 +163,6 @@ void DeviceResources::SetWindow(const std::shared_ptr<GraphicsEngine::IWindow>& 
 	CreateWindowSizeDependentResources();
 }
 
-// This method is called in the event handler for the SizeChanged event.
 void DeviceResources::SetLogicalSize(const DirectX::XMFLOAT2& logicalSize)
 {
 	if (m_logicalSize.x != logicalSize.x || m_logicalSize.y != logicalSize.y)
@@ -175,8 +171,6 @@ void DeviceResources::SetLogicalSize(const DirectX::XMFLOAT2& logicalSize)
 		CreateWindowSizeDependentResources();
 	}
 }
-
-// This method is called in the event handler for the DpiChanged event.
 void DeviceResources::SetDpi(float dpi)
 {
 	if (dpi != m_dpi)
@@ -189,8 +183,6 @@ void DeviceResources::SetDpi(float dpi)
 		CreateWindowSizeDependentResources();
 	}
 }
-
-// This method is called in the event handler for the OrientationChanged event.
 void DeviceResources::SetCurrentOrientation(GraphicsEngine::DisplayOrientations currentOrientation)
 {
 	if (m_currentOrientation != currentOrientation)
@@ -200,7 +192,6 @@ void DeviceResources::SetCurrentOrientation(GraphicsEngine::DisplayOrientations 
 	}
 }
 
-// This method is called in the event handler for the DisplayContentsInvalidated event.
 void DeviceResources::ValidateDevice()
 {
 	// The D3D Device is no longer valid if the default adapter changed since the device
@@ -240,7 +231,6 @@ void DeviceResources::ValidateDevice()
 	}
 }
 
-// Present the contents of the swap chain to the screen.
 void DeviceResources::Present()
 {
 	// The first argument instructs DXGI to block until VSync, putting the application
@@ -261,8 +251,6 @@ void DeviceResources::Present()
 		MoveToNextFrame();
 	}
 }
-
-// Wait for pending GPU work to complete.
 void DeviceResources::WaitForGpu()
 {
 	// Schedule a Signal command in the queue.
@@ -275,8 +263,6 @@ void DeviceResources::WaitForGpu()
 	// Increment the fence value for the current frame.
 	m_fenceValues[m_currentFrame]++;
 }
-
-// Prepare to render the next frame.
 void DeviceResources::MoveToNextFrame()
 {
 	// Schedule a Signal command in the queue.
@@ -297,8 +283,6 @@ void DeviceResources::MoveToNextFrame()
 	m_fenceValues[m_currentFrame] = currentFenceValue + 1;
 }
 
-// This method determines the rotation between the display device's native Orientation and the
-// current display orientation.
 DXGI_MODE_ROTATION DeviceResources::ComputeDisplayRotation() const
 {
 	DXGI_MODE_ROTATION rotation = DXGI_MODE_ROTATION_UNSPECIFIED;
@@ -358,8 +342,6 @@ DXGI_MODE_ROTATION DeviceResources::ComputeDisplayRotation() const
 	return rotation;
 }
 
-// This method acquires the first available hardware adapter that supports Direct3D 12.
-// If no such adapter can be found, *ppAdapter will be set to nullptr.
 void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter) const
 {
 	ComPtr<IDXGIAdapter1> adapter;
@@ -646,7 +628,7 @@ void DeviceResources::CreateDepthStencilBufferAndView()
 		m_d3dDevice->CreateDepthStencilView(m_depthStencil.Get(), &dsvDesc, m_dsvHeap->GetCPUDescriptorHandleForHeapStart());
 	}
 }
-void DeviceResources::SetViewportAndScissorRectangles()
+void DeviceResources::SetViewport()
 {
 	// Set the viewport:
 	{
@@ -657,13 +639,5 @@ void DeviceResources::SetViewportAndScissorRectangles()
 		m_screenViewport.Height = m_d3dRenderTargetSize.y;
 		m_screenViewport.MinDepth = 0.0f;
 		m_screenViewport.MaxDepth = 1.0f;
-	}
-
-	// Set the scissor rectangles:
-	{
-		m_scissorRect.left = 0;
-		m_scissorRect.top = 0;
-		m_scissorRect.right = std::lround(m_d3dRenderTargetSize.x);
-		m_scissorRect.top = std::lround(m_d3dRenderTargetSize.y);
 	}
 }
