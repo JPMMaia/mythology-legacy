@@ -30,13 +30,13 @@
     <AppXManifest Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\x64\Debug\WindowsApp\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-07-25T13:09:10.885</Modified>
+      <Modified>2017-07-27T12:58:26.090</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\x64\Debug\WindowsApp\WindowsApp.exe">
       <PackagePath>WindowsApp.exe</PackagePath>
-      <Modified>2017-07-25T14:38:31.885</Modified>
+      <Modified>2017-07-27T13:51:28.514</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\x64\Debug\WindowsApp\WindowsApp.winmd">
       <PackagePath>WindowsApp.winmd</PackagePath>
@@ -91,7 +91,7 @@
     <AppxPackagedFile Include="C:\Users\JPMMa\documents\visual studio 2017\Projects\Mythology\x64\Debug\WindowsApp\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-07-25T13:09:10.693</Modified>
+      <Modified>2017-07-27T12:58:25.947</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

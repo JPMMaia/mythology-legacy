@@ -75,7 +75,9 @@ void WindowsAppMain::OnDeviceRemoved()
 
 bool WindowsAppMain::ProcessInput()
 {
-	m_deviceResources->Mouse().ProcessInput();
+	m_deviceResources->Mouse().Update();
+
+	m_renderer->ProcessInput();
 
 	return true;
 }

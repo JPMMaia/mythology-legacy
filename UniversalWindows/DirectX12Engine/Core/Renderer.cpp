@@ -40,6 +40,10 @@ void Renderer::LoadState()
 {
 }
 
+void Renderer::ProcessInput() const
+{
+	m_scene->ProcessInput();
+}
 void Renderer::FrameUpdate(const Common::Timer& timer)
 {
 	m_scene->FrameUpdate(timer);

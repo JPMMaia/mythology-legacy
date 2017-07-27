@@ -26,6 +26,7 @@ namespace DirectX12Engine
 		void SaveState() override;
 		void LoadState() override;
 
+		void ProcessInput() override;
 		void FrameUpdate(const Common::Timer& timer) override;
 
 		bool Render(const Common::Timer& timer) override;

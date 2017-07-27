@@ -12,9 +12,11 @@ using namespace concurrency;
 using namespace Windows::ApplicationModel;
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::ApplicationModel::Activation;
+using namespace Windows::Devices::Input;
 using namespace Windows::UI::Core;
 using namespace Windows::UI::Input;
 using namespace Windows::System;
+using namespace Windows::System::Threading;
 using namespace Windows::Foundation;
 using namespace Windows::Graphics::Display;
 
@@ -38,8 +40,10 @@ IFrameworkView^ Direct3DApplicationSource::CreateView()
 
 App::App() :
 	m_windowClosed(false),
-	m_windowVisible(true)
+	m_windowVisible(true),
+	m_relativeMouseHandling(true)
 {
+	
 }
 
 // The first method called when the IFrameworkView is being created.
@@ -80,12 +84,17 @@ void App::SetWindow(CoreWindow^ window)
 	DisplayInformation::DisplayContentsInvalidated +=
 		ref new TypedEventHandler<DisplayInformation^, Object^>(this, &App::OnDisplayContentsInvalidated);
 
+	// Disable all pointer visual feedback for better performance when touching.
+	auto pointerVisualizationSettings = PointerVisualizationSettings::GetForCurrentView();
+	pointerVisualizationSettings->IsContactFeedbackEnabled = false;
+	pointerVisualizationSettings->IsBarrelButtonFeedbackEnabled = false;
+
 	window->KeyDown += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(this, &WindowsApp::App::OnKeyDown);
 	window->KeyUp += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(this, &WindowsApp::App::OnKeyUp);
-	window->PointerPressed += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(this, &WindowsApp::App::OnPointerPressed);
-	window->PointerReleased += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(this, &WindowsApp::App::OnPointerReleased);
+
 	window->PointerMoved += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(this, &WindowsApp::App::OnPointerMoved);
-	window->PointerWheelChanged += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(this, &WindowsApp::App::OnPointerWheelChanged);
+	MouseDevice::GetForCurrentView()->MouseMoved += ref new Windows::Foundation::TypedEventHandler<Windows::Devices::Input::MouseDevice ^, Windows::Devices::Input::MouseEventArgs ^>(this, &WindowsApp::App::OnMouseMoved);
+	RelativeMouseHandling(m_relativeMouseHandling);
 }
 
 // Initializes scene resources, or loads a previously saved app state.
@@ -244,50 +253,29 @@ void WindowsApp::App::OnKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI
 
 	args->Handled = true;
 }
-
-void WindowsApp::App::HandleMouseButtons(Windows::UI::Core::PointerEventArgs ^args)
-{
-	using namespace Windows::Devices::Input;
-
-	auto currentPoint = args->CurrentPoint;
-	auto pointerDevice = currentPoint->PointerDevice;
-	if (pointerDevice->PointerDeviceType == PointerDeviceType::Mouse)
-	{
-		auto properties = currentPoint->Properties;
-
-		auto& mouse = m_deviceResources->Mouse();
-		mouse.SetKeysState(properties->IsLeftButtonPressed, properties->IsMiddleButtonPressed, properties->IsRightButtonPressed);
-	}
-}
-void WindowsApp::App::HandleMouseMovement(Windows::UI::Core::PointerEventArgs ^args)
-{
-	auto position = args->CurrentPoint->Position;
-	auto& mouse = m_deviceResources->Mouse();
-	mouse.SetMousePosition(position.X, position.Y);
-}
-void WindowsApp::App::OnPointerPressed(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args)
-{
-	HandleMouseButtons(args);
-
-	args->Handled = true;
-}
-void WindowsApp::App::OnPointerReleased(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args)
-{
-	HandleMouseButtons(args);
-
-	args->Handled = true;
-}
 void WindowsApp::App::OnPointerMoved(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args)
 {
-	HandleMouseButtons(args);
-	HandleMouseMovement(args);
-
-	args->Handled = true;
+	if(args->CurrentPoint->PointerDevice->PointerDeviceType == PointerDeviceType::Mouse)
+	{
+		if(m_relativeMouseHandling)
+		{
+			args->Handled = true;
+			return;
+		}
+	}
 }
-void WindowsApp::App::OnPointerWheelChanged(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args)
+void WindowsApp::App::OnMouseMoved(Windows::Devices::Input::MouseDevice ^sender, Windows::Devices::Input::MouseEventArgs ^args)
 {
+	if (!m_relativeMouseHandling)
+		return;
 
-	args->Handled = true;
+	auto& mouse = m_deviceResources->Mouse();
+	mouse.ProcessMouseDelta(args->MouseDelta.X, args->MouseDelta.Y);
 }
 
+void WindowsApp::App::RelativeMouseHandling(bool value)
+{
+	m_relativeMouseHandling = value;
 
+	CoreWindow::GetForCurrentThread()->PointerCursor = value ? nullptr : ref new CoreCursor(CoreCursorType::Arrow, 0);
+}

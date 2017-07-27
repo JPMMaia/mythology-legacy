@@ -1,26 +1,23 @@
 ﻿#include "pch.h"
 #include "Mouse.h"
 
-using namespace DirectX;
 using namespace DirectX12Engine;
 
 Mouse::Mouse() :
-m_position(XMFLOAT2(0.0f, 0.0f)),
-m_lastPosition(m_position)
-
+	m_position({0.0f, 0.0f}),
+	m_lastPosition({ 0.0f, 0.0f }),
+	m_deltaMovement({0.0f, 0.0f}),
+	m_isDirty(true)
 {
 }
 
-void Mouse::ProcessInput()
+void Mouse::Update()
 {
-	if(m_isPositionDirty)
+	if(m_isDirty)
 	{
-		m_deltaPosition.x = m_position.x - m_lastPosition.x;
-		m_deltaPosition.y = m_position.y - m_lastPosition.y;
+		m_deltaMovement = { m_position[0] - m_lastPosition[0], m_position[1] - m_lastPosition[1] };
 
 		m_lastPosition = m_position;
-
-		m_isPositionDirty = false;
 	}
 }
 
@@ -60,22 +57,16 @@ void Mouse::SetKeysState(bool left, bool middle, bool right)
 	}
 }
 
-void Mouse::SetMousePosition(float x, float y)
+void Mouse::ProcessMouseDelta(float x, float y)
 {
-	m_position.x = x;
-	m_position.y = y;
-
-	if(m_isPositionDirty)
-	{
-		m_lastPosition = m_position;
-	}
-
-	m_isPositionDirty = true;
+	m_position[0] += x;
+	m_position[1] += y;
+	m_isDirty = true;
 }
 
-const DirectX::XMFLOAT2& Mouse::DeltaPosition() const
+std::array<float, 2> Mouse::DeltaMovement() const
 {
-	return m_deltaPosition;
+	return m_deltaMovement;
 }
 
 bool Mouse::IsKeyDown(std::uint8_t key) const

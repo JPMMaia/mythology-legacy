@@ -2,6 +2,7 @@
 
 #include "Common/Events/Event.h"
 
+#include <array>
 #include <bitset>
 
 namespace DirectX12Engine
@@ -15,21 +16,21 @@ namespace DirectX12Engine
 	public:
 		Mouse();
 
-		void ProcessInput();
+		void Update();
 
 		void SetKeysState(bool left, bool middle, bool right);
-		void SetMousePosition(float x, float y);
+		void ProcessMouseDelta(float x, float y);
 
-		const DirectX::XMFLOAT2& DeltaPosition() const;
+		std::array<float, 2> DeltaMovement() const;
 
 		bool IsKeyDown(std::uint8_t key) const;
 
 	private:
 		std::bitset<3> m_keysState;
 
-		bool m_isPositionDirty = true;
-		DirectX::XMFLOAT2 m_position;
-		DirectX::XMFLOAT2 m_lastPosition;
-		DirectX::XMFLOAT2 m_deltaPosition;
+		std::array<float, 2> m_position;
+		std::array<float, 2> m_lastPosition;
+		std::array<float, 2> m_deltaMovement;
+		bool m_isDirty;
 	};
 }
