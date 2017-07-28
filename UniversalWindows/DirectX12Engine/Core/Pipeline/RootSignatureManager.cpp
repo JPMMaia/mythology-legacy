@@ -3,6 +3,7 @@
 #include "Core/Utilities/d3dx12.h"
 #include "Common/Helpers.h"
 #include "Core/Utilities/DirectXHelper.h"
+#include "Core/Textures/Samplers.h"
 
 using namespace Common;
 using namespace DirectX12Engine;
@@ -26,7 +27,8 @@ void RootSignatureManager::CreateDeviceDependentResources()
 		auto flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 		CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDescription;
-		rootSignatureDescription.Init(static_cast<UINT>(rootParameters.size()), rootParameters.data(), 0, nullptr, flags);
+		auto staticSamplers = Samplers::GetStaticSamplers();
+		rootSignatureDescription.Init(static_cast<UINT>(rootParameters.size()), rootParameters.data(), static_cast<UINT>(staticSamplers.size()), staticSamplers.data(), flags);
 
 		{
 			ComPtr<ID3DBlob> pSignature;

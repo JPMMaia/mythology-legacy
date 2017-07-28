@@ -243,6 +243,7 @@
     <ClInclude Include="Core\Shader\Shader.h" />
     <ClInclude Include="Core\Shader\ShaderBufferTypes.h" />
     <ClInclude Include="Core\Textures\RWTexture.h" />
+    <ClInclude Include="Core\Textures\Samplers.h" />
     <ClInclude Include="Core\Utilities\d3dx12.h" />
     <ClInclude Include="Core\Utilities\DirectXHelper.h" />
     <ClInclude Include="Core\Utilities\UploadBuffer.h" />
@@ -280,6 +281,7 @@
     <ClCompile Include="Core\Scene\StandardScene.cpp" />
     <ClCompile Include="Core\Shader\Shader.cpp" />
     <ClCompile Include="Core\Textures\RWTexture.cpp" />
+    <ClCompile Include="Core\Textures\Samplers.cpp" />
     <ClCompile Include="Core\Utilities\DirectXHelper.cpp" />
     <ClCompile Include="Core\Utilities\UploadBuffer.cpp" />
     <ClCompile Include="pch.cpp">
@@ -342,12 +344,33 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
     </FxCompile>
+    <FxCompile Include="Shaders\Standard\LightingPassPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shaders\Standard\LightingPassVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
     <None Include="Shaders\Common\InstanceData.hlsli" />
     <None Include="Shaders\Common\MaterialData.hlsli" />
     <None Include="Shaders\Common\PassData.hlsli" />
+    <None Include="Shaders\Common\Samplers.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

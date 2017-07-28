@@ -25,7 +25,7 @@ void Renderer::CreateDeviceDependentResources()
 	m_pipelineStateManager.CreateDeviceDependentResources(m_rootSignatureManager);
 	m_scene->CreateDeviceDependentResources();
 
-	m_rtvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 1, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
+	m_rtvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 2, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
 	m_dsvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 1, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
 }
 void Renderer::CreateWindowSizeDependentResources()
@@ -40,24 +40,45 @@ void Renderer::CreateWindowSizeDependentResources()
 	{
 		m_rtvDescriptorHeap.Clear();
 
-		auto format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		D3D12_CLEAR_VALUE clearValue = {};
-		clearValue.Format = format;
-		clearValue.Color[0] = 0.0f;
-		clearValue.Color[1] = 0.0f;
-		clearValue.Color[2] = 0.0f;
-		clearValue.Color[3] = 1.0f;
 
-		m_GBuffer = RWTexture();
-		m_GBuffer.CreateWindowSizeDependentResources(
-			*m_deviceResources.get(), 
-			static_cast<UINT64>(outputSize.x), 
-			static_cast<UINT64>(outputSize.y), 
-			format,
-			D3D12_RESOURCE_STATE_COPY_SOURCE,
-			&clearValue,
-			D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET);
-		m_GBuffer.CreateRenderTargetView(*m_deviceResources.get(), m_rtvDescriptorHeap, "RTV");
+		// Color:
+		{
+			clearValue.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+			clearValue.Color[0] = 0.0f;
+			clearValue.Color[1] = 0.0f;
+			clearValue.Color[2] = 0.0f;
+			clearValue.Color[3] = 1.0f;
+
+			m_albedo = RWTexture();
+			m_albedo.CreateWindowSizeDependentResources(
+				*m_deviceResources.get(),
+				static_cast<UINT64>(outputSize.x),
+				static_cast<UINT64>(outputSize.y),
+				clearValue.Format,
+				D3D12_RESOURCE_STATE_COPY_SOURCE,
+				&clearValue,
+				D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
+			);
+			m_albedo.CreateRenderTargetView(*m_deviceResources.get(), m_rtvDescriptorHeap, "RTV");
+		}
+
+		// Normals:
+		{
+			/*clearValue.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+			m_normals = RWTexture();
+			m_normals.CreateWindowSizeDependentResources(
+				*m_deviceResources.get(),
+				static_cast<UINT64>(outputSize.x),
+				static_cast<UINT64>(outputSize.y),
+				clearValue.Format,
+				D3D12_RESOURCE_STATE_COPY_SOURCE,
+				&clearValue,
+				D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
+			);*/
+			
+		}
 	}
 
 	// Fill DSV descriptor heap:
@@ -147,7 +168,7 @@ void Renderer::BeginRender()
 
 	// Indicate that the g-buffer will be used as render target:
 	{
-		auto renderTarget = m_GBuffer.GetResource();
+		auto renderTarget = m_albedo.GetResource();
 		auto renderTargetResourceBarrier =
 			CD3DX12_RESOURCE_BARRIER::Transition(renderTarget, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
 		commandList->ResourceBarrier(1, &renderTargetResourceBarrier);
@@ -155,7 +176,7 @@ void Renderer::BeginRender()
 
 	// Clear and set render targets:
 	{
-		auto renderTargetView = m_GBuffer.CPUDescriptorHandle("RTV");
+		auto renderTargetView = m_albedo.CPUDescriptorHandle("RTV");
 		auto depthStencilView = m_depthStencil.CPUDescriptorHandle("DSV");
 
 		// Set render targets:
@@ -174,7 +195,7 @@ void Renderer::EndRender()
 
 	// Indicate that the g-buffer will be used to as copy source:
 	{
-		auto renderTarget = m_GBuffer.GetResource();
+		auto renderTarget = m_albedo.GetResource();
 		auto presentResourceBarrier =
 			CD3DX12_RESOURCE_BARRIER::Transition(renderTarget, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE);
 		commandList->ResourceBarrier(1, &presentResourceBarrier);
@@ -189,7 +210,7 @@ void Renderer::EndRender()
 	}
 
 	// Copy data from g-buffer to render target:
-	commandList->CopyResource(m_deviceResources->GetRenderTarget(), m_GBuffer.GetResource());
+	commandList->CopyResource(m_deviceResources->GetRenderTarget(), m_albedo.GetResource());
 
 	// Indicate that the back buffer will be used presented when the command list is executed:
 	{

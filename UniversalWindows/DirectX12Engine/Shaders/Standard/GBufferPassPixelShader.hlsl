@@ -5,12 +5,19 @@ struct PixelInput
 	float4 PositionH : SV_POSITION;
 	nointerpolation uint MaterialIndex : MATERIAL_INDEX;
 };
-
-StructuredBuffer<MaterialData> gMaterialData : register(t1, space1);
-
-float4 main(PixelInput input) : SV_TARGET
+struct PixelOutput
 {
-	MaterialData materialData = gMaterialData[input.MaterialIndex];
+	float4 Albedo : SV_TARGET0;
+};
 
-	return materialData.BaseColor;
+StructuredBuffer<MaterialData> g_materialData : register(t1, space1);
+
+PixelOutput main(PixelInput input)
+{
+	PixelOutput output;
+
+	MaterialData materialData = g_materialData[input.MaterialIndex];
+	output.Albedo = materialData.BaseColor;
+
+	return output;
 }

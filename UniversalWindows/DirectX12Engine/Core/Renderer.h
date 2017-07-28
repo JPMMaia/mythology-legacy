@@ -41,7 +41,8 @@ namespace DirectX12Engine
 		DescriptorHeap m_dsvDescriptorHeap;
 
 		std::shared_ptr<GraphicsEngine::IScene> m_scene;
-		RWTexture m_GBuffer;
+		RWTexture m_albedo;
+		RWTexture m_normals;
 		RWTexture m_depthStencil;
 	};
 }

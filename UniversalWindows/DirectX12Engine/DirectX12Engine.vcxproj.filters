@@ -37,6 +37,7 @@
     <ClCompile Include="Core\D3DBase.cpp" />
     <ClCompile Include="Core\Textures\RWTexture.cpp" />
     <ClCompile Include="Core\Resources\DescriptorHeap.cpp" />
+    <ClCompile Include="Core\Textures\Samplers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -75,17 +76,21 @@
     <ClInclude Include="Core\D3DBase.h" />
     <ClInclude Include="Core\Textures\RWTexture.h" />
     <ClInclude Include="Core\Resources\DescriptorHeap.h" />
+    <ClInclude Include="Core\Textures\Samplers.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\SamplePixelShader.hlsl" />
     <FxCompile Include="Shaders\SampleVertexShader.hlsl" />
     <FxCompile Include="Shaders\Standard\GBufferPassVertexShader.hlsl" />
     <FxCompile Include="Shaders\Standard\GBufferPassPixelShader.hlsl" />
+    <FxCompile Include="Shaders\Standard\LightingPassVertexShader.hlsl" />
+    <FxCompile Include="Shaders\Standard\LightingPassPixelShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
     <None Include="Shaders\Common\PassData.hlsli" />
     <None Include="Shaders\Common\InstanceData.hlsli" />
     <None Include="Shaders\Common\MaterialData.hlsli" />
+    <None Include="Shaders\Common\Samplers.hlsli" />
   </ItemGroup>
 </Project>
