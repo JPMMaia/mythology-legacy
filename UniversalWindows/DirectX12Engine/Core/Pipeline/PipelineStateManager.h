@@ -8,6 +8,8 @@
 
 namespace DirectX12Engine
 {
+	class Renderer;
+
 	class PipelineStateManager
 	{
 	public:

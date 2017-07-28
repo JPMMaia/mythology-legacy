@@ -17,9 +17,13 @@ void DescriptorHeap::CreateDeviceDependentResources(const DeviceResources& devic
 	descriptorHeapDescription.Type = heapType;
 	descriptorHeapDescription.Flags = heapFlags;
 	descriptorHeapDescription.NodeMask = 0;
-
+	
 	auto device = deviceResources.GetD3DDevice();
 	DX::ThrowIfFailed(device->CreateDescriptorHeap(&descriptorHeapDescription, IID_PPV_ARGS(m_descriptorHeap.GetAddressOf())));
+}
+void DescriptorHeap::Clear()
+{
+	m_count = 0;
 }
 
 INT DescriptorHeap::CreateConstantBufferView(const DeviceResources& deviceResources, const D3D12_CONSTANT_BUFFER_VIEW_DESC* description)
@@ -36,7 +40,7 @@ INT DescriptorHeap::CreateConstantBufferView(const DeviceResources& deviceResour
 }
 INT DescriptorHeap::CreateDepthStencilView(const DeviceResources& deviceResources, ID3D12Resource* resource, const D3D12_DEPTH_STENCIL_VIEW_DESC* description)
 {
-	assert(m_type == D3D12_DESCRIPTOR_HEAP_TYPE_RTV && "Can't create a DSV on this type of heap!");
+	assert(m_type == D3D12_DESCRIPTOR_HEAP_TYPE_DSV && "Can't create a DSV on this type of heap!");
 	assert(m_count < m_capacity && "Descriptor heap is full!");
 
 	auto heapIndex = static_cast<INT>(m_count++);

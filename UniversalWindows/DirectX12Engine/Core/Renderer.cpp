@@ -24,19 +24,69 @@ void Renderer::CreateDeviceDependentResources()
 	m_rootSignatureManager.CreateDeviceDependentResources();
 	m_pipelineStateManager.CreateDeviceDependentResources(m_rootSignatureManager);
 	m_scene->CreateDeviceDependentResources();
+
 	m_rtvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 1, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
+	m_dsvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 1, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
 }
 void Renderer::CreateWindowSizeDependentResources()
 {
 	auto viewport = m_deviceResources->GetScreenViewport();
 	m_scissorRect = { 0, 0, static_cast<LONG>(viewport.Width), static_cast<LONG>(viewport.Height) };
 	m_scene->CreateWindowSizeDependentResources();
+	
+	auto outputSize = m_deviceResources->GetOutputSize();
+	
+	// Fill RTV descriptor heap:
+	{
+		m_rtvDescriptorHeap.Clear();
+
+		auto format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		D3D12_CLEAR_VALUE clearValue = {};
+		clearValue.Format = format;
+		clearValue.Color[0] = 0.0f;
+		clearValue.Color[1] = 0.0f;
+		clearValue.Color[2] = 0.0f;
+		clearValue.Color[3] = 1.0f;
+
+		m_GBuffer = RWTexture();
+		m_GBuffer.CreateWindowSizeDependentResources(
+			*m_deviceResources.get(), 
+			static_cast<UINT64>(outputSize.x), 
+			static_cast<UINT64>(outputSize.y), 
+			format,
+			D3D12_RESOURCE_STATE_COPY_SOURCE,
+			&clearValue,
+			D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET);
+		m_GBuffer.CreateRenderTargetView(*m_deviceResources.get(), m_rtvDescriptorHeap, "RTV");
+	}
+
+	// Fill DSV descriptor heap:
+	{
+		m_dsvDescriptorHeap.Clear();
+
+		auto format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		D3D12_CLEAR_VALUE clearValue = {};
+		clearValue.Format = format;
+		clearValue.DepthStencil.Depth = 1.0f;
+		clearValue.DepthStencil.Stencil = 0;
+
+		m_depthStencil = RWTexture();
+		m_depthStencil.CreateWindowSizeDependentResources(
+			*m_deviceResources.get(), 
+			static_cast<UINT64>(outputSize.x), 
+			static_cast<UINT64>(outputSize.y), 
+			format,
+			D3D12_RESOURCE_STATE_DEPTH_WRITE,
+			&clearValue,
+			D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
+		m_depthStencil.CreateDepthStencilView(*m_deviceResources.get(), m_dsvDescriptorHeap, "DSV");
+	}
+	
 }
 
 void Renderer::SaveState()
 {
 }
-
 void Renderer::LoadState()
 {
 }
@@ -95,37 +145,58 @@ void Renderer::BeginRender()
 		commandList->RSSetScissorRects(1, &m_scissorRect);
 	}
 
-	// Indicate this resource will be in use as a render target:
+	// Indicate that the g-buffer will be used as render target:
 	{
+		auto renderTarget = m_GBuffer.GetResource();
 		auto renderTargetResourceBarrier =
-			CD3DX12_RESOURCE_BARRIER::Transition(m_deviceResources->GetRenderTarget(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+			CD3DX12_RESOURCE_BARRIER::Transition(renderTarget, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
 		commandList->ResourceBarrier(1, &renderTargetResourceBarrier);
 	}
 
 	// Clear and set render targets:
 	{
-		auto renderTargetView = m_deviceResources->GetRenderTargetView();
-		auto depthStencilView = m_deviceResources->GetDepthStencilView();
+		auto renderTargetView = m_GBuffer.CPUDescriptorHandle("RTV");
+		auto depthStencilView = m_depthStencil.CPUDescriptorHandle("DSV");
+
+		// Set render targets:
+		commandList->OMSetRenderTargets(1, &renderTargetView, false, &depthStencilView);
 
 		// Clear render target view:
 		commandList->ClearRenderTargetView(renderTargetView, Colors::Black, 0, nullptr);
 
 		// Clear depth stencil view:
 		commandList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-
-		// Set render targets:
-		commandList->OMSetRenderTargets(1, &renderTargetView, false, &depthStencilView);
 	}
 }
 void Renderer::EndRender()
 {
 	auto commandList = m_commandListManager.GetGraphicsCommandList(0);
 
-	// Indicate that the render target will now be used to present when the command list is done executing:
+	// Indicate that the g-buffer will be used to as copy source:
 	{
-		CD3DX12_RESOURCE_BARRIER presentResourceBarrier =
-			CD3DX12_RESOURCE_BARRIER::Transition(m_deviceResources->GetRenderTarget(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+		auto renderTarget = m_GBuffer.GetResource();
+		auto presentResourceBarrier =
+			CD3DX12_RESOURCE_BARRIER::Transition(renderTarget, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE);
 		commandList->ResourceBarrier(1, &presentResourceBarrier);
+	}
+
+	// Indicate that the back buffer will be used as copy destination:
+	{
+		auto renderTarget = m_deviceResources->GetRenderTarget();
+		auto renderTargetResourceBarrier =
+			CD3DX12_RESOURCE_BARRIER::Transition(renderTarget, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_COPY_DEST);
+		commandList->ResourceBarrier(1, &renderTargetResourceBarrier);
+	}
+
+	// Copy data from g-buffer to render target:
+	commandList->CopyResource(m_deviceResources->GetRenderTarget(), m_GBuffer.GetResource());
+
+	// Indicate that the back buffer will be used presented when the command list is executed:
+	{
+		auto renderTarget = m_deviceResources->GetRenderTarget();
+		auto renderTargetResourceBarrier =
+			CD3DX12_RESOURCE_BARRIER::Transition(renderTarget, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PRESENT);
+		commandList->ResourceBarrier(1, &renderTargetResourceBarrier);
 	}
 
 	// Close command list:

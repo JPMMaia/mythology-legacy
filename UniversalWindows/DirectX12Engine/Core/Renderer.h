@@ -8,6 +8,7 @@
 #include "Resources/DescriptorHeap.h"
 #include "Utilities/UploadBuffer.h"
 #include "Command/CommandListManager.h"
+#include "Textures/RWTexture.h"
 
 namespace DirectX12Engine
 {
@@ -36,7 +37,11 @@ namespace DirectX12Engine
 		PipelineStateManager m_pipelineStateManager;
 		CommandListManager m_commandListManager;
 		D3D12_RECT m_scissorRect;
-		std::shared_ptr<GraphicsEngine::IScene> m_scene;
 		DescriptorHeap m_rtvDescriptorHeap;
+		DescriptorHeap m_dsvDescriptorHeap;
+
+		std::shared_ptr<GraphicsEngine::IScene> m_scene;
+		RWTexture m_GBuffer;
+		RWTexture m_depthStencil;
 	};
 }

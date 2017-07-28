@@ -5,14 +5,27 @@
 
 using namespace DirectX12Engine;
 
-RWTexture::RWTexture(const DeviceResources& deviceResources, UINT64 width, UINT64 height, DXGI_FORMAT format) :
-	m_width(width),
-	m_height(height),
-	m_format(format)
+void RWTexture::CreateWindowSizeDependentResources(const DeviceResources& deviceResources, UINT64 width, UINT64 height, DXGI_FORMAT format, D3D12_RESOURCE_STATES initialResourceState, D3D12_CLEAR_VALUE* optimizedClearValue, D3D12_RESOURCE_FLAGS resourceFlags)
 {
-	CreateResource(deviceResources, width, height, format);
+	m_width = width;
+	m_height = height;
+	m_format = format;
+
+	CreateResource(deviceResources, width, height, format, initialResourceState, optimizedClearValue, resourceFlags);
 }
 
+void RWTexture::CreateDepthStencilView(const DeviceResources& deviceResources, DescriptorHeap& descriptorHeap, const std::string& name)
+{
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDescription = {};
+	dsvDescription.Format = m_format;
+	dsvDescription.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	dsvDescription.Flags = D3D12_DSV_FLAG_NONE;
+	dsvDescription.Texture2D.MipSlice = 0;
+
+	auto heapIndex = descriptorHeap.CreateDepthStencilView(deviceResources, m_resource.Get(), &dsvDescription);
+	m_cpuDescriptorHandles.emplace(name, CD3DX12_CPU_DESCRIPTOR_HANDLE(descriptorHeap.Get()->GetCPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize()));
+	m_gpuDescriptorHandles.emplace(name, CD3DX12_GPU_DESCRIPTOR_HANDLE(descriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize()));
+}
 void RWTexture::CreateRenderTargetView(const DeviceResources& deviceResources, DescriptorHeap& descriptorHeap, const std::string& name)
 {
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDescription = {};
@@ -49,7 +62,21 @@ void RWTexture::CreateUnorderedAccessView(const DeviceResources& deviceResources
 	m_gpuDescriptorHandles.emplace(name, CD3DX12_GPU_DESCRIPTOR_HANDLE(descriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize()));
 }
 
-void RWTexture::CreateResource(const DeviceResources& deviceResources, UINT64 width, UINT64 height, DXGI_FORMAT format)
+D3D12_CPU_DESCRIPTOR_HANDLE RWTexture::CPUDescriptorHandle(const std::string& name) const
+{
+	return m_cpuDescriptorHandles.at(name);
+}
+D3D12_GPU_DESCRIPTOR_HANDLE RWTexture::GPUDescriptorHandle(const std::string& name) const
+{
+	return m_gpuDescriptorHandles.at(name);
+}
+
+ID3D12Resource* RWTexture::GetResource() const
+{
+	return m_resource.Get();
+}
+
+void RWTexture::CreateResource(const DeviceResources& deviceResources, UINT64 width, UINT64 height, DXGI_FORMAT format, D3D12_RESOURCE_STATES initialResourceState, D3D12_CLEAR_VALUE* optimizedClearValue, D3D12_RESOURCE_FLAGS resourceFlags)
 {
 	auto heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 
@@ -64,14 +91,14 @@ void RWTexture::CreateResource(const DeviceResources& deviceResources, UINT64 wi
 	resourceDescription.SampleDesc.Count = 1;
 	resourceDescription.SampleDesc.Quality = 0;
 	resourceDescription.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-	resourceDescription.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+	resourceDescription.Flags = resourceFlags;
 
 	deviceResources.GetD3DDevice()->CreateCommittedResource(
 		&heapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&resourceDescription,
-		D3D12_RESOURCE_STATE_COMMON,
-		nullptr,
+		initialResourceState,
+		optimizedClearValue,
 		IID_PPV_ARGS(m_resource.GetAddressOf())
 	);
 }

@@ -14,6 +14,7 @@ namespace DirectX12Engine
 
 	public:
 		void CreateDeviceDependentResources(const DeviceResources& deviceResources, size_t capacity, D3D12_DESCRIPTOR_HEAP_TYPE heapType, D3D12_DESCRIPTOR_HEAP_FLAGS heapFlags);
+		void Clear();
 
 		INT CreateConstantBufferView(const DeviceResources& deviceResources, const D3D12_CONSTANT_BUFFER_VIEW_DESC* description);
 		INT CreateDepthStencilView(const DeviceResources& deviceResources, ID3D12Resource* resource, const D3D12_DEPTH_STENCIL_VIEW_DESC* description);

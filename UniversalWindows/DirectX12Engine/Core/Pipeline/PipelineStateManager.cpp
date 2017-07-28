@@ -2,6 +2,7 @@
 #include "PipelineStateManager.h"
 #include "Common/Helpers.h"
 #include "Core/Utilities/DirectXHelper.h"
+
 #include <filesystem>
 
 using namespace Common;
@@ -58,10 +59,10 @@ void PipelineStateManager::InitializePipelineStateObjects(const RootSignatureMan
 		state.SampleMask = UINT_MAX;
 		state.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 		state.NumRenderTargets = 1;
-		state.RTVFormats[0] = m_deviceResources->GetBackBufferFormat();
-		state.DSVFormat = m_deviceResources->GetDepthBufferFormat();
-		state.SampleDesc.Count = m_deviceResources->GetSampleCount();
-		state.SampleDesc.Quality = m_deviceResources->GetSampleQuality();
+		state.RTVFormats[0] = DXGI_FORMAT_B8G8R8A8_UNORM;
+		state.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		state.SampleDesc.Count = 1;
+		state.SampleDesc.Quality = 0;
 
 		Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState;
 		DX::ThrowIfFailed(d3dDevice->CreateGraphicsPipelineState(&state, IID_PPV_ARGS(&pipelineState)));
