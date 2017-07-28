@@ -6,7 +6,7 @@ struct PixelInput
 	float2 TextureCoordinates : TEXCOORD0;
 };
 
-Texture2D g_albedo;
+Texture2D g_albedo : register(t0, space0);;
 
 float4 main(PixelInput input) : SV_TARGET
 {

@@ -5,8 +5,10 @@ namespace Common
 	class Timer;
 }
 
-namespace GraphicsEngine
+namespace DirectX12Engine
 {
+	enum class RenderLayer;
+
 	class IScene
 	{
 	public:
@@ -37,6 +39,6 @@ namespace GraphicsEngine
 
 		virtual void ProcessInput() = 0;
 		virtual void FrameUpdate(const Common::Timer& timer) = 0;
-		virtual bool Render(const Common::Timer& timer) = 0;
+		virtual bool Render(const Common::Timer& timer, RenderLayer renderLayer) = 0;
 	};
 }

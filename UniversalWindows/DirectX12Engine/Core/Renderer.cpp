@@ -3,6 +3,7 @@
 #include "Scene/StandardScene.h"
 #include "Utilities/DirectXHelper.h"
 #include "Utilities/UploadBuffer.h"
+#include "Scene/RenderLayers.h"
 
 using namespace Common;
 using namespace DirectX;
@@ -25,8 +26,9 @@ void Renderer::CreateDeviceDependentResources()
 	m_pipelineStateManager.CreateDeviceDependentResources(m_rootSignatureManager);
 	m_scene->CreateDeviceDependentResources();
 
-	m_rtvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 2, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
 	m_dsvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 1, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
+	m_rtvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 2, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
+	m_srvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 1, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
 }
 void Renderer::CreateWindowSizeDependentResources()
 {
@@ -36,13 +38,15 @@ void Renderer::CreateWindowSizeDependentResources()
 	
 	auto outputSize = m_deviceResources->GetOutputSize();
 	
-	// Fill RTV descriptor heap:
-	{
-		m_rtvDescriptorHeap.Clear();
+	m_dsvDescriptorHeap.Clear();
+	m_rtvDescriptorHeap.Clear();
+	m_srvDescriptorHeap.Clear();
 
+	// G-Buffer:
+	{
 		D3D12_CLEAR_VALUE clearValue = {};
 
-		// Color:
+		// Albedo:
 		{
 			clearValue.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 			clearValue.Color[0] = 0.0f;
@@ -56,11 +60,12 @@ void Renderer::CreateWindowSizeDependentResources()
 				static_cast<UINT64>(outputSize.x),
 				static_cast<UINT64>(outputSize.y),
 				clearValue.Format,
-				D3D12_RESOURCE_STATE_COPY_SOURCE,
+				D3D12_RESOURCE_STATE_RENDER_TARGET,
 				&clearValue,
 				D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 			);
-			m_albedo.CreateRenderTargetView(*m_deviceResources.get(), m_rtvDescriptorHeap, "RTV");
+			m_albedo.CreateRenderTargetView(*m_deviceResources.get(), m_rtvDescriptorHeap, "Albedo");
+			m_albedo.CreateShaderResourceView(*m_deviceResources.get(), m_srvDescriptorHeap, "Albedo");
 		}
 
 		// Normals:
@@ -83,8 +88,6 @@ void Renderer::CreateWindowSizeDependentResources()
 
 	// Fill DSV descriptor heap:
 	{
-		m_dsvDescriptorHeap.Clear();
-
 		auto format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		D3D12_CLEAR_VALUE clearValue = {};
 		clearValue.Format = format;
@@ -100,7 +103,7 @@ void Renderer::CreateWindowSizeDependentResources()
 			D3D12_RESOURCE_STATE_DEPTH_WRITE,
 			&clearValue,
 			D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
-		m_depthStencil.CreateDepthStencilView(*m_deviceResources.get(), m_dsvDescriptorHeap, "DSV");
+		m_depthStencil.CreateDepthStencilView(*m_deviceResources.get(), m_dsvDescriptorHeap, "DepthStencil");
 	}
 	
 }
@@ -127,16 +130,57 @@ bool Renderer::Render(const Common::Timer& timer)
 
 	auto commandList = m_commandListManager.GetGraphicsCommandList(0);
 
-	PIXBeginEvent(commandList, 0, L"Draw:");
-	{
-		// Set the graphics root signature:
-		m_rootSignatureManager.SetGraphicsRootSignature(commandList, "RootSignature");
+	// Set the graphics root signature:
+	m_rootSignatureManager.SetGraphicsRootSignature(commandList, "RootSignature");
 
+	// Clear and set render targets for G-Buffer pass:
+	PIXBeginEvent(commandList, 0, L"Begin G-Buffer Pass");
+	{
+		auto renderTargetView = m_albedo.CPUDescriptorHandle("Albedo");
+		auto depthStencilView = m_depthStencil.CPUDescriptorHandle("DepthStencil");
+
+		// Set render targets:
+		commandList->OMSetRenderTargets(1, &renderTargetView, false, &depthStencilView);
+
+		// Clear render target view:
+		commandList->ClearRenderTargetView(renderTargetView, Colors::Black, 0, nullptr);
+
+		// Clear depth stencil view:
+		commandList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	}
+	PIXEndEvent(commandList);
+
+	PIXBeginEvent(commandList, 0, L"Draw");
+	{
 		// Set pipeline state:
 		m_pipelineStateManager.SetPipelineState(commandList, "GBufferPass");
 
 		// Render scene:
-		m_scene->Render(timer);
+		m_scene->Render(timer, RenderLayer::Opaque);
+	}
+	PIXEndEvent(commandList);
+
+	PIXBeginEvent(commandList, 0, L"Begin Lighting Pass");
+	{
+		// Set render targets for Lighting Pass:
+		auto renderTargetView = m_deviceResources->GetRenderTargetView();
+		auto depthStencilView = m_depthStencil.CPUDescriptorHandle("DepthStencil");
+		commandList->OMSetRenderTargets(1, &renderTargetView, false, &depthStencilView);
+
+		// Set textures:
+		std::array<ID3D12DescriptorHeap*, 1> descriptorHeaps = { m_srvDescriptorHeap.Get() };
+		commandList->SetDescriptorHeaps(static_cast<UINT>(descriptorHeaps.size()), descriptorHeaps.data());
+		commandList->SetGraphicsRootDescriptorTable(3, m_srvDescriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart());
+	}
+	PIXEndEvent(commandList);
+
+	PIXBeginEvent(commandList, 0, L"Draw");
+	{
+		// Set pipeline state:
+		m_pipelineStateManager.SetPipelineState(commandList, "LightingPass");
+
+		// Render scene:
+		m_scene->Render(timer, RenderLayer::LightingPass);
 	}
 	PIXEndEvent(commandList);
 
@@ -161,62 +205,28 @@ void Renderer::BeginRender()
 
 	// Set the viewport and scissor rectangle.
 	{
-		D3D12_VIEWPORT viewport = m_deviceResources->GetScreenViewport();
+		auto viewport = m_deviceResources->GetScreenViewport();
 		commandList->RSSetViewports(1, &viewport);
 		commandList->RSSetScissorRects(1, &m_scissorRect);
 	}
 
-	// Indicate that the g-buffer will be used as render target:
+	// Indicate that the back buffer will be used as render target:
 	{
-		auto renderTarget = m_albedo.GetResource();
+		auto renderTarget = m_deviceResources->GetRenderTarget();
 		auto renderTargetResourceBarrier =
-			CD3DX12_RESOURCE_BARRIER::Transition(renderTarget, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+			CD3DX12_RESOURCE_BARRIER::Transition(renderTarget, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 		commandList->ResourceBarrier(1, &renderTargetResourceBarrier);
-	}
-
-	// Clear and set render targets:
-	{
-		auto renderTargetView = m_albedo.CPUDescriptorHandle("RTV");
-		auto depthStencilView = m_depthStencil.CPUDescriptorHandle("DSV");
-
-		// Set render targets:
-		commandList->OMSetRenderTargets(1, &renderTargetView, false, &depthStencilView);
-
-		// Clear render target view:
-		commandList->ClearRenderTargetView(renderTargetView, Colors::Black, 0, nullptr);
-
-		// Clear depth stencil view:
-		commandList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 	}
 }
 void Renderer::EndRender()
 {
 	auto commandList = m_commandListManager.GetGraphicsCommandList(0);
 
-	// Indicate that the g-buffer will be used to as copy source:
-	{
-		auto renderTarget = m_albedo.GetResource();
-		auto presentResourceBarrier =
-			CD3DX12_RESOURCE_BARRIER::Transition(renderTarget, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE);
-		commandList->ResourceBarrier(1, &presentResourceBarrier);
-	}
-
-	// Indicate that the back buffer will be used as copy destination:
+	// Indicate that the back buffer will be presented when the command list is executed:
 	{
 		auto renderTarget = m_deviceResources->GetRenderTarget();
 		auto renderTargetResourceBarrier =
-			CD3DX12_RESOURCE_BARRIER::Transition(renderTarget, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_COPY_DEST);
-		commandList->ResourceBarrier(1, &renderTargetResourceBarrier);
-	}
-
-	// Copy data from g-buffer to render target:
-	commandList->CopyResource(m_deviceResources->GetRenderTarget(), m_albedo.GetResource());
-
-	// Indicate that the back buffer will be used presented when the command list is executed:
-	{
-		auto renderTarget = m_deviceResources->GetRenderTarget();
-		auto renderTargetResourceBarrier =
-			CD3DX12_RESOURCE_BARRIER::Transition(renderTarget, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PRESENT);
+			CD3DX12_RESOURCE_BARRIER::Transition(renderTarget, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 		commandList->ResourceBarrier(1, &renderTargetResourceBarrier);
 	}
 

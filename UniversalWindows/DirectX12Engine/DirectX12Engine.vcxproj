@@ -238,6 +238,7 @@
     <ClInclude Include="Core\Resources\DescriptorHeap.h" />
     <ClInclude Include="Core\Resources\GPUAllocator.h" />
     <ClInclude Include="Core\Sample3DSceneRenderer.h" />
+    <ClInclude Include="Core\Scene\RenderLayers.h" />
     <ClInclude Include="Core\Scene\StandardScene.h" />
     <ClInclude Include="Core\ShaderStructures.h" />
     <ClInclude Include="Core\Shader\Shader.h" />

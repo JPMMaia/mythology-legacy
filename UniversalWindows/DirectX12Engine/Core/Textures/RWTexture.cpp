@@ -99,6 +99,7 @@ void RWTexture::CreateResource(const DeviceResources& deviceResources, UINT64 wi
 		&resourceDescription,
 		initialResourceState,
 		optimizedClearValue,
-		IID_PPV_ARGS(m_resource.GetAddressOf())
+		IID_PPV_ARGS(m_resource.GetAddressOf()
+		)
 	);
 }

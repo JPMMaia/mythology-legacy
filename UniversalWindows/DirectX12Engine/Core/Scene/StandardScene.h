@@ -15,7 +15,9 @@
 
 namespace DirectX12Engine
 {
-	class StandardScene : public GraphicsEngine::IScene
+	enum class RenderLayer;
+
+	class StandardScene : public IScene
 	{
 	public:
 		StandardScene(const std::shared_ptr<DeviceResources>& deviceResources, CommandListManager& commandListManager);
@@ -30,7 +32,7 @@ namespace DirectX12Engine
 		void ProcessInput() override;
 		void FrameUpdate(const Common::Timer& timer) override;
 
-		bool Render(const Common::Timer& timer) override;
+		bool Render(const Common::Timer& timer, RenderLayer renderLayer) override;
 
 		StandardRenderItem& GetCubeRenderItem();
 
@@ -52,5 +54,6 @@ namespace DirectX12Engine
 		GPUUploadBuffer<ShaderBufferTypes::PassData> m_passGPUBuffer;
 
 		StandardRenderItem m_cubeRenderItem;
+		StandardRenderItem m_rectangleRenderItem;
 	};
 }

@@ -77,6 +77,7 @@
     <ClInclude Include="Core\Textures\RWTexture.h" />
     <ClInclude Include="Core\Resources\DescriptorHeap.h" />
     <ClInclude Include="Core\Textures\Samplers.h" />
+    <ClInclude Include="Core\Scene\RenderLayers.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\SamplePixelShader.hlsl" />

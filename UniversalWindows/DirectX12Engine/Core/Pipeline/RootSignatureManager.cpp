@@ -19,10 +19,16 @@ void RootSignatureManager::CreateDeviceDependentResources()
 	auto d3dDevice = m_deviceResources->GetD3DDevice();
 
 	{
-		std::array<CD3DX12_ROOT_PARAMETER, 3> rootParameters;		
+		std::array<CD3DX12_ROOT_PARAMETER, 4> rootParameters;		
 		rootParameters[0].InitAsShaderResourceView(0, 1);
 		rootParameters[1].InitAsShaderResourceView(1, 1);
 		rootParameters[2].InitAsConstantBufferView(0);
+
+		std::array<D3D12_DESCRIPTOR_RANGE, 1> descriptorRanges = 
+		{ 
+			CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0)
+		};
+		rootParameters[3].InitAsDescriptorTable(static_cast<UINT>(descriptorRanges.size()), descriptorRanges.data());
 
 		auto flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 

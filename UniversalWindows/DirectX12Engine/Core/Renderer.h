@@ -39,8 +39,9 @@ namespace DirectX12Engine
 		D3D12_RECT m_scissorRect;
 		DescriptorHeap m_rtvDescriptorHeap;
 		DescriptorHeap m_dsvDescriptorHeap;
+		DescriptorHeap m_srvDescriptorHeap;
 
-		std::shared_ptr<GraphicsEngine::IScene> m_scene;
+		std::shared_ptr<IScene> m_scene;
 		RWTexture m_albedo;
 		RWTexture m_normals;
 		RWTexture m_depthStencil;

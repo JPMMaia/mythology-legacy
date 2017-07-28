@@ -14,5 +14,5 @@ void StandardRenderItem::Render(ID3D12GraphicsCommandList* commandList) const
 {
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	m_mesh->Render(commandList, m_submeshName);
+	m_mesh->Render(commandList, m_submeshName, 1);
 }

@@ -31,24 +31,41 @@ ID3D12PipelineState* PipelineStateManager::GetPipelineState(const std::string& n
 void PipelineStateManager::InitializeShadersAndInputLayout()
 {
 	{
-		std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout =
+		std::vector<D3D12_INPUT_ELEMENT_DESC> positionInputLayout =
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		};
-		m_inputLayouts.emplace("PositionInputLayout", std::move(inputLayout));
+		m_inputLayouts.emplace("Position", std::move(positionInputLayout));
+
+		std::vector<D3D12_INPUT_ELEMENT_DESC> positionTextureCoordinatesInputLayout =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		};
+		m_inputLayouts.emplace("PositionTextureCoordinates", std::move(positionTextureCoordinatesInputLayout));
 	}
 
-	m_shaders["GBufferPassVS"] = Shader::CompileShader(L"Shaders/Standard/GBufferPassVertexShader.hlsl", nullptr, "main", "vs_5_1");
-	m_shaders["GBufferPassPS"] = Shader::CompileShader(L"Shaders/Standard/GBufferPassPixelShader.hlsl", nullptr, "main", "ps_5_1");
+	// GBufferPass:
+	{
+		m_shaders["GBufferPassVS"] = Shader::CompileShader(L"Shaders/Standard/GBufferPassVertexShader.hlsl", nullptr, "main", "vs_5_1");
+		m_shaders["GBufferPassPS"] = Shader::CompileShader(L"Shaders/Standard/GBufferPassPixelShader.hlsl", nullptr, "main", "ps_5_1");
+	}
+
+	// LightingPass:
+	{
+		m_shaders["LightingPassVS"] = Shader::CompileShader(L"Shaders/Standard/LightingPassVertexShader.hlsl", nullptr, "main", "vs_5_1");
+		m_shaders["LightingPassPS"] = Shader::CompileShader(L"Shaders/Standard/LightingPassPixelShader.hlsl", nullptr, "main", "ps_5_1");
+	}
 }
 
 void PipelineStateManager::InitializePipelineStateObjects(const RootSignatureManager& rootSignatureManager)
 {
 	auto d3dDevice = m_deviceResources->GetD3DDevice();
 
+	// GBufferPass:
 	{
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC state = {};
-		const auto& inputLayout = m_inputLayouts.at("PositionInputLayout");
+		const auto& inputLayout = m_inputLayouts.at("Position");
 		state.InputLayout = { inputLayout.data(), static_cast<uint32_t>(inputLayout.size()) };
 		state.pRootSignature = rootSignatureManager.GetRootSignature("RootSignature");
 		state.VS = m_shaders["GBufferPassVS"].GetShaderBytecode();
@@ -67,5 +84,29 @@ void PipelineStateManager::InitializePipelineStateObjects(const RootSignatureMan
 		Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState;
 		DX::ThrowIfFailed(d3dDevice->CreateGraphicsPipelineState(&state, IID_PPV_ARGS(&pipelineState)));
 		m_pipelineStateObjects.emplace("GBufferPass", std::move(pipelineState));
+	}
+
+	// LightingPass:
+	{
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC state = {};
+		const auto& inputLayout = m_inputLayouts.at("PositionTextureCoordinates");
+		state.InputLayout = { inputLayout.data(), static_cast<uint32_t>(inputLayout.size()) };
+		state.pRootSignature = rootSignatureManager.GetRootSignature("RootSignature");
+		state.VS = m_shaders["LightingPassVS"].GetShaderBytecode();
+		state.PS = m_shaders["LightingPassPS"].GetShaderBytecode();
+		state.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		state.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+		state.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+		state.SampleMask = UINT_MAX;
+		state.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		state.NumRenderTargets = 1;
+		state.RTVFormats[0] = DXGI_FORMAT_B8G8R8A8_UNORM;
+		state.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		state.SampleDesc.Count = 1;
+		state.SampleDesc.Quality = 0;
+
+		Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState;
+		DX::ThrowIfFailed(d3dDevice->CreateGraphicsPipelineState(&state, IID_PPV_ARGS(&pipelineState)));
+		m_pipelineStateObjects.emplace("LightingPass", std::move(pipelineState));
 	}
 }

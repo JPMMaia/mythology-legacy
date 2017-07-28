@@ -3,9 +3,9 @@
 #include "Core/Geometry/ImmutableMesh.h"
 #include "Core/Geometry/MeshGenerator.h"
 #include "Core/Geometry/VertexTypes.h"
-#include "Core/Material/ColorMaterial.h"
 #include "Core/Shader/ShaderBufferTypes.h"
 #include "Common/Helpers.h"
+#include "RenderLayers.h"
 
 
 using namespace Common;
@@ -30,13 +30,16 @@ void StandardScene::CreateDeviceDependentResources()
 	ID3D12GraphicsCommandList* commandList;
 	m_commandListIndex = m_commandListManager.CreateGraphicsCommandList(commandList);
 
+	// Cube Render Item:
 	{
+		using VertexType = VertexTypes::PositionVertex;
+
 		// Create mesh data:
 		auto meshData = MeshGenerator::CreateBox(1.0f, 1.0f, 1.0f, 0);
-		auto vertices = VertexTypes::PositionVertex::CreateFromMeshData(meshData);
+		auto vertices = VertexType::CreateFromMeshData(meshData);
 
 		// Create buffers:
-		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexTypes::PositionVertex));
+		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType));
 		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT);
 
 		// Create mesh:		
@@ -44,14 +47,30 @@ void StandardScene::CreateDeviceDependentResources()
 		mesh->AddSubmesh("CubeSubmesh", Submesh(meshData));
 		m_meshes.emplace(mesh->Name(), mesh);
 
-		// Create material:
-		auto material = std::make_shared<ColorMaterial>("BlueMaterial");
-		material->SetColor({ 0.0f, 0.0f, 1.0f });
-		m_materials.emplace(material->Name(), material);
-
 		m_cubeRenderItem = StandardRenderItem(mesh, "CubeSubmesh");
 	}
 
+	// Render Rectangle Render Item
+	{
+		using VertexType = VertexTypes::PositionTextureCoordinatesVextex;
+
+		// Create mesh data:
+		auto meshData = MeshGenerator::CreateRectangle(-1.0f, 1.0f, 2.0f, 2.0f, 0.0f);
+		auto vertices = VertexType::CreateFromMeshData(meshData);
+
+		// Create buffers:
+		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType));
+		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT);
+
+		// Create mesh:		
+		auto mesh = std::make_shared<ImmutableMesh>("RectangleMesh", std::move(vertexBuffer), std::move(indexBuffer));
+		mesh->AddSubmesh("RectangleSubmesh", Submesh(meshData));
+		m_meshes.emplace(mesh->Name(), mesh);
+
+		m_rectangleRenderItem = StandardRenderItem(mesh, "RectangleSubmesh");
+	}
+
+	// Upload vertex and index buffers to the GPU in order to dispose the upload buffers:
 	{
 		commandList->Close();
 		m_commandListManager.ExecuteCommandList(m_commandListIndex);
@@ -67,7 +86,7 @@ void StandardScene::CreateDeviceDependentResources()
 		{
 			// Make a material:
 			ShaderBufferTypes::MaterialData materialData;
-			materialData.BaseColor = DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+			materialData.BaseColor = DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
 			m_materialsGPUBuffer.push_back(materialData);
 
 			// Make an instance:
@@ -141,9 +160,15 @@ void StandardScene::FrameUpdate(const Common::Timer& timer)
 	UpdatePassBuffer();
 }
 
-bool StandardScene::Render(const Common::Timer& timer)
+bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 {
 	auto commandList = m_commandListManager.GetGraphicsCommandList(0);
+
+	if(renderLayer == RenderLayer::LightingPass)
+	{
+		m_rectangleRenderItem.Render(commandList);
+		return true;
+	}
 
 	// Bind pass buffer:
 	commandList->SetGraphicsRootConstantBufferView(2, m_passGPUBuffer.get_allocator().GetGPUVirtualAddress(0));

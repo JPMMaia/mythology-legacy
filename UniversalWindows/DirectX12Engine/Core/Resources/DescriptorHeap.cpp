@@ -69,7 +69,7 @@ INT DescriptorHeap::CreateShaderResourceView(const DeviceResources& deviceResour
 
 	auto heapIndex = static_cast<INT>(m_count++);
 	CD3DX12_CPU_DESCRIPTOR_HANDLE destinationDescriptor(m_descriptorHeap->GetCPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize());
-
+	
 	deviceResources.GetD3DDevice()->CreateShaderResourceView(resource, description, destinationDescriptor);
 
 	return heapIndex;

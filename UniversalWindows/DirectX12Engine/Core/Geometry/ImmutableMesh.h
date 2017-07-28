@@ -16,7 +16,7 @@ namespace DirectX12Engine
 
 		void AddSubmesh(const std::string& name, const Submesh& submesh);
 
-		void Render(ID3D12GraphicsCommandList* commandList, const std::string& submeshName) const;
+		void Render(ID3D12GraphicsCommandList* commandList, const std::string& submeshName, UINT instanceCount) const;
 
 		void DisposeUploadBuffers() override;
 

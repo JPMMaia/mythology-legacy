@@ -3,7 +3,6 @@
 #include "Core/DeviceResources.h"
 #include "ShaderStructures.h"
 #include "GraphicsEngineInterfaces/IScene.h"
-#include "Material/MaterialInstance.h"
 
 namespace Common
 {
@@ -13,7 +12,7 @@ namespace Common
 namespace DirectX12Engine
 {
 	// This sample renderer instantiates a basic rendering pipeline.
-	class Sample3DSceneRenderer : GraphicsEngine::IScene
+	class Sample3DSceneRenderer : IScene
 	{
 	public:
 		explicit Sample3DSceneRenderer(const std::shared_ptr<DirectX12Engine::DeviceResources>& deviceResources);
