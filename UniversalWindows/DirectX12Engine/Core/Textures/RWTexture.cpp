@@ -23,8 +23,8 @@ void RWTexture::CreateDepthStencilView(const DeviceResources& deviceResources, D
 	dsvDescription.Texture2D.MipSlice = 0;
 
 	auto heapIndex = descriptorHeap.CreateDepthStencilView(deviceResources, m_resource.Get(), &dsvDescription);
-	m_cpuDescriptorHandles.emplace(name, CD3DX12_CPU_DESCRIPTOR_HANDLE(descriptorHeap.Get()->GetCPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize()));
-	m_gpuDescriptorHandles.emplace(name, CD3DX12_GPU_DESCRIPTOR_HANDLE(descriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize()));
+	m_cpuDescriptorHandles.emplace(name, CD3DX12_CPU_DESCRIPTOR_HANDLE(descriptorHeap.Get()->GetCPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetDsvDescriptorSize()));
+	m_gpuDescriptorHandles.emplace(name, CD3DX12_GPU_DESCRIPTOR_HANDLE(descriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetDsvDescriptorSize()));
 }
 void RWTexture::CreateRenderTargetView(const DeviceResources& deviceResources, DescriptorHeap& descriptorHeap, const std::string& name)
 {
@@ -34,8 +34,8 @@ void RWTexture::CreateRenderTargetView(const DeviceResources& deviceResources, D
 	rtvDescription.Texture2D.MipSlice = 0;
 
 	auto heapIndex = descriptorHeap.CreateRenderTargetView(deviceResources, m_resource.Get(), &rtvDescription);
-	m_cpuDescriptorHandles.emplace(name, CD3DX12_CPU_DESCRIPTOR_HANDLE(descriptorHeap.Get()->GetCPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize()));
-	m_gpuDescriptorHandles.emplace(name, CD3DX12_GPU_DESCRIPTOR_HANDLE(descriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetCbvSrvUavDescriptorSize()));
+	m_cpuDescriptorHandles.emplace(name, CD3DX12_CPU_DESCRIPTOR_HANDLE(descriptorHeap.Get()->GetCPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetRtvDescriptorSize()));
+	m_gpuDescriptorHandles.emplace(name, CD3DX12_GPU_DESCRIPTOR_HANDLE(descriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart(), heapIndex, deviceResources.GetRtvDescriptorSize()));
 }
 void RWTexture::CreateShaderResourceView(const DeviceResources& deviceResources, DescriptorHeap& descriptorHeap, const std::string& name)
 {

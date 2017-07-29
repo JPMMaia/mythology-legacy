@@ -76,8 +76,9 @@ void PipelineStateManager::InitializePipelineStateObjects(const RootSignatureMan
 		state.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 		state.SampleMask = UINT_MAX;
 		state.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-		state.NumRenderTargets = 1;
+		state.NumRenderTargets = 2;
 		state.RTVFormats[0] = DXGI_FORMAT_B8G8R8A8_UNORM;
+		state.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		state.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		state.SampleDesc.Count = 1;
 		state.SampleDesc.Quality = 0;
