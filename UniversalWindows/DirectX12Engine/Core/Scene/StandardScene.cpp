@@ -32,7 +32,7 @@ void StandardScene::CreateDeviceDependentResources()
 
 	// Cube Render Item:
 	{
-		using VertexType = VertexTypes::PositionVertex;
+		using VertexType = VertexTypes::PositionNormalVertex;
 
 		// Create mesh data:
 		auto meshData = MeshGenerator::CreateBox(1.0f, 1.0f, 1.0f, 0);

@@ -5,6 +5,7 @@
 struct VertexInput
 {
 	float3 PositionL : POSITION;
+	float3 NormalL : NORMAL;
 };
 struct VertexOutput
 {
