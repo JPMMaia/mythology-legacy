@@ -136,7 +136,10 @@ float3 ComputePointLight(Light light, Material material, float3 position, float3
 
 	float distance = length(lightDirection);
 	if (distance > light.FalloffEnd)
-		return float3(0.0f, 0.0f, 0.0f);
+	{
+		float3 zero = float3(0.0f, 0.0f, 0.0f);
+		return zero;
+	}
 
 	// Normalize the vector
 	lightDirection /= distance;

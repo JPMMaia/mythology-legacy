@@ -14,9 +14,10 @@ using namespace DirectX12Engine;
 StandardScene::StandardScene(const std::shared_ptr<DeviceResources>& deviceResources, CommandListManager& commandListManager) :
 	m_deviceResources(deviceResources),
 	m_commandListManager(commandListManager),
-	m_instancesGPUBuffer(GPUAllocator<ShaderBufferTypes::InstanceData>(m_deviceResources->GetD3DDevice(), false)),
-	m_materialsGPUBuffer(GPUAllocator<ShaderBufferTypes::MaterialData>(m_deviceResources->GetD3DDevice(), false)),
-	m_passGPUBuffer(GPUAllocator<ShaderBufferTypes::PassData>(m_deviceResources->GetD3DDevice(), false))
+	m_materialsGPUBuffer(GPUAllocator<ShaderBufferTypes::MaterialData>(deviceResources->GetD3DDevice(), false)),
+	m_passGPUBuffer(GPUAllocator<ShaderBufferTypes::PassData>(deviceResources->GetD3DDevice(), false)),
+	m_cubeRenderItem(deviceResources->GetD3DDevice()),
+	m_rectangleRenderItem(deviceResources->GetD3DDevice())
 {
 }
 StandardScene::~StandardScene()
@@ -43,12 +44,12 @@ void StandardScene::CreateDeviceDependentResources()
 		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType));
 		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT);
 
-		// Create mesh:		
+		// Create mesh:
 		auto mesh = std::make_shared<ImmutableMesh>("CubeMesh", std::move(vertexBuffer), std::move(indexBuffer));
 		mesh->AddSubmesh("CubeSubmesh", Submesh(meshData));
 		m_meshes.emplace(mesh->Name(), mesh);
 
-		m_cubeRenderItem = StandardRenderItem(mesh, "CubeSubmesh");
+		m_cubeRenderItem = StandardRenderItem(d3dDevice, mesh, "CubeSubmesh");
 	}
 
 	// Render Rectangle Render Item
@@ -68,7 +69,7 @@ void StandardScene::CreateDeviceDependentResources()
 		mesh->AddSubmesh("RectangleSubmesh", Submesh(meshData));
 		m_meshes.emplace(mesh->Name(), mesh);
 
-		m_rectangleRenderItem = StandardRenderItem(mesh, "RectangleSubmesh");
+		m_rectangleRenderItem = StandardRenderItem(d3dDevice, mesh, "RectangleSubmesh");
 	}
 
 	// Upload vertex and index buffers to the GPU in order to dispose the upload buffers:
@@ -95,7 +96,7 @@ void StandardScene::CreateDeviceDependentResources()
 			instanceData.MaterialIndex = 0;
 			auto rotation = DirectX::XMMatrixRotationX(-90.0f * DirectX::XM_PI / 180.0f);
 			XMStoreFloat4x4(&instanceData.ModelMatrix, rotation);
-			m_instancesGPUBuffer.push_back(instanceData);
+			m_cubeRenderItem.AddInstance(instanceData);
 		}
 	}
 
@@ -168,7 +169,7 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 
 	if(renderLayer == RenderLayer::LightingPass)
 	{
-		m_rectangleRenderItem.Render(commandList);
+		m_rectangleRenderItem.RenderNonInstanced(commandList);
 		return true;
 	}
 
@@ -177,9 +178,6 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 
 	// Bind materials buffer:
 	commandList->SetGraphicsRootShaderResourceView(1, m_materialsGPUBuffer.get_allocator().GetGPUVirtualAddress(0));
-
-	// Bind instances buffer:
-	commandList->SetGraphicsRootShaderResourceView(0, m_instancesGPUBuffer.get_allocator().GetGPUVirtualAddress(0));
 
 	// Render cube:
 	m_cubeRenderItem.Render(commandList);

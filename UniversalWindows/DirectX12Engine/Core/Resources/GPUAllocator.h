@@ -1,6 +1,5 @@
 #pragma once
 
-#include <new>
 #include <minwinbase.h>
 #include <wrl/client.h>
 
@@ -22,7 +21,6 @@ namespace DirectX12Engine
 		constexpr GPUAllocator(const GPUAllocator<U>& other) noexcept :
 			m_d3dDevice(other.D3DDevice()),
 			m_isConstantBuffer(other.IsConstantBuffer())
-			
 		{
 		}
 
