@@ -33,7 +33,7 @@ void StandardScene::CreateDeviceDependentResources()
 
 	// Cube Render Item:
 	{
-		using VertexType = VertexTypes::PositionNormalVertex;
+		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
 
 		// Create mesh data:
 		//auto meshData = MeshGenerator::CreateBox(1.0f, 1.0f, 1.0f, 0);
@@ -91,6 +91,7 @@ void StandardScene::CreateDeviceDependentResources()
 			// Make a material:
 			ShaderBufferTypes::MaterialData materialData;
 			materialData.BaseColor = DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+			materialData.AlbedoMapIndex = 0;
 			m_materialsGPUBuffer.push_back(materialData);
 
 			// Make an instance:

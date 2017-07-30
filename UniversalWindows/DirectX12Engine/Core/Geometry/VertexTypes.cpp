@@ -25,6 +25,17 @@ std::vector<VertexTypes::PositionNormalVertex> VertexTypes::PositionNormalVertex
 	return vertices;
 }
 
+std::vector<VertexTypes::PositionNormalTextureCoordinatesVertex> VertexTypes::PositionNormalTextureCoordinatesVertex::CreateFromMeshData(const MeshGenerator::MeshData& meshData)
+{
+	std::vector<PositionNormalTextureCoordinatesVertex> vertices;
+	vertices.reserve(meshData.Vertices.size());
+
+	for (const auto& vertex : meshData.Vertices)
+		vertices.push_back({ vertex.Position, vertex.Normal, vertex.TextureCoordinates });
+
+	return vertices;
+}
+
 std::vector<VertexTypes::PositionTextureCoordinatesVextex> VertexTypes::PositionTextureCoordinatesVextex::CreateFromMeshData(const MeshGenerator::MeshData& meshData)
 {
 	std::vector<PositionTextureCoordinatesVextex> vertices;

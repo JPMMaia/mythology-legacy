@@ -21,10 +21,10 @@ namespace DirectX12Engine
 		void CreateResource(const DeviceResources& deviceResources, UINT64 width, UINT64 height, DXGI_FORMAT format, D3D12_RESOURCE_STATES initialResourceState, D3D12_CLEAR_VALUE* optimizedClearValue, D3D12_RESOURCE_FLAGS resourceFlags);
 		void LoadTextureFromFile(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* graphicsCommandList, const std::wstring& filename, D3D12_RESOURCE_FLAGS resourceFlags, unsigned int loadFlags, DirectX::DDS_ALPHA_MODE& alphaMode, bool& isCubeMap, Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer);
 
-		void CreateDepthStencilView(const DeviceResources& deviceResources, DescriptorHeap& descriptorHeap, const std::string& name);
-		void CreateRenderTargetView(const DeviceResources& deviceResources, DescriptorHeap& descriptorHeap, const std::string& name);
-		void CreateShaderResourceView(const DeviceResources& deviceResources, DescriptorHeap& descriptorHeap, const std::string& name);
-		void CreateUnorderedAccessView(const DeviceResources& deviceResources, DescriptorHeap& descriptorHeap, const std::string& name);
+		void CreateDepthStencilView(const std::shared_ptr<DeviceResources>& deviceResources, DescriptorHeap& descriptorHeap, const std::string& name);
+		void CreateRenderTargetView(const std::shared_ptr<DeviceResources>& deviceResources, DescriptorHeap& descriptorHeap, const std::string& name);
+		void CreateShaderResourceView(const std::shared_ptr<DeviceResources>& deviceResources, DescriptorHeap& descriptorHeap, const std::string& name);
+		void CreateUnorderedAccessView(const std::shared_ptr<DeviceResources>& deviceResources, DescriptorHeap& descriptorHeap, const std::string& name);
 
 		D3D12_CPU_DESCRIPTOR_HANDLE CPUDescriptorHandle(const std::string& name) const;
 		D3D12_GPU_DESCRIPTOR_HANDLE GPUDescriptorHandle(const std::string& name) const;

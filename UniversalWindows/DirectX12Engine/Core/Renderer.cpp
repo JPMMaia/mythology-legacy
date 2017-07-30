@@ -26,18 +26,18 @@ void Renderer::CreateDeviceDependentResources()
 	m_pipelineStateManager.CreateDeviceDependentResources(m_rootSignatureManager);
 	m_scene->CreateDeviceDependentResources();
 
-	m_dsvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 1, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
-	m_rtvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 3, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
-	m_srvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 4, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
+	m_dsvDescriptorHeap.CreateDeviceDependentResources(m_deviceResources, 1, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
+	m_rtvDescriptorHeap.CreateDeviceDependentResources(m_deviceResources, 3, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
+	m_srvDescriptorHeap.CreateDeviceDependentResources(m_deviceResources, 3, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
+	m_texturesDescriptorHeap.CreateDeviceDependentResources(m_deviceResources, 4, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
 
 	{
 		auto commandList = m_commandListManager.GetGraphicsCommandList(0);
 
-		RWTexture texture;
 		Microsoft::WRL::ComPtr<ID3D12Resource> uploadBuffer;
 		DDS_ALPHA_MODE alphaMode;
 		bool isCubeMap;
-		texture.LoadTextureFromFile(
+		m_albedoTexture.LoadTextureFromFile(
 			m_deviceResources->GetD3DDevice(),
 			commandList,
 			L"Resources/sandstonecliff-albedo.dds",
@@ -51,6 +51,8 @@ void Renderer::CreateDeviceDependentResources()
 		commandList->Close();
 		m_commandListManager.ExecuteCommandList(0);
 		m_deviceResources->WaitForGpu();
+
+		m_albedoTexture.CreateShaderResourceView(m_deviceResources, m_texturesDescriptorHeap, "SRV");
 	}
 }
 void Renderer::CreateWindowSizeDependentResources()
@@ -88,8 +90,8 @@ void Renderer::CreateWindowSizeDependentResources()
 				&clearValue,
 				D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 			);
-			texture.CreateRenderTargetView(*m_deviceResources.get(), m_rtvDescriptorHeap, "RTV");
-			texture.CreateShaderResourceView(*m_deviceResources.get(), m_srvDescriptorHeap, "SRV");
+			texture.CreateRenderTargetView(m_deviceResources, m_rtvDescriptorHeap, "RTV");
+			texture.CreateShaderResourceView(m_deviceResources, m_srvDescriptorHeap, "SRV");
 		}
 
 		// Albedo:
@@ -111,8 +113,8 @@ void Renderer::CreateWindowSizeDependentResources()
 				&clearValue,
 				D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 			);
-			texture.CreateRenderTargetView(*m_deviceResources.get(), m_rtvDescriptorHeap, "RTV");
-			texture.CreateShaderResourceView(*m_deviceResources.get(), m_srvDescriptorHeap, "SRV");
+			texture.CreateRenderTargetView(m_deviceResources, m_rtvDescriptorHeap, "RTV");
+			texture.CreateShaderResourceView(m_deviceResources, m_srvDescriptorHeap, "SRV");
 		}
 
 		// Normals:
@@ -134,8 +136,8 @@ void Renderer::CreateWindowSizeDependentResources()
 				&clearValue,
 				D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 			);
-			texture.CreateRenderTargetView(*m_deviceResources.get(), m_rtvDescriptorHeap, "RTV");
-			texture.CreateShaderResourceView(*m_deviceResources.get(), m_srvDescriptorHeap, "SRV");
+			texture.CreateRenderTargetView(m_deviceResources, m_rtvDescriptorHeap, "RTV");
+			texture.CreateShaderResourceView(m_deviceResources, m_srvDescriptorHeap, "SRV");
 		}
 	}
 
@@ -156,7 +158,7 @@ void Renderer::CreateWindowSizeDependentResources()
 			D3D12_RESOURCE_STATE_DEPTH_WRITE,
 			&clearValue,
 			D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
-		m_depthStencil.CreateDepthStencilView(*m_deviceResources.get(), m_dsvDescriptorHeap, "DSV");
+		m_depthStencil.CreateDepthStencilView(m_deviceResources, m_dsvDescriptorHeap, "DSV");
 	}
 }
 
@@ -214,6 +216,11 @@ bool Renderer::Render(const Common::Timer& timer)
 	{
 		// Set pipeline state:
 		m_pipelineStateManager.SetPipelineState(commandList, "GBufferPass");
+
+		// Set textures:
+		std::array<ID3D12DescriptorHeap*, 1> descriptorHeaps = { m_texturesDescriptorHeap.Get() };
+		commandList->SetDescriptorHeaps(static_cast<UINT>(descriptorHeaps.size()), descriptorHeaps.data());
+		commandList->SetGraphicsRootDescriptorTable(3, m_texturesDescriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart());
 
 		// Render scene:
 		m_scene->Render(timer, RenderLayer::Opaque);

@@ -9,9 +9,9 @@ struct PixelInput
 };
 
 ConstantBuffer<PassData> g_passData : register(b0);
-Texture2D g_positions : register(t0, space2);
-Texture2D g_albedo : register(t1, space2);
-Texture2D g_normals : register(t2, space2);
+Texture2D g_positions : register(t0, space0);
+Texture2D g_albedo : register(t1, space0);
+Texture2D g_normals : register(t2, space0);
 
 float4 main(PixelInput input) : SV_TARGET
 {

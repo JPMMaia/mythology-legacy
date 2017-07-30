@@ -35,8 +35,9 @@ void PipelineStateManager::InitializeShadersAndInputLayout()
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		};
-		m_inputLayouts.emplace("PositionNormal", std::move(positionNormalInputLayout));
+		m_inputLayouts.emplace("PositionNormalTextureCoordinates", std::move(positionNormalInputLayout));
 
 		std::vector<D3D12_INPUT_ELEMENT_DESC> positionTextureCoordinatesInputLayout =
 		{
@@ -66,7 +67,7 @@ void PipelineStateManager::InitializePipelineStateObjects(const RootSignatureMan
 	// GBufferPass:
 	{
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC state = {};
-		const auto& inputLayout = m_inputLayouts.at("PositionNormal");
+		const auto& inputLayout = m_inputLayouts.at("PositionNormalTextureCoordinates");
 		state.InputLayout = { inputLayout.data(), static_cast<uint32_t>(inputLayout.size()) };
 		state.pRootSignature = rootSignatureManager.GetRootSignature("RootSignature");
 		state.VS = m_shaders["GBufferPassVS"].GetShaderBytecode();

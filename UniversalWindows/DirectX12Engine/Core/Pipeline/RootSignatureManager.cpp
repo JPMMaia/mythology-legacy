@@ -27,14 +27,14 @@ void RootSignatureManager::CreateDeviceDependentResources()
 		// Textures:
 		std::array<D3D12_DESCRIPTOR_RANGE, 1> descriptorRanges1 = 
 		{ 
-			CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 3, 0, 0)
+			CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 4, 0, 2)
 		};
 		rootParameters[3].InitAsDescriptorTable(static_cast<UINT>(descriptorRanges1.size()), descriptorRanges1.data());
 
 		// G-Buffer descriptor table:
 		std::array<D3D12_DESCRIPTOR_RANGE, 1> descriptorRanges2 =
 		{
-			CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 3, 0, 2)
+			CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 3, 0, 0)
 		};
 		rootParameters[4].InitAsDescriptorTable(static_cast<UINT>(descriptorRanges2.size()), descriptorRanges2.data());
 

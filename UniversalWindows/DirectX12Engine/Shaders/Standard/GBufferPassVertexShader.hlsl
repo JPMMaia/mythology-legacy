@@ -6,12 +6,14 @@ struct VertexInput
 {
 	float3 PositionL : POSITION;
 	float3 NormalL : NORMAL;
+	float2 TextureCoordinates : TEXCOORD0;
 };
 struct VertexOutput
 {
 	float4 PositionH : SV_POSITION;
 	float3 PositionW : POSITION;
 	float3 NormalW : NORMAL;
+	float2 TextureCoordinates : TEXCOORD0;
 	nointerpolation uint MaterialIndex : MATERIAL_INDEX;
 };
 
@@ -35,6 +37,9 @@ VertexOutput main(VertexInput input, uint instanceID : SV_InstanceID)
 
 	// Transfrom normal from local space to world space, assuming that there is no non-uniform transformation:
 	output.NormalW = mul(input.NormalL, (float3x3) instanceData.ModelMatrix);
+
+	// Output texture coordinates:
+	output.TextureCoordinates = input.TextureCoordinates;
 
 	// Output the index of the instance's material:
 	output.MaterialIndex = instanceData.MaterialIndex;

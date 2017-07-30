@@ -40,6 +40,7 @@ namespace DirectX12Engine
 		DescriptorHeap m_rtvDescriptorHeap;
 		DescriptorHeap m_dsvDescriptorHeap;
 		DescriptorHeap m_srvDescriptorHeap;
+		DescriptorHeap m_texturesDescriptorHeap;
 
 		std::shared_ptr<IScene> m_scene;
 		RWTexture m_positions;

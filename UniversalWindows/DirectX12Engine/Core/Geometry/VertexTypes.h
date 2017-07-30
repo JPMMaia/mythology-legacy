@@ -24,6 +24,15 @@ namespace DirectX12Engine
 			static std::vector<PositionNormalVertex> CreateFromMeshData(const MeshGenerator::MeshData& meshData);
 		};
 
+		struct PositionNormalTextureCoordinatesVertex
+		{
+			DirectX::XMFLOAT3 PositionL;
+			DirectX::XMFLOAT3 NormalL;
+			DirectX::XMFLOAT2 TextureCoordinates;
+
+			static std::vector<PositionNormalTextureCoordinatesVertex> CreateFromMeshData(const MeshGenerator::MeshData& meshData);
+		};
+
 		struct PositionTextureCoordinatesVextex
 		{
 			DirectX::XMFLOAT3 PositionL;
