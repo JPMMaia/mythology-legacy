@@ -29,6 +29,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Common\Timer.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\LightComponent.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\PhysicsComponent.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -58,6 +61,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\TasksComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Timer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\IComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\LightComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\MeshComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\PhysicsComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\TransformComponent.h" />
