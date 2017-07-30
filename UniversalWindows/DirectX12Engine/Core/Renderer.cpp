@@ -27,8 +27,8 @@ void Renderer::CreateDeviceDependentResources()
 	m_scene->CreateDeviceDependentResources();
 
 	m_dsvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 1, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
-	m_rtvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 2, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
-	m_srvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 1, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
+	m_rtvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 3, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
+	m_srvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 3, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
 }
 void Renderer::CreateWindowSizeDependentResources()
 {
@@ -46,16 +46,17 @@ void Renderer::CreateWindowSizeDependentResources()
 	{
 		D3D12_CLEAR_VALUE clearValue = {};
 
-		// Albedo:
+		// Positions:
 		{
-			clearValue.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+			clearValue.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 			clearValue.Color[0] = 0.0f;
 			clearValue.Color[1] = 0.0f;
 			clearValue.Color[2] = 0.0f;
 			clearValue.Color[3] = 1.0f;
 
-			m_albedo = RWTexture();
-			m_albedo.CreateWindowSizeDependentResources(
+			auto& texture = m_positions;
+			texture = RWTexture();
+			texture.CreateWindowSizeDependentResources(
 				*m_deviceResources.get(),
 				static_cast<UINT64>(outputSize.x),
 				static_cast<UINT64>(outputSize.y),
@@ -64,25 +65,54 @@ void Renderer::CreateWindowSizeDependentResources()
 				&clearValue,
 				D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 			);
-			m_albedo.CreateRenderTargetView(*m_deviceResources.get(), m_rtvDescriptorHeap, "Albedo");
-			m_albedo.CreateShaderResourceView(*m_deviceResources.get(), m_srvDescriptorHeap, "Albedo");
+			texture.CreateRenderTargetView(*m_deviceResources.get(), m_rtvDescriptorHeap, "RTV");
+			texture.CreateShaderResourceView(*m_deviceResources.get(), m_srvDescriptorHeap, "SRV");
 		}
 
-		// Normals:
+		// Albedo:
 		{
-			/*clearValue.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+			clearValue.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+			clearValue.Color[0] = 0.0f;
+			clearValue.Color[1] = 0.0f;
+			clearValue.Color[2] = 0.0f;
+			clearValue.Color[3] = 1.0f;
 
-			m_normals = RWTexture();
-			m_normals.CreateWindowSizeDependentResources(
+			auto& texture = m_albedo;
+			texture = RWTexture();
+			texture.CreateWindowSizeDependentResources(
 				*m_deviceResources.get(),
 				static_cast<UINT64>(outputSize.x),
 				static_cast<UINT64>(outputSize.y),
 				clearValue.Format,
-				D3D12_RESOURCE_STATE_COPY_SOURCE,
+				D3D12_RESOURCE_STATE_RENDER_TARGET,
 				&clearValue,
 				D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
-			);*/
-			
+			);
+			texture.CreateRenderTargetView(*m_deviceResources.get(), m_rtvDescriptorHeap, "RTV");
+			texture.CreateShaderResourceView(*m_deviceResources.get(), m_srvDescriptorHeap, "SRV");
+		}
+
+		// Normals:
+		{
+			clearValue.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+			clearValue.Color[0] = 0.0f;
+			clearValue.Color[1] = 0.0f;
+			clearValue.Color[2] = 0.0f;
+			clearValue.Color[3] = 1.0f;
+
+			auto& texture = m_normals;
+			texture = RWTexture();
+			texture.CreateWindowSizeDependentResources(
+				*m_deviceResources.get(),
+				static_cast<UINT64>(outputSize.x),
+				static_cast<UINT64>(outputSize.y),
+				clearValue.Format,
+				D3D12_RESOURCE_STATE_RENDER_TARGET,
+				&clearValue,
+				D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
+			);
+			texture.CreateRenderTargetView(*m_deviceResources.get(), m_rtvDescriptorHeap, "RTV");
+			texture.CreateShaderResourceView(*m_deviceResources.get(), m_srvDescriptorHeap, "SRV");
 		}
 	}
 
@@ -103,9 +133,8 @@ void Renderer::CreateWindowSizeDependentResources()
 			D3D12_RESOURCE_STATE_DEPTH_WRITE,
 			&clearValue,
 			D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
-		m_depthStencil.CreateDepthStencilView(*m_deviceResources.get(), m_dsvDescriptorHeap, "DepthStencil");
+		m_depthStencil.CreateDepthStencilView(*m_deviceResources.get(), m_dsvDescriptorHeap, "DSV");
 	}
-	
 }
 
 void Renderer::SaveState()
@@ -136,14 +165,22 @@ bool Renderer::Render(const Common::Timer& timer)
 	// Clear and set render targets for G-Buffer pass:
 	PIXBeginEvent(commandList, 0, L"Begin G-Buffer Pass");
 	{
-		auto renderTargetView = m_albedo.CPUDescriptorHandle("Albedo");
-		auto depthStencilView = m_depthStencil.CPUDescriptorHandle("DepthStencil");
+		std::array<D3D12_CPU_DESCRIPTOR_HANDLE, 3> renderTargetViews = 
+		{ 
+			m_positions.CPUDescriptorHandle("RTV"),
+			m_albedo.CPUDescriptorHandle("RTV"), 
+			m_normals.CPUDescriptorHandle("RTV") 
+		};
+		auto depthStencilView = m_depthStencil.CPUDescriptorHandle("DSV");
 
 		// Set render targets:
-		commandList->OMSetRenderTargets(1, &renderTargetView, false, &depthStencilView);
+		commandList->OMSetRenderTargets(static_cast<UINT>(renderTargetViews.size()), renderTargetViews.data(), true, &depthStencilView);
 
-		// Clear render target view:
-		commandList->ClearRenderTargetView(renderTargetView, Colors::Black, 0, nullptr);
+		// Clear render target views:
+		std::for_each(renderTargetViews.begin(), renderTargetViews.end(), [&commandList](auto renderTargetView)
+		{
+			commandList->ClearRenderTargetView(renderTargetView, Colors::Black, 0, nullptr);
+		});
 
 		// Clear depth stencil view:
 		commandList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
@@ -164,7 +201,7 @@ bool Renderer::Render(const Common::Timer& timer)
 	{
 		// Set render targets for Lighting Pass:
 		auto renderTargetView = m_deviceResources->GetRenderTargetView();
-		auto depthStencilView = m_depthStencil.CPUDescriptorHandle("DepthStencil");
+		auto depthStencilView = m_depthStencil.CPUDescriptorHandle("DSV");
 		commandList->OMSetRenderTargets(1, &renderTargetView, false, &depthStencilView);
 
 		// Set textures:

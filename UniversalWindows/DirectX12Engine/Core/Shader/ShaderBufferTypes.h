@@ -24,6 +24,9 @@ namespace DirectX12Engine
 			DirectX::XMFLOAT4X4 ViewMatrix;
 			DirectX::XMFLOAT4X4 ProjectionMatrix;
 			DirectX::XMFLOAT4X4 ViewProjectionMatrix;
+			DirectX::XMFLOAT4X4 InverseViewProjectionMatrix;
+			DirectX::XMFLOAT3 CameraPositionW;
+			float Padding;
 		};
 	}
 }

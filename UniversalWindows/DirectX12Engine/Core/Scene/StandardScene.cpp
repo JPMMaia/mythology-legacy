@@ -32,10 +32,11 @@ void StandardScene::CreateDeviceDependentResources()
 
 	// Cube Render Item:
 	{
-		using VertexType = VertexTypes::PositionVertex;
+		using VertexType = VertexTypes::PositionNormalVertex;
 
 		// Create mesh data:
-		auto meshData = MeshGenerator::CreateBox(1.0f, 1.0f, 1.0f, 0);
+		//auto meshData = MeshGenerator::CreateBox(1.0f, 1.0f, 1.0f, 0);
+		auto meshData = MeshGenerator::CreateRectangle(-10.0f, 0.0f, 20.0f, 20.0f, 0.0f);
 		auto vertices = VertexType::CreateFromMeshData(meshData);
 
 		// Create buffers:
@@ -92,7 +93,8 @@ void StandardScene::CreateDeviceDependentResources()
 			// Make an instance:
 			ShaderBufferTypes::InstanceData instanceData;
 			instanceData.MaterialIndex = 0;
-			XMStoreFloat4x4(&instanceData.ModelMatrix, DirectX::XMMatrixIdentity());
+			auto rotation = DirectX::XMMatrixRotationX(-90.0f * DirectX::XM_PI / 180.0f);
+			XMStoreFloat4x4(&instanceData.ModelMatrix, rotation);
 			m_instancesGPUBuffer.push_back(instanceData);
 		}
 	}
@@ -115,7 +117,7 @@ void StandardScene::CreateWindowSizeDependentResources()
 	auto orientationMatrix = XMLoadFloat4x4(&orientation);
 
 	m_camera = Camera(aspectRatio, fovAngleY, 0.25f, 50.0f, orientationMatrix);
-	m_camera.SetPosition(0.0f, 0.0f, -5.0f);
+	m_camera.SetPosition(0.0f, 2.0f, -5.0f);
 	m_camera.Update();
 
 	UpdatePassBuffer();
@@ -197,10 +199,14 @@ void StandardScene::UpdatePassBuffer()
 	const auto& viewMatrix = m_camera.GetViewMatrix();
 	const auto& projectionMatrix = m_camera.GetProjectionMatrix();
 	auto viewProjectionMatrix = viewMatrix * projectionMatrix;
+	auto viewProjectionMatrixDeterminant = XMMatrixDeterminant(viewProjectionMatrix);
+	auto inverseViewProjectionMatrix = XMMatrixInverse(&viewProjectionMatrixDeterminant, viewProjectionMatrix);
 
 	XMStoreFloat4x4(&passData.ViewMatrix, XMMatrixTranspose(viewMatrix));
 	XMStoreFloat4x4(&passData.ProjectionMatrix, XMMatrixTranspose(projectionMatrix));
 	XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
+	XMStoreFloat4x4(&passData.InverseViewProjectionMatrix, XMMatrixTranspose(inverseViewProjectionMatrix));
+	XMStoreFloat3(&passData.CameraPositionW, m_camera.GetPosition());
 
 	m_passGPUBuffer[0] = passData;
 }
