@@ -17,6 +17,7 @@ namespace DirectX12Engine
 		struct MaterialData
 		{
 			DirectX::XMFLOAT4 BaseColor;
+			std::uint32_t AlbedoMapIndex;
 		};
 
 		struct PassData

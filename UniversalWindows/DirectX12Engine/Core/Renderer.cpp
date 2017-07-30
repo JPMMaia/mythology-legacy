@@ -227,10 +227,10 @@ bool Renderer::Render(const Common::Timer& timer)
 		auto depthStencilView = m_depthStencil.CPUDescriptorHandle("DSV");
 		commandList->OMSetRenderTargets(1, &renderTargetView, false, &depthStencilView);
 
-		// Set textures:
+		// Set G-Buffer textures:
 		std::array<ID3D12DescriptorHeap*, 1> descriptorHeaps = { m_srvDescriptorHeap.Get() };
 		commandList->SetDescriptorHeaps(static_cast<UINT>(descriptorHeaps.size()), descriptorHeaps.data());
-		commandList->SetGraphicsRootDescriptorTable(3, m_srvDescriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart());
+		commandList->SetGraphicsRootDescriptorTable(4, m_srvDescriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart());
 	}
 	PIXEndEvent(commandList);
 
