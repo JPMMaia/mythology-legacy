@@ -16,8 +16,8 @@ namespace GameEngine
 		using IDType = std::size_t;
 		using ThreeDType = Eigen::Vector3f;
 		using QuaternionType = Eigen::Quaternion<float>;
+		using TransformType = Eigen::Transform<float, 3, Eigen::Affine>;
 		
-
 	public:
 		TransformComponent();
 
@@ -37,17 +37,17 @@ namespace GameEngine
 		const std::weak_ptr<TransformComponent>& GetParent() const;
 		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldPositionStays = false);
 
-		const Eigen::Transform<float, 3, Eigen::Projective>& WorldTransform() const;
+		const TransformType& WorldTransform() const;
 
 	private:
-		Eigen::Transform<float, 3, Eigen::Projective> CalculateLocalTransform() const;
+		TransformType CalculateLocalTransform() const;
 		void UpdateMatrix();
 
 	private:
 		static IDType s_count;
 
 		IDType m_id;
-		Eigen::Transform<float, 3, Eigen::Projective> m_worldTransform;
+		TransformType m_worldTransform;
 		bool m_dirty = true;
 
 		ThreeDType m_translation;

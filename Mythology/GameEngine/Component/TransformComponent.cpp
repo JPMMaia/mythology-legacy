@@ -95,14 +95,14 @@ void TransformComponent::SetParent(const std::weak_ptr<TransformComponent>& pare
 	m_dirty = true;
 }
 
-const Eigen::Transform<float, 3, Eigen::Projective>& TransformComponent::WorldTransform() const
+const TransformComponent::TransformType& TransformComponent::WorldTransform() const
 {
 	return m_worldTransform;
 }
 
-Eigen::Transform<float, 3, Eigen::Projective> TransformComponent::CalculateLocalTransform() const
+TransformComponent::TransformType TransformComponent::CalculateLocalTransform() const
 {
-	Eigen::Transform<float, 3, Eigen::Projective> transform(Eigen::Transform<float, 3, Eigen::Projective>::Identity());
+	auto transform(TransformType::Identity());
 	transform.translate(m_translation);
 	transform.rotate(m_rotation);
 	transform.scale(m_scale);
