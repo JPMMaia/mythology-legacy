@@ -27,8 +27,8 @@ void Renderer::CreateDeviceDependentResources()
 	m_scene->CreateDeviceDependentResources();
 
 	m_dsvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 1, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
-	m_rtvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 2, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
-	m_srvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 2, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
+	m_rtvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 3, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
+	m_srvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 3, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
 }
 void Renderer::CreateWindowSizeDependentResources()
 {
@@ -46,16 +46,17 @@ void Renderer::CreateWindowSizeDependentResources()
 	{
 		D3D12_CLEAR_VALUE clearValue = {};
 
-		// Albedo:
+		// Positions:
 		{
-			clearValue.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+			clearValue.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 			clearValue.Color[0] = 0.0f;
 			clearValue.Color[1] = 0.0f;
 			clearValue.Color[2] = 0.0f;
 			clearValue.Color[3] = 1.0f;
 
-			m_albedo = RWTexture();
-			m_albedo.CreateWindowSizeDependentResources(
+			auto& texture = m_positions;
+			texture = RWTexture();
+			texture.CreateWindowSizeDependentResources(
 				*m_deviceResources.get(),
 				static_cast<UINT64>(outputSize.x),
 				static_cast<UINT64>(outputSize.y),
@@ -64,8 +65,31 @@ void Renderer::CreateWindowSizeDependentResources()
 				&clearValue,
 				D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 			);
-			m_albedo.CreateRenderTargetView(*m_deviceResources.get(), m_rtvDescriptorHeap, "RTV");
-			m_albedo.CreateShaderResourceView(*m_deviceResources.get(), m_srvDescriptorHeap, "SRV");
+			texture.CreateRenderTargetView(*m_deviceResources.get(), m_rtvDescriptorHeap, "RTV");
+			texture.CreateShaderResourceView(*m_deviceResources.get(), m_srvDescriptorHeap, "SRV");
+		}
+
+		// Albedo:
+		{
+			clearValue.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+			clearValue.Color[0] = 0.0f;
+			clearValue.Color[1] = 0.0f;
+			clearValue.Color[2] = 0.0f;
+			clearValue.Color[3] = 1.0f;
+
+			auto& texture = m_albedo;
+			texture = RWTexture();
+			texture.CreateWindowSizeDependentResources(
+				*m_deviceResources.get(),
+				static_cast<UINT64>(outputSize.x),
+				static_cast<UINT64>(outputSize.y),
+				clearValue.Format,
+				D3D12_RESOURCE_STATE_RENDER_TARGET,
+				&clearValue,
+				D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
+			);
+			texture.CreateRenderTargetView(*m_deviceResources.get(), m_rtvDescriptorHeap, "RTV");
+			texture.CreateShaderResourceView(*m_deviceResources.get(), m_srvDescriptorHeap, "SRV");
 		}
 
 		// Normals:
@@ -76,8 +100,9 @@ void Renderer::CreateWindowSizeDependentResources()
 			clearValue.Color[2] = 0.0f;
 			clearValue.Color[3] = 1.0f;
 
-			m_normals = RWTexture();
-			m_normals.CreateWindowSizeDependentResources(
+			auto& texture = m_normals;
+			texture = RWTexture();
+			texture.CreateWindowSizeDependentResources(
 				*m_deviceResources.get(),
 				static_cast<UINT64>(outputSize.x),
 				static_cast<UINT64>(outputSize.y),
@@ -86,8 +111,8 @@ void Renderer::CreateWindowSizeDependentResources()
 				&clearValue,
 				D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 			);
-			m_normals.CreateRenderTargetView(*m_deviceResources.get(), m_rtvDescriptorHeap, "RTV");
-			m_normals.CreateShaderResourceView(*m_deviceResources.get(), m_srvDescriptorHeap, "SRV");
+			texture.CreateRenderTargetView(*m_deviceResources.get(), m_rtvDescriptorHeap, "RTV");
+			texture.CreateShaderResourceView(*m_deviceResources.get(), m_srvDescriptorHeap, "SRV");
 		}
 	}
 
@@ -140,7 +165,12 @@ bool Renderer::Render(const Common::Timer& timer)
 	// Clear and set render targets for G-Buffer pass:
 	PIXBeginEvent(commandList, 0, L"Begin G-Buffer Pass");
 	{
-		std::array<D3D12_CPU_DESCRIPTOR_HANDLE, 2> renderTargetViews = { m_albedo.CPUDescriptorHandle("RTV"), m_normals.CPUDescriptorHandle("RTV") };
+		std::array<D3D12_CPU_DESCRIPTOR_HANDLE, 3> renderTargetViews = 
+		{ 
+			m_positions.CPUDescriptorHandle("RTV"),
+			m_albedo.CPUDescriptorHandle("RTV"), 
+			m_normals.CPUDescriptorHandle("RTV") 
+		};
 		auto depthStencilView = m_depthStencil.CPUDescriptorHandle("DSV");
 
 		// Set render targets:

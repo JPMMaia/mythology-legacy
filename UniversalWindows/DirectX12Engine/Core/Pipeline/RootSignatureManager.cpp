@@ -26,7 +26,7 @@ void RootSignatureManager::CreateDeviceDependentResources()
 
 		std::array<D3D12_DESCRIPTOR_RANGE, 1> descriptorRanges = 
 		{ 
-			CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0)
+			CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 3, 0, 0)
 		};
 		rootParameters[3].InitAsDescriptorTable(static_cast<UINT>(descriptorRanges.size()), descriptorRanges.data());
 

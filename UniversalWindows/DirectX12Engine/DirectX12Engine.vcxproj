@@ -369,6 +369,7 @@
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
     <None Include="Shaders\Common\InstanceData.hlsli" />
+    <None Include="Shaders\Common\LightingUtils.hlsli" />
     <None Include="Shaders\Common\MaterialData.hlsli" />
     <None Include="Shaders\Common\PassData.hlsli" />
     <None Include="Shaders\Common\Samplers.hlsli" />

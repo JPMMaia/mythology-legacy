@@ -42,6 +42,7 @@ namespace DirectX12Engine
 		DescriptorHeap m_srvDescriptorHeap;
 
 		std::shared_ptr<IScene> m_scene;
+		RWTexture m_positions;
 		RWTexture m_albedo;
 		RWTexture m_normals;
 		RWTexture m_depthStencil;

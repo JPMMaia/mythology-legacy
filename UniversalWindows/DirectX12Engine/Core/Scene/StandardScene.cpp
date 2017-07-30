@@ -197,10 +197,14 @@ void StandardScene::UpdatePassBuffer()
 	const auto& viewMatrix = m_camera.GetViewMatrix();
 	const auto& projectionMatrix = m_camera.GetProjectionMatrix();
 	auto viewProjectionMatrix = viewMatrix * projectionMatrix;
+	auto viewProjectionMatrixDeterminant = XMMatrixDeterminant(viewProjectionMatrix);
+	auto inverseViewProjectionMatrix = XMMatrixInverse(&viewProjectionMatrixDeterminant, viewProjectionMatrix);
 
 	XMStoreFloat4x4(&passData.ViewMatrix, XMMatrixTranspose(viewMatrix));
 	XMStoreFloat4x4(&passData.ProjectionMatrix, XMMatrixTranspose(projectionMatrix));
 	XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
+	XMStoreFloat4x4(&passData.InverseViewProjectionMatrix, XMMatrixTranspose(inverseViewProjectionMatrix));
+	XMStoreFloat3(&passData.CameraPositionW, m_camera.GetPosition());
 
 	m_passGPUBuffer[0] = passData;
 }
