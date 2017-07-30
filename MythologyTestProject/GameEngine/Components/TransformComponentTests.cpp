@@ -1,13 +1,14 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "GameEngine/Component/TransformComponent.h"
-#include "Libraries/tue/transform.hpp"
 #include "Common/Timer.h"
 
 #include <cmath>
 
+using namespace Eigen;
 using namespace GameEngine;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+
 namespace MythologyTestProject
 {
 	TEST_CLASS(TransformComponentTests)
@@ -19,7 +20,7 @@ namespace MythologyTestProject
 
 			// Test translation:
 			{
-				tue::fvec3 expectedTranslation(1.0f, -1.0f, 2.0f);
+				Vector3f expectedTranslation(1.0f, -1.0f, 2.0f);
 				t1->SetTranslation(expectedTranslation);
 				Assert::IsTrue(expectedTranslation == t1->Translation());
 			}
@@ -27,14 +28,14 @@ namespace MythologyTestProject
 			// Test rotation:
 			auto pi = std::acos(-1.0f);
 			{
-				auto expectedRotation = tue::transform::rotation_quat(pi, pi / 2.0f, 0.1f * pi);
+				Quaternionf expectedRotation(AngleAxisf(pi, Vector3f(0.0f, 1.0f, 0.0f)));
 				t1->SetRotation(expectedRotation);
-				Assert::IsTrue(expectedRotation == t1->Rotation());
+				Assert::IsTrue(expectedRotation.coeffs() == (t1->Rotation().coeffs()));
 			}
 
 			// Test scale:
 			{
-				tue::fvec3 expectedScale(3.0f, 1.0f, 0.5f);
+				Vector3f expectedScale(3.0f, 1.0f, 0.5f);
 				t1->SetScale(expectedScale);
 				Assert::IsTrue(expectedScale == t1->Scale());
 			}
@@ -54,7 +55,7 @@ namespace MythologyTestProject
 					t1->FixedUpdate(timer);
 
 					auto expectedWorldTransform = parent->WorldTransform() * worldTransformBeforeAddingParent;
-					Assert::IsTrue(t1->WorldTransform() == expectedWorldTransform);
+					Assert::IsTrue(t1->WorldTransform().matrix() == expectedWorldTransform.matrix());
 				}
 
 				// World position stays = true:
@@ -65,7 +66,7 @@ namespace MythologyTestProject
 
 					t1->FixedUpdate(timer);
 
-					Assert::IsTrue(t1->WorldTransform() == worldTransformBeforeAddingParent);
+					Assert::IsTrue(t1->WorldTransform().isApprox(worldTransformBeforeAddingParent));
 				}
 			}
 		}

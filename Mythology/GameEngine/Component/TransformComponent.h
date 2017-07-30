@@ -2,9 +2,8 @@
 
 #include "IComponent.h"
 
-#include "Libraries/tue/vec.hpp"
-#include "Libraries/tue/quat.hpp"
-#include "Libraries/tue/mat.hpp"
+#include "Libraries/Eigen/Core"
+#include "Libraries/Eigen/Geometry"
 
 #include <memory>
 #include <unordered_map>
@@ -15,9 +14,9 @@ namespace GameEngine
 	{
 	public:
 		using IDType = std::size_t;
-		using ThreeDType = tue::fvec3;
-		using QuaternionType = tue::fquat;
-		using MatrixType = tue::fmat4x4;
+		using ThreeDType = Eigen::Vector3f;
+		using QuaternionType = Eigen::Quaternion<float>;
+		
 
 	public:
 		TransformComponent();
@@ -38,16 +37,17 @@ namespace GameEngine
 		const std::weak_ptr<TransformComponent>& GetParent() const;
 		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldPositionStays = false);
 
-		const MatrixType& WorldTransform() const;
+		const Eigen::Transform<float, 3, Eigen::Projective>& WorldTransform() const;
 
 	private:
+		Eigen::Transform<float, 3, Eigen::Projective> CalculateLocalTransform() const;
 		void UpdateMatrix();
 
 	private:
 		static IDType s_count;
 
 		IDType m_id;
-		MatrixType m_worldTransform;
+		Eigen::Transform<float, 3, Eigen::Projective> m_worldTransform;
 		bool m_dirty = true;
 
 		ThreeDType m_translation;
