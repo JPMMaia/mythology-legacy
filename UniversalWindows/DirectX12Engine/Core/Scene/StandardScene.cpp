@@ -5,10 +5,10 @@
 #include "Core/Geometry/VertexTypes.h"
 #include "Core/Shader/ShaderBufferTypes.h"
 #include "RenderLayers.h"
-#include "Core/Textures/RWTexture.h"
-
+#include "Core/Textures/Texture.h"
 
 using namespace Common;
+using namespace DirectX;
 using namespace DirectX12Engine;
 
 StandardScene::StandardScene(const std::shared_ptr<DeviceResources>& deviceResources, CommandListManager& commandListManager) :
@@ -197,17 +197,29 @@ void StandardScene::UpdatePassBuffer()
 {
 	ShaderBufferTypes::PassData passData;
 
-	const auto& viewMatrix = m_camera.GetViewMatrix();
-	const auto& projectionMatrix = m_camera.GetProjectionMatrix();
-	auto viewProjectionMatrix = viewMatrix * projectionMatrix;
-	auto viewProjectionMatrixDeterminant = XMMatrixDeterminant(viewProjectionMatrix);
-	auto inverseViewProjectionMatrix = XMMatrixInverse(&viewProjectionMatrixDeterminant, viewProjectionMatrix);
+	// Matrices:
+	{
+		const auto& viewMatrix = m_camera.GetViewMatrix();
+		const auto& projectionMatrix = m_camera.GetProjectionMatrix();
+		auto viewProjectionMatrix = viewMatrix * projectionMatrix;
+		auto viewProjectionMatrixDeterminant = XMMatrixDeterminant(viewProjectionMatrix);
+		auto inverseViewProjectionMatrix = XMMatrixInverse(&viewProjectionMatrixDeterminant, viewProjectionMatrix);
 
-	XMStoreFloat4x4(&passData.ViewMatrix, XMMatrixTranspose(viewMatrix));
-	XMStoreFloat4x4(&passData.ProjectionMatrix, XMMatrixTranspose(projectionMatrix));
-	XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
-	XMStoreFloat4x4(&passData.InverseViewProjectionMatrix, XMMatrixTranspose(inverseViewProjectionMatrix));
-	XMStoreFloat3(&passData.CameraPositionW, m_camera.GetPosition());
+		XMStoreFloat4x4(&passData.ViewMatrix, XMMatrixTranspose(viewMatrix));
+		XMStoreFloat4x4(&passData.ProjectionMatrix, XMMatrixTranspose(projectionMatrix));
+		XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
+		XMStoreFloat4x4(&passData.InverseViewProjectionMatrix, XMMatrixTranspose(inverseViewProjectionMatrix));
+		XMStoreFloat3(&passData.CameraPositionW, m_camera.GetPosition());
+	}
+
+	// Lights:
+	{
+		auto& light = passData.Lights[0];
+		light.Strength = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
+		light.FalloffStart = 3.0f;
+		light.FalloffEnd = 8.0f;
+		light.Position = DirectX::XMFLOAT3 (2.0f, 3.0f, -2.0f);
+	}
 
 	m_passGPUBuffer[0] = passData;
 }

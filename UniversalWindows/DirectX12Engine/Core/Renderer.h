@@ -8,7 +8,7 @@
 #include "Resources/DescriptorHeap.h"
 #include "Utilities/UploadBuffer.h"
 #include "Command/CommandListManager.h"
-#include "Textures/RWTexture.h"
+#include "Textures/Texture.h"
 
 namespace DirectX12Engine
 {
@@ -43,11 +43,11 @@ namespace DirectX12Engine
 		DescriptorHeap m_texturesDescriptorHeap;
 
 		std::shared_ptr<IScene> m_scene;
-		RWTexture m_positions;
-		RWTexture m_albedo;
-		RWTexture m_normals;
-		RWTexture m_depthStencil;
+		Texture m_positions;
+		Texture m_albedo;
+		Texture m_normals;
+		Texture m_depthStencil;
 
-		RWTexture m_albedoTexture;
+		Texture m_albedoTexture;
 	};
 }

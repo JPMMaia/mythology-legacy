@@ -1,3 +1,5 @@
+#include "../Common/LightingUtils.hlsli"
+
 struct PassData
 {
 	float4x4 ViewMatrix;
@@ -6,4 +8,5 @@ struct PassData
 	float4x4 InverseViewProjectionMatrix;
 	float3 CameraPositionW;
 	float Padding;
+	Light Lights[MAX_NUM_LIGHTS];
 };

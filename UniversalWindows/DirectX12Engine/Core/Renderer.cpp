@@ -80,7 +80,7 @@ void Renderer::CreateWindowSizeDependentResources()
 			clearValue.Color[3] = 1.0f;
 
 			auto& texture = m_positions;
-			texture = RWTexture();
+			texture = Texture();
 			texture.CreateResource(
 				*m_deviceResources.get(),
 				static_cast<UINT64>(outputSize.x),
@@ -103,7 +103,7 @@ void Renderer::CreateWindowSizeDependentResources()
 			clearValue.Color[3] = 1.0f;
 
 			auto& texture = m_albedo;
-			texture = RWTexture();
+			texture = Texture();
 			texture.CreateResource(
 				*m_deviceResources.get(),
 				static_cast<UINT64>(outputSize.x),
@@ -126,7 +126,7 @@ void Renderer::CreateWindowSizeDependentResources()
 			clearValue.Color[3] = 1.0f;
 
 			auto& texture = m_normals;
-			texture = RWTexture();
+			texture = Texture();
 			texture.CreateResource(
 				*m_deviceResources.get(),
 				static_cast<UINT64>(outputSize.x),
@@ -149,7 +149,7 @@ void Renderer::CreateWindowSizeDependentResources()
 		clearValue.DepthStencil.Depth = 1.0f;
 		clearValue.DepthStencil.Stencil = 0;
 
-		m_depthStencil = RWTexture();
+		m_depthStencil = Texture();
 		m_depthStencil.CreateResource(
 			*m_deviceResources.get(), 
 			static_cast<UINT64>(outputSize.x), 

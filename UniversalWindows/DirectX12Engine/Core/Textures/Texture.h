@@ -12,10 +12,10 @@ namespace DirectX12Engine
 	class DeviceResources;
 	class DescriptorHeap;
 
-	class RWTexture
+	class Texture
 	{
 	public:
-		RWTexture() = default;
+		Texture() = default;
 
 	public:
 		void CreateResource(const DeviceResources& deviceResources, UINT64 width, UINT64 height, DXGI_FORMAT format, D3D12_RESOURCE_STATES initialResourceState, D3D12_CLEAR_VALUE* optimizedClearValue, D3D12_RESOURCE_FLAGS resourceFlags);

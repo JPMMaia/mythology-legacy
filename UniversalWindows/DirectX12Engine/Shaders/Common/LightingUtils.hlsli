@@ -1,5 +1,5 @@
 #ifndef MAX_NUM_LIGHTS
-#define MAX_NUM_LIGHTS 1
+#define MAX_NUM_LIGHTS 8
 #endif
 
 #ifndef NUM_DIR_LIGHTS

@@ -257,7 +257,7 @@
     <ClInclude Include="Core\ShaderStructures.h" />
     <ClInclude Include="Core\Shader\Shader.h" />
     <ClInclude Include="Core\Shader\ShaderBufferTypes.h" />
-    <ClInclude Include="Core\Textures\RWTexture.h" />
+    <ClInclude Include="Core\Textures\Texture.h" />
     <ClInclude Include="Core\Textures\Samplers.h" />
     <ClInclude Include="Core\Utilities\d3dx12.h" />
     <ClInclude Include="Core\Utilities\DirectXHelper.h" />
@@ -295,7 +295,7 @@
     <ClCompile Include="Core\Sample3DSceneRenderer.cpp" />
     <ClCompile Include="Core\Scene\StandardScene.cpp" />
     <ClCompile Include="Core\Shader\Shader.cpp" />
-    <ClCompile Include="Core\Textures\RWTexture.cpp" />
+    <ClCompile Include="Core\Textures\Texture.cpp" />
     <ClCompile Include="Core\Textures\Samplers.cpp" />
     <ClCompile Include="Core\Utilities\DirectXHelper.cpp" />
     <ClCompile Include="Core\Utilities\UploadBuffer.cpp" />

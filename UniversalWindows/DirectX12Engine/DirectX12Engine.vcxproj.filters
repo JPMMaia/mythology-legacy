@@ -35,9 +35,9 @@
     <ClCompile Include="Core\Input\Keyboard.cpp" />
     <ClCompile Include="Core\Input\Mouse.cpp" />
     <ClCompile Include="Core\D3DBase.cpp" />
-    <ClCompile Include="Core\Textures\RWTexture.cpp" />
     <ClCompile Include="Core\Resources\DescriptorHeap.cpp" />
     <ClCompile Include="Core\Textures\Samplers.cpp" />
+    <ClCompile Include="Core\Textures\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -74,10 +74,10 @@
     <ClInclude Include="Core\Input\Keyboard.h" />
     <ClInclude Include="Core\Input\Mouse.h" />
     <ClInclude Include="Core\D3DBase.h" />
-    <ClInclude Include="Core\Textures\RWTexture.h" />
     <ClInclude Include="Core\Resources\DescriptorHeap.h" />
     <ClInclude Include="Core\Textures\Samplers.h" />
     <ClInclude Include="Core\Scene\RenderLayers.h" />
+    <ClInclude Include="Core\Textures\Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\SamplePixelShader.hlsl" />
