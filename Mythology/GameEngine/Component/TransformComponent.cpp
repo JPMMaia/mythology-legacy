@@ -68,15 +68,25 @@ void TransformComponent::SetParent(const std::weak_ptr<TransformComponent>& pare
 	m_parent = parent;
 
 	// Add as a child to parent:
-	{
-		auto parentLocked = parent.lock();
-		parentLocked->m_children.emplace(m_id, shared_from_this());
-	}
+	auto parentLocked = m_parent.lock();
+	parentLocked->m_children.emplace(m_id, shared_from_this());
 
 	if (worldPositionStays)
-		throw std::domain_error("Not implemented");
+	{
+		// Ensure that parent is updated:
+		if (parentLocked->m_dirty)
+			parentLocked->UpdateMatrix();
+
+		auto parentWorldTransform = parentLocked->WorldTransform();
+		
+	}	
 
 	m_dirty = true;
+}
+
+const TransformComponent::MatrixType& TransformComponent::WorldTransform() const
+{
+	return m_worldTransform;
 }
 
 void TransformComponent::UpdateMatrix()

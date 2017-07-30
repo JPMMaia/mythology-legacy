@@ -38,6 +38,8 @@ namespace GameEngine
 		const std::weak_ptr<TransformComponent>& GetParent() const;
 		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldPositionStays = false);
 
+		const MatrixType& WorldTransform() const;
+
 	private:
 		void UpdateMatrix();
 
