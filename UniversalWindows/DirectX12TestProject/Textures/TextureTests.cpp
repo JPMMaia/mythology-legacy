@@ -2,7 +2,7 @@
 #include "CppUnitTest.h"
 #include "Core/DeviceResources.h"
 #include "Core/Renderer.h"
-#include "Core/Textures/RWTexture.h"
+#include "Core/Textures/Texture.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace DirectX;
@@ -26,7 +26,7 @@ namespace DirectX12TestProject
 			ID3D12GraphicsCommandList* commandList;
 			commandListManager.CreateGraphicsCommandList(commandList);
 
-			RWTexture texture;
+			Texture texture;
 			Microsoft::WRL::ComPtr<ID3D12Resource> uploadBuffer;
 			DirectX::DDS_ALPHA_MODE alphaMode;
 			bool isCubeMap;

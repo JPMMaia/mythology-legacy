@@ -87,7 +87,7 @@ void TransformComponent::SetParent(const std::weak_ptr<TransformComponent>& pare
 
 		// Apply rotation and scaling:
 		Matrix3f rotationMatrix, scalingMatrix;
-		localTransform.computeScalingRotation(&scalingMatrix, &rotationMatrix);
+		localTransform.computeRotationScaling(&rotationMatrix, &scalingMatrix);
 		m_rotation = Eigen::AngleAxis<float>(rotationMatrix);
 		m_scale = scalingMatrix.diagonal();
 	}

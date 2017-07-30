@@ -50,6 +50,8 @@ namespace MythologyTestProject
 				{
 					auto parent = std::make_shared<TransformComponent>();
 					parent->SetTranslation({ 0.0f, 1.0f, 2.0f });
+					parent->SetRotation(Quaternion<float>(1.0f, 0.1f, 0.4f, 0.3f).normalized());
+					parent->SetScale({ 0.1f, 0.4f, 0.6f });
 					t1->SetParent(parent, false);
 
 					t1->FixedUpdate(timer);
@@ -62,6 +64,14 @@ namespace MythologyTestProject
 				{
 					auto parent = std::make_shared<TransformComponent>();
 					parent->SetTranslation({ 0.0f, 1.0f, 2.0f });
+					parent->SetRotation(
+						Quaternion<float>(
+							AngleAxisf(pi, Vector3f::UnitZ()) *
+							AngleAxisf(pi, Vector3f::UnitY()) *
+							AngleAxisf(pi, Vector3f::UnitZ())
+							)
+					);
+					parent->SetScale({ 0.1f, 0.4f, 0.6f });
 					t1->SetParent(parent, true);
 
 					t1->FixedUpdate(timer);
