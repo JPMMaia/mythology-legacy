@@ -46,5 +46,7 @@ namespace DirectX12Engine
 		RWTexture m_albedo;
 		RWTexture m_normals;
 		RWTexture m_depthStencil;
+
+		RWTexture m_albedoTexture;
 	};
 }

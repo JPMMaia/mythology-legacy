@@ -28,7 +28,30 @@ void Renderer::CreateDeviceDependentResources()
 
 	m_dsvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 1, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
 	m_rtvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 3, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
-	m_srvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 3, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
+	m_srvDescriptorHeap.CreateDeviceDependentResources(*m_deviceResources.get(), 4, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
+
+	{
+		auto commandList = m_commandListManager.GetGraphicsCommandList(0);
+
+		RWTexture texture;
+		Microsoft::WRL::ComPtr<ID3D12Resource> uploadBuffer;
+		DDS_ALPHA_MODE alphaMode;
+		bool isCubeMap;
+		texture.LoadTextureFromFile(
+			m_deviceResources->GetD3DDevice(),
+			commandList,
+			L"Resources/sandstonecliff-albedo.dds",
+			D3D12_RESOURCE_FLAG_NONE,
+			DDS_LOADER_FORCE_SRGB,
+			alphaMode,
+			isCubeMap,
+			uploadBuffer
+		);
+
+		commandList->Close();
+		m_commandListManager.ExecuteCommandList(0);
+		m_deviceResources->WaitForGpu();
+	}
 }
 void Renderer::CreateWindowSizeDependentResources()
 {
@@ -56,7 +79,7 @@ void Renderer::CreateWindowSizeDependentResources()
 
 			auto& texture = m_positions;
 			texture = RWTexture();
-			texture.CreateWindowSizeDependentResources(
+			texture.CreateResource(
 				*m_deviceResources.get(),
 				static_cast<UINT64>(outputSize.x),
 				static_cast<UINT64>(outputSize.y),
@@ -79,7 +102,7 @@ void Renderer::CreateWindowSizeDependentResources()
 
 			auto& texture = m_albedo;
 			texture = RWTexture();
-			texture.CreateWindowSizeDependentResources(
+			texture.CreateResource(
 				*m_deviceResources.get(),
 				static_cast<UINT64>(outputSize.x),
 				static_cast<UINT64>(outputSize.y),
@@ -102,7 +125,7 @@ void Renderer::CreateWindowSizeDependentResources()
 
 			auto& texture = m_normals;
 			texture = RWTexture();
-			texture.CreateWindowSizeDependentResources(
+			texture.CreateResource(
 				*m_deviceResources.get(),
 				static_cast<UINT64>(outputSize.x),
 				static_cast<UINT64>(outputSize.y),
@@ -125,7 +148,7 @@ void Renderer::CreateWindowSizeDependentResources()
 		clearValue.DepthStencil.Stencil = 0;
 
 		m_depthStencil = RWTexture();
-		m_depthStencil.CreateWindowSizeDependentResources(
+		m_depthStencil.CreateResource(
 			*m_deviceResources.get(), 
 			static_cast<UINT64>(outputSize.x), 
 			static_cast<UINT64>(outputSize.y), 

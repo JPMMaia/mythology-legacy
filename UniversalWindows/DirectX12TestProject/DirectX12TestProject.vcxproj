@@ -129,7 +129,7 @@
     <ClCompile>
       <AdditionalOptions>/bigobj /D_ITERATOR_DEBUG_LEVEL=1 %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\DirectX12Engine;$(SolutionDir)Mythology;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\DirectX12Engine;$(SolutionDir)Mythology;$(ProjectDir)..\DirectX12Engine\Libraries\DirectXTK12\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>D3D12.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -139,7 +139,7 @@
     <ClCompile>
       <AdditionalOptions>/bigobj /D_ITERATOR_DEBUG_LEVEL=1 %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\DirectX12Engine;$(SolutionDir)Mythology;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\DirectX12Engine;$(SolutionDir)Mythology;$(ProjectDir)..\DirectX12Engine\Libraries\DirectXTK12\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>D3D12.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -163,6 +163,7 @@
     <None Include="DirectX12TestProject_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\WindowsApp\Working Directory\Resources\sandstonecliff-albedo.dds" />
     <Image Include="Assets\LockScreenLogo.scale-200.png" />
     <Image Include="Assets\SplashScreen.scale-200.png" />
     <Image Include="Assets\Square44x44Logo.scale-200.png" />
@@ -172,6 +173,7 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Textures\TextureTests.cpp" />
     <ClCompile Include="UnitTestApp.xaml.cpp">
       <DependentUpon>UnitTestApp.xaml</DependentUpon>
     </ClCompile>

@@ -29,6 +29,17 @@ size_t CommandListManager::CreateGraphicsCommandList(ID3D12GraphicsCommandList*&
 
 	return m_graphicsCommandLists.size() - 1;
 }
+void CommandListManager::DeleteGraphicsCommandList(std::size_t index)
+{
+	m_graphicsCommandLists.erase(m_graphicsCommandLists.begin() + index);
+}
+void CommandListManager::ResetGraphicsCommandList(std::size_t index)
+{
+	auto commandList = m_graphicsCommandLists.at(index);
+	auto commandAllocator = m_deviceResources->GetCommandAllocator();
+
+	DX::ThrowIfFailed(commandList->Reset(commandAllocator, nullptr));
+}
 
 ID3D12GraphicsCommandList* CommandListManager::GetGraphicsCommandList(size_t index)
 {

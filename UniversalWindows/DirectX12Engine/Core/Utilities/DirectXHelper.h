@@ -11,6 +11,32 @@ namespace DX
 {
 	void ThrowIfFailed(HRESULT hr);
 
+	inline void UploadDataToBuffer(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, Microsoft::WRL::ComPtr<ID3D12Resource>& resource, std::vector<D3D12_SUBRESOURCE_DATA>& subresources, Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer, D3D12_RESOURCE_STATES finalState)
+	{
+		const auto uploadBufferSize = GetRequiredIntermediateSize(resource.Get(), 0,
+			static_cast<UINT>(subresources.size()));
+
+		// Create the GPU upload buffer:
+		auto heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+		auto resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
+		DX::ThrowIfFailed(
+			d3dDevice->CreateCommittedResource(
+				&heapProperties,
+				D3D12_HEAP_FLAG_NONE,
+				&resourceDesc,
+				D3D12_RESOURCE_STATE_GENERIC_READ,
+				nullptr,
+				IID_PPV_ARGS(uploadBuffer.GetAddressOf())));
+
+		// Copy data from CPU to GPU:
+		UpdateSubresources(commandList, resource.Get(), uploadBuffer.Get(),
+			0, 0, static_cast<UINT>(subresources.size()), subresources.data());
+		
+		auto t1 = CD3DX12_RESOURCE_BARRIER::Transition(resource.Get(),
+			D3D12_RESOURCE_STATE_COPY_DEST, finalState);
+		commandList->ResourceBarrier(1, &t1);
+	}
+
 	inline Microsoft::WRL::ComPtr<ID3D12Resource> CreateDefaultBuffer(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const void* initialData, uint64_t byteSize, Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer)
 	{
 		Microsoft::WRL::ComPtr<ID3D12Resource> defaultBuffer;

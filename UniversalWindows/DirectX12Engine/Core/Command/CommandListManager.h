@@ -9,13 +9,15 @@ namespace DirectX12Engine
 	public:
 		explicit CommandListManager(const std::shared_ptr<DeviceResources>& deviceResources);
 
-		size_t CreateGraphicsCommandList(ID3D12GraphicsCommandList*& graphicsCommandList);
+		std::size_t CreateGraphicsCommandList(ID3D12GraphicsCommandList*& graphicsCommandList);
+		void DeleteGraphicsCommandList(std::size_t index);
+		void ResetGraphicsCommandList(std::size_t index);
 
-		ID3D12GraphicsCommandList* GetGraphicsCommandList(size_t index);
+		ID3D12GraphicsCommandList* GetGraphicsCommandList(std::size_t index);
 
-		void AddToExecutionQueue(size_t index);
+		void AddToExecutionQueue(std::size_t index);
 		void ExecuteCommandLists();
-		void ExecuteCommandList(size_t index);
+		void ExecuteCommandList(std::size_t index);
 
 	private:
 		std::shared_ptr<DeviceResources> m_deviceResources;

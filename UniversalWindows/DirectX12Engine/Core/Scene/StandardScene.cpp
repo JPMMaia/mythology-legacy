@@ -4,8 +4,8 @@
 #include "Core/Geometry/MeshGenerator.h"
 #include "Core/Geometry/VertexTypes.h"
 #include "Core/Shader/ShaderBufferTypes.h"
-#include "Common/Helpers.h"
 #include "RenderLayers.h"
+#include "Core/Textures/RWTexture.h"
 
 
 using namespace Common;
@@ -82,6 +82,8 @@ void StandardScene::CreateDeviceDependentResources()
 
 		for (const auto& mesh : m_meshes)
 			mesh.second->DisposeUploadBuffers();
+
+		m_commandListManager.ResetGraphicsCommandList(m_commandListIndex);
 	}
 
 	{
