@@ -41,5 +41,8 @@
     <ClCompile Include="GameEngine\Components\TransformComponentTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameEngine\Components\LightComponentTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

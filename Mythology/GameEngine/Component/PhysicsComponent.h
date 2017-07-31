@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IComponent.h"
-#include "TransformComponent.h"
+#include "GameEngine/Component/Transforms/TransformComponent.h"
 
 namespace GameEngine
 {
@@ -9,6 +9,8 @@ namespace GameEngine
 	{
 	public:
 		void FixedUpdate(const Common::Timer& timer) override;
+
+		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldPositionStays) override;
 
 	private:
 		TransformComponent m_transform;

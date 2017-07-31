@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "GameEngine/Component/TransformComponent.h"
+#include "GameEngine/Component/Transforms/TransformComponent.h"
 #include "Common/Timer.h"
 
 #include <cmath>

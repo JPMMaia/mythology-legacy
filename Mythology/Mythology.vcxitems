@@ -29,13 +29,16 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Common\Timer.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\LightComponent.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Base\BaseComponent.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\DirectionalLightComponent.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\PhysicsComponent.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\TransformComponent.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Transforms\TransformComponent.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\GameManager.cpp">
@@ -60,11 +63,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Task.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\TasksComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Timer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Base\BaseComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\IComponent.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\LightComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\DirectionalLightComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\MeshComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\PhysicsComponent.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\TransformComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Transforms\TransformComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\MeshData.h" />

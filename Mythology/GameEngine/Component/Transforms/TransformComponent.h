@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "IComponent.h"
+#include "GameEngine/Component/IComponent.h"
 
 #include "Libraries/Eigen/Core"
 #include "Libraries/Eigen/Geometry"
@@ -35,7 +35,7 @@ namespace GameEngine
 		void SetScale(const ThreeDType& scale);
 
 		const std::weak_ptr<TransformComponent>& GetParent() const;
-		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldPositionStays = false);
+		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldPositionStays = false) override;
 
 		const TransformType& WorldTransform() const;
 

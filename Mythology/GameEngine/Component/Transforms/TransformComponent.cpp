@@ -7,7 +7,7 @@ TransformComponent::IDType TransformComponent::s_count = 0;
 
 TransformComponent::TransformComponent() :
 	m_id(s_count++),
-	m_translation({0.0f, 0.0f, 0.0f}),
+	m_translation(Vector3f::Zero()),
 	m_rotation(Quaternion<float>(1.0f, 0.0f, 0.0f, 0.0f)),
 	m_scale({1.0f, 1.0f, 1.0f})
 {

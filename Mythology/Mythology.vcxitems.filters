@@ -6,12 +6,13 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Common\PerformanceTimer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Common\TasksComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Common\Timer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\TransformComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\PhysicsComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\MythologyGame.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\GameManager.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\LightComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\DirectionalLightComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Transforms\TransformComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Base\BaseComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
@@ -26,7 +27,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IRenderItem.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\IComponent.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\TransformComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\MeshGenerator.h" />
@@ -82,6 +82,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\InternalEvent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\InternalEventsComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\Event.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\LightComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\DirectionalLightComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Transforms\TransformComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Base\BaseComponent.h" />
   </ItemGroup>
 </Project>
