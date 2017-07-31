@@ -29,6 +29,14 @@ namespace MythologyTestProject
 				DirectionalLightComponent light(strength, direction);
 				Assert::IsTrue(light.Strength() == strength);
 				Assert::IsTrue(light.Direction() == direction);
+
+				Vector3 newStrength(-4.0f, -5.0f, -6.0f);
+				light.Strength() = newStrength;
+				Assert::IsTrue(light.Strength() == newStrength);
+
+				Vector3 newDirection(-1.0f, -2.0f, -3.0f);
+				light.Direction() = newDirection;
+				Assert::IsTrue(light.Direction() == newDirection);
 			}
 		}
 	};

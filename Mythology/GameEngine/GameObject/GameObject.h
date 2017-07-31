@@ -1,9 +1,8 @@
 ﻿#pragma once
 
-#include "GameEngine/Component/TransformComponent.h"
+#include "GameEngine/Component/IComponent.h"
 
 #include <unordered_map>
-#include <memory>
 
 namespace GameEngine
 {

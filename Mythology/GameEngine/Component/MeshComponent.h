@@ -1,17 +1,16 @@
 #pragma once
 
 #include "IComponent.h"
-#include "GameEngine/Component/Transforms/TransformComponent.h"
+#include "Base/BaseComponent.h"
 
 namespace GameEngine
 {
 	template<typename GeometryType>
-	class MeshComponent : public IComponent
+	class MeshComponent : public BaseComponent
 	{
 	public:
 		MeshComponent() = default;
-		MeshComponent(TransformComponent* transform, const GeometryType& geometry) :
-			m_transform(transform),
+		explicit MeshComponent(const GeometryType& geometry) :
 			m_geometry(geometry)
 		{
 		}
@@ -27,7 +26,6 @@ namespace GameEngine
 		}
 
 	private:
-		TransformComponent* m_transform = nullptr;
 		GeometryType m_geometry;
 	};
 }
