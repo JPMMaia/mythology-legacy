@@ -4,17 +4,16 @@ using namespace GameEngine;
 
 PointLightComponent::PointLightComponent() :
 	m_strength(Vector3Type::Zero()),
-	m_position(Vector3Type::Zero()),
 	m_falloffStart(0.0f),
 	m_falloffEnd(0.0f)
 {
 }
 PointLightComponent::PointLightComponent(const Vector3Type& strength, const Vector3Type& position, float falloffStart, float falloffEnd) :
 	m_strength(strength),
-	m_position(position),
 	m_falloffStart(falloffStart),
 	m_falloffEnd(falloffEnd)
 {
+	Transform().SetLocalPosition(position);
 }
 
 const BaseComponent::Vector3Type& PointLightComponent::Strength() const
@@ -28,11 +27,11 @@ BaseComponent::Vector3Type& PointLightComponent::Strength()
 
 const BaseComponent::Vector3Type& PointLightComponent::Position() const
 {
-	return m_position;
+	return Transform().LocalPosition();
 }
-BaseComponent::Vector3Type& PointLightComponent::Position()
+void PointLightComponent::SetPosition(const Vector3Type& position)
 {
-	return m_position;
+	Transform().SetLocalPosition(position);
 }
 
 float PointLightComponent::FalloffStart() const

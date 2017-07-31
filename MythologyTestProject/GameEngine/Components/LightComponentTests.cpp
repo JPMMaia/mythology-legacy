@@ -3,6 +3,7 @@
 #include "GameEngine/Component/Lights/DirectionalLightComponent.h"
 #include "GameEngine/Component/Lights/PointLightComponent.h"
 #include "GameEngine/Component/Lights/SpotLightComponent.h"
+#include "GameEngine/GameObject/GameObject.h"
 
 using namespace Eigen;
 using namespace GameEngine;
@@ -72,7 +73,7 @@ namespace MythologyTestProject
 				Assert::IsTrue(light.Strength() == newStrength);
 
 				Vector3 newPosition(-4.0f, 1.0f, -3.0f);
-				light.Position() = newPosition;
+				light.SetPosition(newPosition);
 				Assert::IsTrue(light.Position() == newPosition);
 
 				auto newFalloffStart = 7.0f;
@@ -82,6 +83,25 @@ namespace MythologyTestProject
 				auto newFalloffEnd = 15.0f;
 				light.FalloffEnd() = newFalloffEnd;
 				Assert::IsTrue(light.FalloffEnd() == newFalloffEnd);
+			}
+
+			// Test integration with transform:
+			{
+				Vector3 position(1.0f, 2.0f, 3.0f);
+
+				PointLightComponent light;
+				light.SetPosition(position);
+
+				Assert::IsTrue(light.Transform().LocalPosition() == position);
+
+				Vector3 position2(-1.0f, 2.0f, 5.0f);
+				light.Transform().SetLocalPosition(position2);
+				Assert::IsTrue(light.Position() == position2);
+
+				auto parent = std::make_shared<TransformComponent>();
+				parent->SetLocalPosition(Vector3(1.0f, 1.0f, 1.0f));
+				light.Transform().SetParent(parent);
+				Assert::IsTrue(light.Position().isApprox(Vector3(0.0f, 3.0f, 6.0f)));
 			}
 		}
 

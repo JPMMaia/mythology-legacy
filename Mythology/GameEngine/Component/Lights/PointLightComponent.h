@@ -15,7 +15,7 @@ namespace GameEngine
 		Vector3Type& Strength();
 
 		const Vector3Type& Position() const;
-		Vector3Type& Position();
+		void SetPosition(const Vector3Type& position);
 
 		float FalloffStart() const;
 		float& FalloffStart();
@@ -25,7 +25,6 @@ namespace GameEngine
 
 	private:
 		Vector3Type m_strength;
-		Vector3Type m_position;
 		float m_falloffStart;
 		float m_falloffEnd;
 	};

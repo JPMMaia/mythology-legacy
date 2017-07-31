@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GameEngine/Component/IComponent.h"
 #include "GameEngine/Component/Base/BaseComponent.h"
 
 namespace GameEngine
@@ -16,10 +15,6 @@ namespace GameEngine
 		}
 
 	public:
-		void FixedUpdate(const Common::Timer& timer) override
-		{
-		}
-
 		const GeometryType& Geometry() const
 		{
 			return m_geometry;

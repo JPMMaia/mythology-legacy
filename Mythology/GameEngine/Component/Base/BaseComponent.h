@@ -12,7 +12,7 @@ namespace GameEngine
 		using QuaternionType = Eigen::Quaternion<float>;
 
 	public:
-		BaseComponent() = default;
+		BaseComponent();
 
 	public:
 		void FixedUpdate(const Common::Timer& timer) override;
@@ -22,7 +22,7 @@ namespace GameEngine
 		const TransformComponent& Transform() const;
 		TransformComponent& Transform();
 
-	protected:
-		TransformComponent m_transform;
+	private:
+		std::shared_ptr<TransformComponent> m_transform;
 	};
 }
