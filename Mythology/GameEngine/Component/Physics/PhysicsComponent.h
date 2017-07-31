@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IComponent.h"
+#include "GameEngine/Component/IComponent.h"
 #include "GameEngine/Component/Transforms/TransformComponent.h"
 
 namespace GameEngine

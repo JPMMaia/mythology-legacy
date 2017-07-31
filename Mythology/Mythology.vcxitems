@@ -41,7 +41,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\SpotLightComponent.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\PhysicsComponent.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\PhysicsComponent.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Transforms\TransformComponent.cpp">
@@ -74,8 +74,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\DirectionalLightComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\PointLightComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\SpotLightComponent.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\MeshComponent.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\PhysicsComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\MeshComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\PhysicsComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Transforms\TransformComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.h" />

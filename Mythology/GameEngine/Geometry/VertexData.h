@@ -2,11 +2,11 @@
 
 namespace GameEngine
 {
-	template<typename TwoDType, typename ThreeDType>
+	template<typename Vector2Type, typename Vector3Type>
 	struct Vertex
 	{
 		Vertex() = default;
-		Vertex(const ThreeDType& position, const ThreeDType& normal, const ThreeDType& tangent, const TwoDType& textureCoordinates) :
+		Vertex(const Vector3Type& position, const Vector3Type& normal, const Vector3Type& tangent, const Vector2Type& textureCoordinates) :
 			Position(position),
 			Normal(normal),
 			Tangent(tangent),
@@ -14,9 +14,9 @@ namespace GameEngine
 		{
 		}
 
-		ThreeDType Position;
-		ThreeDType Normal;
-		ThreeDType Tangent;
-		TwoDType TextureCoordinates;
+		Vector3Type Position;
+		Vector3Type Normal;
+		Vector3Type Tangent;
+		Vector2Type TextureCoordinates;
 	};
 }

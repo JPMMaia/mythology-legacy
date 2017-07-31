@@ -1,7 +1,7 @@
 #pragma once
 
-#include "IComponent.h"
-#include "Base/BaseComponent.h"
+#include "GameEngine/Component/IComponent.h"
+#include "GameEngine/Component/Base/BaseComponent.h"
 
 namespace GameEngine
 {
@@ -20,9 +20,13 @@ namespace GameEngine
 		{
 		}
 
-		const GeometryType* Geometry() const
+		const GeometryType& Geometry() const
 		{
-			return &m_geometry;
+			return m_geometry;
+		}
+		GeometryType& Geometry()
+		{
+			return m_geometry;
 		}
 
 	private:
