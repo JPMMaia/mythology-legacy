@@ -7,14 +7,14 @@ TransformComponent::IDType TransformComponent::s_count = 0;
 
 TransformComponent::TransformComponent() :
 	m_id(s_count++),
-	m_localPosition(Vector3Type::Zero()),
+	m_localTranslation(Vector3Type::Zero()),
 	m_localRotation(QuaternionType::Identity()),
 	m_localScaling(Vector3Type(1.0f, 1.0f, 1.0f))
 {
 }
 TransformComponent::TransformComponent(const Vector3Type& localPosition, const QuaternionType& localRotation, const Vector3Type& localScaling) :
 	m_id(s_count++),
-	m_localPosition(localPosition),
+	m_localTranslation(localPosition),
 	m_localRotation(localRotation),
 	m_localScaling(localScaling)
 {
@@ -24,61 +24,82 @@ void TransformComponent::FixedUpdate(const Common::Timer& timer)
 {
 }
 
-const TransformComponent::Vector3Type& TransformComponent::LocalPosition() const
+const TransformComponent::Vector3Type& TransformComponent::LocalTranslation() const
 {
-	return m_localPosition;
+	return m_localTranslation;
 }
-void TransformComponent::SetLocalPosition(const Vector3Type& translation)
+void TransformComponent::SetLocalTranslation(const Vector3Type& localTranslation)
 {
-	m_localPosition = translation;
-	UpdateMatrix();
+	m_localTranslation = localTranslation;
 }
 
 const TransformComponent::QuaternionType& TransformComponent::LocalRotation() const
 {
 	return m_localRotation;
 }
-void TransformComponent::SetLocalRotation(const QuaternionType& rotation)
+void TransformComponent::SetLocalRotation(const QuaternionType& localRotation)
 {
-	m_localRotation = rotation;
+	m_localRotation = localRotation;
 	m_localRotation.normalize();
-	UpdateMatrix();
 }
 
 const TransformComponent::Vector3Type& TransformComponent::LocalScaling() const
 {
 	return m_localScaling;
 }
-void TransformComponent::SetLocalScaling(const Vector3Type& scaling)
+void TransformComponent::SetLocalScaling(const Vector3Type& localScaling)
 {
-	m_localScaling = scaling;
-	UpdateMatrix();
+	m_localScaling = localScaling;
 }
 
-const TransformComponent::Vector3Type& TransformComponent::WorldPosition() const
+TransformComponent::Vector3Type TransformComponent::WorldPosition() const
 {
-	static auto x = CalculateParentsTransform() * m_localPosition;
-	return x;
+	// Apply scale and rotation to local position:
+	auto localTransform = TransformType::Identity();
+	localTransform.rotate(m_localRotation);
+	localTransform.scale(m_localScaling);
+	auto position = localTransform * m_localTranslation;
+
+	// Apply parent's transform:
+	return CalculateParentsTransform() * position;
 }
-void TransformComponent::SetWorldPosition(const Vector3Type& translation)
+void TransformComponent::SetWorldPosition(const Vector3Type& worldPosition)
 {
+	// Apply inverse of parent's transform:
+	auto position = CalculateParentsTransform().inverse() * worldPosition;
+
+	// Apply inverse of scale and rotation:
+	auto localTransform = TransformType::Identity();
+	localTransform.rotate(m_localRotation);
+	localTransform.scale(m_localScaling);
+	m_localTranslation = localTransform.inverse() * position;
 }
 
-const TransformComponent::QuaternionType& TransformComponent::WorldRotation() const
+TransformComponent::QuaternionType TransformComponent::WorldRotation() const
 {
-	return m_localRotation;
-}
-void TransformComponent::SetWorldRotation(const QuaternionType& rotation)
-{
-}
+	auto rotation = m_localRotation;
 
-const TransformComponent::Vector3Type& TransformComponent::WorldScaling() const
-{
-	static auto x = CalculateParentsTransform() * m_localScaling;
-	return x;
+	auto transform = shared_from_this();
+	while (!transform->m_parent.expired())
+	{
+		transform = transform->m_parent.lock();
+		rotation = transform->m_localRotation * rotation;
+	}
+
+	return rotation;
 }
-void TransformComponent::SetWorldScaling(const Vector3Type& scale)
+void TransformComponent::SetWorldRotation(const QuaternionType& worldRotation)
 {
+	auto parentsRotation = QuaternionType::Identity();
+
+	auto transform = shared_from_this();
+	while (!transform->m_parent.expired())
+	{
+		transform = transform->m_parent.lock();
+		parentsRotation = transform->m_localRotation * parentsRotation;
+	}
+
+	m_localRotation = parentsRotation.inverse() * worldRotation;
 }
 
 const std::weak_ptr<TransformComponent>& TransformComponent::GetParent() const
@@ -103,15 +124,12 @@ void TransformComponent::SetParent(const std::weak_ptr<TransformComponent>& pare
 
 	if (worldPositionStays)
 	{
-		// Ensure that parent is updated:
-		parentLocked->UpdateMatrix();
-
 		// Left-multiply world transform by the parent's world inverse transform in order to hold the same world position:
 		auto parentWorldInverseTransform = parentLocked->WorldTransform().inverse();
 		auto localTransform = parentWorldInverseTransform * CalculateLocalTransform();
 
 		// Apply translation:
-		m_localPosition = localTransform.translation();
+		m_localTranslation = localTransform.translation();
 
 		// Apply rotation and scaling:
 		Matrix3f rotationMatrix, scalingMatrix;
@@ -121,7 +139,7 @@ void TransformComponent::SetParent(const std::weak_ptr<TransformComponent>& pare
 	}
 }
 
-const TransformComponent::TransformType& TransformComponent::WorldTransform() const
+TransformComponent::TransformType TransformComponent::WorldTransform() const
 {
 	return CalculateParentsTransform() * CalculateLocalTransform();
 }
@@ -129,7 +147,7 @@ const TransformComponent::TransformType& TransformComponent::WorldTransform() co
 TransformComponent::TransformType TransformComponent::CalculateLocalTransform() const
 {
 	auto transform(TransformType::Identity());
-	transform.translate(m_localPosition);
+	transform.translate(m_localTranslation);
 	transform.rotate(m_localRotation);
 	transform.scale(m_localScaling);
 	return transform;
@@ -152,25 +170,4 @@ TransformComponent::TransformType TransformComponent::CalculateParentsTransform(
 	}
 
 	return transform;
-}
-
-void TransformComponent::UpdateMatrix()
-{
-	// TODO test for parent validity:
-
-	/*// Update world transform using local parameters:
-	m_worldTransform = CalculateLocalTransform();
-
-	// If parent is valid, then apply parent transform:
-	if (!m_parent.expired())
-	{
-		auto lockedParent = m_parent.lock();
-
-		// Ensure that parent is updated:
-		if (lockedParent->m_dirty)
-			lockedParent->UpdateMatrix();
-
-		// Apply parent transform:
-		m_worldTransform = lockedParent->m_worldTransform * m_worldTransform;
-	}*/
 }

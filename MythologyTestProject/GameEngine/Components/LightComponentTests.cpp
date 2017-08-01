@@ -92,14 +92,14 @@ namespace MythologyTestProject
 				PointLightComponent light;
 				light.SetPosition(position);
 
-				Assert::IsTrue(light.Transform().LocalPosition() == position);
+				Assert::IsTrue(light.Transform().LocalTranslation() == position);
 
 				Vector3 position2(-1.0f, 2.0f, 5.0f);
-				light.Transform().SetLocalPosition(position2);
+				light.Transform().SetLocalTranslation(position2);
 				Assert::IsTrue(light.Position() == position2);
 
 				auto parent = std::make_shared<TransformComponent>();
-				parent->SetLocalPosition(Vector3(1.0f, 1.0f, 1.0f));
+				parent->SetLocalTranslation(Vector3(1.0f, 1.0f, 1.0f));
 				light.Transform().SetParent(parent);
 				Assert::IsTrue(light.Position().isApprox(Vector3(0.0f, 3.0f, 6.0f)));
 			}

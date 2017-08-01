@@ -13,7 +13,7 @@ PointLightComponent::PointLightComponent(const Vector3Type& strength, const Vect
 	m_falloffStart(falloffStart),
 	m_falloffEnd(falloffEnd)
 {
-	Transform().SetLocalPosition(position);
+	Transform().SetLocalTranslation(position);
 }
 
 const BaseComponent::Vector3Type& PointLightComponent::Strength() const
@@ -27,11 +27,11 @@ BaseComponent::Vector3Type& PointLightComponent::Strength()
 
 const BaseComponent::Vector3Type& PointLightComponent::Position() const
 {
-	return Transform().LocalPosition();
+	return Transform().LocalTranslation();
 }
 void PointLightComponent::SetPosition(const Vector3Type& position)
 {
-	Transform().SetLocalPosition(position);
+	Transform().SetLocalTranslation(position);
 }
 
 float PointLightComponent::FalloffStart() const

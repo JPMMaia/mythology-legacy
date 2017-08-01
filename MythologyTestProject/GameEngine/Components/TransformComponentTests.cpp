@@ -21,8 +21,8 @@ namespace MythologyTestProject
 			// Test translation:
 			{
 				Vector3f expectedTranslation(1.0f, -1.0f, 2.0f);
-				t1->SetLocalPosition(expectedTranslation);
-				Assert::IsTrue(expectedTranslation == t1->LocalPosition());
+				t1->SetLocalTranslation(expectedTranslation);
+				Assert::IsTrue(expectedTranslation == t1->LocalTranslation());
 			}
 
 			// Test rotation:
@@ -49,7 +49,7 @@ namespace MythologyTestProject
 				// World position stays = true:
 				{
 					auto parent = std::make_shared<TransformComponent>();
-					parent->SetLocalPosition({ 0.0f, 1.0f, 2.0f });
+					parent->SetLocalTranslation({ 0.0f, 1.0f, 2.0f });
 					parent->SetLocalRotation(
 						Quaternion<float>(
 							AngleAxisf(pi, Vector3f::UnitZ()) *
@@ -71,22 +71,60 @@ namespace MythologyTestProject
 		{
 			auto pi = std::acos(-1.0f);
 
+			// Apply local transformations and test world position:
 			{
 				auto t1 = std::make_shared<TransformComponent>();
-				t1->SetLocalPosition({ 1.0f, 1.0f, 0.0f });
+				t1->SetLocalTranslation({ 1.0f, 1.0f, 0.0f });
 
 				auto parent = std::make_shared<TransformComponent>();
 				parent->SetLocalRotation(Quaternion<float>(AngleAxisf(-pi / 2.0f, Vector3f::UnitZ())));
-
 				t1->SetParent(parent, false);
+
 				Assert::IsTrue(t1->WorldPosition().isApprox(Vector3f(1.0f, -1.0f, 0.0f)));
 			}
 
+			// Apply local transformations and test world rotation:
 			{
 				auto t1 = std::make_shared<TransformComponent>();
+				t1->SetLocalRotation(Quaternion<float>(AngleAxisf(pi, Vector3f::UnitZ())));
 				
 				auto parent = std::make_shared<TransformComponent>();
+				parent->SetLocalRotation(Quaternion<float>(AngleAxisf(pi, Vector3f::UnitZ())));
+				t1->SetParent(parent, false);
 
+				Assert::IsTrue(t1->WorldRotation().isApprox(Quaternion<float>(AngleAxisf(2.0f * pi, Vector3f::UnitZ()))));
+			}
+
+			// Apply world transformations and test local position:
+			{
+				auto parent = std::make_shared<TransformComponent>();
+				parent->SetLocalRotation(Quaternionf(AngleAxisf(-pi / 2.0f, Vector3f::UnitZ())));
+
+				auto t1 = std::make_shared<TransformComponent>();
+				t1->SetLocalTranslation({ 1.0f, 1.0f, 0.0f });
+				t1->SetParent(parent, false);
+				Assert::IsTrue(t1->LocalTranslation().isApprox(Vector3f(1.0f, 1.0f, 0.0f)));
+				Assert::IsTrue(t1->WorldPosition().isApprox(Vector3f(1.0f, -1.0f, 0.0f)));
+
+				t1->SetWorldPosition({ 0.0f, 1.0f, 0.0f });
+				Assert::IsTrue(t1->WorldPosition().isApprox(Vector3f(0.0f, 1.0f, 0.0f)));
+				Assert::IsTrue(t1->LocalTranslation().isApprox(Vector3f(-1.0f, 0.0f, 0.0f)));
+			}
+
+			// Apply world transformations and test local rotation:
+			{
+				auto parent = std::make_shared<TransformComponent>();
+				parent->SetLocalRotation(Quaternionf(AngleAxisf(-pi / 2.0f, Vector3f::UnitZ())));
+
+				auto t1 = std::make_shared<TransformComponent>();
+				t1->SetLocalTranslation({ 1.0f, 1.0f, 0.0f });
+				t1->SetParent(parent, false);
+
+				t1->SetWorldRotation(Quaternionf(AngleAxisf(pi / 2.0f, Vector3f::UnitZ())));
+				Assert::IsTrue(t1->WorldRotation().isApprox(Quaternionf(AngleAxisf(pi / 2.0f, Vector3f::UnitZ()))));
+				Assert::IsTrue(t1->LocalRotation().isApprox(Quaternionf(AngleAxisf(pi, Vector3f::UnitZ()))));
+				Assert::IsTrue(t1->WorldPosition().isApprox(Vector3f(-1.0f, 1.0f, 0.0f)));
+				Assert::IsTrue(t1->LocalTranslation().isApprox(Vector3f(1.0f, 1.0f, 0.0f)));
 			}
 		}
 	};

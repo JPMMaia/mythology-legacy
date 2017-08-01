@@ -26,39 +26,35 @@ namespace GameEngine
 		void FixedUpdate(const Common::Timer& timer) override;
 
 	public:
-		const Vector3Type& LocalPosition() const;
-		void SetLocalPosition(const Vector3Type& translation);
+		const Vector3Type& LocalTranslation() const;
+		void SetLocalTranslation(const Vector3Type& localTranslation);
 
 		const QuaternionType& LocalRotation() const;
-		void SetLocalRotation(const QuaternionType& rotation);
+		void SetLocalRotation(const QuaternionType& localRotation);
 
 		const Vector3Type& LocalScaling() const;
-		void SetLocalScaling(const Vector3Type& scaling);
+		void SetLocalScaling(const Vector3Type& localScaling);
 
-		const Vector3Type& WorldPosition() const;
-		void SetWorldPosition(const Vector3Type& translation);
+		Vector3Type WorldPosition() const;
+		void SetWorldPosition(const Vector3Type& worldPosition);
 
-		const QuaternionType& WorldRotation() const;
-		void SetWorldRotation(const QuaternionType& rotation);
-
-		const Vector3Type& WorldScaling() const;
-		void SetWorldScaling(const Vector3Type& scale);
+		QuaternionType WorldRotation() const;
+		void SetWorldRotation(const QuaternionType& worldRotation);
 
 		const std::weak_ptr<TransformComponent>& GetParent() const;
 		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldPositionStays = false) override;
 
-		const TransformType& WorldTransform() const;
+		TransformType WorldTransform() const;
 
 	private:
 		TransformType CalculateLocalTransform() const;
 		TransformType CalculateParentsTransform() const;
-		void UpdateMatrix();
 
 	private:
 		static IDType s_count;
 
 		IDType m_id;
-		Vector3Type m_localPosition;
+		Vector3Type m_localTranslation;
 		QuaternionType m_localRotation;
 		Vector3Type m_localScaling;
 
