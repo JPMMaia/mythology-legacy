@@ -2,75 +2,78 @@
 
 using namespace GameEngine;
 
+BaseComponent::Vector3Type SpotLightComponent::s_initialDirection(0.0f, -1.0f, 0.0f);
+
 SpotLightComponent::SpotLightComponent() :
 	m_strength(Vector3Type::Zero()),
-	m_position(Vector3Type::Zero()),
-	m_direction(Vector3Type::Zero()),
 	m_falloffStart(0.0f),
 	m_falloffEnd(0.0f),
 	m_spotPower(0.0f)
 {
 }
-SpotLightComponent::SpotLightComponent(const Vector3Type& strength, const Vector3Type& position, const Vector3Type& direction, float falloffStart, float falloffEnd, float spotPower) :
+SpotLightComponent::SpotLightComponent(const Vector3Type& strength, float falloffStart, float falloffEnd, float spotPower) :
 	m_strength(strength),
-	m_position(position),
-	m_direction(direction),
 	m_falloffStart(falloffStart),
 	m_falloffEnd(falloffEnd),
 	m_spotPower(spotPower)
 {
 }
 
-const BaseComponent::Vector3Type& SpotLightComponent::Strength() const
+const BaseComponent::Vector3Type& SpotLightComponent::GetStrength() const
 {
 	return m_strength;
 }
-BaseComponent::Vector3Type& SpotLightComponent::Strength()
+void SpotLightComponent::SetStrength(const Vector3Type& strength)
 {
-	return m_strength;
+	m_strength = strength;
 }
 
-const BaseComponent::Vector3Type& SpotLightComponent::Position() const
-{
-	return m_position;
-}
-BaseComponent::Vector3Type& SpotLightComponent::Position()
-{
-	return m_position;
-}
-
-const BaseComponent::Vector3Type& SpotLightComponent::Direction() const
-{
-	return m_direction;
-}
-BaseComponent::Vector3Type& SpotLightComponent::Direction()
-{
-	return m_direction;
-}
-
-float SpotLightComponent::FalloffStart() const
+float SpotLightComponent::GetFalloffStart() const
 {
 	return m_falloffStart;
 }
-float& SpotLightComponent::FalloffStart()
+void SpotLightComponent::SetFalloffStart(float falloffStart)
 {
-	return m_falloffStart;
+	m_falloffStart = falloffStart;
 }
 
-float SpotLightComponent::FalloffEnd() const
+float SpotLightComponent::GetFalloffEnd() const
 {
 	return m_falloffEnd;
 }
-float& SpotLightComponent::FalloffEnd()
+void SpotLightComponent::SetFalloffEnd(float falloffEnd)
 {
-	return m_falloffEnd;
+	m_falloffEnd = falloffEnd;
 }
 
-float SpotLightComponent::SpotPower() const
+float SpotLightComponent::GetSpotPower() const
 {
 	return m_spotPower;
 }
-float& SpotLightComponent::SpotPower()
+void SpotLightComponent::SetSpotPower(float spotPower)
 {
-	return m_spotPower;
+	m_spotPower = spotPower;
+}
+
+BaseComponent::Vector3Type SpotLightComponent::GetLocalDirection() const
+{
+	return GetTransform().GetLocalRotation().toRotationMatrix() * s_initialDirection;
+}
+void SpotLightComponent::SetLocalDirection(const Vector3Type& localDirection)
+{
+	GetTransform().SetLocalRotation(QuaternionType::FromTwoVectors(s_initialDirection, localDirection));
+}
+
+BaseComponent::Vector3Type SpotLightComponent::GetLocalPosition() const
+{
+	return GetTransform().GetLocalPosition();
+}
+void SpotLightComponent::SetLocalPosition(const Vector3Type& localPosition)
+{
+	GetTransform().SetLocalPosition(localPosition);
+}
+
+BaseComponent::Vector3Type SpotLightComponent::GetWorldPosition() const
+{
+	return GetTransform().GetWorldPosition();
 }

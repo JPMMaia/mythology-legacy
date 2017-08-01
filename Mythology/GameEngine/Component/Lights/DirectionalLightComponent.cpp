@@ -2,31 +2,31 @@
 
 using namespace GameEngine;
 
+BaseComponent::Vector3Type DirectionalLightComponent::s_initialDirection(0.0f, -1.0f, 0.0f);
+
 DirectionalLightComponent::DirectionalLightComponent() :
-	m_strength(Vector3Type::Zero()),
-	m_direction(Vector3Type::Zero())
+	m_strength(Vector3Type::Zero())
 {
 }
-DirectionalLightComponent::DirectionalLightComponent(const Vector3Type& strength, const Vector3Type& direction) :
-	m_strength(strength),
-	m_direction(direction)
+DirectionalLightComponent::DirectionalLightComponent(const Vector3Type& strength) :
+	m_strength(strength)
 {
 }
 
-const BaseComponent::Vector3Type& DirectionalLightComponent::Strength() const
+const BaseComponent::Vector3Type& DirectionalLightComponent::GetStrength() const
 {
 	return m_strength;
 }
-BaseComponent::Vector3Type& DirectionalLightComponent::Strength()
+void DirectionalLightComponent::SetStrength(const Vector3Type& strength)
 {
-	return m_strength;
+	m_strength = strength;
 }
 
-const BaseComponent::Vector3Type& DirectionalLightComponent::Direction() const
+BaseComponent::Vector3Type DirectionalLightComponent::GetLocalDirection() const
 {
-	return m_direction;
+	return GetTransform().GetLocalRotation().toRotationMatrix() * s_initialDirection;
 }
-BaseComponent::Vector3Type& DirectionalLightComponent::Direction()
+void DirectionalLightComponent::SetLocalDirection(const Vector3Type& localDirection)
 {
-	return m_direction;
+	GetTransform().SetLocalRotation(QuaternionType::FromTwoVectors(s_initialDirection, localDirection));
 }

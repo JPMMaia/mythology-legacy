@@ -22,9 +22,9 @@ namespace MythologyTestProject
 			// Test default construction:
 			{
 				auto& transform = gameObject.Transform();
-				Assert::IsTrue(transform.LocalTranslation() == Vector3::Zero());
-				Assert::IsTrue(transform.LocalRotation().isApprox(Quaternion::Identity()));
-				Assert::IsTrue(transform.LocalScaling() == Vector3(1.0f, 1.0f, 1.0f));
+				Assert::IsTrue(transform.GetLocalPosition() == Vector3::Zero());
+				Assert::IsTrue(transform.GetLocalRotation().isApprox(Quaternion::Identity()));
+				Assert::IsTrue(transform.GetLocalScaling() == Vector3(1.0f, 1.0f, 1.0f));
 			}
 
 			// Test components:
@@ -45,7 +45,7 @@ namespace MythologyTestProject
 				gameObject.AddComponent("PointLight", pointLightComponent);
 
 				auto& transform = gameObject.Transform();
-				transform.SetLocalTranslation({1.0f, -2.0f, 5.0f});
+				transform.SetLocalPosition({1.0f, -2.0f, 5.0f});
 				transform.FixedUpdate(timer);
 				// TODO
 

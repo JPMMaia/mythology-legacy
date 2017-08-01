@@ -15,34 +15,43 @@ PointLightComponent::PointLightComponent(const Vector3Type& strength, float fall
 {
 }
 
-const BaseComponent::Vector3Type& PointLightComponent::Strength() const
+const BaseComponent::Vector3Type& PointLightComponent::GetStrength() const
 {
 	return m_strength;
 }
-BaseComponent::Vector3Type& PointLightComponent::Strength()
+void PointLightComponent::SetStrength(const Vector3Type& strength)
 {
-	return m_strength;
+	m_strength = strength;
 }
 
-float PointLightComponent::FalloffStart() const
+float PointLightComponent::GetFalloffStart() const
 {
 	return m_falloffStart;
 }
-float& PointLightComponent::FalloffStart()
+void PointLightComponent::SetFalloffStart(float falloffStart)
 {
-	return m_falloffStart;
+	m_falloffStart = falloffStart;
 }
 
-float PointLightComponent::FalloffEnd() const
+float PointLightComponent::GetFalloffEnd() const
 {
 	return m_falloffEnd;
 }
-float& PointLightComponent::FalloffEnd()
+void PointLightComponent::SetFalloffEnd(float falloffEnd)
 {
-	return m_falloffEnd;
+	m_falloffEnd = falloffEnd;
 }
 
-BaseComponent::Vector3Type PointLightComponent::WorldPosition() const
+BaseComponent::Vector3Type PointLightComponent::GetLocalPosition() const
 {
-	return Transform().WorldPosition();
+	return GetTransform().GetLocalPosition();
+}
+void PointLightComponent::SetLocalPosition(const Vector3Type& localPosition)
+{
+	GetTransform().SetLocalPosition(localPosition);
+}
+
+BaseComponent::Vector3Type PointLightComponent::GetWorldPosition() const
+{
+	return GetTransform().GetWorldPosition();
 }

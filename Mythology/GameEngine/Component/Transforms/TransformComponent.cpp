@@ -7,14 +7,14 @@ TransformComponent::IDType TransformComponent::s_count = 0;
 
 TransformComponent::TransformComponent() :
 	m_id(s_count++),
-	m_localTranslation(Vector3Type::Zero()),
+	m_localPosition(Vector3Type::Zero()),
 	m_localRotation(QuaternionType::Identity()),
 	m_localScaling(Vector3Type(1.0f, 1.0f, 1.0f))
 {
 }
 TransformComponent::TransformComponent(const Vector3Type& localPosition, const QuaternionType& localRotation, const Vector3Type& localScaling) :
 	m_id(s_count++),
-	m_localTranslation(localPosition),
+	m_localPosition(localPosition),
 	m_localRotation(localRotation),
 	m_localScaling(localScaling)
 {
@@ -24,16 +24,16 @@ void TransformComponent::FixedUpdate(const Common::Timer& timer)
 {
 }
 
-const TransformComponent::Vector3Type& TransformComponent::LocalTranslation() const
+const TransformComponent::Vector3Type& TransformComponent::GetLocalPosition() const
 {
-	return m_localTranslation;
+	return m_localPosition;
 }
-void TransformComponent::SetLocalTranslation(const Vector3Type& localTranslation)
+void TransformComponent::SetLocalPosition(const Vector3Type& localPosition)
 {
-	m_localTranslation = localTranslation;
+	m_localPosition = localPosition;
 }
 
-const TransformComponent::QuaternionType& TransformComponent::LocalRotation() const
+const TransformComponent::QuaternionType& TransformComponent::GetLocalRotation() const
 {
 	return m_localRotation;
 }
@@ -43,7 +43,7 @@ void TransformComponent::SetLocalRotation(const QuaternionType& localRotation)
 	m_localRotation.normalize();
 }
 
-const TransformComponent::Vector3Type& TransformComponent::LocalScaling() const
+const TransformComponent::Vector3Type& TransformComponent::GetLocalScaling() const
 {
 	return m_localScaling;
 }
@@ -52,18 +52,18 @@ void TransformComponent::SetLocalScaling(const Vector3Type& localScaling)
 	m_localScaling = localScaling;
 }
 
-TransformComponent::Vector3Type TransformComponent::WorldPosition() const
+TransformComponent::Vector3Type TransformComponent::GetWorldPosition() const
 {
 	// Apply parent's transform:
-	return CalculateParentsTransform() * m_localTranslation;
+	return CalculateParentsTransform() * m_localPosition;
 }
 void TransformComponent::SetWorldPosition(const Vector3Type& worldPosition)
 {
 	// Apply inverse of parent's transform:
-	m_localTranslation = CalculateParentsTransform().inverse() * worldPosition;
+	m_localPosition = CalculateParentsTransform().inverse() * worldPosition;
 }
 
-TransformComponent::QuaternionType TransformComponent::WorldRotation() const
+TransformComponent::QuaternionType TransformComponent::GetWorldRotation() const
 {
 	auto rotation = m_localRotation;
 
@@ -113,11 +113,11 @@ void TransformComponent::SetParent(const std::weak_ptr<TransformComponent>& pare
 	if (worldPositionStays)
 	{
 		// Left-multiply world transform by the parent's world inverse transform in order to hold the same world position:
-		auto parentWorldInverseTransform = parentLocked->WorldTransform().inverse();
+		auto parentWorldInverseTransform = parentLocked->GetWorldTransform().inverse();
 		auto localTransform = parentWorldInverseTransform * CalculateLocalTransform();
 
 		// Apply translation:
-		m_localTranslation = localTransform.translation();
+		m_localPosition = localTransform.translation();
 
 		// Apply rotation and scaling:
 		Matrix3f rotationMatrix, scalingMatrix;
@@ -127,7 +127,7 @@ void TransformComponent::SetParent(const std::weak_ptr<TransformComponent>& pare
 	}
 }
 
-TransformComponent::TransformType TransformComponent::WorldTransform() const
+TransformComponent::TransformType TransformComponent::GetWorldTransform() const
 {
 	return CalculateParentsTransform() * CalculateLocalTransform();
 }
@@ -135,7 +135,7 @@ TransformComponent::TransformType TransformComponent::WorldTransform() const
 TransformComponent::TransformType TransformComponent::CalculateLocalTransform() const
 {
 	auto transform(TransformType::Identity());
-	transform.translate(m_localTranslation);
+	transform.translate(m_localPosition);
 	transform.rotate(m_localRotation);
 	transform.scale(m_localScaling);
 	return transform;

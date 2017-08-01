@@ -17,11 +17,11 @@ void BaseComponent::SetParent(const std::weak_ptr<TransformComponent>& parent, b
 	m_transform->SetParent(parent, worldPositionStays);
 }
 
-const TransformComponent& BaseComponent::Transform() const
+const TransformComponent& BaseComponent::GetTransform() const
 {
 	return *m_transform;
 }
-TransformComponent& BaseComponent::Transform()
+TransformComponent& BaseComponent::GetTransform()
 {
 	return *m_transform;
 }

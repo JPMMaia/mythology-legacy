@@ -19,8 +19,8 @@ namespace GameEngine
 
 		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldPositionStays = false) override;
 
-		const TransformComponent& Transform() const;
-		TransformComponent& Transform();
+		const TransformComponent& GetTransform() const;
+		TransformComponent& GetTransform();
 
 	private:
 		std::shared_ptr<TransformComponent> m_transform;

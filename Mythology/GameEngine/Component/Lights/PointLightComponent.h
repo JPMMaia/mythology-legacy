@@ -11,16 +11,19 @@ namespace GameEngine
 		PointLightComponent(const Vector3Type& strength, float falloffStart, float falloffEnd);
 
 	public:
-		const Vector3Type& Strength() const;
-		Vector3Type& Strength();
+		const Vector3Type& GetStrength() const;
+		void SetStrength(const Vector3Type& strength);
 
-		float FalloffStart() const;
-		float& FalloffStart();
+		float GetFalloffStart() const;
+		void SetFalloffStart(float falloffStart);
 
-		float FalloffEnd() const;
-		float& FalloffEnd();
+		float GetFalloffEnd() const;
+		void SetFalloffEnd(float falloffEnd);
 
-		Vector3Type WorldPosition() const;
+		Vector3Type GetLocalPosition() const;
+		void SetLocalPosition(const Vector3Type& localPosition);
+		
+		Vector3Type GetWorldPosition() const;
 
 	private:
 		Vector3Type m_strength;

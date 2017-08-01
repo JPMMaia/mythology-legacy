@@ -26,25 +26,25 @@ namespace GameEngine
 		void FixedUpdate(const Common::Timer& timer) override;
 
 	public:
-		const Vector3Type& LocalTranslation() const;
-		void SetLocalTranslation(const Vector3Type& localTranslation);
+		const Vector3Type& GetLocalPosition() const;
+		void SetLocalPosition(const Vector3Type& localPosition);
 
-		const QuaternionType& LocalRotation() const;
+		const QuaternionType& GetLocalRotation() const;
 		void SetLocalRotation(const QuaternionType& localRotation);
 
-		const Vector3Type& LocalScaling() const;
+		const Vector3Type& GetLocalScaling() const;
 		void SetLocalScaling(const Vector3Type& localScaling);
 
-		Vector3Type WorldPosition() const;
+		Vector3Type GetWorldPosition() const;
 		void SetWorldPosition(const Vector3Type& worldPosition);
 
-		QuaternionType WorldRotation() const;
+		QuaternionType GetWorldRotation() const;
 		void SetWorldRotation(const QuaternionType& worldRotation);
 
 		const std::weak_ptr<TransformComponent>& GetParent() const;
 		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldPositionStays = false) override;
 
-		TransformType WorldTransform() const;
+		TransformType GetWorldTransform() const;
 
 	private:
 		TransformType CalculateLocalTransform() const;
@@ -54,7 +54,7 @@ namespace GameEngine
 		static IDType s_count;
 
 		IDType m_id;
-		Vector3Type m_localTranslation;
+		Vector3Type m_localPosition;
 		QuaternionType m_localRotation;
 		Vector3Type m_localScaling;
 
