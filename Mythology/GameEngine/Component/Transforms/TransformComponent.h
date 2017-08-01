@@ -42,13 +42,15 @@ namespace GameEngine
 		void SetWorldRotation(const QuaternionType& worldRotation);
 
 		const std::weak_ptr<TransformComponent>& GetParent() const;
-		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldPositionStays = false) override;
+		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldTransformStays = false) override;
+		void UnsetParent(bool worldTransformStays = false) override;
 
 		TransformType GetWorldTransform() const;
 
 	private:
 		TransformType CalculateLocalTransform() const;
 		TransformType CalculateParentsTransform() const;
+		void UpdateTransformValuesToHoldWorldTransform(const std::shared_ptr<TransformComponent>& parent, bool isNewParent);
 
 	private:
 		static IDType s_count;

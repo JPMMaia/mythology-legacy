@@ -12,9 +12,13 @@ void BaseComponent::FixedUpdate(const Common::Timer& timer)
 	m_transform->FixedUpdate(timer);
 }
 
-void BaseComponent::SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldPositionStays)
+void BaseComponent::SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldTransformStays)
 {
-	m_transform->SetParent(parent, worldPositionStays);
+	m_transform->SetParent(parent, worldTransformStays);
+}
+void BaseComponent::UnsetParent(bool worldTransformStays)
+{
+	m_transform->UnsetParent(worldTransformStays);
 }
 
 const TransformComponent& BaseComponent::GetTransform() const

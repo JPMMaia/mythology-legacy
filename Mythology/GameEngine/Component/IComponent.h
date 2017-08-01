@@ -20,6 +20,7 @@ namespace GameEngine
 	public:
 		virtual void FixedUpdate(const Common::Timer& timer) = 0;
 
-		virtual void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldPositionStays = false) = 0;
+		virtual void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldTransformStays = false) = 0;
+		virtual void UnsetParent(bool worldTransformStays = false) = 0;
 	};
 }

@@ -17,7 +17,8 @@ namespace GameEngine
 	public:
 		void FixedUpdate(const Common::Timer& timer) override;
 
-		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldPositionStays = false) override;
+		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldTransformStays = false) override;
+		void UnsetParent(bool worldTransformStays = false) override;
 
 		const TransformComponent& GetTransform() const;
 		TransformComponent& GetTransform();

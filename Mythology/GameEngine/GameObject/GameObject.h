@@ -13,16 +13,16 @@ namespace GameEngine
 		GameObject();
 
 	public:
-		void AddComponent(const std::string& name, IComponent& component);
-		void RemoveComponent(const std::string& name);
+		void AddComponent(const std::string& name, IComponent& component, bool worldTransformStays = false);
+		void RemoveComponent(const std::string& name, bool worldTransformStays = false);
 		IComponent& GetComponent(const std::string& name) const;
 		bool HasComponent(const std::string& name) const;
 
-		const TransformComponent& Transform() const;
-		TransformComponent& Transform();
+		const TransformComponent& GetTransform() const;
+		TransformComponent& GetTransform();
 
 	private:
-		TransformComponent m_transform;
+		std::shared_ptr<TransformComponent> m_transform;
 		std::unordered_map<std::string, IComponent*> m_components;
 	};
 }

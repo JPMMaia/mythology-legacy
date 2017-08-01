@@ -94,37 +94,35 @@ const std::weak_ptr<TransformComponent>& TransformComponent::GetParent() const
 {
 	return m_parent;
 }
-void TransformComponent::SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldPositionStays)
+void TransformComponent::SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldTransformStays)
 {
 	// If has parent, remove child:
 	if (!m_parent.expired())
 	{
 		auto oldParent = m_parent.lock();
 		oldParent->m_children.erase(oldParent->m_children.find(m_id));
+
+		if (worldTransformStays)
+			UpdateTransformValuesToHoldWorldTransform(oldParent, false);
 	}
 
 	// Set parent:
 	m_parent = parent;
 
-	// Add as a child to parent:
-	auto parentLocked = m_parent.lock();
-	parentLocked->m_children.emplace(m_id, shared_from_this());
-
-	if (worldPositionStays)
+	// If new parent is valid:
+	if(!m_parent.expired())
 	{
-		// Left-multiply world transform by the parent's world inverse transform in order to hold the same world position:
-		auto parentWorldInverseTransform = parentLocked->GetWorldTransform().inverse();
-		auto localTransform = parentWorldInverseTransform * CalculateLocalTransform();
+		// Add as a child to parent:
+		auto newParent = m_parent.lock();
+		newParent->m_children.emplace(m_id, shared_from_this());
 
-		// Apply translation:
-		m_localPosition = localTransform.translation();
-
-		// Apply rotation and scaling:
-		Matrix3f rotationMatrix, scalingMatrix;
-		localTransform.computeRotationScaling(&rotationMatrix, &scalingMatrix);
-		m_localRotation = Eigen::AngleAxis<float>(rotationMatrix);
-		m_localScaling = scalingMatrix.diagonal();
+		if (worldTransformStays)
+			UpdateTransformValuesToHoldWorldTransform(newParent, true);
 	}
+}
+void TransformComponent::UnsetParent(bool worldTransformStays)
+{
+	SetParent({}, worldTransformStays);
 }
 
 TransformComponent::TransformType TransformComponent::GetWorldTransform() const
@@ -158,4 +156,25 @@ TransformComponent::TransformType TransformComponent::CalculateParentsTransform(
 	}
 
 	return transform;
+}
+void TransformComponent::UpdateTransformValuesToHoldWorldTransform(const std::shared_ptr<TransformComponent>& parent, bool isNewParent)
+{
+	// Get the parent's world transform:
+	auto parentWorldTransform = parent->GetWorldTransform();
+
+	// If it is a new parent, we need the inverse transform:
+	if (isNewParent)
+		parentWorldTransform = parentWorldTransform.inverse();
+
+	// Apply parent's transform:
+	auto localTransform = parentWorldTransform * CalculateLocalTransform();
+
+	// Apply translation:
+	m_localPosition = localTransform.translation();
+
+	// Apply rotation and scaling:
+	Matrix3f rotationMatrix, scalingMatrix;
+	localTransform.computeRotationScaling(&rotationMatrix, &scalingMatrix);
+	m_localRotation = Eigen::AngleAxis<float>(rotationMatrix);
+	m_localScaling = scalingMatrix.diagonal();
 }

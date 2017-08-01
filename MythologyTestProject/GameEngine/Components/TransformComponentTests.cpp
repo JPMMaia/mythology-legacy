@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "GameEngine/Component/Transforms/TransformComponent.h"
-#include "Common/Timer.h"
 
 #include <cmath>
 
@@ -39,11 +38,14 @@ namespace MythologyTestProject
 				t1->SetLocalScaling(expectedScale);
 				Assert::IsTrue(expectedScale == t1->GetLocalScaling());
 			}
+		}
 
-			// Test setting parent:
+		TEST_METHOD(TransformComponentTest2)
+		{
+			auto pi = std::acos(-1.0f);
+
 			{
-				Common::Timer timer(std::chrono::milliseconds(12));
-				t1->FixedUpdate(timer);
+				auto t1 = std::make_shared<TransformComponent>();
 				auto worldTransformBeforeAddingParent = t1->GetWorldTransform();
 
 				// World position stays = true:
@@ -60,14 +62,84 @@ namespace MythologyTestProject
 					parent->SetLocalScaling({ 0.1f, 0.4f, 0.6f });
 					t1->SetParent(parent, true);
 
-					t1->FixedUpdate(timer);
+					Assert::IsTrue(t1->GetWorldTransform().isApprox(worldTransformBeforeAddingParent));
 
+					t1->UnsetParent(true);
+					Assert::IsTrue(t1->GetParent().expired());
 					Assert::IsTrue(t1->GetWorldTransform().isApprox(worldTransformBeforeAddingParent));
 				}
 			}
+
+			// No parent, word position stays = false:
+			{
+				auto parent = std::make_shared<TransformComponent>();
+				parent->SetLocalPosition({ 1.0f, 2.0f, 3.0f });
+
+				auto t1 = std::make_shared<TransformComponent>();
+				t1->SetLocalPosition({ 4.0f, 5.0f, 6.0f });
+
+				t1->SetParent(parent, false);
+				Assert::IsTrue(t1->GetLocalPosition() == Vector3f(4.0f, 5.0f, 6.0f));
+
+				t1->UnsetParent(false);
+				Assert::IsTrue(t1->GetLocalPosition() == Vector3f(4.0f, 5.0f, 6.0f));
+			}
+
+			// No parent, word position stays = true:
+			{
+				auto parent = std::make_shared<TransformComponent>();
+				parent->SetLocalPosition({ 1.0f, 2.0f, 3.0f });
+
+				auto t1 = std::make_shared<TransformComponent>();
+				t1->SetWorldPosition({ 4.0f, 5.0f, 6.0f });
+
+				t1->SetParent(parent, true);
+				Assert::IsTrue(t1->GetWorldPosition() == Vector3f(4.0f, 5.0f, 6.0f));
+
+				t1->UnsetParent(true);
+				Assert::IsTrue(t1->GetWorldPosition() == Vector3f(4.0f, 5.0f, 6.0f));
+			}
+
+			// Has parent, word position stays = false:
+			{
+				auto otherParent = std::make_shared<TransformComponent>();
+				otherParent->SetLocalPosition({ 7.0f, 8.0f, 9.0f });
+
+				auto parent = std::make_shared<TransformComponent>();
+				parent->SetLocalPosition({ 1.0f, 2.0f, 3.0f });
+
+				auto t1 = std::make_shared<TransformComponent>();
+				t1->SetLocalPosition({ 4.0f, 5.0f, 6.0f });
+				
+				t1->SetParent(otherParent, false);
+				t1->SetParent(parent, false);
+				Assert::IsTrue(t1->GetLocalPosition() == Vector3f(4.0f, 5.0f, 6.0f));
+
+				t1->UnsetParent(false);
+				Assert::IsTrue(t1->GetLocalPosition() == Vector3f(4.0f, 5.0f, 6.0f));
+			}
+
+			// Has parent, word position stays = true:
+			{
+				auto otherParent = std::make_shared<TransformComponent>();
+				otherParent->SetLocalPosition({ 7.0f, 8.0f, 9.0f });
+
+				auto parent = std::make_shared<TransformComponent>();
+				parent->SetLocalPosition({ 1.0f, 2.0f, 3.0f });
+
+				auto t1 = std::make_shared<TransformComponent>();
+				t1->SetWorldPosition({ 4.0f, 5.0f, 6.0f });
+
+				t1->SetParent(otherParent, true);
+				t1->SetParent(parent, true);
+				Assert::IsTrue(t1->GetWorldPosition() == Vector3f(4.0f, 5.0f, 6.0f));
+
+				t1->UnsetParent(true);
+				Assert::IsTrue(t1->GetWorldPosition() == Vector3f(4.0f, 5.0f, 6.0f));
+			}
 		}
 
-		TEST_METHOD(TransformComponentTest2)
+		TEST_METHOD(TransformComponentTest3)
 		{
 			auto pi = std::acos(-1.0f);
 

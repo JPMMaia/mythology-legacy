@@ -2,8 +2,8 @@
 #include "CppUnitTest.h"
 #include "GameEngine/GameObject/GameObject.h"
 #include "GameEngine/Component/Lights/PointLightComponent.h"
-#include "Common/Timer.h"
 
+using namespace Eigen;
 using namespace GameEngine;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -21,7 +21,7 @@ namespace MythologyTestProject
 
 			// Test default construction:
 			{
-				auto& transform = gameObject.Transform();
+				auto& transform = gameObject.GetTransform();
 				Assert::IsTrue(transform.GetLocalPosition() == Vector3::Zero());
 				Assert::IsTrue(transform.GetLocalRotation().isApprox(Quaternion::Identity()));
 				Assert::IsTrue(transform.GetLocalScaling() == Vector3(1.0f, 1.0f, 1.0f));
@@ -36,19 +36,25 @@ namespace MythologyTestProject
 
 				gameObject.RemoveComponent("PointLight");
 				Assert::IsFalse(gameObject.HasComponent("PointLight"));
+
+				// Remove non-existent component:
+				gameObject.RemoveComponent("OtherComponent");
 			}
 
 			// Test transform logic:
 			{
-				Common::Timer timer(std::chrono::milliseconds(12));
-
 				gameObject.AddComponent("PointLight", pointLightComponent);
+				pointLightComponent.SetLocalPosition({ 1.0f, 1.0f, 1.0f });
 
-				auto& transform = gameObject.Transform();
+				auto& transform = gameObject.GetTransform();
 				transform.SetLocalPosition({1.0f, -2.0f, 5.0f});
-				transform.FixedUpdate(timer);
-				// TODO
+				
+				Vector3f worldPosition(2.0f, -1.0f, 6.0f);
+				Assert::IsTrue(pointLightComponent.GetWorldPosition() == worldPosition);
 
+				gameObject.RemoveComponent("PointLight", true);
+				Assert::IsTrue(pointLightComponent.GetTransform().GetParent().expired());
+				Assert::IsTrue(pointLightComponent.GetWorldPosition() == worldPosition);
 			}
 		}
 	};
