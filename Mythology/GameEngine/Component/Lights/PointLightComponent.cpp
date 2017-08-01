@@ -8,12 +8,11 @@ PointLightComponent::PointLightComponent() :
 	m_falloffEnd(0.0f)
 {
 }
-PointLightComponent::PointLightComponent(const Vector3Type& strength, const Vector3Type& position, float falloffStart, float falloffEnd) :
+PointLightComponent::PointLightComponent(const Vector3Type& strength, float falloffStart, float falloffEnd) :
 	m_strength(strength),
 	m_falloffStart(falloffStart),
 	m_falloffEnd(falloffEnd)
 {
-	Transform().SetLocalTranslation(position);
 }
 
 const BaseComponent::Vector3Type& PointLightComponent::Strength() const
@@ -23,15 +22,6 @@ const BaseComponent::Vector3Type& PointLightComponent::Strength() const
 BaseComponent::Vector3Type& PointLightComponent::Strength()
 {
 	return m_strength;
-}
-
-const BaseComponent::Vector3Type& PointLightComponent::Position() const
-{
-	return Transform().LocalTranslation();
-}
-void PointLightComponent::SetPosition(const Vector3Type& position)
-{
-	Transform().SetLocalTranslation(position);
 }
 
 float PointLightComponent::FalloffStart() const
@@ -50,4 +40,9 @@ float PointLightComponent::FalloffEnd() const
 float& PointLightComponent::FalloffEnd()
 {
 	return m_falloffEnd;
+}
+
+BaseComponent::Vector3Type PointLightComponent::WorldPosition() const
+{
+	return Transform().WorldPosition();
 }

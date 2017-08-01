@@ -54,25 +54,13 @@ void TransformComponent::SetLocalScaling(const Vector3Type& localScaling)
 
 TransformComponent::Vector3Type TransformComponent::WorldPosition() const
 {
-	// Apply scale and rotation to local position:
-	auto localTransform = TransformType::Identity();
-	localTransform.rotate(m_localRotation);
-	localTransform.scale(m_localScaling);
-	auto position = localTransform * m_localTranslation;
-
 	// Apply parent's transform:
-	return CalculateParentsTransform() * position;
+	return CalculateParentsTransform() * m_localTranslation;
 }
 void TransformComponent::SetWorldPosition(const Vector3Type& worldPosition)
 {
 	// Apply inverse of parent's transform:
-	auto position = CalculateParentsTransform().inverse() * worldPosition;
-
-	// Apply inverse of scale and rotation:
-	auto localTransform = TransformType::Identity();
-	localTransform.rotate(m_localRotation);
-	localTransform.scale(m_localScaling);
-	m_localTranslation = localTransform.inverse() * position;
+	m_localTranslation = CalculateParentsTransform().inverse() * worldPosition;
 }
 
 TransformComponent::QuaternionType TransformComponent::WorldRotation() const

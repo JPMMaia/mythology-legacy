@@ -8,20 +8,19 @@ namespace GameEngine
 	{
 	public:
 		PointLightComponent();
-		PointLightComponent(const Vector3Type& strength, const Vector3Type& position, float falloffStart, float falloffEnd);
+		PointLightComponent(const Vector3Type& strength, float falloffStart, float falloffEnd);
 
 	public:
 		const Vector3Type& Strength() const;
 		Vector3Type& Strength();
-
-		const Vector3Type& Position() const;
-		void SetPosition(const Vector3Type& position);
 
 		float FalloffStart() const;
 		float& FalloffStart();
 
 		float FalloffEnd() const;
 		float& FalloffEnd();
+
+		Vector3Type WorldPosition() const;
 
 	private:
 		Vector3Type m_strength;

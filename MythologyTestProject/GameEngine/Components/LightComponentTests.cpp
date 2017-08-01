@@ -22,7 +22,7 @@ namespace MythologyTestProject
 			{
 				DirectionalLightComponent light;
 				Assert::IsTrue(light.Strength() == Vector3::Zero());
-				Assert::IsTrue(light.Direction() == Vector3::Zero());
+				Assert::IsTrue(light.Direction() == Vector3f(0.0f, -1.0f, 0.0f));
 			}
 
 			// Test custom constructor and accessors:
@@ -41,6 +41,15 @@ namespace MythologyTestProject
 				light.Direction() = newDirection;
 				Assert::IsTrue(light.Direction() == newDirection);
 			}
+
+			// Test integration with transform:
+			{
+				Vector3 direction(0.0f, -1.0f, 0.0f);
+
+				DirectionalLightComponent light;
+				Assert::IsTrue(light.Direction() == direction);
+				
+			}
 		}
 
 		TEST_METHOD(PointLightComponentTests)
@@ -51,7 +60,6 @@ namespace MythologyTestProject
 			{
 				PointLightComponent light;
 				Assert::IsTrue(light.Strength() == Vector3::Zero());
-				Assert::IsTrue(light.Position() == Vector3::Zero());
 				Assert::IsTrue(light.FalloffStart() == 0.0f);
 				Assert::IsTrue(light.FalloffEnd() == 0.0f);
 			}
@@ -59,22 +67,16 @@ namespace MythologyTestProject
 			// Test custom constructor and accessors:
 			{
 				Vector3 strength(1.0f, 2.0f, 3.0f);
-				Vector3 position(4.0f, 5.0f, 6.0f);
 				auto falloffStart = 3.0f;
 				auto falloffEnd = 5.0f;
-				PointLightComponent light(strength, position, falloffStart, falloffEnd);
+				PointLightComponent light(strength, falloffStart, falloffEnd);
 				Assert::IsTrue(light.Strength() == strength);
-				Assert::IsTrue(light.Position() == position);
 				Assert::IsTrue(light.FalloffStart() == falloffStart);
 				Assert::IsTrue(light.FalloffEnd() == falloffEnd);
 
 				Vector3 newStrength(2.0f, 3.0f, 4.0f);
 				light.Strength() = newStrength;
 				Assert::IsTrue(light.Strength() == newStrength);
-
-				Vector3 newPosition(-4.0f, 1.0f, -3.0f);
-				light.SetPosition(newPosition);
-				Assert::IsTrue(light.Position() == newPosition);
 
 				auto newFalloffStart = 7.0f;
 				light.FalloffStart() = newFalloffStart;
@@ -90,18 +92,8 @@ namespace MythologyTestProject
 				Vector3 position(1.0f, 2.0f, 3.0f);
 
 				PointLightComponent light;
-				light.SetPosition(position);
-
-				Assert::IsTrue(light.Transform().LocalTranslation() == position);
-
-				Vector3 position2(-1.0f, 2.0f, 5.0f);
-				light.Transform().SetLocalTranslation(position2);
-				Assert::IsTrue(light.Position() == position2);
-
-				auto parent = std::make_shared<TransformComponent>();
-				parent->SetLocalTranslation(Vector3(1.0f, 1.0f, 1.0f));
-				light.Transform().SetParent(parent);
-				Assert::IsTrue(light.Position().isApprox(Vector3(0.0f, 3.0f, 6.0f)));
+				light.Transform().SetWorldPosition(position);
+				Assert::IsTrue(light.WorldPosition() == position);
 			}
 		}
 

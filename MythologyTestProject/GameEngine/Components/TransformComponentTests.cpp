@@ -75,6 +75,7 @@ namespace MythologyTestProject
 			{
 				auto t1 = std::make_shared<TransformComponent>();
 				t1->SetLocalTranslation({ 1.0f, 1.0f, 0.0f });
+				t1->SetLocalRotation(Quaternionf(AngleAxisf(-pi / 2.0f, Vector3f::UnitZ())));
 
 				auto parent = std::make_shared<TransformComponent>();
 				parent->SetLocalRotation(Quaternion<float>(AngleAxisf(-pi / 2.0f, Vector3f::UnitZ())));
@@ -123,7 +124,7 @@ namespace MythologyTestProject
 				t1->SetWorldRotation(Quaternionf(AngleAxisf(pi / 2.0f, Vector3f::UnitZ())));
 				Assert::IsTrue(t1->WorldRotation().isApprox(Quaternionf(AngleAxisf(pi / 2.0f, Vector3f::UnitZ()))));
 				Assert::IsTrue(t1->LocalRotation().isApprox(Quaternionf(AngleAxisf(pi, Vector3f::UnitZ()))));
-				Assert::IsTrue(t1->WorldPosition().isApprox(Vector3f(-1.0f, 1.0f, 0.0f)));
+				Assert::IsTrue(t1->WorldPosition().isApprox(Vector3f(1.0f, -1.0f, 0.0f)));
 				Assert::IsTrue(t1->LocalTranslation().isApprox(Vector3f(1.0f, 1.0f, 0.0f)));
 			}
 		}
