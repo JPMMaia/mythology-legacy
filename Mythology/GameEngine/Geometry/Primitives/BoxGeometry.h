@@ -1,5 +1,8 @@
 #pragma once
+
 #include "GameEngine/Geometry/MeshGenerator.h"
+
+#include <cstddef>
 
 namespace GameEngine
 {

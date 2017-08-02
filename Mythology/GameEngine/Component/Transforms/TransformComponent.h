@@ -14,45 +14,51 @@ namespace GameEngine
 	{
 	public:
 		using IDType = std::size_t;
-		using ThreeDType = Eigen::Vector3f;
+		using Vector3Type = Eigen::Vector3f;
 		using QuaternionType = Eigen::Quaternion<float>;
 		using TransformType = Eigen::Transform<float, 3, Eigen::Affine>;
 		
 	public:
 		TransformComponent();
+		TransformComponent(const Vector3Type& localPosition, const QuaternionType& localRotation, const Vector3Type& localScaling);
 
 	public:
 		void FixedUpdate(const Common::Timer& timer) override;
 
 	public:
-		const ThreeDType& Translation() const;
-		void SetTranslation(const ThreeDType& translation);
+		const Vector3Type& GetLocalPosition() const;
+		void SetLocalPosition(const Vector3Type& localPosition);
 
-		const QuaternionType& Rotation() const;
-		void SetRotation(const QuaternionType& rotation);
+		const QuaternionType& GetLocalRotation() const;
+		void SetLocalRotation(const QuaternionType& localRotation);
 
-		const ThreeDType& Scale() const;
-		void SetScale(const ThreeDType& scale);
+		const Vector3Type& GetLocalScaling() const;
+		void SetLocalScaling(const Vector3Type& localScaling);
+
+		Vector3Type GetWorldPosition() const;
+		void SetWorldPosition(const Vector3Type& worldPosition);
+
+		QuaternionType GetWorldRotation() const;
+		void SetWorldRotation(const QuaternionType& worldRotation);
 
 		const std::weak_ptr<TransformComponent>& GetParent() const;
-		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldPositionStays = false) override;
+		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldTransformStays = false) override;
+		void UnsetParent(bool worldTransformStays = false) override;
 
-		const TransformType& WorldTransform() const;
+		TransformType GetWorldTransform() const;
 
 	private:
 		TransformType CalculateLocalTransform() const;
-		void UpdateMatrix();
+		TransformType CalculateParentsTransform() const;
+		void UpdateTransformValuesToHoldWorldTransform(const std::shared_ptr<TransformComponent>& parent, bool isNewParent);
 
 	private:
 		static IDType s_count;
 
 		IDType m_id;
-		TransformType m_worldTransform;
-		bool m_dirty = true;
-
-		ThreeDType m_translation;
-		QuaternionType m_rotation;
-		ThreeDType m_scale;
+		Vector3Type m_localPosition;
+		QuaternionType m_localRotation;
+		Vector3Type m_localScaling;
 
 		std::weak_ptr<TransformComponent> m_parent;
 		std::unordered_map<IDType, std::weak_ptr<TransformComponent>> m_children;

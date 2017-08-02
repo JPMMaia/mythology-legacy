@@ -8,17 +8,19 @@ namespace GameEngine
 	{
 	public:
 		DirectionalLightComponent();
-		DirectionalLightComponent(const Vector3Type& strength, const Vector3Type& direction);
+		explicit DirectionalLightComponent(const Vector3Type& strength);
 
 	public:
-		const Vector3Type& Strength() const;
-		Vector3Type& Strength();
+		const Vector3Type& GetStrength() const;
+		void SetStrength(const Vector3Type& strength);
 
-		const Vector3Type& Direction() const;
-		Vector3Type& Direction();
+		Vector3Type GetLocalDirection() const;
+		void SetLocalDirection(const Vector3Type& localDirection);
+
+	private:
+		static Vector3Type s_initialDirection;
 
 	private:
 		Vector3Type m_strength;
-		Vector3Type m_direction;
 	};
 }

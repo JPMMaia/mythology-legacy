@@ -4,51 +4,54 @@ using namespace GameEngine;
 
 PointLightComponent::PointLightComponent() :
 	m_strength(Vector3Type::Zero()),
-	m_position(Vector3Type::Zero()),
 	m_falloffStart(0.0f),
 	m_falloffEnd(0.0f)
 {
 }
-PointLightComponent::PointLightComponent(const Vector3Type& strength, const Vector3Type& position, float falloffStart, float falloffEnd) :
+PointLightComponent::PointLightComponent(const Vector3Type& strength, float falloffStart, float falloffEnd) :
 	m_strength(strength),
-	m_position(position),
 	m_falloffStart(falloffStart),
 	m_falloffEnd(falloffEnd)
 {
 }
 
-const BaseComponent::Vector3Type& PointLightComponent::Strength() const
+const BaseComponent::Vector3Type& PointLightComponent::GetStrength() const
 {
 	return m_strength;
 }
-BaseComponent::Vector3Type& PointLightComponent::Strength()
+void PointLightComponent::SetStrength(const Vector3Type& strength)
 {
-	return m_strength;
+	m_strength = strength;
 }
 
-const BaseComponent::Vector3Type& PointLightComponent::Position() const
-{
-	return m_position;
-}
-BaseComponent::Vector3Type& PointLightComponent::Position()
-{
-	return m_position;
-}
-
-float PointLightComponent::FalloffStart() const
+float PointLightComponent::GetFalloffStart() const
 {
 	return m_falloffStart;
 }
-float& PointLightComponent::FalloffStart()
+void PointLightComponent::SetFalloffStart(float falloffStart)
 {
-	return m_falloffStart;
+	m_falloffStart = falloffStart;
 }
 
-float PointLightComponent::FalloffEnd() const
+float PointLightComponent::GetFalloffEnd() const
 {
 	return m_falloffEnd;
 }
-float& PointLightComponent::FalloffEnd()
+void PointLightComponent::SetFalloffEnd(float falloffEnd)
 {
-	return m_falloffEnd;
+	m_falloffEnd = falloffEnd;
+}
+
+BaseComponent::Vector3Type PointLightComponent::GetLocalPosition() const
+{
+	return GetTransform().GetLocalPosition();
+}
+void PointLightComponent::SetLocalPosition(const Vector3Type& localPosition)
+{
+	GetTransform().SetLocalPosition(localPosition);
+}
+
+BaseComponent::Vector3Type PointLightComponent::GetWorldPosition() const
+{
+	return GetTransform().GetWorldPosition();
 }

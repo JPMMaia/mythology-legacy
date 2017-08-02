@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Common/MemoryPool/MemoryPool.h"
-#include "Component/MeshComponent.h"
+#include "Component/Meshes/MeshComponent.h"
+#include "Component/Transforms/TransformComponent.h"
 #include "Geometry/Primitives/BoxGeometry.h"
 #include "Common/Events/Event.h"
 

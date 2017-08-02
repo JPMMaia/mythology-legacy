@@ -7,7 +7,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Common\TasksComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Common\Timer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\PhysicsComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\MythologyGame.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\GameManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\DirectionalLightComponent.cpp" />
@@ -15,6 +14,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Base\BaseComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\SpotLightComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\PointLightComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\PhysicsComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
@@ -74,13 +74,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\transform.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\unused.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\vec.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\PhysicsComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\MythologyGame.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\MemoryPool\MemoryPoolElement.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\MemoryPool\MemoryPool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Primitives\BoxGeometry.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\MeshComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\InternalEvent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\InternalEventsComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\Event.h" />
@@ -89,5 +87,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Base\BaseComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\PointLightComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\SpotLightComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\MeshComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\PhysicsComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\EigenGeometry.h" />
   </ItemGroup>
 </Project>

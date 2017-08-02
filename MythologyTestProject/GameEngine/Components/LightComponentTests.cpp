@@ -3,6 +3,7 @@
 #include "GameEngine/Component/Lights/DirectionalLightComponent.h"
 #include "GameEngine/Component/Lights/PointLightComponent.h"
 #include "GameEngine/Component/Lights/SpotLightComponent.h"
+#include "GameEngine/GameObject/GameObject.h"
 
 using namespace Eigen;
 using namespace GameEngine;
@@ -20,25 +21,46 @@ namespace MythologyTestProject
 			// Test default constructor:
 			{
 				DirectionalLightComponent light;
-				Assert::IsTrue(light.Strength() == Vector3::Zero());
-				Assert::IsTrue(light.Direction() == Vector3::Zero());
+				Assert::IsTrue(light.GetStrength() == Vector3::Zero());
+				Assert::IsTrue(light.GetLocalDirection() == Vector3f(0.0f, -1.0f, 0.0f));
 			}
 
 			// Test custom constructor and accessors:
 			{
 				Vector3 strength(1.0f, 2.0f, 3.0f);
 				Vector3 direction(4.0f, 5.0f, 6.0f);
-				DirectionalLightComponent light(strength, direction);
-				Assert::IsTrue(light.Strength() == strength);
-				Assert::IsTrue(light.Direction() == direction);
+				DirectionalLightComponent light(strength);
+				light.SetLocalDirection(direction);
+				Assert::IsTrue(light.GetStrength() == strength);
+				Assert::IsTrue(light.GetLocalDirection().isApprox(direction.normalized()));
 
 				Vector3 newStrength(-4.0f, -5.0f, -6.0f);
-				light.Strength() = newStrength;
-				Assert::IsTrue(light.Strength() == newStrength);
+				light.SetStrength(newStrength);
+				Assert::IsTrue(light.GetStrength() == newStrength);
 
 				Vector3 newDirection(-1.0f, -2.0f, -3.0f);
-				light.Direction() = newDirection;
-				Assert::IsTrue(light.Direction() == newDirection);
+				light.SetLocalDirection(newDirection);
+				Assert::IsTrue(light.GetLocalDirection().isApprox(newDirection.normalized()));
+			}
+
+			// Test integration with transform:
+			{
+				DirectionalLightComponent light;
+
+				{
+					Vector3f direction({ 0.0f, -2.0f, 0.0f });
+					light.SetLocalDirection(direction);
+					Assert::IsTrue(light.GetLocalDirection() == direction.normalized());
+				}
+				
+				{
+					auto pi = std::acos(-1.0f);
+					light.GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(-pi / 2.0f, Vector3f::UnitX())));
+					Assert::IsTrue(light.GetLocalDirection().isApprox(Vector3f(0.0f, 0.0f, 1.0f)));
+
+					light.SetLocalDirection({ 0.0f, 0.0f, -1.0f});
+					Assert::IsTrue(light.GetTransform().GetWorldRotation().isApprox(Quaternionf(AngleAxisf(pi / 2.0f, Vector3f::UnitX()))));
+				}
 			}
 		}
 
@@ -49,39 +71,41 @@ namespace MythologyTestProject
 			// Test default constructor:
 			{
 				PointLightComponent light;
-				Assert::IsTrue(light.Strength() == Vector3::Zero());
-				Assert::IsTrue(light.Position() == Vector3::Zero());
-				Assert::IsTrue(light.FalloffStart() == 0.0f);
-				Assert::IsTrue(light.FalloffEnd() == 0.0f);
+				Assert::IsTrue(light.GetStrength() == Vector3::Zero());
+				Assert::IsTrue(light.GetFalloffStart() == 0.0f);
+				Assert::IsTrue(light.GetFalloffEnd() == 0.0f);
 			}
 
 			// Test custom constructor and accessors:
 			{
 				Vector3 strength(1.0f, 2.0f, 3.0f);
-				Vector3 position(4.0f, 5.0f, 6.0f);
 				auto falloffStart = 3.0f;
 				auto falloffEnd = 5.0f;
-				PointLightComponent light(strength, position, falloffStart, falloffEnd);
-				Assert::IsTrue(light.Strength() == strength);
-				Assert::IsTrue(light.Position() == position);
-				Assert::IsTrue(light.FalloffStart() == falloffStart);
-				Assert::IsTrue(light.FalloffEnd() == falloffEnd);
+				PointLightComponent light(strength, falloffStart, falloffEnd);
+				Assert::IsTrue(light.GetStrength() == strength);
+				Assert::IsTrue(light.GetFalloffStart() == falloffStart);
+				Assert::IsTrue(light.GetFalloffEnd() == falloffEnd);
 
 				Vector3 newStrength(2.0f, 3.0f, 4.0f);
-				light.Strength() = newStrength;
-				Assert::IsTrue(light.Strength() == newStrength);
-
-				Vector3 newPosition(-4.0f, 1.0f, -3.0f);
-				light.Position() = newPosition;
-				Assert::IsTrue(light.Position() == newPosition);
+				light.SetStrength(newStrength);
+				Assert::IsTrue(light.GetStrength() == newStrength);
 
 				auto newFalloffStart = 7.0f;
-				light.FalloffStart() = newFalloffStart;
-				Assert::IsTrue(light.FalloffStart() == newFalloffStart);
+				light.SetFalloffStart(newFalloffStart);
+				Assert::IsTrue(light.GetFalloffStart() == newFalloffStart);
 
 				auto newFalloffEnd = 15.0f;
-				light.FalloffEnd() = newFalloffEnd;
-				Assert::IsTrue(light.FalloffEnd() == newFalloffEnd);
+				light.SetFalloffEnd(newFalloffEnd);
+				Assert::IsTrue(light.GetFalloffEnd() == newFalloffEnd);
+			}
+
+			// Test integration with transform:
+			{
+				Vector3 position(1.0f, 2.0f, 3.0f);
+
+				PointLightComponent light;
+				light.GetTransform().SetWorldPosition(position);
+				Assert::IsTrue(light.GetWorldPosition() == position);
 			}
 		}
 
@@ -92,53 +116,49 @@ namespace MythologyTestProject
 			// Test default constructor:
 			{
 				SpotLightComponent light;
-				Assert::IsTrue(light.Strength() == Vector3::Zero());
-				Assert::IsTrue(light.Position() == Vector3::Zero());
-				Assert::IsTrue(light.Direction() == Vector3::Zero());
-				Assert::IsTrue(light.FalloffStart() == 0.0f);
-				Assert::IsTrue(light.FalloffEnd() == 0.0f);
-				Assert::IsTrue(light.SpotPower() == 0.0f);
+				Assert::IsTrue(light.GetStrength() == Vector3::Zero());
+				Assert::IsTrue(light.GetFalloffStart() == 0.0f);
+				Assert::IsTrue(light.GetFalloffEnd() == 0.0f);
+				Assert::IsTrue(light.GetSpotPower() == 0.0f);
+				Assert::IsTrue(light.GetLocalPosition() == Vector3::Zero());
+				Assert::IsTrue(light.GetLocalDirection() == Vector3(0.0f, -1.0f, 0.0f));
 			}
 
 			// Test custom constructor and accessors:
 			{
 				Vector3 strength(1.0f, 2.0f, 3.0f);
-				Vector3 position(4.0f, 5.0f, 6.0f);
-				Vector3 direction(2.0f, 1.0f, -6.0f);
 				auto falloffStart = 3.0f;
 				auto falloffEnd = 5.0f;
 				auto spotPower = 32.0f;
-				SpotLightComponent light(strength, position, direction, falloffStart, falloffEnd, spotPower);
-				Assert::IsTrue(light.Strength() == strength);
-				Assert::IsTrue(light.Position() == position);
-				Assert::IsTrue(light.Direction() == direction);
-				Assert::IsTrue(light.FalloffStart() == falloffStart);
-				Assert::IsTrue(light.FalloffEnd() == falloffEnd);
-				Assert::IsTrue(light.SpotPower() == spotPower);
+				SpotLightComponent light(strength, falloffStart, falloffEnd, spotPower);
+				Assert::IsTrue(light.GetStrength() == strength);
+				Assert::IsTrue(light.GetFalloffStart() == falloffStart);
+				Assert::IsTrue(light.GetFalloffEnd() == falloffEnd);
+				Assert::IsTrue(light.GetSpotPower() == spotPower);
 
 				Vector3 newStrength(2.0f, 3.0f, 4.0f);
-				light.Strength() = newStrength;
-				Assert::IsTrue(light.Strength() == newStrength);
-
-				Vector3 newPosition(-4.0f, 1.0f, -3.0f);
-				light.Position() = newPosition;
-				Assert::IsTrue(light.Position() == newPosition);
-
-				Vector3 newDirection(-1.0f, -2.0f, -3.0f);
-				light.Direction() = newDirection;
-				Assert::IsTrue(light.Direction() == newDirection);
+				light.SetStrength(newStrength);
+				Assert::IsTrue(light.GetStrength() == newStrength);
 
 				auto newFalloffStart = 7.0f;
-				light.FalloffStart() = newFalloffStart;
-				Assert::IsTrue(light.FalloffStart() == newFalloffStart);
+				light.SetFalloffStart(newFalloffStart);
+				Assert::IsTrue(light.GetFalloffStart() == newFalloffStart);
 
 				auto newFalloffEnd = 15.0f;
-				light.FalloffEnd() = newFalloffEnd;
-				Assert::IsTrue(light.FalloffEnd() == newFalloffEnd);
+				light.SetFalloffEnd(newFalloffEnd);
+				Assert::IsTrue(light.GetFalloffEnd() == newFalloffEnd);
 
 				auto newSpotPower = 64.0f;
-				light.SpotPower() = newSpotPower;
-				Assert::IsTrue(light.SpotPower() == newSpotPower);
+				light.SetSpotPower(newSpotPower);
+				Assert::IsTrue(light.GetSpotPower() == newSpotPower);
+
+				Vector3 newPosition(-4.0f, 1.0f, -3.0f);
+				light.SetLocalPosition(newPosition);
+				Assert::IsTrue(light.GetLocalPosition() == newPosition);
+
+				Vector3 newDirection(-1.0f, -2.0f, -3.0f);
+				light.SetLocalDirection(newDirection);
+				Assert::IsTrue(light.GetLocalDirection().isApprox(newDirection.normalized()));
 			}
 		}
 	};

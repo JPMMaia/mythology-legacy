@@ -8,31 +8,35 @@ namespace GameEngine
 	{
 	public:
 		SpotLightComponent();
-		SpotLightComponent(const Vector3Type& strength, const Vector3Type& position, const Vector3Type& direction, float falloffStart, float falloffEnd, float spotPower);
+		SpotLightComponent(const Vector3Type& strength, float falloffStart, float falloffEnd, float spotPower);
 
 	public:
-		const Vector3Type& Strength() const;
-		Vector3Type& Strength();
 
-		const Vector3Type& Position() const;
-		Vector3Type& Position();
+		const Vector3Type& GetStrength() const;
+		void SetStrength(const Vector3Type& strength);
 
-		const Vector3Type& Direction() const;
-		Vector3Type& Direction();
+		float GetFalloffStart() const;
+		void SetFalloffStart(float falloffStart);
 
-		float FalloffStart() const;
-		float& FalloffStart();
+		float GetFalloffEnd() const;
+		void SetFalloffEnd(float falloffEnd);
 
-		float FalloffEnd() const;
-		float& FalloffEnd();
+		float GetSpotPower() const;
+		void SetSpotPower(float spotPower);
 
-		float SpotPower() const;
-		float& SpotPower();
+		Vector3Type GetLocalDirection() const;
+		void SetLocalDirection(const Vector3Type& localDirection);
+
+		Vector3Type GetLocalPosition() const;
+		void SetLocalPosition(const Vector3Type& localPosition);
+
+		Vector3Type GetWorldPosition() const;
+
+	private:
+		static Vector3Type s_initialDirection;
 
 	private:
 		Vector3Type m_strength;
-		Vector3Type m_position;
-		Vector3Type m_direction;
 		float m_falloffStart;
 		float m_falloffEnd;
 		float m_spotPower;

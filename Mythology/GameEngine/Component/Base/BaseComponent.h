@@ -12,17 +12,18 @@ namespace GameEngine
 		using QuaternionType = Eigen::Quaternion<float>;
 
 	public:
-		BaseComponent() = default;
+		BaseComponent();
 
 	public:
 		void FixedUpdate(const Common::Timer& timer) override;
 
-		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldPositionStays = false) override;
+		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldTransformStays = false) override;
+		void UnsetParent(bool worldTransformStays = false) override;
 
-		const TransformComponent& Transform() const;
-		TransformComponent& Transform();
+		const TransformComponent& GetTransform() const;
+		TransformComponent& GetTransform();
 
-	protected:
-		TransformComponent m_transform;
+	private:
+		std::shared_ptr<TransformComponent> m_transform;
 	};
 }
