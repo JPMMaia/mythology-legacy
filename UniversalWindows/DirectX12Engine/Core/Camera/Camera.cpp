@@ -43,8 +43,6 @@ void Camera::Update()
 		// Update the camera rotation matrix:
 		m_rotationMatrix = XMMatrixRotationQuaternion(m_rotationQuaternion);
 
-
-
 		// Build view matrix:
 		m_viewMatrix = translationMatrix * m_rotationMatrix;
 
