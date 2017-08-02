@@ -15,6 +15,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\SpotLightComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\PointLightComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\PhysicsComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CameraComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
@@ -90,5 +91,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\MeshComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\PhysicsComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\EigenGeometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CameraComponent.h" />
   </ItemGroup>
 </Project>

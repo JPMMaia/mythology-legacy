@@ -200,5 +200,37 @@ namespace MythologyTestProject
 				Assert::IsTrue(t1->GetLocalPosition().isApprox(Vector3f(1.0f, 1.0f, 0.0f)));
 			}
 		}
+
+		TEST_METHOD(TransformComponentTest4)
+		{
+			using Vector3 = TransformComponent::Vector3Type;
+			const auto pi = std::acos(-1.0f);
+
+			auto t1 = std::make_shared<TransformComponent>();
+
+			t1->Move(Vector3({ 1.0f, 1.0f, 1.0f }), 2.0f);
+			Assert::IsTrue(t1->GetLocalPosition() == Vector3({ 2.0f, 2.0f, 2.0f }));
+
+			t1->Move(Vector3({ -1.0f, -1.0f, -1.0f }), 2.0f);
+			Assert::IsTrue(t1->GetLocalPosition() == Vector3({ 0.0f, 0.0f, 0.0f }));
+
+			t1->MoveLocalZ(1.0f);
+			Assert::IsTrue(t1->GetLocalPosition() == Vector3({ 0.0f, 0.0f, 1.0f }));
+
+			t1->MoveLocalY(-2.0f);
+			Assert::IsTrue(t1->GetLocalPosition() == Vector3({ 0.0f, -2.0f, 1.0f }));
+
+			t1->MoveLocalX(3.0f);
+			Assert::IsTrue(t1->GetLocalPosition() == Vector3({ 3.0f, -2.0f, 1.0f }));
+
+			t1->RotateLocalZ(pi / 2.0f);
+			Assert::IsTrue(t1->GetLocalRotation().isApprox(Quaternionf(AngleAxisf(pi / 2.0f, Vector3::UnitZ()))));
+
+			t1->MoveLocalX(-4.0f);
+			Assert::IsTrue(t1->GetLocalPosition().isApprox(Vector3({ 3.0f, -6.0f, 1.0f })));
+
+			t1->MoveLocalY(5.0f);
+			Assert::IsTrue(t1->GetLocalPosition().isApprox(Vector3({ -2.0f, -6.0f, 1.0f })));
+		}
 	};
 }

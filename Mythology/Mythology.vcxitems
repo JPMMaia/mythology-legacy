@@ -32,6 +32,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Base\BaseComponent.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CameraComponent.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\DirectionalLightComponent.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -70,6 +73,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\TasksComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Timer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Base\BaseComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CameraComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\IComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\DirectionalLightComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\PointLightComponent.h" />

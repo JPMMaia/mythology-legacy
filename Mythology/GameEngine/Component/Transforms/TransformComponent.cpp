@@ -12,7 +12,7 @@ TransformComponent::TransformComponent() :
 	m_localScaling(Vector3Type(1.0f, 1.0f, 1.0f))
 {
 }
-TransformComponent::TransformComponent(const Vector3Type& localPosition, const QuaternionType& localRotation, const Vector3Type& localScaling) :
+TransformComponent::TransformComponent(Vector3CRType localPosition, QuaternionCRType localRotation, Vector3CRType localScaling) :
 	m_id(s_count++),
 	m_localPosition(localPosition),
 	m_localRotation(localRotation),
@@ -24,11 +24,61 @@ void TransformComponent::FixedUpdate(const Common::Timer& timer)
 {
 }
 
+void TransformComponent::Move(Vector3CRType axis, float scalar)
+{
+	m_localPosition += scalar * axis;
+}
+void TransformComponent::MoveLocalX(float scalar)
+{
+	Move(GetLocalX(), scalar);
+}
+void TransformComponent::MoveLocalY(float scalar)
+{	
+	Move(GetLocalY(), scalar);
+}
+void TransformComponent::MoveLocalZ(float scalar)
+{
+	Move(GetLocalZ(), scalar);
+}
+
+void TransformComponent::Rotate(Vector3CRType axis, float radians)
+{
+	m_localRotation *= QuaternionType(AngleAxisf(radians, axis));
+}
+void TransformComponent::RotateLocalX(float radians)
+{
+	Rotate(GetLocalX(), radians);
+}
+void TransformComponent::RotateLocalY(float radians)
+{
+	Rotate(GetLocalY(), radians);
+}
+void TransformComponent::RotateLocalZ(float radians)
+{
+	Rotate(GetLocalZ(), radians);
+}
+
+TransformComponent::Vector3Type TransformComponent::GetLocalX() const
+{
+	auto rotationMatrix = m_localRotation.toRotationMatrix();
+	return Vector3Type(rotationMatrix(0, 0), rotationMatrix(1, 0), rotationMatrix(2, 0));
+}
+TransformComponent::Vector3Type TransformComponent::GetLocalY() const
+{
+	auto rotationMatrix = m_localRotation.toRotationMatrix();
+	return Vector3Type(rotationMatrix(0, 1), rotationMatrix(1, 1), rotationMatrix(2, 1));
+}
+TransformComponent::Vector3Type TransformComponent::GetLocalZ() const
+{
+	auto rotationMatrix = m_localRotation.toRotationMatrix();
+	return Vector3Type(rotationMatrix(0, 2), rotationMatrix(1, 2), rotationMatrix(2, 2));
+}
+
 const TransformComponent::Vector3Type& TransformComponent::GetLocalPosition() const
 {
 	return m_localPosition;
 }
-void TransformComponent::SetLocalPosition(const Vector3Type& localPosition)
+void TransformComponent::SetLocalPosition(Vector3CRType localPosition)
 {
 	m_localPosition = localPosition;
 }
@@ -37,7 +87,7 @@ const TransformComponent::QuaternionType& TransformComponent::GetLocalRotation()
 {
 	return m_localRotation;
 }
-void TransformComponent::SetLocalRotation(const QuaternionType& localRotation)
+void TransformComponent::SetLocalRotation(QuaternionCRType localRotation)
 {
 	m_localRotation = localRotation;
 	m_localRotation.normalize();
@@ -47,7 +97,7 @@ const TransformComponent::Vector3Type& TransformComponent::GetLocalScaling() con
 {
 	return m_localScaling;
 }
-void TransformComponent::SetLocalScaling(const Vector3Type& localScaling)
+void TransformComponent::SetLocalScaling(Vector3CRType localScaling)
 {
 	m_localScaling = localScaling;
 }
@@ -57,7 +107,7 @@ TransformComponent::Vector3Type TransformComponent::GetWorldPosition() const
 	// Apply parent's transform:
 	return CalculateParentsTransform() * m_localPosition;
 }
-void TransformComponent::SetWorldPosition(const Vector3Type& worldPosition)
+void TransformComponent::SetWorldPosition(Vector3CRType worldPosition)
 {
 	// Apply inverse of parent's transform:
 	m_localPosition = CalculateParentsTransform().inverse() * worldPosition;
@@ -76,7 +126,7 @@ TransformComponent::QuaternionType TransformComponent::GetWorldRotation() const
 
 	return rotation;
 }
-void TransformComponent::SetWorldRotation(const QuaternionType& worldRotation)
+void TransformComponent::SetWorldRotation(QuaternionCRType worldRotation)
 {
 	auto parentsRotation = QuaternionType::Identity();
 

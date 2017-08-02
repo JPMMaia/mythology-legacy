@@ -15,31 +15,48 @@ namespace GameEngine
 	public:
 		using IDType = std::size_t;
 		using Vector3Type = Eigen::Vector3f;
+		using Vector3CRType = const Vector3Type&;
 		using QuaternionType = Eigen::Quaternion<float>;
+		using QuaternionCRType = const QuaternionType&;
 		using TransformType = Eigen::Transform<float, 3, Eigen::Affine>;
 		
 	public:
 		TransformComponent();
-		TransformComponent(const Vector3Type& localPosition, const QuaternionType& localRotation, const Vector3Type& localScaling);
+		TransformComponent(Vector3CRType localPosition, QuaternionCRType localRotation, Vector3CRType localScaling);
 
 	public:
 		void FixedUpdate(const Common::Timer& timer) override;
 
 	public:
-		const Vector3Type& GetLocalPosition() const;
-		void SetLocalPosition(const Vector3Type& localPosition);
+		void Move(Vector3CRType axis, float scalar);
+		void MoveLocalX(float scalar);
+		void MoveLocalY(float scalar);
+		void MoveLocalZ(float scalar);
 
-		const QuaternionType& GetLocalRotation() const;
-		void SetLocalRotation(const QuaternionType& localRotation);
+		void Rotate(Vector3CRType axis, float radians);
+		void RotateLocalX(float radians);
+		void RotateLocalY(float radians);
+		void RotateLocalZ(float radians);
 
-		const Vector3Type& GetLocalScaling() const;
-		void SetLocalScaling(const Vector3Type& localScaling);
+		Vector3Type GetLocalX() const;
+		Vector3Type GetLocalY() const;
+		Vector3Type GetLocalZ() const;
+
+	public:
+		Vector3CRType GetLocalPosition() const;
+		void SetLocalPosition(Vector3CRType localPosition);
+
+		QuaternionCRType GetLocalRotation() const;
+		void SetLocalRotation(QuaternionCRType localRotation);
+
+		Vector3CRType GetLocalScaling() const;
+		void SetLocalScaling(Vector3CRType localScaling);
 
 		Vector3Type GetWorldPosition() const;
-		void SetWorldPosition(const Vector3Type& worldPosition);
+		void SetWorldPosition(Vector3CRType worldPosition);
 
 		QuaternionType GetWorldRotation() const;
-		void SetWorldRotation(const QuaternionType& worldRotation);
+		void SetWorldRotation(QuaternionCRType worldRotation);
 
 		const std::weak_ptr<TransformComponent>& GetParent() const;
 		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldTransformStays = false) override;
