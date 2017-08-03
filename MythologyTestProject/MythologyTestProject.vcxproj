@@ -157,6 +157,7 @@
     <ClCompile Include="GameEngine\Components\CameraComponentTests.cpp" />
     <ClCompile Include="GameEngine\Components\LightComponentTests.cpp" />
     <ClCompile Include="GameEngine\Components\TransformComponentTests.cpp" />
+    <ClCompile Include="GameEngine\GameManagerTests.cpp" />
     <ClCompile Include="GameEngine\GameObject\GameObjectTests.cpp" />
     <ClCompile Include="GameEngine\Geometry\MeshDataTests.cpp" />
     <ClCompile Include="GameEngine\Geometry\MeshGeneratorTests.cpp" />
