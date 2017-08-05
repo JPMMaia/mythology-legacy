@@ -1,15 +1,12 @@
 #pragma once
 
-#include "GameEngine/Memory/StandardAllocator.h"
-#include "Common/MemoryPool/MemoryPool.h"
+#include "Common/MemoryPool/Allocator.h"
 #include "GameEngine/Component/Base/BaseComponent.h"
 
 namespace GameEngine
 {
 	class CameraComponent : public BaseComponent
 	{
-		friend StandardAllocator<CameraComponent>;
-
 	public:
 		using Vector3 = Eigen::Vector3f;
 		using Vector3CR = const Vector3&;
@@ -50,13 +47,6 @@ namespace GameEngine
 		Matrix m_viewMatrix;
 		Matrix m_projectionMatrix;
 
-	public:
-		static Common::MemoryPool<CameraComponent, 2>& GetStorage()
-		{
-			return s_storage;
-		}
-
-	private:
-		static Common::MemoryPool<CameraComponent, 2> s_storage;
+		DECLARE_ALLOCATOR
 	};
 }

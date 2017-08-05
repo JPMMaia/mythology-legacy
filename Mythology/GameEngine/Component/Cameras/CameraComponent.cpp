@@ -2,7 +2,7 @@
 
 using namespace GameEngine;
 
-Common::MemoryPool<CameraComponent, 2> CameraComponent::s_storage;
+IMPLEMENT_ALLOCATOR(CameraComponent, 0, nullptr)
 
 CameraComponent::CameraComponent() :
 	m_aspectRatio(16.0f / 9.0f),

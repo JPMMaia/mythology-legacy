@@ -11,6 +11,7 @@ namespace GameEngine
 	{
 	public:
 		GameObject();
+		~GameObject();
 
 	public:
 		void AddComponent(const std::string& name, IComponent& component, bool worldTransformStays = false);

@@ -6,6 +6,10 @@ GameObject::GameObject() :
 	m_transform(std::make_shared<TransformComponent>())
 {
 }
+GameObject::~GameObject()
+{
+	int i = 0;
+}
 
 void GameObject::AddComponent(const std::string& name, IComponent& component, bool worldTransformStays)
 {
