@@ -88,6 +88,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\MeshGenerator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Primitives\BoxGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\VertexData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Memory\StandardAllocator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\DisplayOrientations.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IMaterial.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IRenderer.h" />

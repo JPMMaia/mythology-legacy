@@ -2,6 +2,8 @@
 
 using namespace GameEngine;
 
+Common::MemoryPool<CameraComponent, 2> CameraComponent::s_storage;
+
 CameraComponent::CameraComponent() :
 	m_aspectRatio(16.0f / 9.0f),
 	m_fovAngleY(60.0f),

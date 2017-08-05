@@ -11,9 +11,8 @@ MythologyGame::MythologyGame() :
 void MythologyGame::Initialize()
 {
 	m_gameManager = std::make_shared<GameEngine::GameManager>();
-	m_gameManager->Initialize();
 
-	m_person.AddComponent("Box", m_gameManager->CreateBox(BoxGeometry(1.0f, 1.0f, 1.0f, 0)));
+	//m_person.AddComponent("Box", m_gameManager->CreateBox(BoxGeometry(1.0f, 1.0f, 1.0f, 0)));
 }
 
 void MythologyGame::FixedUpdate(const Common::Timer& timer) const

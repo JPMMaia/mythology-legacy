@@ -14,6 +14,10 @@ namespace MythologyTestProject
 {
 	TEST_CLASS(GameManagerTests)
 	{
+	private:
+		template<class T>
+		using Allocator = StandardAllocator<T>;
+
 	public:
 		TEST_METHOD(GameManagerTest1)
 		{
@@ -23,19 +27,21 @@ namespace MythologyTestProject
 
 			GameObject gameObject1;
 
-			MeshComponent<BoxGeometry> boxComponent(BoxGeometry(1.0f, 1.0f, 1.0f, 0));
-			gameObject1.AddComponent("Mesh", boxComponent);
+			/*auto boxComponent = std::allocate_shared<MeshComponent<BoxGeometry>>(Allocator<MeshComponent<BoxGeometry>>(), BoxGeometry(1.0f, 1.0f, 1.0f, 0));
+			gameObject1.AddComponent("Mesh", *boxComponent);
 
-			PointLightComponent pointLightComponent({ 0.8f, 0.8f, 0.8f }, 2.0f, 5.0f);
-			pointLightComponent.SetLocalPosition({ 0.0f, 2.0f, -1.0f });
+			auto pointLightComponent = std::allocate_shared<PointLightComponent>(Allocator<PointLightComponent>(), Vector3f(0.8f, 0.8f, 0.8f), 2.0f, 5.0f);
+			pointLightComponent->SetLocalPosition({ 0.0f, 2.0f, -1.0f });
+			gameObject1.AddComponent("Light", *pointLightComponent);*/
 
-			CameraComponent cameraComponent;
-			cameraComponent.GetTransform().SetLocalPosition({ 0.0f, 2.0f, -1.0f });
-			cameraComponent.GetTransform().SetLocalRotation(Quaternionf::FromTwoVectors( Vector3f::UnitZ(), Vector3f(0.0f, -2.0f, 1.0f) ));
+			auto cameraComponent = std::allocate_shared<CameraComponent>(Allocator<CameraComponent>());
+			cameraComponent->GetTransform().SetLocalPosition({ 0.0f, 2.0f, -1.0f });
+			cameraComponent->GetTransform().SetLocalRotation(Quaternionf::FromTwoVectors( Vector3f::UnitZ(), Vector3f(0.0f, -2.0f, 1.0f) ));
+			gameObject1.AddComponent("Camera", *cameraComponent);
 
 			gameManager.FixedUpdate(timer);
 
-			Assert::IsTrue(cameraComponent.GetViewMatrix().isApprox( cameraComponent.GetTransform().GetWorldRotation().toRotationMatrix() * Translation3f(Vector3f( 0.0f, -2.0f, 1.0f )) ));
+			Assert::IsTrue(cameraComponent->GetViewMatrix().isApprox( cameraComponent->GetTransform().GetWorldRotation().toRotationMatrix() * Translation3f(Vector3f( 0.0f, -2.0f, 1.0f )) ));
 		}
 	};
 }

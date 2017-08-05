@@ -92,5 +92,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\PhysicsComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\EigenGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CameraComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Memory\StandardAllocator.h" />
   </ItemGroup>
 </Project>

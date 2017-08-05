@@ -10,7 +10,8 @@ namespace Common
 	class MemoryPool
 	{
 	public:
-		using ContainerType = std::array<MemoryPoolElement<Type>, Size>;
+		using ElementType = MemoryPoolElement<Type>;
+		using ContainerType = std::array<ElementType, Size>;
 		using ContainerIterator = typename ContainerType::iterator;
 
 	public:
@@ -42,7 +43,7 @@ namespace Common
 			m_firstAvailable = newElement.GetNext();
 
 			// Initialize element:
-			newElement.Initialize(std::forward<ArgumentsType>(arguments)...);
+			//newElement.Initialize(std::forward<ArgumentsType>(arguments)...);
 
 			// Return pointer to element:
 			return newElement.GetElement();
@@ -53,12 +54,12 @@ namespace Common
 			// Calculating the index of the element:
 			auto baseAddress = reinterpret_cast<std::size_t>(&m_pool[0]);
 			auto elementAddress = reinterpret_cast<std::size_t>(&element);
-			auto index = (elementAddress - baseAddress) / sizeof(MemoryPoolElement<Type>);
+			auto index = (elementAddress - baseAddress) / sizeof(ElementType);
 
 			auto& poolElement = m_pool[index];
 			if (poolElement.IsInitialized())
 			{
-				poolElement.Shutdown(m_firstAvailable);
+				//poolElement.Shutdown(m_firstAvailable);
 				m_firstAvailable = &poolElement;
 
 				--m_activeElements;
