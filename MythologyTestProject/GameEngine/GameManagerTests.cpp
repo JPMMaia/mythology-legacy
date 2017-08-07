@@ -16,7 +16,7 @@ namespace MythologyTestProject
 	{
 	private:
 		template<class T>
-		using Allocator = StandardAllocator<T>;
+		using Allocator = std::allocator<T>;
 
 	public:
 		TEST_METHOD(GameManagerTest1)

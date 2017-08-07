@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "Common/MemoryPool/Allocator.h"
-#include "GameEngine/GameObject/GameObject.h"
 
 #include <vector>
 #include "GameEngine/Component/Cameras/CameraComponent.h"
+#include "GameEngine/Memory/StandardAllocator.h"
+#include <windows.h>
 
 using namespace GameEngine;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -16,35 +16,38 @@ namespace MythologyTestProject
 	public:
 		TEST_METHOD(StandardAllocatorTest1)
 		{
-			std::allocator<GameObject> allocator;
-
-			static constexpr std::size_t gameObjectsCount = 1;
-			std::vector<std::shared_ptr<GameObject>> gameObjects(gameObjectsCount);
-			for (std::size_t i = 0; i < gameObjectsCount; ++i)
-				gameObjects.emplace_back(std::allocate_shared<GameObject>(allocator));
+			static constexpr std::size_t componentCount = 10;
+			std::vector<std::shared_ptr<CameraComponent>> components;
+			components.reserve(componentCount);
+			for (std::size_t i = 0; i < componentCount; ++i)
+			{
+				auto componentPointer = new CameraComponent;
+				components.emplace_back(std::shared_ptr<CameraComponent>(componentPointer));
+			}	
+			Assert::AreEqual(componentCount, StandardAllocator<CameraComponent>::size());
+			
+			// Set fov angle for a component:
+			components[8]->SetFovAngleY(90.0f);
 
 			// Erase at middle:
-			//gameObjects.erase(gameObjects.begin() + 7);
+			components.erase(components.begin() + 7);
 
 			// Check if pointer is still valid:
-			auto camera = std::make_shared<CameraComponent>();
-			{
-				const auto& gameObject = gameObjects[0];
-				gameObject->AddComponent("Camera", *camera);
-				Assert::IsTrue(gameObject->HasComponent("Camera"));
-			}
-			
-			/*// Check if removed node is initialized again:
-			Assert::AreEqual(std::size_t(10), allocator.size());
-			auto anotherGameObject = std::allocate_shared<GameObject>(allocator);
-			Assert::AreEqual(std::size_t(10), allocator.size());
-			Assert::IsFalse(anotherGameObject->HasComponent("Camera"));
+			Assert::IsTrue(90.0f == components[7]->GetFovAngleY());
+
+			// Check if removed node is initialized again:
+			Assert::AreEqual(std::size_t(10), StandardAllocator<CameraComponent>::size());
+			auto anotherComponentPointer = new CameraComponent;
+			auto anotherComponent = std::shared_ptr<CameraComponent>(anotherComponentPointer);
+			Assert::AreEqual(std::size_t(10), StandardAllocator<CameraComponent>::size());
+			anotherComponent->SetFarZ(70.0f);
+			Assert::IsFalse(anotherComponent->GetFarZ() == 70.0f);
 
 			// Erase at end:
-			gameObjects.erase(gameObjects.begin() + 7, gameObjects.end());
+			components.erase(components.begin() + 7, components.end());
 
 			// Check if size decreased:
-			Assert::AreEqual(std::size_t(8), allocator.size());*/
+			Assert::AreEqual(std::size_t(8), StandardAllocator<CameraComponent>::size());
 		}
 	};
 }
