@@ -117,10 +117,10 @@ TransformComponent::QuaternionType TransformComponent::GetWorldRotation() const
 {
 	auto rotation = m_localRotation;
 
-	auto transform = shared_from_this();
+	auto transform = this;
 	while (!transform->m_parent.expired())
 	{
-		transform = transform->m_parent.lock();
+		transform = transform->m_parent.lock().get();
 		rotation = transform->m_localRotation * rotation;
 	}
 
@@ -130,10 +130,10 @@ void TransformComponent::SetWorldRotation(QuaternionCRType worldRotation)
 {
 	auto parentsRotation = QuaternionType::Identity();
 
-	auto transform = shared_from_this();
+	auto transform = this;
 	while (!transform->m_parent.expired())
 	{
-		transform = transform->m_parent.lock();
+		transform = transform->m_parent.lock().get();
 		parentsRotation = transform->m_localRotation * parentsRotation;
 	}
 

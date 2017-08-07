@@ -19,7 +19,7 @@ void GameManager::FixedUpdate(const Common::Timer& timer)
 		});
 	};
 	
-	fixedUpdate(CameraComponent::GetStorage());
+	//fixedUpdate(CameraComponent::GetStorage());
 }
 void GameManager::FrameUpdate(const Common::Timer& timer)
 {

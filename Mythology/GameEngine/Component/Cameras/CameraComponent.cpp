@@ -2,7 +2,7 @@
 
 using namespace GameEngine;
 
-IMPLEMENT_ALLOCATOR(CameraComponent, 0, nullptr)
+StandardAllocator<CameraComponent> CameraComponent::s_storage;
 
 CameraComponent::CameraComponent() :
 	m_aspectRatio(16.0f / 9.0f),
@@ -13,7 +13,7 @@ CameraComponent::CameraComponent() :
 	m_projectionMatrix(BuildProjectionMatrix(m_aspectRatio, m_fovAngleY, m_nearZ, m_farZ, Matrix::Identity()))
 {
 }
-CameraComponent::CameraComponent(float aspectRatio, float fovAngleY, float nearZ, float farZ, MatrixCR orientationMatrix) :
+CameraComponent::CameraComponent(float aspectRatio, float fovAngleY, float nearZ, float farZ, AlignedMatrixCR orientationMatrix) :
 	m_aspectRatio(aspectRatio),
 	m_fovAngleY(fovAngleY),
 	m_nearZ(nearZ),
@@ -78,14 +78,14 @@ CameraComponent::Matrix CameraComponent::BuildViewMatrix(Vector3CR position, Qua
 {
 	return rotation.toRotationMatrix() * Eigen::Translation3f(-position);
 }
-CameraComponent::Matrix CameraComponent::BuildProjectionMatrix(float aspectRatio, float fovAngleY, float nearZ, float farZ, MatrixCR orientationMatrix)
+CameraComponent::Matrix CameraComponent::BuildProjectionMatrix(float aspectRatio, float fovAngleY, float nearZ, float farZ, AlignedMatrixCR orientationMatrix)
 {
 	auto top = std::tan(fovAngleY) * nearZ;
 	auto bottom = -top;
 	auto right = top * aspectRatio;
 	auto left = -aspectRatio;
 
-	auto perspectiveMatrix(Matrix::Identity());
+	auto perspectiveMatrix(AlignedMatrix::Identity());
 	perspectiveMatrix(0, 0) = 2.0f * nearZ / (right - left);
 	perspectiveMatrix(1, 1) = 2.0f * nearZ / (top - bottom);
 	perspectiveMatrix(0, 2) = (right + left) / (right - left);

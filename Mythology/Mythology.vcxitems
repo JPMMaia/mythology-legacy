@@ -20,7 +20,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Common\Helpers.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Common\MemoryPool\Allocator.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Common\MemoryPool\Allocator.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Common\PerformanceTimer.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>

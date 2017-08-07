@@ -136,8 +136,3 @@ void* Allocator::Pop()
 
     return static_cast<void*>(pBlock);
 }
-
-
-
-
-
