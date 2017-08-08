@@ -23,8 +23,10 @@ CameraComponent::CameraComponent(float aspectRatio, float fovAngleY, float nearZ
 {
 }
 
-void CameraComponent::Update()
+void CameraComponent::FixedUpdate(const Common::Timer& timer)
 {
+	BaseComponent::FixedUpdate(timer);
+
 	const auto& transform = GetTransform();
 	m_viewMatrix = BuildViewMatrix(transform.GetWorldPosition(), transform.GetWorldRotation());
 }

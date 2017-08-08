@@ -8,19 +8,23 @@ GameManager::GameManager()
 {
 }
 
-void GameManager::FixedUpdate(const Common::Timer& timer)
+template<class T>
+void FixedUpdate(const Timer& timer)
 {
-	auto fixedUpdate = [&timer](auto& container)
+	for(auto it = T::Allocator::begin(); it != T::Allocator::end(); ++it)
 	{
-		std::for_each(container.Begin(), container.End(), [&timer](auto& element)
-		{
-			if(element.IsInitialized())
-				element.GetElement().FixedUpdate(timer);
-		});
-	};
-	
-	//fixedUpdate(CameraComponent::GetStorage());
+		it->FixedUpdate(timer);
+	}
+
+	/*std::for_each(T::Allocator::begin(), T::Allocator::end(), [&timer](auto& element)
+	{
+		element.FixedUpdate(timer);
+	});*/
 }
-void GameManager::FrameUpdate(const Common::Timer& timer)
+void GameManager::FixedUpdate(const Common::Timer& timer) const
+{
+	::FixedUpdate<CameraComponent>(timer);
+}
+void GameManager::FrameUpdate(const Common::Timer& timer) const
 {
 }

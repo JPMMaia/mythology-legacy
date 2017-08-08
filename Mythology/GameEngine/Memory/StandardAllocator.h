@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cstdlib>
 #include <deque>
+#include <iterator>
 
 namespace GameEngine
 {
@@ -91,12 +91,90 @@ namespace GameEngine
 		bool m_initialized = false;
 	};
 
+	template<typename T>
+	class StandardAllocatorIterator
+	{
+	public:
+		using value_type = T;
+		using difference_type = std::ptrdiff_t;
+		using reference = T&;
+		using pointer = T*;
+		using iterator_category = std::forward_iterator_tag;
+
+	private:
+		using node_type = MemoryPoolNode<value_type>;
+
+	public:
+		StandardAllocatorIterator() = default;
+		~StandardAllocatorIterator() = default;
+		StandardAllocatorIterator(const StandardAllocatorIterator& other) = default;
+		StandardAllocatorIterator(StandardAllocatorIterator&& other) noexcept = default;
+		StandardAllocatorIterator& operator=(const StandardAllocatorIterator& other) = default;
+		StandardAllocatorIterator& operator=(StandardAllocatorIterator&& other) noexcept = default;
+
+
+		StandardAllocatorIterator(const typename std::deque<MemoryPoolNode<T>>::iterator& begin, const typename std::deque<MemoryPoolNode<T>>::iterator& end)
+			: m_location(begin),
+			  m_end(end)
+		{
+		}
+
+	public:
+
+		bool operator==(const StandardAllocatorIterator& other)
+		{
+			return m_location == other.m_location;
+		}
+		bool operator!=(const StandardAllocatorIterator& other)
+		{
+			return !(*this == other);
+		}
+
+		reference operator*()
+		{
+			return *m_location->GetElement();
+		}
+		pointer operator->()
+		{
+			return m_location->GetElement();
+		}
+		StandardAllocatorIterator& operator++()
+		{
+			do
+			{
+				++m_location;
+			}
+			while (m_location != m_end && !m_location->IsInitialized());
+
+			return *this;
+		}
+		StandardAllocatorIterator operator++(int)
+		{
+			StandardAllocatorIterator other(*this);
+			operator++();
+			return other;
+		}
+
+	private:
+		typename std::deque<node_type>::iterator m_location;
+		typename std::deque<node_type>::iterator m_end;
+	};
+
 	template <class T>
 	class StandardAllocator
 	{
 	public:
 		using value_type = T;
+		using iterator = StandardAllocatorIterator<value_type>;
+
+	private:
 		using node_type = MemoryPoolNode<value_type>;
+
+	public:
+		static void Deleter(value_type* pointer)
+		{
+			value_type::operator delete(pointer, sizeof(value_type));
+		}
 
 	public:
 		StandardAllocator() = default;
@@ -117,7 +195,7 @@ namespace GameEngine
 			auto node = PopFront();
 
 			// If a node is not available:
-			if(!node)
+			if (!node)
 			{
 				// Emplace node at the end of the deque:
 				s_storage.emplace_back();
@@ -145,7 +223,7 @@ namespace GameEngine
 			node->Shutdown();
 
 			// If node is not at the end, set as the front node:
-			if(std::distance(node, s_storage.end()) > 1)
+			if (std::distance(node, s_storage.end()) > 1)
 			{
 				PushFront(&(*node));
 			}
@@ -157,7 +235,7 @@ namespace GameEngine
 				s_storage.pop_back();
 
 				// Remove all nodes at the end of the deque that are not initialized:
-				for(auto iterator = s_storage.rbegin(); iterator != s_storage.rend() && !iterator->IsInitialized(); iterator = s_storage.rbegin())
+				for (auto iterator = s_storage.rbegin(); iterator != s_storage.rend() && !iterator->IsInitialized(); iterator = s_storage.rbegin())
 				{
 					// Remove node from available nodes:
 					RemoveAt(iterator);
@@ -168,6 +246,15 @@ namespace GameEngine
 			}
 		}
 
+		static iterator begin()
+		{
+			return iterator(s_storage.begin(), s_storage.end());
+		}
+		static iterator end()
+		{
+			return iterator(s_storage.end(), s_storage.end());
+		}
+
 		static std::size_t size()
 		{
 			return s_storage.size();
@@ -176,7 +263,7 @@ namespace GameEngine
 	private:
 		static void PushFront(node_type* node)
 		{
-			if(node)
+			if (node)
 			{
 				// Set previous to null:
 				node->SetPrevious(nullptr);
@@ -185,7 +272,7 @@ namespace GameEngine
 				node->SetNext(s_front);
 			}
 
-			if(s_front)
+			if (s_front)
 			{
 				// Set the previous node of the old front:
 				s_front->SetPrevious(node);
@@ -199,7 +286,7 @@ namespace GameEngine
 			node_type* node = nullptr;
 
 			// If a node is available:
-			if(s_front)
+			if (s_front)
 			{
 				// Get node at the front:
 				node = s_front;
@@ -208,7 +295,7 @@ namespace GameEngine
 				s_front = s_front->GetNext();
 
 				// Set previous to null:
-				if(s_front)
+				if (s_front)
 					s_front->SetPrevious(nullptr);
 			}
 
@@ -222,7 +309,7 @@ namespace GameEngine
 			// Get next node:
 			auto next = location->GetNext();
 
-			if(previous)
+			if (previous)
 				previous->SetNext(next);
 
 			if (next)

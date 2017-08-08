@@ -20,13 +20,9 @@ namespace GameEngine
 	public:
 		CameraComponent();
 		CameraComponent(float aspectRatio, float fovAngleY, float nearZ, float farZ, AlignedMatrixCR orientationMatrix);
-		~CameraComponent()
-		{
-			int i = 0;
-		}
 
 	public:
-		void Update();
+		void FixedUpdate(const Common::Timer& timer) override;
 
 		MatrixCR GetViewMatrix() const;
 		MatrixCR GetProjectionMatrix() const;
@@ -55,6 +51,8 @@ namespace GameEngine
 		Matrix m_projectionMatrix;
 
 	public:
+		using Allocator = StandardAllocator<CameraComponent>;
+	public:
 		void* operator new(std::size_t size)
 		{
 			return s_storage.allocate(size);
@@ -63,6 +61,7 @@ namespace GameEngine
 		{
 			s_storage.deallocate(reinterpret_cast<CameraComponent*>(pointer), size);
 		}
+	private:
 		static StandardAllocator<CameraComponent> s_storage;
 	};
 }

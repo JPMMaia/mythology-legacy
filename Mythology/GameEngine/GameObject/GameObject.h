@@ -10,13 +10,16 @@ namespace GameEngine
 	class GameObject
 	{
 	public:
-		GameObject();
-		~GameObject();
+		using IComponentPointer = std::shared_ptr<IComponent>;
+		using IComponentPointerCR = const IComponentPointer&;
 
 	public:
-		void AddComponent(const std::string& name, IComponent& component, bool worldTransformStays = false);
+		GameObject();
+
+	public:
+		void AddComponent(const std::string& name, IComponentPointerCR component, bool worldTransformStays = false);
 		void RemoveComponent(const std::string& name, bool worldTransformStays = false);
-		IComponent& GetComponent(const std::string& name) const;
+		IComponentPointerCR GetComponent(const std::string& name) const;
 		bool HasComponent(const std::string& name) const;
 
 		const TransformComponent& GetTransform() const;
@@ -24,6 +27,6 @@ namespace GameEngine
 
 	private:
 		std::shared_ptr<TransformComponent> m_transform;
-		std::unordered_map<std::string, IComponent*> m_components;
+		std::unordered_map<std::string, std::shared_ptr<IComponent>> m_components;
 	};
 }

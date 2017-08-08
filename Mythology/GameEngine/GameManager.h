@@ -15,7 +15,7 @@ namespace Common
 
 namespace GameEngine
 {
-	class GameManager : std::enable_shared_from_this<GameManager>
+	class GameManager : public std::enable_shared_from_this<GameManager>
 	{
 	public:
 		Common::Event<GameManager, std::string, void*, const MeshComponent<BoxGeometry>&> OnBoxCreatedEvent;
@@ -24,8 +24,8 @@ namespace GameEngine
 		GameManager();
 
 	public:
-		void FixedUpdate(const Common::Timer& timer);
-		void FrameUpdate(const Common::Timer& timer);
+		void FixedUpdate(const Common::Timer& timer) const;
+		void FrameUpdate(const Common::Timer& timer) const;
 
 	private:
 		std::array<TransformComponent, 20> m_transforms;

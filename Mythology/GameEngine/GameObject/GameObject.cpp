@@ -3,18 +3,14 @@
 using namespace GameEngine;
 
 GameObject::GameObject() :
-	m_transform(std::make_shared<TransformComponent>())
+	m_transform(new TransformComponent)
 {
-}
-GameObject::~GameObject()
-{
-	int i = 0;
 }
 
-void GameObject::AddComponent(const std::string& name, IComponent& component, bool worldTransformStays)
+void GameObject::AddComponent(const std::string& name, IComponentPointerCR component, bool worldTransformStays)
 {
-	component.SetParent(m_transform, worldTransformStays);
-	m_components.emplace(name, &component);
+	component->SetParent(m_transform, worldTransformStays);
+	m_components.emplace(name, component);
 }
 void GameObject::RemoveComponent(const std::string& name, bool worldTransformStays)
 {
@@ -26,9 +22,9 @@ void GameObject::RemoveComponent(const std::string& name, bool worldTransformSta
 
 	m_components.erase(componentLocation);
 }
-IComponent& GameObject::GetComponent(const std::string& name) const
+GameObject::IComponentPointerCR GameObject::GetComponent(const std::string& name) const
 {
-	return *m_components.at(name);
+	return m_components.at(name);
 }
 bool GameObject::HasComponent(const std::string& name) const
 {

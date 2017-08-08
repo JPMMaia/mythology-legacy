@@ -56,5 +56,5 @@ void Renderer::Render(const Common::Timer& timer) const
 
 void Renderer::OnBoxCreated(void* sender, const GameEngine::MeshComponent<GameEngine::BoxGeometry>& box)
 {
-	m_colorRenderItems.emplace_back(ColorRenderItem(box.Geometry()->GenerateMeshData<TueMeshData>()));
+	//m_colorRenderItems.emplace_back(ColorRenderItem(box.Geometry()->GenerateMeshData<TueMeshData>()));
 }

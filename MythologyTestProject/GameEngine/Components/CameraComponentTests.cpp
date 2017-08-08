@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "GameEngine/Component/Cameras/CameraComponent.h"
+#include "Common/Timer.h"
 
 using namespace Eigen;
 using namespace GameEngine;
@@ -85,6 +86,8 @@ namespace MythologyTestProject
 
 			// Test view matrix:
 			{
+				Common::Timer timer(std::chrono::milliseconds(12));
+
 				auto aspectRatio = 16.0f / 9.0f;
 				auto nearZ = 0.0625f;
 				auto farZ = 50.0f;
@@ -96,7 +99,7 @@ namespace MythologyTestProject
 				Quaternionf rotation(AngleAxisf(pi / 2.0f, Vector3::UnitY()));
 				camera.GetTransform().SetLocalPosition(position);
 				camera.GetTransform().SetLocalRotation(rotation);
-				camera.Update();
+				camera.FixedUpdate(timer);
 
 				auto viewMatrix = CalculateViewMatrix(position, rotation);
 				Assert::IsTrue(camera.GetViewMatrix().isApprox(viewMatrix));
@@ -108,7 +111,7 @@ namespace MythologyTestProject
 				parent->SetLocalRotation(parentRotation);
 
 				camera.SetParent(parent, false);
-				camera.Update();
+				camera.FixedUpdate(timer);
 
 				auto worldViewMatrix = CalculateViewMatrix({ 5.0f, 5.0f, 8.0f }, parentRotation * rotation);
 				Assert::IsTrue(camera.GetViewMatrix().isApprox(worldViewMatrix));

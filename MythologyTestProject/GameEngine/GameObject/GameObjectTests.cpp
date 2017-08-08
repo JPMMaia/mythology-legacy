@@ -28,11 +28,12 @@ namespace MythologyTestProject
 			}
 
 			// Test components:
-			PointLightComponent pointLightComponent;
+			auto pointLightComponentPointer = new PointLightComponent();
+			std::shared_ptr<PointLightComponent> pointLightComponent(pointLightComponentPointer);
 			{
 				gameObject.AddComponent("PointLight", pointLightComponent);
-				auto& component = gameObject.GetComponent("PointLight");
-				Assert::IsTrue(&component == &pointLightComponent);
+				const auto& component = gameObject.GetComponent("PointLight");
+				Assert::IsTrue(component.get() == pointLightComponent.get());
 
 				gameObject.RemoveComponent("PointLight");
 				Assert::IsFalse(gameObject.HasComponent("PointLight"));
@@ -44,17 +45,17 @@ namespace MythologyTestProject
 			// Test transform logic:
 			{
 				gameObject.AddComponent("PointLight", pointLightComponent);
-				pointLightComponent.SetLocalPosition({ 1.0f, 1.0f, 1.0f });
+				pointLightComponent->SetLocalPosition({ 1.0f, 1.0f, 1.0f });
 
 				auto& transform = gameObject.GetTransform();
 				transform.SetLocalPosition({1.0f, -2.0f, 5.0f});
 				
 				Vector3f worldPosition(2.0f, -1.0f, 6.0f);
-				Assert::IsTrue(pointLightComponent.GetWorldPosition() == worldPosition);
+				Assert::IsTrue(pointLightComponent->GetWorldPosition() == worldPosition);
 
 				gameObject.RemoveComponent("PointLight", true);
-				Assert::IsTrue(pointLightComponent.GetTransform().GetParent().expired());
-				Assert::IsTrue(pointLightComponent.GetWorldPosition() == worldPosition);
+				Assert::IsTrue(pointLightComponent->GetTransform().GetParent().expired());
+				Assert::IsTrue(pointLightComponent->GetWorldPosition() == worldPosition);
 			}
 		}
 	};
