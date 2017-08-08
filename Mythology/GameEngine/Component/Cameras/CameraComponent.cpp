@@ -83,9 +83,19 @@ void CameraComponent::SetOrientationMatrix(AlignedMatrixCR orientationMatrix)
 
 CameraComponent::Matrix CameraComponent::BuildViewMatrix(Vector3CR position, QuaternionCR rotation)
 {
-	auto matrix = (rotation.toRotationMatrix() * Eigen::Translation3f(position)).inverse();
+	auto matrix = Eigen::Translation3f(position) * rotation.toRotationMatrix();
 
-	return matrix;
+#if defined(USING_DIRECTX)
+	Eigen::Matrix4f rotateZ180;
+	rotateZ180 << 
+		-1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, -1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f;
+	matrix = matrix * rotateZ180;
+#endif
+
+	return matrix.inverse();
 }
 CameraComponent::Matrix CameraComponent::BuildProjectionMatrix(float aspectRatio, float fovAngleY, float nearZ, float farZ, AlignedMatrixCR orientationMatrix)
 {
@@ -106,7 +116,6 @@ CameraComponent::Matrix CameraComponent::BuildProjectionMatrix(float aspectRatio
 	perspectiveMatrix(3, 2) = -1.0f;
 	perspectiveMatrix(2, 3) = (nearZ * farZ) / (nearZ - farZ);
 	perspectiveMatrix(3, 3) = 0.0f;
-	//perspectiveMatrix(2, 3) = (depthFar - depthNear) * (farZ * nearZ) / (farZ - nearZ);
 
 	return orientationMatrix * perspectiveMatrix;
 }

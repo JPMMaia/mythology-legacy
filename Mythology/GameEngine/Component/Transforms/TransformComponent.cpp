@@ -183,9 +183,9 @@ TransformComponent::TransformType TransformComponent::GetWorldTransform() const
 TransformComponent::TransformType TransformComponent::CalculateLocalTransform() const
 {
 	auto transform(TransformType::Identity());
-	transform.translate(m_localPosition);
-	transform.rotate(m_localRotation);
 	transform.scale(m_localScaling);
+	transform.rotate(m_localRotation);
+	transform.translate(m_localPosition);
 	return transform;
 }
 TransformComponent::TransformType TransformComponent::CalculateParentsTransform() const
