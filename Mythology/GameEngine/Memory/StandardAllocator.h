@@ -1,52 +1,10 @@
 #pragma once
 
 #include <cstdlib>
-
-#include "Common/MemoryPool/Allocator.h"
 #include <deque>
 
 namespace GameEngine
 {
-	/*template <class T>
-	class StandardAllocator
-	{
-	public:
-		typedef T value_type;
-
-	public:
-		StandardAllocator() = default;
-
-		template <class U>
-		constexpr StandardAllocator(const StandardAllocator<U>&) noexcept
-		{
-		}
-
-	public:
-		T* allocate(std::size_t size)
-		{
-			return reinterpret_cast<T*>(s_allocator.Allocate(size));
-		}
-		void deallocate(T* pBlock, std::size_t) noexcept
-		{
-			s_allocator.Deallocate(pBlock);
-		}
-
-	private: \
-		static Common::Allocator s_allocator;
-		//static Common::AllocatorPool<T, 2> s_allocator;
-	};
-
-	template<class T>
-	Common::Allocator StandardAllocator<T>::s_allocator(sizeof(StandardAllocator<T>), 0, nullptr, "StandardAllocator");
-
-	//template<class T>
-	//Common::AllocatorPool<T, 2> StandardAllocator<T>::s_allocator;
-
-	template <class T, class U>
-	bool operator==(const StandardAllocator<T>&, const StandardAllocator<U>&) { return true; }
-	template <class T, class U>
-	bool operator!=(const StandardAllocator<T>&, const StandardAllocator<U>&) { return false; }*/
-
 	template<typename Type>
 	class MemoryPoolNode
 	{
@@ -57,7 +15,11 @@ namespace GameEngine
 		union State
 		{
 			Type Element;
-			NodeType* Next;
+			struct
+			{
+				NodeType* Next;
+				NodeType* Previous;
+			} Meta;
 
 			State()
 			{
@@ -83,17 +45,15 @@ namespace GameEngine
 			m_initialized = true;
 		}
 
-		void Shutdown(NodeType* next)
+		void Shutdown()
 		{
+			if (!m_initialized)
+				return;
+
 			m_state.Element.~Type();
-			m_state.Next = next;
 			m_initialized = false;
 		}
 
-		NodeType* GetNext() const
-		{
-			return m_state.Next;
-		}
 		Type* GetElement()
 		{
 			return &m_state.Element;
@@ -103,9 +63,22 @@ namespace GameEngine
 			return &m_state.Element;
 		}
 
+		NodeType* GetPrevious() const
+		{
+			return m_state.Meta.Previous;
+		}
+		void SetPrevious(NodeType* previous)
+		{
+			m_state.Meta.Previous = previous;
+		}
+
+		NodeType* GetNext() const
+		{
+			return m_state.Meta.Next;
+		}
 		void SetNext(NodeType* next)
 		{
-			m_state.Next = next;
+			m_state.Meta.Next = next;
 		}
 
 		bool IsInitialized() const
@@ -141,7 +114,7 @@ namespace GameEngine
 		value_type* allocate(std::size_t n)
 		{
 			// Try to get the front node:
-			auto node = Pop();
+			auto node = PopFront();
 
 			// If a node is not available:
 			if(!node)
@@ -151,16 +124,6 @@ namespace GameEngine
 
 				// Get emplaced node:
 				node = &s_storage.back();
-
-				// Set as back node:
-				node->SetNext(nullptr);
-
-				// If storage wasn't empty:
-				if(s_storage.size() > 1)
-				{
-					// Append node to the queue:
-					(++s_storage.rbegin())->SetNext(node);
-				}
 			}
 
 			// Signal that node will be used to contain data:
@@ -179,15 +142,30 @@ namespace GameEngine
 			assert(node != s_storage.end());
 
 			// Signal that the node will be used to store a reference to the next node:
-			node->Shutdown(0);
+			node->Shutdown();
 
-			// If at middle, set as the front node:
-			if(node != s_storage.rbegin())
-				Push(&(*node));
+			// If node is not at the end, set as the front node:
+			if(std::distance(node, s_storage.end()) > 1)
+			{
+				PushFront(&(*node));
+			}
 
-			// Remove all nodes at the end of the deque that are not initialized:
-			while(!s_storage.rbegin()->IsInitialized())
+			// If node is at the end:
+			else
+			{
+				// Remove back node:
 				s_storage.pop_back();
+
+				// Remove all nodes at the end of the deque that are not initialized:
+				for(auto iterator = s_storage.rbegin(); iterator != s_storage.rend() && !iterator->IsInitialized(); iterator = s_storage.rbegin())
+				{
+					// Remove node from available nodes:
+					RemoveAt(iterator);
+
+					// Decrease storage:
+					s_storage.pop_back();
+				}
+			}
 		}
 
 		static std::size_t size()
@@ -196,15 +174,27 @@ namespace GameEngine
 		}
 
 	private:
-		static void Push(node_type* node)
+		static void PushFront(node_type* node)
 		{
-			// Set the front node as the next of the pushed node:
-			node->SetNext(s_front);
+			if(node)
+			{
+				// Set previous to null:
+				node->SetPrevious(nullptr);
 
-			// Set the pushed node as the head:
+				// Set the front node as the next of the pushed node:
+				node->SetNext(s_front);
+			}
+
+			if(s_front)
+			{
+				// Set the previous node of the old front:
+				s_front->SetPrevious(node);
+			}
+
+			// Set the pushed node as the front:
 			s_front = node;
 		}
-		static node_type* Pop()
+		static node_type* PopFront()
 		{
 			node_type* node = nullptr;
 
@@ -215,10 +205,28 @@ namespace GameEngine
 				node = s_front;
 
 				// Assign new front:
-				s_front = s_storage.at(s_front).GetNext();
+				s_front = s_front->GetNext();
+
+				// Set previous to null:
+				if(s_front)
+					s_front->SetPrevious(nullptr);
 			}
 
 			return node;
+		}
+		static void RemoveAt(typename std::deque<node_type>::reverse_iterator location)
+		{
+			// Get previous node:
+			auto previous = location->GetPrevious();
+
+			// Get next node:
+			auto next = location->GetNext();
+
+			if(previous)
+				previous->SetNext(next);
+
+			if (next)
+				next->SetPrevious(previous);
 		}
 
 	private:

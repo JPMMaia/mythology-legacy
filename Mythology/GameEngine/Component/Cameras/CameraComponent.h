@@ -20,6 +20,10 @@ namespace GameEngine
 	public:
 		CameraComponent();
 		CameraComponent(float aspectRatio, float fovAngleY, float nearZ, float farZ, AlignedMatrixCR orientationMatrix);
+		~CameraComponent()
+		{
+			int i = 0;
+		}
 
 	public:
 		void Update();

@@ -16,13 +16,23 @@ namespace MythologyTestProject
 	public:
 		TEST_METHOD(StandardAllocatorTest1)
 		{
+			auto deleter = [](CameraComponent* pointer)
+			{
+				CameraComponent::operator delete(pointer, sizeof(CameraComponent));
+			};
+
+			{
+				auto componentPointer = new CameraComponent;
+				std::shared_ptr<CameraComponent> hello(componentPointer, deleter);
+			}
+
 			static constexpr std::size_t componentCount = 10;
 			std::vector<std::shared_ptr<CameraComponent>> components;
 			components.reserve(componentCount);
 			for (std::size_t i = 0; i < componentCount; ++i)
 			{
 				auto componentPointer = new CameraComponent;
-				components.emplace_back(std::shared_ptr<CameraComponent>(componentPointer));
+				components.emplace_back(std::shared_ptr<CameraComponent>(componentPointer, deleter));
 			}	
 			Assert::AreEqual(componentCount, StandardAllocator<CameraComponent>::size());
 			
@@ -41,7 +51,7 @@ namespace MythologyTestProject
 			auto anotherComponent = std::shared_ptr<CameraComponent>(anotherComponentPointer);
 			Assert::AreEqual(std::size_t(10), StandardAllocator<CameraComponent>::size());
 			anotherComponent->SetFarZ(70.0f);
-			Assert::IsFalse(anotherComponent->GetFarZ() == 70.0f);
+			Assert::IsTrue(anotherComponent->GetFarZ() == 70.0f);
 
 			// Erase at end:
 			components.erase(components.begin() + 7, components.end());
