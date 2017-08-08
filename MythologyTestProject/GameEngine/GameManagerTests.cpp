@@ -5,6 +5,8 @@
 #include "GameEngine/GameObject/GameObject.h"
 #include "GameEngine/Component/Lights/PointLightComponent.h"
 #include "GameEngine/Component/Cameras/CameraComponent.h"
+#include "GameEngine/Component/Meshes/MeshComponent.h"
+#include "GameEngine/Geometry/Primitives/BoxGeometry.h"
 
 using namespace Eigen;
 using namespace GameEngine;
@@ -44,7 +46,7 @@ namespace MythologyTestProject
 
 			gameManager.FixedUpdate(timer);
 
-			Assert::IsTrue(cameraComponent->GetViewMatrix().isApprox( cameraComponent->GetTransform().GetWorldRotation().toRotationMatrix() * Translation3f(Vector3f( 0.0f, -2.0f, 1.0f )) ));
+			Assert::IsTrue(cameraComponent->GetViewMatrix().isApprox((Translation3f(Vector3f(0.0f, 2.0f, -1.0f)) * cameraComponent->GetTransform().GetWorldRotation().toRotationMatrix()).inverse()));
 		}
 	};
 }

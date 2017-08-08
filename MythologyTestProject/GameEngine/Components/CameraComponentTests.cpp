@@ -22,19 +22,17 @@ namespace MythologyTestProject
 
 		static Matrix CalculatePerspectiveMatrix(float aspectRatio, float fovAngleY, float nearZ, float farZ)
 		{
-			auto top = std::tan(fovAngleY) * nearZ;
-			auto bottom = -top;
-			auto right = top * aspectRatio;
-			auto left = -aspectRatio;
+			auto yScale = 1.0f / std::tan(fovAngleY / 2.0f);
+			auto xScale = yScale / aspectRatio;
+			auto nearDepth = -1.0f;
+			auto farDepth = 1.0f;
 
 			auto perspectiveMatrix(Matrix::Identity());
-			perspectiveMatrix(0, 0) = 2.0f * nearZ / (right - left);
-			perspectiveMatrix(1, 1) = 2.0f * nearZ / (top - bottom);
-			perspectiveMatrix(0, 2) = (right + left) / (right - left);
-			perspectiveMatrix(1, 2) = (top + bottom) / (top - bottom);
-			perspectiveMatrix(2, 2) = -(farZ + nearZ) / (farZ - nearZ);
+			perspectiveMatrix(0, 0) = xScale;
+			perspectiveMatrix(1, 1) = yScale;
+			perspectiveMatrix(2, 2) = (farDepth * farZ - nearDepth * nearZ) / (nearZ - farZ);
 			perspectiveMatrix(3, 2) = -1.0f;
-			perspectiveMatrix(2, 3) = -(2.0f * farZ * nearZ) / (farZ - nearZ);
+			perspectiveMatrix(2, 3) = (farDepth - nearDepth) * (nearZ * farZ) / (nearZ - farZ);
 			perspectiveMatrix(3, 3) = 0.0f;
 
 			return perspectiveMatrix;
@@ -42,7 +40,7 @@ namespace MythologyTestProject
 
 		static Matrix CalculateViewMatrix(const Vector3f& position, const Quaternionf& rotation)
 		{
-			return rotation.toRotationMatrix() * Translation3f(-position);
+			return (Translation3f(position) * rotation.toRotationMatrix()).inverse();
 		}
 
 		TEST_METHOD(CameraComponentTest1)

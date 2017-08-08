@@ -183,9 +183,9 @@ TransformComponent::TransformType TransformComponent::GetWorldTransform() const
 TransformComponent::TransformType TransformComponent::CalculateLocalTransform() const
 {
 	auto transform(TransformType::Identity());
-	transform.scale(m_localScaling);
-	transform.rotate(m_localRotation);
 	transform.translate(m_localPosition);
+	transform.rotate(m_localRotation);
+	transform.scale(m_localScaling);
 	return transform;
 }
 TransformComponent::TransformType TransformComponent::CalculateParentsTransform() const
@@ -219,12 +219,16 @@ void TransformComponent::UpdateTransformValuesToHoldWorldTransform(const std::sh
 	// Apply parent's transform:
 	auto localTransform = parentWorldTransform * CalculateLocalTransform();
 
-	// Apply translation:
-	m_localPosition = localTransform.translation();
-
 	// Apply rotation and scaling:
 	Matrix3f rotationMatrix, scalingMatrix;
 	localTransform.computeRotationScaling(&rotationMatrix, &scalingMatrix);
-	m_localRotation = Eigen::AngleAxis<float>(rotationMatrix);
 	m_localScaling = scalingMatrix.diagonal();
+	m_localRotation = Eigen::AngleAxis<float>(rotationMatrix);
+
+	// Apply translation:
+	m_localPosition = localTransform.translation();
+
+#if defined(_DEBUG)
+	assert(CalculateLocalTransform().isApprox(localTransform));
+#endif
 }

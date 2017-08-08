@@ -28,7 +28,7 @@ void CameraComponent::FixedUpdate(const Common::Timer& timer)
 	BaseComponent::FixedUpdate(timer);
 
 	const auto& transform = GetTransform();
-	m_viewMatrix = BuildViewMatrix(transform.GetWorldPosition(), transform.GetWorldRotation());
+	m_viewMatrix = BuildViewMatrix(transform);
 }
 
 CameraComponent::MatrixCR CameraComponent::GetViewMatrix() const
@@ -81,9 +81,11 @@ void CameraComponent::SetOrientationMatrix(AlignedMatrixCR orientationMatrix)
 	m_projectionMatrix = BuildProjectionMatrix(m_aspectRatio, m_fovAngleY, m_nearZ, m_farZ, orientationMatrix);
 }
 
-CameraComponent::Matrix CameraComponent::BuildViewMatrix(Vector3CR position, QuaternionCR rotation)
+CameraComponent::Matrix CameraComponent::BuildViewMatrix(const TransformComponent& transform)
 {
-	auto matrix = Eigen::Translation3f(position) * rotation.toRotationMatrix();
+	//auto matrix = transform.GetWorldTransform().inverse();
+
+	auto matrix = Eigen::Translation3f(transform.GetWorldPosition()) * transform.GetWorldRotation().toRotationMatrix();
 
 #if defined(USING_DIRECTX)
 	Eigen::Matrix4f rotateZ180;
@@ -103,18 +105,18 @@ CameraComponent::Matrix CameraComponent::BuildProjectionMatrix(float aspectRatio
 	auto xScale = yScale / aspectRatio;
 
 #if defined(USING_DIRECTX)
-	auto depthNear = 0.0f;
+	auto nearDepth = 0.0f;
 #else
-	auto depthNear = -1.0f;
+	auto nearDepth = -1.0f;
 #endif
-	auto depthFar = 1.0f;
+	auto farDepth = 1.0f;
 
 	auto perspectiveMatrix(AlignedMatrix::Identity());
 	perspectiveMatrix(0, 0) = xScale;
 	perspectiveMatrix(1, 1) = yScale;
-	perspectiveMatrix(2, 2) = farZ / (nearZ - farZ);
+	perspectiveMatrix(2, 2) = (farDepth * farZ - nearDepth * nearZ) / (nearZ - farZ);
 	perspectiveMatrix(3, 2) = -1.0f;
-	perspectiveMatrix(2, 3) = (nearZ * farZ) / (nearZ - farZ);
+	perspectiveMatrix(2, 3) = (farDepth - nearDepth) * (nearZ * farZ) / (nearZ - farZ);
 	perspectiveMatrix(3, 3) = 0.0f;
 
 	return orientationMatrix * perspectiveMatrix;

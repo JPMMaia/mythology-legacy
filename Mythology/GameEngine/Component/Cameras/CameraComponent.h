@@ -42,7 +42,7 @@ namespace GameEngine
 		void SetOrientationMatrix(AlignedMatrixCR orientationMatrix);
 
 	private:
-		static Matrix BuildViewMatrix(Vector3CR position, QuaternionCR rotation);
+		static Matrix BuildViewMatrix(const TransformComponent& transform);
 		static Matrix BuildProjectionMatrix(float aspectRatio, float fovAngleY, float nearZ, float farZ, AlignedMatrixCR orientationMatrix);
 
 	private:

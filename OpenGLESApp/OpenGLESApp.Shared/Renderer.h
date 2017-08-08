@@ -20,7 +20,7 @@ namespace OpenGLESRenderer
 		void Render(const Common::Timer& timer) const;
 
 	private:
-		void OnBoxCreated(void* sender, const GameEngine::MeshComponent<GameEngine::BoxGeometry>& box);
+		//void OnBoxCreated(void* sender, const GameEngine::MeshComponent<GameEngine::BoxGeometry>& box);
 
 	private:
 		std::shared_ptr<GameEngine::GameManager> m_gameManager;

@@ -28,12 +28,9 @@ void Renderer::Initialize(float width, float height)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glFrustumf(-ratio, ratio, -1, 1, 1, 10);
-	
-	m_gameManager->OnBoxCreatedEvent += {"Renderer", this, &Renderer::OnBoxCreated };
 }
 void Renderer::Shutdown()
 {
-	m_gameManager->OnBoxCreatedEvent -= "Renderer";
 }
 
 void Renderer::FrameUpdate(const Common::Timer& timer)
@@ -54,7 +51,7 @@ void Renderer::Render(const Common::Timer& timer) const
 		renderItem.Draw();
 }
 
-void Renderer::OnBoxCreated(void* sender, const GameEngine::MeshComponent<GameEngine::BoxGeometry>& box)
+/*void Renderer::OnBoxCreated(void* sender, const GameEngine::MeshComponent<GameEngine::BoxGeometry>& box)
 {
 	//m_colorRenderItems.emplace_back(ColorRenderItem(box.Geometry()->GenerateMeshData<TueMeshData>()));
-}
+}*/
