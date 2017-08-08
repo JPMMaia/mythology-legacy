@@ -8,7 +8,8 @@ using namespace Windows::System::Threading;
 using namespace Concurrency;
 
 WindowsAppMain::WindowsAppMain() :
-	m_timer(std::chrono::milliseconds(12))
+	m_timer(std::chrono::milliseconds(12)),
+	m_game(std::make_shared<Mythology::MythologyGame>())
 {
 }
 
@@ -17,6 +18,9 @@ void WindowsAppMain::CreateRenderers(const std::shared_ptr<DirectX12Engine::Devi
 {
 	m_deviceResources = deviceResources;
 	m_renderer = std::make_unique<DirectX12Engine::Renderer>(deviceResources);
+	m_scene = std::make_shared<DirectX12Engine::StandardScene>(deviceResources, m_renderer->GetCommandListManager(), m_game);
+	m_scene->CreateDeviceDependentResources();
+	m_renderer->SetScene(m_scene);
 
 	OnWindowSizeChanged();
 
@@ -39,9 +43,8 @@ bool WindowsAppMain::UpdateAndRender()
 // Updates application state when the window's size changes (e.g. device orientation change)
 void WindowsAppMain::OnWindowSizeChanged()
 {
-	// TODO: Replace this with the size-dependent initialization of your app's content.
-	//m_sceneRenderer->CreateWindowSizeDependentResources();
 	m_renderer->CreateWindowSizeDependentResources();
+	m_scene->CreateWindowSizeDependentResources();
 }
 
 // Notifies the app that it is being suspended.
@@ -75,7 +78,7 @@ void WindowsAppMain::OnDeviceRemoved()
 
 bool WindowsAppMain::ProcessInput()
 {
-	m_game.ProcessInput();
+	m_game->ProcessInput();
 
 	m_renderer->ProcessInput();
 
@@ -83,7 +86,7 @@ bool WindowsAppMain::ProcessInput()
 }
 void WindowsAppMain::FixedUpdate(const Common::Timer& timer)
 {
-	m_game.FixedUpdate(timer);
+	m_game->FixedUpdate(timer);
 }
 void WindowsAppMain::FrameUpdate(const Common::Timer& timer)
 {	

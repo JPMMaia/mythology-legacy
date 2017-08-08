@@ -24,6 +24,9 @@ namespace Mythology
 	public:
 		std::shared_ptr<GameEngine::GameManager> GameManager() const;
 
+	public:
+		const GameEngine::GameObject& GetPerson() const { return m_person; }
+
 	private:
 		std::shared_ptr<GameEngine::GameManager> m_gameManager;
 		GameEngine::GameObject m_person;

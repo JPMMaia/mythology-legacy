@@ -8,8 +8,8 @@
 #include "Core/Geometry/IMesh.h"
 #include "Core/RenderItem/StandardRenderItem.h"
 #include "Core/Resources/GPUAllocator.h"
-#include "Core/Camera/Camera.h"
 #include "Core/Shader/ShaderBufferTypes.h"
+#include "Mythology/MythologyGame.h"
 
 #include <unordered_map>
 
@@ -20,7 +20,7 @@ namespace DirectX12Engine
 	class StandardScene : public IScene
 	{
 	public:
-		StandardScene(const std::shared_ptr<DeviceResources>& deviceResources, CommandListManager& commandListManager);
+		StandardScene(const std::shared_ptr<DeviceResources>& deviceResources, CommandListManager& commandListManager, const std::shared_ptr<Mythology::MythologyGame>& game);
 		~StandardScene();
 
 		void CreateDeviceDependentResources() override;
@@ -44,7 +44,6 @@ namespace DirectX12Engine
 		CommandListManager& m_commandListManager;
 		std::size_t m_commandListIndex = 0;
 
-		Camera m_camera;
 		std::unordered_map<std::string, std::shared_ptr<IMesh>> m_meshes;
 		std::unordered_map<std::string, std::shared_ptr<GraphicsEngine::IMaterial>> m_materials;
 		std::unordered_map<std::string, std::shared_ptr<GraphicsEngine::IRenderItem>> m_renderItems;
@@ -54,5 +53,7 @@ namespace DirectX12Engine
 
 		StandardRenderItem m_cubeRenderItem;
 		StandardRenderItem m_rectangleRenderItem;
+
+		std::shared_ptr<Mythology::MythologyGame> m_game;
 	};
 }

@@ -5,6 +5,7 @@
 
 #include "GraphicsEngineInterfaces/IWindow.h"
 #include "Utilities/d3dx12.h"
+#include "Libraries/Eigen/Geometry"
 
 namespace DirectX12Engine
 {
@@ -43,7 +44,7 @@ namespace DirectX12Engine
 		DXGI_FORMAT					GetBackBufferFormat() const			{ return m_backBufferFormat; }
 		DXGI_FORMAT					GetDepthBufferFormat() const		{ return m_depthBufferFormat; }
 		D3D12_VIEWPORT				GetScreenViewport() const			{ return m_screenViewport; }
-		DirectX::XMFLOAT4X4			GetOrientationTransform3D() const	{ return m_orientationTransform3D; }
+		Eigen::Matrix4f				GetOrientationTransform3D() const	{ return m_orientationTransform3D; }
 		UINT						GetCurrentFrameIndex() const		{ return m_currentFrame; }
 
 		CD3DX12_CPU_DESCRIPTOR_HANDLE GetRenderTargetView() const
@@ -122,7 +123,7 @@ namespace DirectX12Engine
 		float m_effectiveDpi;
 
 		// Transforms used for display orientation.
-		DirectX::XMFLOAT4X4	m_orientationTransform3D;
+		Eigen::Matrix4f	m_orientationTransform3D;
 
 		UINT m_cbvSrvUavDescriptorSize = 0;
 		UINT m_dsvDescriptorSize = 0;

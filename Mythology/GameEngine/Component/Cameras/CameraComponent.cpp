@@ -76,6 +76,11 @@ void CameraComponent::SetFarZ(float farZ)
 	m_farZ = farZ;
 }
 
+void CameraComponent::SetOrientationMatrix(AlignedMatrixCR orientationMatrix)
+{
+	m_projectionMatrix = BuildProjectionMatrix(m_aspectRatio, m_fovAngleY, m_nearZ, m_farZ, orientationMatrix);
+}
+
 CameraComponent::Matrix CameraComponent::BuildViewMatrix(Vector3CR position, QuaternionCR rotation)
 {
 	return rotation.toRotationMatrix() * Eigen::Translation3f(-position);

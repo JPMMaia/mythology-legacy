@@ -13,18 +13,15 @@ Renderer::Renderer(const std::shared_ptr<DeviceResources>& deviceResources) :
 	m_deviceResources(deviceResources),
 	m_rootSignatureManager(deviceResources),
 	m_pipelineStateManager(deviceResources),
-	m_commandListManager(deviceResources),
-	m_scene(std::make_shared<StandardScene>(deviceResources, m_commandListManager))
+	m_commandListManager(deviceResources)
 {
 	Renderer::CreateDeviceDependentResources();
-	Renderer::CreateWindowSizeDependentResources();
 }
 
 void Renderer::CreateDeviceDependentResources()
 {
 	m_rootSignatureManager.CreateDeviceDependentResources();
 	m_pipelineStateManager.CreateDeviceDependentResources(m_rootSignatureManager);
-	m_scene->CreateDeviceDependentResources();
 
 	m_dsvDescriptorHeap.CreateDeviceDependentResources(m_deviceResources, 1, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
 	m_rtvDescriptorHeap.CreateDeviceDependentResources(m_deviceResources, 3, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
@@ -32,7 +29,8 @@ void Renderer::CreateDeviceDependentResources()
 	m_texturesDescriptorHeap.CreateDeviceDependentResources(m_deviceResources, 4, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
 
 	{
-		auto commandList = m_commandListManager.GetGraphicsCommandList(0);
+		ID3D12GraphicsCommandList* commandList;
+		m_commandListManager.CreateGraphicsCommandList(commandList);
 
 		Microsoft::WRL::ComPtr<ID3D12Resource> uploadBuffer;
 		DDS_ALPHA_MODE alphaMode;
@@ -51,6 +49,7 @@ void Renderer::CreateDeviceDependentResources()
 		commandList->Close();
 		m_commandListManager.ExecuteCommandList(0);
 		m_deviceResources->WaitForGpu();
+		m_commandListManager.ResetGraphicsCommandList(0);
 
 		m_albedoTexture.CreateShaderResourceView(m_deviceResources, m_texturesDescriptorHeap, "SRV");
 	}
@@ -59,7 +58,6 @@ void Renderer::CreateWindowSizeDependentResources()
 {
 	auto viewport = m_deviceResources->GetScreenViewport();
 	m_scissorRect = { 0, 0, static_cast<LONG>(viewport.Width), static_cast<LONG>(viewport.Height) };
-	m_scene->CreateWindowSizeDependentResources();
 	
 	auto outputSize = m_deviceResources->GetOutputSize();
 	
@@ -144,7 +142,7 @@ void Renderer::CreateWindowSizeDependentResources()
 	// Fill DSV descriptor heap:
 	{
 		auto format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		D3D12_CLEAR_VALUE clearValue = {};
+		D3D12_CLEAR_VALUE clearValue;
 		clearValue.Format = format;
 		clearValue.DepthStencil.Depth = 1.0f;
 		clearValue.DepthStencil.Stencil = 0;
@@ -254,6 +252,11 @@ bool Renderer::Render(const Common::Timer& timer)
 	EndRender();
 
 	return true;
+}
+
+void Renderer::SetScene(const std::shared_ptr<IScene>& scene)
+{
+	m_scene = scene;
 }
 
 void Renderer::BeginRender()

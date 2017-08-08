@@ -1,5 +1,9 @@
 #pragma once
+
+#include <array>
 #include <DirectXMath.h>
+
+#include "Libraries/Eigen/Geometry"
 
 namespace DirectX12Engine
 {
@@ -32,11 +36,11 @@ namespace DirectX12Engine
 
 		struct PassData
 		{
-			DirectX::XMFLOAT4X4 ViewMatrix;
-			DirectX::XMFLOAT4X4 ProjectionMatrix;
-			DirectX::XMFLOAT4X4 ViewProjectionMatrix;
-			DirectX::XMFLOAT4X4 InverseViewProjectionMatrix;
-			DirectX::XMFLOAT3 CameraPositionW;
+			Eigen::Affine3f ViewMatrix;
+			Eigen::Affine3f ProjectionMatrix;
+			Eigen::Affine3f ViewProjectionMatrix;
+			Eigen::Affine3f InverseViewProjectionMatrix;
+			Eigen::Vector3f CameraPositionW;
 			float Padding;
 
 			static constexpr auto MaxNumLights = 8;

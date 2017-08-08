@@ -23,6 +23,7 @@ namespace GameEngine
 
 	public:
 		void FixedUpdate(const Common::Timer& timer) override;
+		void BuildMatrice();
 
 		MatrixCR GetViewMatrix() const;
 		MatrixCR GetProjectionMatrix() const;
@@ -38,6 +39,8 @@ namespace GameEngine
 
 		float GetFarZ() const;
 		void SetFarZ(float farZ);
+
+		void SetOrientationMatrix(AlignedMatrixCR orientationMatrix);
 
 	private:
 		static Matrix BuildViewMatrix(Vector3CR position, QuaternionCR rotation);

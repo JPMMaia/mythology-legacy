@@ -243,13 +243,13 @@ std::shared_ptr<DirectX12Engine::DeviceResources> App::GetDeviceResources()
 
 void App::OnKeyDown(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::KeyEventArgs^ args)
 {
-	m_deviceResources->Keyboard().PressKey(static_cast<std::uint8_t>(args->VirtualKey));
+	m_main->GetGame()->GameManager()->GetKeyboard().PressKey(static_cast<std::uint8_t>(args->VirtualKey));
 
 	args->Handled = true;
 }
 void WindowsApp::App::OnKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args)
 {
-	m_deviceResources->Keyboard().ReleaseKey(static_cast<std::uint8_t>(args->VirtualKey));
+	m_main->GetGame()->GameManager()->GetKeyboard().ReleaseKey(static_cast<std::uint8_t>(args->VirtualKey));
 
 	args->Handled = true;
 }
@@ -269,7 +269,7 @@ void WindowsApp::App::OnMouseMoved(Windows::Devices::Input::MouseDevice ^sender,
 	if (!m_relativeMouseHandling)
 		return;
 
-	auto& mouse = m_deviceResources->Mouse();
+	auto& mouse = m_main->GetGame()->GameManager()->GetMouse();
 	mouse.ProcessMouseDelta(static_cast<float>(args->MouseDelta.X), static_cast<float>(args->MouseDelta.Y));
 }
 

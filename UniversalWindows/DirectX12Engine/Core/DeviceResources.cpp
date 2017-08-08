@@ -3,6 +3,7 @@
 #include "Utilities/DirectXHelper.h"
 #include "GraphicsEngineInterfaces/DisplayOrientations.h"
 
+using namespace Eigen;
 using namespace DirectX;
 using namespace DirectX12Engine;
 using namespace Microsoft::WRL;
@@ -24,40 +25,77 @@ namespace DisplayMetrics
 	static const float WidthThreshold = 1920.0f;	// 1080p width.
 	static const float HeightThreshold = 1080.0f;	// 1080p height.
 };
-namespace ScreenRotation
+
+class ScreenRotation
 {
-	// 0-degree Z-rotation
-	static const XMFLOAT4X4 Rotation0(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
+public:
+	static void Initialize()
+	{
+		s_rotation0 = Matrix4f::Identity();
 
-	// 90-degree Z-rotation
-	static const XMFLOAT4X4 Rotation90(
-		0.0f, 1.0f, 0.0f, 0.0f,
-		-1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
+		s_rotation90 <<
+			0.0f, 1.0f, 0.0f, 0.0f,
+			-1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f;
 
-	// 180-degree Z-rotation
-	static const XMFLOAT4X4 Rotation180(
-		-1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, -1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
+		s_rotation180 <<
+			-1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, -1.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f;
 
-	// 270-degree Z-rotation
-	static const XMFLOAT4X4 Rotation270(
-		0.0f, -1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
+		s_rotation270 <<
+			0.0f, -1.0f, 0.0f, 0.0f,
+			1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f;
+
+		s_initialized = true;
+	}
+
+	static const Matrix4f& GetRotation0()
+	{
+		if (!s_initialized)
+			Initialize();
+
+		return s_rotation0;
+	}
+	static const Matrix4f& GetRotation90()
+	{
+		if (!s_initialized)
+			Initialize();
+
+		return s_rotation90;
+	}
+	static const Matrix4f& GetRotation180()
+	{
+		if (!s_initialized)
+			Initialize();
+
+		return s_rotation180;
+	}
+	static const Matrix4f& GetRotation270()
+	{
+		if (!s_initialized)
+			Initialize();
+
+		return s_rotation270;
+	}
+
+private:
+	static Matrix4f s_rotation0;
+	static Matrix4f s_rotation90;
+	static Matrix4f s_rotation180;
+	static Matrix4f s_rotation270;
+	static bool s_initialized;
 };
+
+Matrix4f ScreenRotation::s_rotation0;
+Matrix4f ScreenRotation::s_rotation90;
+Matrix4f ScreenRotation::s_rotation180;
+Matrix4f ScreenRotation::s_rotation270;
+bool ScreenRotation::s_initialized(false);
 
 DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT depthBufferFormat) :
 	m_currentFrame(0),
@@ -420,7 +458,7 @@ void DeviceResources::QueryDescriptorSizes()
 }
 void DeviceResources::QueryMultisampleQualityLevels()
 {
-	D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS multisampleQualityLevels = {};
+	D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS multisampleQualityLevels;
 	multisampleQualityLevels.Format = m_backBufferFormat;
 	multisampleQualityLevels.SampleCount = 4;
 	multisampleQualityLevels.Flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;
@@ -493,8 +531,8 @@ void DeviceResources::CreateSwapChain()
 		{
 			// ReSharper disable once CppUnreachableCode
 			auto scaling = DisplayMetrics::SupportHighResolutions ? DXGI_SCALING_NONE : DXGI_SCALING_STRETCH;
-		
-			DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
+
+			DXGI_SWAP_CHAIN_DESC1 swapChainDesc;
 			swapChainDesc.Width = backBufferWidth;
 			swapChainDesc.Height = backBufferHeight;
 			swapChainDesc.Format = m_backBufferFormat;
@@ -530,19 +568,19 @@ void DeviceResources::CreateSwapChain()
 		switch (displayRotation)
 		{
 		case DXGI_MODE_ROTATION_IDENTITY:
-			m_orientationTransform3D = ScreenRotation::Rotation0;
+			m_orientationTransform3D = ScreenRotation::GetRotation0();
 			break;
 
 		case DXGI_MODE_ROTATION_ROTATE90:
-			m_orientationTransform3D = ScreenRotation::Rotation270;
+			m_orientationTransform3D = ScreenRotation::GetRotation270();
 			break;
 
 		case DXGI_MODE_ROTATION_ROTATE180:
-			m_orientationTransform3D = ScreenRotation::Rotation180;
+			m_orientationTransform3D = ScreenRotation::GetRotation180();
 			break;
 
 		case DXGI_MODE_ROTATION_ROTATE270:
-			m_orientationTransform3D = ScreenRotation::Rotation90;
+			m_orientationTransform3D = ScreenRotation::GetRotation90();
 			break;
 
 		default:
@@ -565,7 +603,7 @@ void DeviceResources::CreateDescriptorHeaps()
 		DX::ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
 		NAME_D3D12_OBJECT(m_rtvHeap);
 	}
-	
+
 	// Create DSV descriptor heaps:
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
@@ -579,7 +617,7 @@ void DeviceResources::CreateDescriptorHeaps()
 void DeviceResources::CreateRenderTargetView()
 {
 	m_currentFrame = m_swapChain->GetCurrentBackBufferIndex();
-	
+
 	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvDescriptor(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
 	for (UINT n = 0; n < c_frameCount; n++)
 	{

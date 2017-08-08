@@ -6,18 +6,20 @@
 #include "Core/Shader/ShaderBufferTypes.h"
 #include "RenderLayers.h"
 #include "Core/Textures/Texture.h"
+#include "GameEngine/Component/Cameras/CameraComponent.h"
 
 using namespace Common;
 using namespace DirectX;
 using namespace DirectX12Engine;
 
-StandardScene::StandardScene(const std::shared_ptr<DeviceResources>& deviceResources, CommandListManager& commandListManager) :
+StandardScene::StandardScene(const std::shared_ptr<DeviceResources>& deviceResources, CommandListManager& commandListManager, const std::shared_ptr<Mythology::MythologyGame>& game) :
 	m_deviceResources(deviceResources),
 	m_commandListManager(commandListManager),
 	m_materialsGPUBuffer(GPUAllocator<ShaderBufferTypes::MaterialData>(deviceResources->GetD3DDevice(), false)),
 	m_passGPUBuffer(GPUAllocator<ShaderBufferTypes::PassData>(deviceResources->GetD3DDevice(), false)),
 	m_cubeRenderItem(deviceResources->GetD3DDevice()),
-	m_rectangleRenderItem(deviceResources->GetD3DDevice())
+	m_rectangleRenderItem(deviceResources->GetD3DDevice()),
+	m_game(game)
 {
 }
 StandardScene::~StandardScene()
@@ -28,8 +30,8 @@ void StandardScene::CreateDeviceDependentResources()
 {
 	auto d3dDevice = m_deviceResources->GetD3DDevice();
 
-	ID3D12GraphicsCommandList* commandList;
-	m_commandListIndex = m_commandListManager.CreateGraphicsCommandList(commandList);
+	m_commandListIndex = 0;
+	auto commandList = m_commandListManager.GetGraphicsCommandList(m_commandListIndex);
 
 	// Cube Render Item:
 	{
@@ -82,8 +84,6 @@ void StandardScene::CreateDeviceDependentResources()
 
 		for (const auto& mesh : m_meshes)
 			mesh.second->DisposeUploadBuffers();
-
-		m_commandListManager.ResetGraphicsCommandList(m_commandListIndex);
 	}
 
 	{
@@ -118,13 +118,12 @@ void StandardScene::CreateWindowSizeDependentResources()
 	}
 
 	auto orientation = m_deviceResources->GetOrientationTransform3D();
-	auto orientationMatrix = XMLoadFloat4x4(&orientation);
 
-	m_camera = Camera(aspectRatio, fovAngleY, 0.25f, 50.0f, orientationMatrix);
-	m_camera.SetPosition(0.0f, 2.0f, -5.0f);
-	m_camera.Update();
-
-	UpdatePassBuffer();
+	const auto& person = m_game->GetPerson();
+	auto camera = person.GetComponent<GameEngine::CameraComponent>("Camera");
+	camera->SetAspectRatio(aspectRatio);
+	camera->SetFovAngleY(fovAngleY);
+	camera->SetOrientationMatrix(Eigen::Affine3f(orientation));
 }
 
 void StandardScene::SaveState()
@@ -171,21 +170,24 @@ StandardRenderItem& StandardScene::GetCubeRenderItem()
 
 void StandardScene::UpdatePassBuffer()
 {
-	ShaderBufferTypes::PassData passData;
+	ShaderBufferTypes::PassData passData = {};
+
+	const auto& person = m_game->GetPerson();
 
 	// Matrices:
 	{
-		const auto& viewMatrix = m_camera.GetViewMatrix();
-		const auto& projectionMatrix = m_camera.GetProjectionMatrix();
-		auto viewProjectionMatrix = viewMatrix * projectionMatrix;
-		auto viewProjectionMatrixDeterminant = XMMatrixDeterminant(viewProjectionMatrix);
-		auto inverseViewProjectionMatrix = XMMatrixInverse(&viewProjectionMatrixDeterminant, viewProjectionMatrix);
+		auto camera = person.GetComponent<GameEngine::CameraComponent>("Camera");
 
-		XMStoreFloat4x4(&passData.ViewMatrix, XMMatrixTranspose(viewMatrix));
-		XMStoreFloat4x4(&passData.ProjectionMatrix, XMMatrixTranspose(projectionMatrix));
-		XMStoreFloat4x4(&passData.ViewProjectionMatrix, XMMatrixTranspose(viewProjectionMatrix));
-		XMStoreFloat4x4(&passData.InverseViewProjectionMatrix, XMMatrixTranspose(inverseViewProjectionMatrix));
-		XMStoreFloat3(&passData.CameraPositionW, m_camera.GetPosition());
+		const auto& viewMatrix = camera->GetViewMatrix();
+		const auto& projectionMatrix = camera->GetProjectionMatrix();
+		auto viewProjectionMatrix = projectionMatrix * viewMatrix;
+		auto inverseViewProjectionMatrix = viewProjectionMatrix.inverse();
+
+		passData.ViewMatrix = viewMatrix.matrix();
+		passData.ProjectionMatrix = projectionMatrix.matrix();
+		passData.ViewProjectionMatrix = viewProjectionMatrix.matrix();
+		passData.InverseViewProjectionMatrix = inverseViewProjectionMatrix.matrix();
+		passData.CameraPositionW = camera->GetTransform().GetWorldPosition();
 	}
 
 	// Lights:

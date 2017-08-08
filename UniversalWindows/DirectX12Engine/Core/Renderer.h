@@ -6,7 +6,6 @@
 #include "Pipeline/RootSignatureManager.h"
 #include "Pipeline/PipelineStateManager.h"
 #include "Resources/DescriptorHeap.h"
-#include "Utilities/UploadBuffer.h"
 #include "Command/CommandListManager.h"
 #include "Textures/Texture.h"
 
@@ -26,6 +25,10 @@ namespace DirectX12Engine
 		void ProcessInput() const;
 		void FrameUpdate(const Common::Timer& timer) override;
 		bool Render(const Common::Timer& timer) override;
+
+	public:
+		CommandListManager& GetCommandListManager() { return m_commandListManager; }
+		void SetScene(const std::shared_ptr<IScene>& scene);
 
 	private:
 		void BeginRender();
