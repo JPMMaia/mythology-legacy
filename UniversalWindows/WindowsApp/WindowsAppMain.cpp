@@ -75,14 +75,15 @@ void WindowsAppMain::OnDeviceRemoved()
 
 bool WindowsAppMain::ProcessInput()
 {
-	m_deviceResources->Mouse().Update();
+	m_game.ProcessInput();
 
 	m_renderer->ProcessInput();
 
 	return true;
 }
 void WindowsAppMain::FixedUpdate(const Common::Timer& timer)
-{	
+{
+	m_game.FixedUpdate(timer);
 }
 void WindowsAppMain::FrameUpdate(const Common::Timer& timer)
 {	

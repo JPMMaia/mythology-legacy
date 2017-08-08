@@ -10,7 +10,9 @@ namespace GameEngine
 	class GameObject
 	{
 	public:
-		using IComponentPointer = std::shared_ptr<IComponent>;
+		template<class T>
+		using PointerType = std::shared_ptr<T>;
+		using IComponentPointer = PointerType<IComponent>;
 		using IComponentPointerCR = const IComponentPointer&;
 
 	public:
@@ -19,9 +21,18 @@ namespace GameEngine
 	public:
 		void AddComponent(const std::string& name, IComponentPointerCR component, bool worldTransformStays = false);
 		void RemoveComponent(const std::string& name, bool worldTransformStays = false);
+		
 		IComponentPointerCR GetComponent(const std::string& name) const;
+		
+		template<class T>
+		PointerType<T> GetComponent(const std::string& name) const
+		{
+			return std::static_pointer_cast<T>(GetComponent(name));
+		}
+		
 		bool HasComponent(const std::string& name) const;
 
+	public:
 		const TransformComponent& GetTransform() const;
 		TransformComponent& GetTransform();
 

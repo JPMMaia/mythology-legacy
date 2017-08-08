@@ -5,7 +5,7 @@
 #include <array>
 #include <bitset>
 
-namespace DirectX12Engine
+namespace GameEngine
 {
 	class Mouse
 	{

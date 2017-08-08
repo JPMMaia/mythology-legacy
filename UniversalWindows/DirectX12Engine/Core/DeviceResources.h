@@ -5,8 +5,6 @@
 
 #include "GraphicsEngineInterfaces/IWindow.h"
 #include "Utilities/d3dx12.h"
-#include "Input/Keyboard.h"
-#include "Input/Mouse.h"
 
 namespace DirectX12Engine
 {
@@ -65,9 +63,6 @@ namespace DirectX12Engine
 		UINT GetSampleQuality() const { return m_sampleQuality; }
 
 		static constexpr UINT GetFrameCount() { return c_frameCount; }
-
-		Keyboard& Keyboard() { return m_keyboard; }
-		Mouse& Mouse() { return m_mouse; }
 
 	private:
 		void CreateDeviceIndependentResources();
@@ -135,8 +130,5 @@ namespace DirectX12Engine
 
 		UINT m_sampleCount = 1;
 		UINT m_sampleQuality = 0;
-
-		DirectX12Engine::Keyboard m_keyboard;
-		DirectX12Engine::Mouse m_mouse;
 	};
 }

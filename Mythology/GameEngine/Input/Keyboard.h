@@ -1,9 +1,10 @@
 #pragma once
 
-#include <bitset>
 #include "Common/Events/Event.h"
 
-namespace DirectX12Engine
+#include <bitset>
+
+namespace GameEngine
 {
 	class Keyboard
 	{

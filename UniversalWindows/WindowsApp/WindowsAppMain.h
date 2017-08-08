@@ -3,6 +3,7 @@
 #include "Common/Timer.h"
 #include "Core/DeviceResources.h"
 #include "Core/Renderer.h"
+#include "Mythology/MythologyGame.h"
 
 // Renders Direct3D content on the screen.
 namespace WindowsApp
@@ -30,5 +31,6 @@ namespace WindowsApp
 		std::shared_ptr<DirectX12Engine::DeviceResources> m_deviceResources;
 		Common::Timer m_timer;
 		std::unique_ptr<DirectX12Engine::Renderer> m_renderer;
+		Mythology::MythologyGame m_game;
 	};
 }

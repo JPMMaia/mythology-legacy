@@ -17,6 +17,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\PhysicsComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CameraComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Common\MemoryPool\Allocator.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Input\Keyboard.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Input\Mouse.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
@@ -95,5 +97,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CameraComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\MemoryPool\Allocator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Memory\StandardAllocator.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Input\Keyboard.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Input\Mouse.h" />
   </ItemGroup>
 </Project>

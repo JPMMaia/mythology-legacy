@@ -1,7 +1,6 @@
-﻿#include "pch.h"
-#include "Mouse.h"
+﻿#include "Mouse.h"
 
-using namespace DirectX12Engine;
+using namespace GameEngine;
 
 Mouse::Mouse() :
 	m_position({0.0f, 0.0f}),

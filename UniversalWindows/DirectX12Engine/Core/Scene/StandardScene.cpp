@@ -136,30 +136,6 @@ void StandardScene::LoadState()
 
 void StandardScene::ProcessInput()
 {
-	static constexpr auto movementSensibility = 0.125f;
-	auto& keyboard = m_deviceResources->Keyboard();
-	if (keyboard.IsKeyDown('W'))
-		m_camera.MoveForward(movementSensibility);
-	if (keyboard.IsKeyDown('S'))
-		m_camera.MoveForward(-movementSensibility);
-	if (keyboard.IsKeyDown('D'))
-		m_camera.MoveRight(movementSensibility);
-	if (keyboard.IsKeyDown('A'))
-		m_camera.MoveRight(-movementSensibility);
-
-	static constexpr auto tiltSensibility = 0.0625f;
-	if (keyboard.IsKeyDown('Q'))
-		m_camera.RotateWorldZ(-tiltSensibility);
-	if (keyboard.IsKeyDown('E'))
-		m_camera.RotateWorldZ(tiltSensibility);
-
-	static constexpr auto mouseSensibility = 1.0f / 512.0f;
-	auto& mouse = m_deviceResources->Mouse();
-	auto deltaMovement = mouse.DeltaMovement();
-	m_camera.RotateWorldX(-mouseSensibility * deltaMovement[1]);
-	m_camera.RotateWorldY(-mouseSensibility * deltaMovement[0]);
-	
-	m_camera.Update();
 }
 void StandardScene::FrameUpdate(const Common::Timer& timer)
 {
