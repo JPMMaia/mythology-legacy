@@ -11,7 +11,7 @@ namespace DirectX12Engine
 	{
 		struct InstanceData
 		{
-			DirectX::XMFLOAT4X4 ModelMatrix;
+			Eigen::Affine3f ModelMatrix;
 			uint32_t MaterialIndex;
 			uint32_t Pad0;
 			uint32_t Pad1;

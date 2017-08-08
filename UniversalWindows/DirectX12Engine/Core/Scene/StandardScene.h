@@ -53,6 +53,10 @@ namespace DirectX12Engine
 
 		StandardRenderItem m_cubeRenderItem;
 		StandardRenderItem m_rectangleRenderItem;
+		
+		StandardRenderItem m_xAxis;
+		StandardRenderItem m_yAxis;
+		StandardRenderItem m_zAxis;
 
 		std::shared_ptr<Mythology::MythologyGame> m_game;
 	};

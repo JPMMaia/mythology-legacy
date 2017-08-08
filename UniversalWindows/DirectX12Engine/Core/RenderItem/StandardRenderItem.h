@@ -11,7 +11,7 @@ namespace DirectX12Engine
 	class StandardRenderItem : public GraphicsEngine::IRenderItem
 	{
 	public:
-		explicit StandardRenderItem(ID3D12Device* d3dDevice);
+		StandardRenderItem(ID3D12Device* d3dDevice);
 		StandardRenderItem(ID3D12Device* d3dDevice, std::shared_ptr<ImmutableMesh> mesh, const std::string& submeshName);
 
 		void Render(ID3D12GraphicsCommandList* commandList) const;

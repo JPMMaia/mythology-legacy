@@ -19,6 +19,9 @@ StandardScene::StandardScene(const std::shared_ptr<DeviceResources>& deviceResou
 	m_passGPUBuffer(GPUAllocator<ShaderBufferTypes::PassData>(deviceResources->GetD3DDevice(), false)),
 	m_cubeRenderItem(deviceResources->GetD3DDevice()),
 	m_rectangleRenderItem(deviceResources->GetD3DDevice()),
+	m_xAxis(deviceResources->GetD3DDevice()),
+	m_yAxis(deviceResources->GetD3DDevice()),
+	m_zAxis(deviceResources->GetD3DDevice()),
 	m_game(game)
 {
 }
@@ -38,8 +41,8 @@ void StandardScene::CreateDeviceDependentResources()
 		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
 
 		// Create mesh data:
-		//auto meshData = MeshGenerator::CreateBox(1.0f, 1.0f, 1.0f, 0);
-		auto meshData = MeshGenerator::CreateRectangle(-10.0f, 0.0f, 20.0f, 20.0f, 0.0f);
+		auto meshData = MeshGenerator::CreateBox(1.0f, 1.0f, 1.0f, 0);
+		//auto meshData = MeshGenerator::CreateRectangle(-10.0f, 0.0f, 20.0f, 20.0f, 0.0f);
 		auto vertices = VertexType::CreateFromMeshData(meshData);
 
 		// Create buffers:
@@ -52,6 +55,66 @@ void StandardScene::CreateDeviceDependentResources()
 		m_meshes.emplace(mesh->Name(), mesh);
 
 		m_cubeRenderItem = StandardRenderItem(d3dDevice, mesh, "CubeSubmesh");
+	}
+
+	// X-axis:
+	{
+		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
+
+		// Create mesh data:
+		auto meshData = MeshGenerator::CreateBox(2.0f, 0.1f, 0.1f, 0);
+		auto vertices = VertexType::CreateFromMeshData(meshData);
+
+		// Create buffers:
+		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType));
+		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT);
+
+		// Create mesh:
+		auto mesh = std::make_shared<ImmutableMesh>("X-axis", std::move(vertexBuffer), std::move(indexBuffer));
+		mesh->AddSubmesh("Submesh", Submesh(meshData));
+		m_meshes.emplace(mesh->Name(), mesh);
+
+		m_xAxis = StandardRenderItem(d3dDevice, mesh, "Submesh");
+	}
+
+	// Y-axis:
+	{
+		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
+
+		// Create mesh data:
+		auto meshData = MeshGenerator::CreateBox(0.1f, 2.0f, 0.1f, 0);
+		auto vertices = VertexType::CreateFromMeshData(meshData);
+
+		// Create buffers:
+		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType));
+		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT);
+
+		// Create mesh:
+		auto mesh = std::make_shared<ImmutableMesh>("Y-axis", std::move(vertexBuffer), std::move(indexBuffer));
+		mesh->AddSubmesh("Submesh", Submesh(meshData));
+		m_meshes.emplace(mesh->Name(), mesh);
+
+		m_yAxis = StandardRenderItem(d3dDevice, mesh, "Submesh");
+	}
+
+	// Z-axis:
+	{
+		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
+
+		// Create mesh data:
+		auto meshData = MeshGenerator::CreateBox(0.1f, 0.1f, 2.0f, 0);
+		auto vertices = VertexType::CreateFromMeshData(meshData);
+
+		// Create buffers:
+		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType));
+		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT);
+
+		// Create mesh:
+		auto mesh = std::make_shared<ImmutableMesh>("Z-axis", std::move(vertexBuffer), std::move(indexBuffer));
+		mesh->AddSubmesh("Submesh", Submesh(meshData));
+		m_meshes.emplace(mesh->Name(), mesh);
+
+		m_zAxis = StandardRenderItem(d3dDevice, mesh, "Submesh");
 	}
 
 	// Render Rectangle Render Item
@@ -88,18 +151,45 @@ void StandardScene::CreateDeviceDependentResources()
 
 	{
 		{
-			// Make a material:
-			ShaderBufferTypes::MaterialData materialData;
-			materialData.BaseColor = DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-			materialData.AlbedoMapIndex = 0;
-			m_materialsGPUBuffer.push_back(materialData);
+			// Make materials:
+			{
+				m_materialsGPUBuffer.reserve(4);
+
+				ShaderBufferTypes::MaterialData materialData;
+				materialData.BaseColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+				materialData.AlbedoMapIndex = 0;
+				m_materialsGPUBuffer.emplace_back(materialData);
+
+				materialData.BaseColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+				m_materialsGPUBuffer.emplace_back(materialData);
+
+				materialData.BaseColor = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+				m_materialsGPUBuffer.emplace_back(materialData);
+
+				materialData.BaseColor = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+				m_materialsGPUBuffer.emplace_back(materialData);
+			}
 
 			// Make an instance:
 			ShaderBufferTypes::InstanceData instanceData;
 			instanceData.MaterialIndex = 0;
-			auto rotation = DirectX::XMMatrixRotationX(-90.0f * DirectX::XM_PI / 180.0f);
-			XMStoreFloat4x4(&instanceData.ModelMatrix, rotation);
+			instanceData.ModelMatrix = Eigen::Affine3f::Identity();
+			//instanceData.ModelMatrix = Eigen::AngleAxisf(-90.0f * std::acos(-1.0f) / 180.0f, Eigen::Vector3f::UnitX()).matrix();
+			//auto rotation = DirectX::XMMatrixRotationX(-90.0f * DirectX::XM_PI / 180.0f);
+			//XMStoreFloat4x4(&instanceData.ModelMatrix, rotation);
 			m_cubeRenderItem.AddInstance(instanceData);
+
+			instanceData.MaterialIndex = 1;
+			instanceData.ModelMatrix = Eigen::Translation<float, 3>(1.0f, 0.0f, 0.0f);
+			m_xAxis.AddInstance(instanceData);
+
+			instanceData.MaterialIndex = 2;
+			instanceData.ModelMatrix = Eigen::Translation<float, 3>(0.0f, 1.0f, 0.0f);
+			m_yAxis.AddInstance(instanceData);
+
+			instanceData.MaterialIndex = 3;
+			instanceData.ModelMatrix = Eigen::Translation<float, 3>(0.0f, 0.0f, 1.0f);
+			m_zAxis.AddInstance(instanceData);
 		}
 	}
 
@@ -110,7 +200,7 @@ void StandardScene::CreateWindowSizeDependentResources()
 {
 	auto outputSize = m_deviceResources->GetOutputSize();
 	auto aspectRatio = outputSize.x / outputSize.y;
-	auto fovAngleY = 70.0f * DirectX::XM_PI / 180.0f;
+	auto fovAngleY = 60.0f * XM_PI / 180.0f;
 
 	if (aspectRatio < 1.0f)
 	{
@@ -159,6 +249,10 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 
 	// Render cube:
 	m_cubeRenderItem.Render(commandList);
+
+	m_xAxis.Render(commandList);
+	m_yAxis.Render(commandList);
+	m_zAxis.Render(commandList);
 	
 	return true;
 }

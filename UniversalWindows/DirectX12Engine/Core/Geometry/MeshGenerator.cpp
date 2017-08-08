@@ -98,8 +98,8 @@ MeshGenerator::MeshData MeshGenerator::CreateRectangle(float originX, float orig
 
 	meshData.Indices =
 	{
-		0, 1, 2,
-		0, 2, 3,
+		0, 2, 1,
+		0, 3, 2,
 	};
 
 	return meshData;
@@ -115,68 +115,68 @@ MeshGenerator::MeshData MeshGenerator::CreateBox(float width, float height, floa
 	meshData.Vertices =
 	{
 		// Front face:
-		{ { -halfWidth, -halfHeight, -halfDepth },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
-		{ { -halfWidth, +halfHeight, -halfDepth },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
-		{ { +halfWidth, +halfHeight, -halfDepth },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } },
-		{ { +halfWidth, -halfHeight, -halfDepth },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
+		{ { -halfWidth, -halfHeight, +halfDepth },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
+		{ { -halfWidth, +halfHeight, +halfDepth },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
+		{ { +halfWidth, +halfHeight, +halfDepth },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } },
+		{ { +halfWidth, -halfHeight, +halfDepth },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
 
 		// Back face:
-		{ { -halfWidth, -halfHeight, +halfDepth },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
-		{ { +halfWidth, -halfHeight, +halfDepth },{ 0.0f, 0.0f, 1.0f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
-		{ { +halfWidth, +halfHeight, +halfDepth },{ 0.0f, 0.0f, 1.0f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
-		{ { -halfWidth, +halfHeight, +halfDepth },{ 0.0f, 0.0f, 1.0f },{ -1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
+		{ { -halfWidth, -halfHeight, -halfDepth },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
+		{ { +halfWidth, -halfHeight, -halfDepth },{ 0.0f, 0.0f, 1.0f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
+		{ { +halfWidth, +halfHeight, -halfDepth },{ 0.0f, 0.0f, 1.0f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
+		{ { -halfWidth, +halfHeight, -halfDepth },{ 0.0f, 0.0f, 1.0f },{ -1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
 
 		// Top face:
-		{ { -halfWidth, +halfHeight, -halfDepth },{ 0.0f, 1.0f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
-		{ { -halfWidth, +halfHeight, +halfDepth },{ 0.0f, 1.0f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
-		{ { +halfWidth, +halfHeight, +halfDepth },{ 0.0f, 1.0f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } },
-		{ { +halfWidth, +halfHeight, -halfDepth },{ 0.0f, 1.0f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
+		{ { -halfWidth, +halfHeight, +halfDepth },{ 0.0f, 1.0f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
+		{ { -halfWidth, +halfHeight, -halfDepth },{ 0.0f, 1.0f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
+		{ { +halfWidth, +halfHeight, -halfDepth },{ 0.0f, 1.0f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } },
+		{ { +halfWidth, +halfHeight, +halfDepth },{ 0.0f, 1.0f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
 
 		// Bottom face:
-		{ { -halfWidth, -halfHeight, -halfDepth },{ 0.0f, -1.0f, 0.0f },{ -1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
-		{ { +halfWidth, -halfHeight, -halfDepth },{ 0.0f, -1.0f, 0.0f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
-		{ { +halfWidth, -halfHeight, +halfDepth },{ 0.0f, -1.0f, 0.0f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
-		{ { -halfWidth, -halfHeight, +halfDepth },{ 0.0f, -1.0f, 0.0f },{ -1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } },
+		{ { -halfWidth, -halfHeight, +halfDepth },{ 0.0f, -1.0f, 0.0f },{ -1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
+		{ { +halfWidth, -halfHeight, +halfDepth },{ 0.0f, -1.0f, 0.0f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
+		{ { +halfWidth, -halfHeight, -halfDepth },{ 0.0f, -1.0f, 0.0f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
+		{ { -halfWidth, -halfHeight, -halfDepth },{ 0.0f, -1.0f, 0.0f },{ -1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } },
 
 		// Left face:
-		{ { -halfWidth, -halfHeight, +halfDepth },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 0.0f, 1.0f } },
-		{ { -halfWidth, +halfHeight, +halfDepth },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 0.0f, 0.0f } },
-		{ { -halfWidth, +halfHeight, -halfDepth },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f } },
-		{ { -halfWidth, -halfHeight, -halfDepth },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 1.0f } },
+		{ { -halfWidth, -halfHeight, -halfDepth },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 0.0f, 1.0f } },
+		{ { -halfWidth, +halfHeight, -halfDepth },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 0.0f, 0.0f } },
+		{ { -halfWidth, +halfHeight, +halfDepth },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f } },
+		{ { -halfWidth, -halfHeight, +halfDepth },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 1.0f } },
 
 		// Right face:
-		{ { +halfWidth, -halfHeight, -halfDepth },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 0.0f, 1.0f } },
-		{ { +halfWidth, +halfHeight, -halfDepth },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } },
-		{ { +halfWidth, +halfHeight, +halfDepth },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f } },
-		{ { +halfWidth, -halfHeight, +halfDepth },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 1.0f } },
+		{ { +halfWidth, -halfHeight, +halfDepth },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 0.0f, 1.0f } },
+		{ { +halfWidth, +halfHeight, +halfDepth },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } },
+		{ { +halfWidth, +halfHeight, -halfDepth },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f } },
+		{ { +halfWidth, -halfHeight, -halfDepth },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 1.0f } },
 
 	};
 
 	meshData.Indices =
 	{
 		// Front face:
-		0, 1, 2,
-		0, 2, 3,
+		0, 2, 1,
+		0, 3, 2,
 
 		// Back face:
-		4, 5, 6,
-		4, 6, 7,
+		4, 6, 5,
+		4, 7, 6,
 
 		// Top face:
-		8, 9, 10,
-		8, 10, 11,
+		8, 10, 9,
+		8, 11, 10,
 
 		// Bottom face:
-		12, 13, 14,
-		12, 14, 15,
+		12, 14, 13,
+		12, 15, 14,
 
 		// Left face:
-		16, 17, 18,
-		16, 18, 19,
+		16, 18, 17,
+		16, 19, 18,
 
 		// Right face:
-		20, 21, 22,
-		20, 22, 23,
+		20, 22, 21,
+		20, 23, 22,
 	};
 
 	for (uint32_t i = 0; i < numSubdivisions; ++i)

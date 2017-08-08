@@ -23,7 +23,6 @@ namespace GameEngine
 
 	public:
 		void FixedUpdate(const Common::Timer& timer) override;
-		void BuildMatrice();
 
 		MatrixCR GetViewMatrix() const;
 		MatrixCR GetProjectionMatrix() const;

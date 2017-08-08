@@ -8,6 +8,7 @@ StandardRenderItem::StandardRenderItem(ID3D12Device* d3dDevice) :
 	m_instancesGPUBuffer(GPUAllocator<ShaderBufferTypes::InstanceData>(d3dDevice, false))
 {
 }
+
 StandardRenderItem::StandardRenderItem(ID3D12Device* d3dDevice, std::shared_ptr<ImmutableMesh> mesh, const std::string& submeshName) :
 	m_submeshName(submeshName),
 	m_mesh(mesh),

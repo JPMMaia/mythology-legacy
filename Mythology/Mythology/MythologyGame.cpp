@@ -33,8 +33,12 @@ void MythologyGame::Initialize()
 	{
 		auto cameraComponentPointer = new CameraComponent();
 		std::shared_ptr<CameraComponent> cameraComponent(cameraComponentPointer);
-		cameraComponent->GetTransform().SetLocalPosition({ 0.0f, 2.0f, -1.0f });
-		cameraComponent->GetTransform().SetLocalRotation(Eigen::Quaternionf::FromTwoVectors(Eigen::Vector3f::UnitZ(), Eigen::Vector3f(0.0f, -2.0f, 1.0f)));
+		cameraComponent->GetTransform().SetWorldPosition({ 0.0f, 0.0f, 0.0f });
+		//cameraComponent->GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(std::acos(-1.0f), Vector3f::UnitY())));
+		//cameraComponent->GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(0.0f * std::acos(-1.0f), Vector3f::UnitY())));
+		//cameraComponent->GetTransform().SetLocalRotation(Eigen::Quaternionf::FromTwoVectors(Eigen::Vector3f::UnitZ(), Eigen::Vector3f(0.0f, -2.0f, 1.0f)));
+		//cameraComponent->GetTransform().SetLocalPosition({ 0.0f, 2.0f, -2.0f });
+		//cameraComponent->GetTransform().SetLocalRotation(Eigen::Quaternionf::FromTwoVectors(Eigen::Vector3f::UnitZ(), Eigen::Vector3f(0.0f, -2.0f, 2.0f)));
 		m_person.AddComponent("Camera", cameraComponent);
 	}
 }
@@ -49,12 +53,12 @@ void MythologyGame::ProcessInput() const
 	auto& keyboard = m_gameManager->GetKeyboard();
 	if (keyboard.IsKeyDown('W'))
 		cameraTransform.MoveLocalZ(movementSensibility);
+	if (keyboard.IsKeyDown('A'))
+		cameraTransform.MoveLocalX(movementSensibility);
 	if (keyboard.IsKeyDown('S'))
 		cameraTransform.MoveLocalZ(-movementSensibility);
 	if (keyboard.IsKeyDown('D'))
 		cameraTransform.MoveLocalX(-movementSensibility);
-	if (keyboard.IsKeyDown('A'))
-		cameraTransform.MoveLocalX(movementSensibility);
 	
 	static constexpr auto tiltSensibility = 0.0625f;
 	if (keyboard.IsKeyDown('Q'))
@@ -65,8 +69,8 @@ void MythologyGame::ProcessInput() const
 	static constexpr auto mouseSensibility = 1.0f / 512.0f;
 	auto& mouse = m_gameManager->GetMouse();
 	auto deltaMovement = mouse.DeltaMovement();
-	cameraTransform.RotateLocalX(-mouseSensibility * deltaMovement[1]);
-	cameraTransform.RotateLocalY(-mouseSensibility * deltaMovement[0]);
+	cameraTransform.Rotate(Vector3f::UnitX(), -mouseSensibility * deltaMovement[1]);
+	//cameraTransform.RotateLocalY(-mouseSensibility * deltaMovement[0]);
 }
 void MythologyGame::FixedUpdate(const Common::Timer& timer) const
 {

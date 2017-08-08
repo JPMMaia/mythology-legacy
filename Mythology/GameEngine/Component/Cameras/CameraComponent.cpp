@@ -83,24 +83,30 @@ void CameraComponent::SetOrientationMatrix(AlignedMatrixCR orientationMatrix)
 
 CameraComponent::Matrix CameraComponent::BuildViewMatrix(Vector3CR position, QuaternionCR rotation)
 {
-	return rotation.toRotationMatrix() * Eigen::Translation3f(-position);
+	auto matrix = (rotation.toRotationMatrix() * Eigen::Translation3f(position)).inverse();
+
+	return matrix;
 }
 CameraComponent::Matrix CameraComponent::BuildProjectionMatrix(float aspectRatio, float fovAngleY, float nearZ, float farZ, AlignedMatrixCR orientationMatrix)
 {
-	auto top = std::tan(fovAngleY) * nearZ;
-	auto bottom = -top;
-	auto right = top * aspectRatio;
-	auto left = -aspectRatio;
+	auto yScale = 1.0f / std::tan(fovAngleY / 2.0f);
+	auto xScale = yScale / aspectRatio;
+
+#if defined(USING_DIRECTX)
+	auto depthNear = 0.0f;
+#else
+	auto depthNear = -1.0f;
+#endif
+	auto depthFar = 1.0f;
 
 	auto perspectiveMatrix(AlignedMatrix::Identity());
-	perspectiveMatrix(0, 0) = 2.0f * nearZ / (right - left);
-	perspectiveMatrix(1, 1) = 2.0f * nearZ / (top - bottom);
-	perspectiveMatrix(0, 2) = (right + left) / (right - left);
-	perspectiveMatrix(1, 2) = (top + bottom) / (top - bottom);
-	perspectiveMatrix(2, 2) = -(farZ + nearZ) / (farZ - nearZ);
+	perspectiveMatrix(0, 0) = xScale;
+	perspectiveMatrix(1, 1) = yScale;
+	perspectiveMatrix(2, 2) = farZ / (nearZ - farZ);
 	perspectiveMatrix(3, 2) = -1.0f;
-	perspectiveMatrix(2, 3) = -(2.0f * farZ * nearZ) / (farZ - nearZ);
+	perspectiveMatrix(2, 3) = (nearZ * farZ) / (nearZ - farZ);
 	perspectiveMatrix(3, 3) = 0.0f;
+	//perspectiveMatrix(2, 3) = (depthFar - depthNear) * (farZ * nearZ) / (farZ - nearZ);
 
 	return orientationMatrix * perspectiveMatrix;
 }

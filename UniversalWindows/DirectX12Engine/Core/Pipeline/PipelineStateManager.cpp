@@ -73,6 +73,7 @@ void PipelineStateManager::InitializePipelineStateObjects(const RootSignatureMan
 		state.VS = m_shaders["GBufferPassVS"].GetShaderBytecode();
 		state.PS = m_shaders["GBufferPassPS"].GetShaderBytecode();
 		state.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		state.RasterizerState.FrontCounterClockwise = true;
 		state.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		state.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 		state.SampleMask = UINT_MAX;
@@ -99,6 +100,7 @@ void PipelineStateManager::InitializePipelineStateObjects(const RootSignatureMan
 		state.VS = m_shaders["LightingPassVS"].GetShaderBytecode();
 		state.PS = m_shaders["LightingPassPS"].GetShaderBytecode();
 		state.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		state.RasterizerState.FrontCounterClockwise = true;
 		state.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		state.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 		state.SampleMask = UINT_MAX;
