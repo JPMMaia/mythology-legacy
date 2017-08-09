@@ -46,7 +46,7 @@ namespace DirectX12Engine
 		DescriptorHeap m_dsvDescriptorHeap;
 		DescriptorHeap m_srvDescriptorHeap;
 		DescriptorHeap m_texturesDescriptorHeap;
-		FLOAT m_clearColor[4];
+		std::array<float, 4> m_clearColor;
 
 		std::shared_ptr<IScene> m_scene;
 		Texture m_positions;

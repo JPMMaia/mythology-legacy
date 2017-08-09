@@ -276,11 +276,11 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 	// Render cube:
 	m_cubeRenderItem.Render(commandList);
 
-	m_floor.Render(commandList);
+	/*m_floor.Render(commandList);
 
 	m_xAxis.Render(commandList);
 	m_yAxis.Render(commandList);
-	m_zAxis.Render(commandList);
+	m_zAxis.Render(commandList);*/
 	
 	return true;
 }

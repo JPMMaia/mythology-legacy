@@ -71,7 +71,7 @@ void Renderer::CreateWindowSizeDependentResources()
 		// Positions:
 		{
 			auto format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-			CD3DX12_CLEAR_VALUE clearValue(format, m_clearColor);
+			CD3DX12_CLEAR_VALUE clearValue(format, m_clearColor.data());
 
 			auto& texture = m_positions;
 			texture = Texture();
@@ -91,7 +91,7 @@ void Renderer::CreateWindowSizeDependentResources()
 		// Albedo:
 		{
 			auto format = DXGI_FORMAT_B8G8R8A8_UNORM;
-			CD3DX12_CLEAR_VALUE clearValue(format, m_clearColor);
+			CD3DX12_CLEAR_VALUE clearValue(format, m_clearColor.data());
 
 			auto& texture = m_albedo;
 			texture = Texture();
@@ -111,7 +111,7 @@ void Renderer::CreateWindowSizeDependentResources()
 		// Normals:
 		{
 			auto format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-			CD3DX12_CLEAR_VALUE clearValue(format, m_clearColor);
+			CD3DX12_CLEAR_VALUE clearValue(format, m_clearColor.data());
 
 			auto& texture = m_normals;
 			texture = Texture();
@@ -186,7 +186,7 @@ bool Renderer::Render(const Common::Timer& timer)
 		// Clear render target views:
 		std::for_each(renderTargetViews.begin(), renderTargetViews.end(), [this, &commandList](auto renderTargetView)
 		{
-			commandList->ClearRenderTargetView(renderTargetView, m_clearColor, 1, &m_scissorRect);
+			commandList->ClearRenderTargetView(renderTargetView, m_clearColor.data(), 0, nullptr);
 		});
 
 		// Clear depth stencil view:
@@ -221,10 +221,6 @@ bool Renderer::Render(const Common::Timer& timer)
 		auto renderTargetView = m_deviceResources->GetRenderTargetView();
 		auto depthStencilView = m_depthStencil.CPUDescriptorHandle("DSV");
 		commandList->OMSetRenderTargets(1, &renderTargetView, false, &depthStencilView);
-
-		// Clear render targets:
-		commandList->ClearRenderTargetView(renderTargetView, m_clearColor, 1, &m_scissorRect);
-		commandList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 		// Set G-Buffer textures:
 		std::array<ID3D12DescriptorHeap*, 1> descriptorHeaps = { m_srvDescriptorHeap.Get() };
@@ -267,13 +263,6 @@ void Renderer::BeginRender()
 		DX::ThrowIfFailed(commandList->Reset(commandAllocator, nullptr));
 	}
 
-	// Set the viewport and scissor rectangle.
-	{
-		auto viewport = m_deviceResources->GetScreenViewport();
-		commandList->RSSetViewports(1, &viewport);
-		commandList->RSSetScissorRects(1, &m_scissorRect);
-	}
-
 	// Indicate that the back buffer will be used as render target:
 	{
 		auto renderTarget = m_deviceResources->GetRenderTarget();
@@ -282,13 +271,11 @@ void Renderer::BeginRender()
 		commandList->ResourceBarrier(1, &renderTargetResourceBarrier);
 	}
 
-	// Clear render targets:
+	// Set the viewport and scissor rectangle.
 	{
-		auto renderTargetView = m_deviceResources->GetRenderTargetView();
-		commandList->ClearRenderTargetView(renderTargetView, m_clearColor, 1, &m_scissorRect);
-
-		auto depthStencilView = m_deviceResources->GetDepthStencilView();
-		commandList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+		auto viewport = m_deviceResources->GetScreenViewport();
+		commandList->RSSetViewports(1, &viewport);
+		commandList->RSSetScissorRects(1, &m_scissorRect);
 	}
 }
 void Renderer::EndRender()
