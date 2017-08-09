@@ -20,6 +20,7 @@ StandardScene::StandardScene(const std::shared_ptr<DeviceResources>& deviceResou
 	m_passGPUBuffer(GPUAllocator<ShaderBufferTypes::PassData>(deviceResources->GetD3DDevice(), false)),
 	m_cubeRenderItem(deviceResources->GetD3DDevice()),
 	m_rectangleRenderItem(deviceResources->GetD3DDevice()),
+	m_floor(deviceResources->GetD3DDevice()),
 	m_xAxis(deviceResources->GetD3DDevice()),
 	m_yAxis(deviceResources->GetD3DDevice()),
 	m_zAxis(deviceResources->GetD3DDevice()),
@@ -56,6 +57,26 @@ void StandardScene::CreateDeviceDependentResources()
 		m_meshes.emplace(mesh->Name(), mesh);
 
 		m_cubeRenderItem = StandardRenderItem(d3dDevice, mesh, "CubeSubmesh");
+	}
+
+	// Floor:
+	{
+		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
+
+		// Create mesh data:
+		auto meshData = MeshGenerator::CreateRectangle(-10.0f, 0.0f, 20.0f, 20.0f, 0.0f);
+		auto vertices = VertexType::CreateFromMeshData(meshData);
+
+		// Create buffers:
+		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType));
+		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT);
+
+		// Create mesh:
+		auto mesh = std::make_shared<ImmutableMesh>("Floor", std::move(vertexBuffer), std::move(indexBuffer));
+		mesh->AddSubmesh("Submesh", Submesh(meshData));
+		m_meshes.emplace(mesh->Name(), mesh);
+
+		m_floor = StandardRenderItem(d3dDevice, mesh, "Submesh");
 	}
 
 	// X-axis:
@@ -180,6 +201,10 @@ void StandardScene::CreateDeviceDependentResources()
 			//XMStoreFloat4x4(&instanceData.ModelMatrix, rotation);
 			m_cubeRenderItem.AddInstance(instanceData);
 
+			instanceData.MaterialIndex = 0;
+			instanceData.ModelMatrix = Eigen::AngleAxisf(-90.0f * std::acos(-1.0f) / 180.0f, Eigen::Vector3f::UnitX()).matrix();
+			m_floor.AddInstance(instanceData);
+
 			instanceData.MaterialIndex = 1;
 			instanceData.ModelMatrix = Eigen::Translation<float, 3>(1.0f, 0.0f, 0.0f);
 			m_xAxis.AddInstance(instanceData);
@@ -251,6 +276,8 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 	// Render cube:
 	m_cubeRenderItem.Render(commandList);
 
+	m_floor.Render(commandList);
+
 	m_xAxis.Render(commandList);
 	m_yAxis.Render(commandList);
 	m_zAxis.Render(commandList);
@@ -288,12 +315,18 @@ void StandardScene::UpdatePassBuffer()
 	// Lights:
 	{
 		/*auto pointLightIt = GameEngine::PointLightComponent::Allocator::begin();
+		auto end = GameEngine::PointLightComponent::Allocator::begin();
 
-		auto& light = passData.Lights[0];
-		light.Strength = pointLightIt->GetStrength();
-		light.FalloffStart = pointLightIt->GetFalloffStart();
-		light.FalloffEnd = pointLightIt->GetFalloffEnd();
-		light.Position = pointLightIt->GetWorldPosition();*/
+		for(std::size_t i = 0; i < ShaderBufferTypes::PassData::MaxNumLights && pointLightIt != end; ++i)
+		{
+			auto& light = passData.Lights[i];
+			light.Strength = pointLightIt->GetStrength();
+			light.FalloffStart = pointLightIt->GetFalloffStart();
+			light.FalloffEnd = pointLightIt->GetFalloffEnd();
+			light.Position = pointLightIt->GetWorldPosition();
+			
+			++pointLightIt;
+		}*/
 	}
 
 	m_passGPUBuffer[0] = passData;

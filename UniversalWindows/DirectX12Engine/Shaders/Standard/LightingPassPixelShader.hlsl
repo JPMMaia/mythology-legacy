@@ -14,8 +14,9 @@ Texture2D g_normals : register(t2, space0);
 
 float4 main(PixelInput input) : SV_TARGET
 {
-	float3 positionW = g_positions.Sample(g_samplerPointClamp, input.TextureCoordinates).xyz;
 	float4 albedo = g_albedo.Sample(g_samplerPointClamp, input.TextureCoordinates);
+	/*float3 positionW = g_positions.Sample(g_samplerPointClamp, input.TextureCoordinates).xyz;
+	
 	float3 normalW = g_normals.Sample(g_samplerPointClamp, input.TextureCoordinates).xyz;
 
 	Material material;
@@ -26,7 +27,7 @@ float4 main(PixelInput input) : SV_TARGET
 	float3 toEyeDirection = normalize(g_passData.CameraPositionW - positionW);
 	float shadowFactor = 1.0f;
 	float specularFactor = 1.0f;
-	float4 color = ComputeLighting(g_passData.Lights, material, positionW, normalW, toEyeDirection, shadowFactor, specularFactor);
+	float4 color = ComputeLighting(g_passData.Lights, material, positionW, normalW, toEyeDirection, shadowFactor, specularFactor);*/
 
 	return albedo;
 }

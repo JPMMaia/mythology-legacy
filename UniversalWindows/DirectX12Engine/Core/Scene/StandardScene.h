@@ -52,6 +52,7 @@ namespace DirectX12Engine
 		GPUUploadBuffer<ShaderBufferTypes::PassData> m_passGPUBuffer;
 
 		StandardRenderItem m_cubeRenderItem;
+		StandardRenderItem m_floor;
 		StandardRenderItem m_rectangleRenderItem;
 		
 		StandardRenderItem m_xAxis;
