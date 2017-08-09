@@ -69,7 +69,7 @@ void PipelineStateManager::InitializePipelineStateObjects(const RootSignatureMan
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC state = {};
 		const auto& inputLayout = m_inputLayouts.at("PositionNormalTextureCoordinates");
 		state.InputLayout = { inputLayout.data(), static_cast<uint32_t>(inputLayout.size()) };
-		state.pRootSignature = rootSignatureManager.GetRootSignature("RootSignature");
+		state.pRootSignature = rootSignatureManager.GetRootSignature("GBufferPass");
 		state.VS = m_shaders["GBufferPassVS"].GetShaderBytecode();
 		state.PS = m_shaders["GBufferPassPS"].GetShaderBytecode();
 		state.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
@@ -96,7 +96,7 @@ void PipelineStateManager::InitializePipelineStateObjects(const RootSignatureMan
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC state = {};
 		const auto& inputLayout = m_inputLayouts.at("PositionTextureCoordinates");
 		state.InputLayout = { inputLayout.data(), static_cast<uint32_t>(inputLayout.size()) };
-		state.pRootSignature = rootSignatureManager.GetRootSignature("RootSignature");
+		state.pRootSignature = rootSignatureManager.GetRootSignature("LightingPass");
 		state.VS = m_shaders["LightingPassVS"].GetShaderBytecode();
 		state.PS = m_shaders["LightingPassPS"].GetShaderBytecode();
 		state.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);

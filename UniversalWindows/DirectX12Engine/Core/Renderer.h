@@ -9,6 +9,8 @@
 #include "Command/CommandListManager.h"
 #include "Textures/Texture.h"
 
+#include <array>
+
 namespace DirectX12Engine
 {
 	class Renderer : public GraphicsEngine::IRenderer
@@ -44,6 +46,7 @@ namespace DirectX12Engine
 		DescriptorHeap m_dsvDescriptorHeap;
 		DescriptorHeap m_srvDescriptorHeap;
 		DescriptorHeap m_texturesDescriptorHeap;
+		FLOAT m_clearColor[4];
 
 		std::shared_ptr<IScene> m_scene;
 		Texture m_positions;

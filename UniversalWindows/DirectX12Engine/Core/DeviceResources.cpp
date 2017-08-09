@@ -274,7 +274,7 @@ void DeviceResources::Present()
 	// The first argument instructs DXGI to block until VSync, putting the application
 	// to sleep until the next VSync. This ensures we don't waste any cycles rendering
 	// frames that will never be displayed to the screen.
-	HRESULT hr = m_swapChain->Present(1, 0);
+	auto hr = m_swapChain->Present(1, 0);
 
 	// If the device was removed either by a disconnection or a driver upgrade, we 
 	// must recreate all device resources.
@@ -304,7 +304,7 @@ void DeviceResources::WaitForGpu()
 void DeviceResources::MoveToNextFrame()
 {
 	// Schedule a Signal command in the queue.
-	const UINT64 currentFenceValue = m_fenceValues[m_currentFrame];
+	const auto currentFenceValue = m_fenceValues[m_currentFrame];
 	DX::ThrowIfFailed(m_commandQueue->Signal(m_fence.Get(), currentFenceValue));
 
 	// Advance the frame index.
@@ -385,6 +385,9 @@ void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter) const
 	ComPtr<IDXGIAdapter1> adapter;
 	*ppAdapter = nullptr;
 
+	UINT bestIndex(0);
+	std::size_t highestMemory(0);
+
 	for (UINT adapterIndex = 0; DXGI_ERROR_NOT_FOUND != m_dxgiFactory->EnumAdapters1(adapterIndex, &adapter); adapterIndex++)
 	{
 		DXGI_ADAPTER_DESC1 desc;
@@ -400,10 +403,15 @@ void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter) const
 		// actual device yet.
 		if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), nullptr)))
 		{
-			break;
+			if(desc.DedicatedVideoMemory > highestMemory)
+			{
+				bestIndex = adapterIndex;
+				highestMemory = desc.DedicatedVideoMemory;
+			}
 		}
 	}
 
+	m_dxgiFactory->EnumAdapters1(bestIndex, &adapter);
 	*ppAdapter = adapter.Detach();
 }
 

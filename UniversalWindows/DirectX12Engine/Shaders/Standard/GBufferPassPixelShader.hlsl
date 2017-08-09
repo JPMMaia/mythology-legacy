@@ -17,7 +17,7 @@ struct PixelOutput
 };
 
 StructuredBuffer<MaterialData> g_materialData : register(t1, space1);
-Texture2D g_albedoMaps[4] : register(t0, space2);
+Texture2D g_albedoMaps[1] : register(t0, space2);
 
 PixelOutput main(PixelInput input)
 {
