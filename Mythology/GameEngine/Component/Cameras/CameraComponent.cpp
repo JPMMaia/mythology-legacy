@@ -2,7 +2,7 @@
 
 using namespace GameEngine;
 
-StandardAllocator<CameraComponent> CameraComponent::s_storage;
+IMPLEMENT_ALLOCATOR(CameraComponent);
 
 CameraComponent::CameraComponent() :
 	m_aspectRatio(16.0f / 9.0f),
@@ -83,13 +83,11 @@ void CameraComponent::SetOrientationMatrix(AlignedMatrixCR orientationMatrix)
 
 CameraComponent::Matrix CameraComponent::BuildViewMatrix(const TransformComponent& transform)
 {
-	//auto matrix = transform.GetWorldTransform().inverse();
-
 	auto matrix = Eigen::Translation3f(transform.GetWorldPosition()) * transform.GetWorldRotation().toRotationMatrix();
 
 #if defined(USING_DIRECTX)
 	Eigen::Matrix4f rotateZ180;
-	rotateZ180 << 
+	rotateZ180 <<
 		-1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, -1.0f, 0.0f,

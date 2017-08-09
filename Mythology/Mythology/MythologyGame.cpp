@@ -26,28 +26,22 @@ void MythologyGame::Initialize()
 	{
 		auto pointLightComponentPointer = new PointLightComponent(Eigen::Vector3f(0.8f, 0.8f, 0.8f), 2.0f, 5.0f);
 		std::shared_ptr<PointLightComponent> pointLightComponent(pointLightComponentPointer);
-		pointLightComponent->SetLocalPosition({ 0.0f, 2.0f, -1.0f });
+		pointLightComponent->SetLocalPosition({ 0.0f, 0.0f, 0.0f });
 		m_person.AddComponent("Light", pointLightComponent);
 	}
 	
 	{
 		auto cameraComponentPointer = new CameraComponent();
 		std::shared_ptr<CameraComponent> cameraComponent(cameraComponentPointer);
-		cameraComponent->GetTransform().SetWorldPosition({ 0.0f, 0.0f, 0.0f });
-		//cameraComponent->GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(std::acos(-1.0f), Vector3f::UnitY())));
-		//cameraComponent->GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(0.0f * std::acos(-1.0f), Vector3f::UnitY())));
-		//cameraComponent->GetTransform().SetLocalRotation(Eigen::Quaternionf::FromTwoVectors(Eigen::Vector3f::UnitZ(), Eigen::Vector3f(0.0f, -2.0f, 1.0f)));
-		//cameraComponent->GetTransform().SetLocalPosition({ 0.0f, 2.0f, -2.0f });
-		//cameraComponent->GetTransform().SetLocalRotation(Eigen::Quaternionf::FromTwoVectors(Eigen::Vector3f::UnitZ(), Eigen::Vector3f(0.0f, -2.0f, 2.0f)));
 		m_person.AddComponent("Camera", cameraComponent);
 	}
 }
 
-void MythologyGame::ProcessInput() const
+void MythologyGame::ProcessInput()
 {
 	m_gameManager->ProcessInput();
 
-	auto& cameraTransform = m_person.GetComponent<CameraComponent>("Camera")->GetTransform();
+	auto& cameraTransform = m_person.GetTransform();
 	
 	static constexpr auto movementSensibility = 0.125f;
 	auto& keyboard = m_gameManager->GetKeyboard();

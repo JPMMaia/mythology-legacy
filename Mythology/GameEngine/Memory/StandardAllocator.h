@@ -339,3 +339,21 @@ namespace GameEngine
 		return !(a == b);
 	}
 }
+
+#define DEFINE_ALLOCATOR(Type) \
+	public:	\
+		using Allocator = StandardAllocator<Type>; \
+	public:	\
+		void* operator new(std::size_t size)	\
+		{	\
+			return s_storage.allocate(size);	\
+		}	\
+		void operator delete(void* pointer, std::size_t size) noexcept	\
+		{	\
+			s_storage.deallocate(reinterpret_cast<Type*>(pointer), size);	\
+		}	\
+	private:	\
+		static StandardAllocator<Type> s_storage;
+
+#define IMPLEMENT_ALLOCATOR(Type) \
+	StandardAllocator<Type> Type::s_storage;

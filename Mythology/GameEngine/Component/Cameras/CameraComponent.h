@@ -52,18 +52,6 @@ namespace GameEngine
 		Matrix m_viewMatrix;
 		Matrix m_projectionMatrix;
 
-	public:
-		using Allocator = StandardAllocator<CameraComponent>;
-	public:
-		void* operator new(std::size_t size)
-		{
-			return s_storage.allocate(size);
-		}
-		void operator delete(void* pointer, std::size_t size) noexcept
-		{
-			s_storage.deallocate(reinterpret_cast<CameraComponent*>(pointer), size);
-		}
-	private:
-		static StandardAllocator<CameraComponent> s_storage;
+		DEFINE_ALLOCATOR(CameraComponent);
 	};
 }

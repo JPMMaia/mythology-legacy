@@ -7,6 +7,7 @@
 #include "RenderLayers.h"
 #include "Core/Textures/Texture.h"
 #include "GameEngine/Component/Cameras/CameraComponent.h"
+#include "GameEngine/Component/Lights/PointLightComponent.h"
 
 using namespace Common;
 using namespace DirectX;
@@ -156,17 +157,17 @@ void StandardScene::CreateDeviceDependentResources()
 				m_materialsGPUBuffer.reserve(4);
 
 				ShaderBufferTypes::MaterialData materialData;
-				materialData.BaseColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+				materialData.BaseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 				materialData.AlbedoMapIndex = 0;
 				m_materialsGPUBuffer.emplace_back(materialData);
 
-				materialData.BaseColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+				materialData.BaseColor = { 1.0f, 0.0f, 0.0f, 1.0f };
 				m_materialsGPUBuffer.emplace_back(materialData);
 
-				materialData.BaseColor = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+				materialData.BaseColor = { 0.0f, 1.0f, 0.0f, 1.0f };
 				m_materialsGPUBuffer.emplace_back(materialData);
 
-				materialData.BaseColor = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+				materialData.BaseColor = { 0.0f, 0.0f, 1.0f, 1.0f };
 				m_materialsGPUBuffer.emplace_back(materialData);
 			}
 
@@ -286,11 +287,13 @@ void StandardScene::UpdatePassBuffer()
 
 	// Lights:
 	{
+		/*auto pointLightIt = GameEngine::PointLightComponent::Allocator::begin();
+
 		auto& light = passData.Lights[0];
-		light.Strength = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
-		light.FalloffStart = 3.0f;
-		light.FalloffEnd = 8.0f;
-		light.Position = DirectX::XMFLOAT3 (2.0f, 3.0f, -2.0f);
+		light.Strength = pointLightIt->GetStrength();
+		light.FalloffStart = pointLightIt->GetFalloffStart();
+		light.FalloffEnd = pointLightIt->GetFalloffEnd();
+		light.Position = pointLightIt->GetWorldPosition();*/
 	}
 
 	m_passGPUBuffer[0] = passData;

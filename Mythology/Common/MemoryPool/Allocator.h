@@ -98,7 +98,7 @@ namespace Common
 }
 
 
-// macro to provide header file interface
+/*// macro to provide header file interface
 #define DECLARE_ALLOCATOR \
     public: \
         void* operator new(std::size_t size) \
@@ -115,3 +115,4 @@ namespace Common
 // macro to provide source file interface
 #define IMPLEMENT_ALLOCATOR(class, objects, memory) \
 	Common::Allocator class::s_allocator(sizeof(class), objects, memory, #class);
+	*/

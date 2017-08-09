@@ -1,7 +1,6 @@
 #pragma once
 
 #include <array>
-#include <DirectXMath.h>
 
 #include "Libraries/Eigen/Geometry"
 
@@ -20,17 +19,17 @@ namespace DirectX12Engine
 
 		struct MaterialData
 		{
-			DirectX::XMFLOAT4 BaseColor;
+			Eigen::Vector4f BaseColor;
 			std::uint32_t AlbedoMapIndex;
 		};
 
 		struct LightData
 		{
-			DirectX::XMFLOAT3 Strength = { 0.5f, 0.5f, 0.5f };		// Light color
+			Eigen::Vector3f Strength = { 0.5f, 0.5f, 0.5f };		// Light color
 			float FalloffStart = 1.0f;								// Point/Spot light only
-			DirectX::XMFLOAT3 Direction = { 0.0f, -1.0f, 0.0f };	// Directional/Spot light only
+			Eigen::Vector3f Direction = { 0.0f, -1.0f, 0.0f };	// Directional/Spot light only
 			float FalloffEnd = 10.0f;								// Point/Spot light only
-			DirectX::XMFLOAT3 Position = { 0.0f, 0.0f, 0.0f };		// Point/Spot light only
+			Eigen::Vector3f Position = { 0.0f, 0.0f, 0.0f };		// Point/Spot light only
 			float SpotPower = 64.0f;								// Spot light only
 		};
 

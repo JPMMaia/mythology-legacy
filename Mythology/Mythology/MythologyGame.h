@@ -17,7 +17,7 @@ namespace Mythology
 
 		void Initialize();
 
-		void ProcessInput() const;
+		void ProcessInput();
 		void FixedUpdate(const Common::Timer& timer) const;
 		void FrameUpdate(const Common::Timer& timer) const;
 

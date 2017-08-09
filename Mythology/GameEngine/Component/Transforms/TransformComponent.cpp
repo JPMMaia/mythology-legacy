@@ -228,7 +228,5 @@ void TransformComponent::UpdateTransformValuesToHoldWorldTransform(const std::sh
 	// Apply translation:
 	m_localPosition = localTransform.translation();
 
-#if defined(_DEBUG)
 	assert(CalculateLocalTransform().isApprox(localTransform));
-#endif
 }

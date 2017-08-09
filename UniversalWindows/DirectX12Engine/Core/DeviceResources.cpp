@@ -417,7 +417,7 @@ void DeviceResources::CreateDevice()
 	GetHardwareAdapter(&adapter);
 
 	// Create device:
-	static constexpr auto minimunFeatureLevel = D3D_FEATURE_LEVEL_12_0;
+	static constexpr auto minimunFeatureLevel = D3D_FEATURE_LEVEL_11_0;
 	auto hr = D3D12CreateDevice(
 		adapter.Get(),
 		minimunFeatureLevel,
