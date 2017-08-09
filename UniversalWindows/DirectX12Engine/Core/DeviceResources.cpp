@@ -347,6 +347,9 @@ void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter) const
 	ComPtr<IDXGIAdapter1> adapter;
 	*ppAdapter = nullptr;
 
+	std::size_t bestAdapterIndex(0);
+	UINT highestDedicatedVideoMemory(0);
+
 	for (UINT adapterIndex = 0; DXGI_ERROR_NOT_FOUND != m_dxgiFactory->EnumAdapters1(adapterIndex, &adapter); adapterIndex++)
 	{
 		DXGI_ADAPTER_DESC1 desc;
@@ -362,10 +365,15 @@ void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter) const
 		// actual device yet.
 		if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), nullptr)))
 		{
-			break;
+			if(desc.DedicatedVideoMemory > highestDedicatedVideoMemory)
+			{
+				bestAdapterIndex = adapterIndex;
+				highestDedicatedVideoMemory = desc.DedicatedVideoMemory;
+			}
 		}
 	}
 
+	m_dxgiFactory->EnumAdapters1(bestAdapterIndex, &adapter);
 	*ppAdapter = adapter.Detach();
 }
 
