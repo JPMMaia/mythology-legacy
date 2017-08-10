@@ -44,7 +44,6 @@ void StandardScene::CreateDeviceDependentResources()
 
 		// Create mesh data:
 		auto meshData = MeshGenerator::CreateBox(1.0f, 1.0f, 1.0f, 0);
-		//auto meshData = MeshGenerator::CreateRectangle(-10.0f, 0.0f, 20.0f, 20.0f, 0.0f);
 		auto vertices = VertexType::CreateFromMeshData(meshData);
 
 		// Create buffers:
@@ -177,18 +176,21 @@ void StandardScene::CreateDeviceDependentResources()
 			{
 				m_materialsGPUBuffer.reserve(4);
 
-				ShaderBufferTypes::MaterialData materialData;
+				ShaderBufferTypes::MaterialData materialData = {};
 				materialData.BaseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 				materialData.AlbedoMapIndex = 0;
 				m_materialsGPUBuffer.emplace_back(materialData);
 
 				materialData.BaseColor = { 1.0f, 0.0f, 0.0f, 1.0f };
+				materialData.AlbedoMapIndex = 0;
 				m_materialsGPUBuffer.emplace_back(materialData);
 
 				materialData.BaseColor = { 0.0f, 1.0f, 0.0f, 1.0f };
+				materialData.AlbedoMapIndex = 0;
 				m_materialsGPUBuffer.emplace_back(materialData);
 
 				materialData.BaseColor = { 0.0f, 0.0f, 1.0f, 1.0f };
+				materialData.AlbedoMapIndex = 0;
 				m_materialsGPUBuffer.emplace_back(materialData);
 			}
 
@@ -261,14 +263,14 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 {
 	auto commandList = m_commandListManager.GetGraphicsCommandList(0);
 
+	// Bind pass buffer:
+	commandList->SetGraphicsRootConstantBufferView(2, m_passGPUBuffer.get_allocator().GetGPUVirtualAddress(0));
+
 	if(renderLayer == RenderLayer::LightingPass)
 	{
 		m_rectangleRenderItem.RenderNonInstanced(commandList);
 		return true;
 	}
-
-	// Bind pass buffer:
-	commandList->SetGraphicsRootConstantBufferView(2, m_passGPUBuffer.get_allocator().GetGPUVirtualAddress(0));
 
 	// Bind materials buffer:
 	commandList->SetGraphicsRootShaderResourceView(1, m_materialsGPUBuffer.get_allocator().GetGPUVirtualAddress(0));
@@ -276,11 +278,11 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 	// Render cube:
 	m_cubeRenderItem.Render(commandList);
 
-	/*m_floor.Render(commandList);
+	m_floor.Render(commandList);
 
 	m_xAxis.Render(commandList);
 	m_yAxis.Render(commandList);
-	m_zAxis.Render(commandList);*/
+	m_zAxis.Render(commandList);
 	
 	return true;
 }
@@ -314,8 +316,8 @@ void StandardScene::UpdatePassBuffer()
 
 	// Lights:
 	{
-		/*auto pointLightIt = GameEngine::PointLightComponent::Allocator::begin();
-		auto end = GameEngine::PointLightComponent::Allocator::begin();
+		auto pointLightIt = GameEngine::PointLightComponent::Allocator::begin();
+		auto end = GameEngine::PointLightComponent::Allocator::end();
 
 		for(std::size_t i = 0; i < ShaderBufferTypes::PassData::MaxNumLights && pointLightIt != end; ++i)
 		{
@@ -326,7 +328,7 @@ void StandardScene::UpdatePassBuffer()
 			light.Position = pointLightIt->GetWorldPosition();
 			
 			++pointLightIt;
-		}*/
+		}
 	}
 
 	m_passGPUBuffer[0] = passData;

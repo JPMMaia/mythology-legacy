@@ -90,10 +90,10 @@ MeshGenerator::MeshData MeshGenerator::CreateRectangle(float originX, float orig
 
 	meshData.Vertices =
 	{
-		{ XMFLOAT3(originX, originY - height, depth), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT3(originX, originY, depth), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
-		{ XMFLOAT3(originX + width, originY, depth), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(originX + width, originY - height, depth), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) }
+		{ XMFLOAT3(originX, originY - height, depth), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(originX, originY, depth), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(originX + width, originY, depth), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(originX + width, originY - height, depth), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) }
 	};
 
 	meshData.Indices =
@@ -115,16 +115,16 @@ MeshGenerator::MeshData MeshGenerator::CreateBox(float width, float height, floa
 	meshData.Vertices =
 	{
 		// Front face:
-		{ { -halfWidth, -halfHeight, +halfDepth },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
-		{ { -halfWidth, +halfHeight, +halfDepth },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
-		{ { +halfWidth, +halfHeight, +halfDepth },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } },
-		{ { +halfWidth, -halfHeight, +halfDepth },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
+		{ { -halfWidth, -halfHeight, +halfDepth },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
+		{ { -halfWidth, +halfHeight, +halfDepth },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
+		{ { +halfWidth, +halfHeight, +halfDepth },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } },
+		{ { +halfWidth, -halfHeight, +halfDepth },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
 
 		// Back face:
-		{ { -halfWidth, -halfHeight, -halfDepth },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
-		{ { +halfWidth, -halfHeight, -halfDepth },{ 0.0f, 0.0f, 1.0f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
-		{ { +halfWidth, +halfHeight, -halfDepth },{ 0.0f, 0.0f, 1.0f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
-		{ { -halfWidth, +halfHeight, -halfDepth },{ 0.0f, 0.0f, 1.0f },{ -1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
+		{ { -halfWidth, -halfHeight, -halfDepth },{ 0.0f, 0.0f, -1.0f },{ -1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
+		{ { +halfWidth, -halfHeight, -halfDepth },{ 0.0f, 0.0f, -1.0f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
+		{ { +halfWidth, +halfHeight, -halfDepth },{ 0.0f, 0.0f, -1.0f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
+		{ { -halfWidth, +halfHeight, -halfDepth },{ 0.0f, 0.0f, -1.0f },{ -1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
 
 		// Top face:
 		{ { -halfWidth, +halfHeight, +halfDepth },{ 0.0f, 1.0f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
@@ -139,16 +139,16 @@ MeshGenerator::MeshData MeshGenerator::CreateBox(float width, float height, floa
 		{ { -halfWidth, -halfHeight, -halfDepth },{ 0.0f, -1.0f, 0.0f },{ -1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } },
 
 		// Left face:
-		{ { -halfWidth, -halfHeight, -halfDepth },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 0.0f, 1.0f } },
-		{ { -halfWidth, +halfHeight, -halfDepth },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 0.0f, 0.0f } },
-		{ { -halfWidth, +halfHeight, +halfDepth },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f } },
-		{ { -halfWidth, -halfHeight, +halfDepth },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 1.0f } },
+		{ { +halfWidth, -halfHeight, +halfDepth },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 1.0f } },
+		{ { +halfWidth, +halfHeight, +halfDepth },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f } },
+		{ { +halfWidth, +halfHeight, -halfDepth },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 0.0f, 0.0f } },
+		{ { +halfWidth, -halfHeight, -halfDepth },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, -1.0f },{ 0.0f, 1.0f } },
 
 		// Right face:
-		{ { +halfWidth, -halfHeight, +halfDepth },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 0.0f, 1.0f } },
-		{ { +halfWidth, +halfHeight, +halfDepth },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } },
-		{ { +halfWidth, +halfHeight, -halfDepth },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f } },
-		{ { +halfWidth, -halfHeight, -halfDepth },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 1.0f } },
+		{ { -halfWidth, -halfHeight, -halfDepth },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 1.0f } },
+		{ { -halfWidth, +halfHeight, -halfDepth },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f } },
+		{ { -halfWidth, +halfHeight, +halfDepth },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } },
+		{ { -halfWidth, -halfHeight, +halfDepth },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 0.0f, 1.0f } },
 
 	};
 

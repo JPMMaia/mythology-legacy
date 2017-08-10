@@ -11,16 +11,19 @@ namespace DirectX12Engine
 		struct InstanceData
 		{
 			Eigen::Affine3f ModelMatrix;
-			uint32_t MaterialIndex;
-			uint32_t Pad0;
-			uint32_t Pad1;
-			uint32_t Pad2;
+			std::uint32_t MaterialIndex;
+			std::uint32_t Pad0;
+			std::uint32_t Pad1;
+			std::uint32_t Pad2;
 		};
 
 		struct MaterialData
 		{
 			Eigen::Vector4f BaseColor;
 			std::uint32_t AlbedoMapIndex;
+			std::uint32_t Pad0;
+			std::uint32_t Pad1;
+			std::uint32_t Pad2;
 		};
 
 		struct LightData
