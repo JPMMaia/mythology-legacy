@@ -19,6 +19,7 @@ namespace DirectX12Engine
 
 		void ReserveSpaceForInstances(std::size_t newCapacity);
 		void AddInstance(const ShaderBufferTypes::InstanceData& instanceData);
+		void UpdateInstance(std::size_t index, const ShaderBufferTypes::InstanceData& instanceData);
 
 	private:
 		std::string m_submeshName;

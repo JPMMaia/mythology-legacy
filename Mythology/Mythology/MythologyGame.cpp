@@ -20,19 +20,23 @@ void MythologyGame::Initialize()
 
 	{
 		auto boxComponentPointer = new MeshComponent<BoxGeometry>(BoxGeometry(1.0f, 1.0f, 1.0f, 0));
-		m_person.AddComponent("Mesh", std::shared_ptr<MeshComponent<BoxGeometry>>(boxComponentPointer));
+		std::shared_ptr<MeshComponent<BoxGeometry>> boxComponent(boxComponentPointer);
+		boxComponent->GetTransform().SetLocalPosition({ 0.0f, 0.0f, 0.0f });
+		m_person.AddComponent("Mesh", boxComponent);
 	}
 
 	{
-		auto pointLightComponentPointer = new PointLightComponent(Eigen::Vector3f(0.8f, 0.8f, 0.8f), 2.0f, 5.0f);
+		auto pointLightComponentPointer = new PointLightComponent(Eigen::Vector3f(0.8f, 0.8f, 0.8f), 10.0f, 50.0f);
 		std::shared_ptr<PointLightComponent> pointLightComponent(pointLightComponentPointer);
-		pointLightComponent->SetLocalPosition({ 0.0f, 0.0f, 0.0f });
+		pointLightComponentPointer->GetTransform().SetLocalPosition(3.0f * Vector3f(0.0f, 1.0f, -2.0f));
 		m_person.AddComponent("Light", pointLightComponent);
 	}
 	
 	{
 		auto cameraComponentPointer = new CameraComponent();
 		std::shared_ptr<CameraComponent> cameraComponent(cameraComponentPointer);
+		cameraComponent->GetTransform().SetLocalRotation(Quaternionf::FromTwoVectors(Vector3f::UnitZ(), Vector3f(0.0f, -1.0f, 2.0f)));
+		cameraComponent->GetTransform().SetLocalPosition(3.0f * Vector3f(0.0f, 1.0f, -2.0f));
 		m_person.AddComponent("Camera", cameraComponent);
 	}
 }

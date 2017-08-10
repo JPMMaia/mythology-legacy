@@ -48,3 +48,7 @@ void StandardRenderItem::AddInstance(const ShaderBufferTypes::InstanceData& inst
 {
 	m_instancesGPUBuffer.push_back(instanceData);
 }
+void StandardRenderItem::UpdateInstance(std::size_t index, const ShaderBufferTypes::InstanceData& instanceData)
+{
+	m_instancesGPUBuffer[index] = instanceData;
+}

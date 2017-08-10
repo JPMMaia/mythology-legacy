@@ -38,6 +38,7 @@ namespace DirectX12Engine
 
 	private:
 		void UpdatePassBuffer();
+		void UpdateInstancesBuffers();
 
 	private:
 		std::shared_ptr<DeviceResources> m_deviceResources;
@@ -46,10 +47,12 @@ namespace DirectX12Engine
 
 		std::unordered_map<std::string, std::shared_ptr<IMesh>> m_meshes;
 		std::unordered_map<std::string, std::shared_ptr<GraphicsEngine::IMaterial>> m_materials;
-		std::unordered_map<std::string, std::shared_ptr<GraphicsEngine::IRenderItem>> m_renderItems;
+		//std::unordered_map<std::string, std::shared_ptr<GraphicsEngine::IRenderItem>> m_renderItems;
 
 		GPUUploadBuffer<ShaderBufferTypes::MaterialData> m_materialsGPUBuffer;
 		GPUUploadBuffer<ShaderBufferTypes::PassData> m_passGPUBuffer;
+
+		std::deque<StandardRenderItem> m_renderItems;
 
 		StandardRenderItem m_cubeRenderItem;
 		StandardRenderItem m_floor;

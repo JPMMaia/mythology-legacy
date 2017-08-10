@@ -10,6 +10,7 @@
 #include "GameEngine/Geometry/Primitives/BoxGeometry.h"
 #include "GameEngine/Geometry/MeshData.h"
 #include "GameEngine/Geometry/EigenGeometry.h"
+#include "GameEngine/Component/Meshes/MeshComponent.h"
 
 using namespace Common;
 using namespace DirectX;
@@ -41,18 +42,37 @@ void StandardScene::CreateDeviceDependentResources()
 	m_commandListIndex = 0;
 	auto commandList = m_commandListManager.GetGraphicsCommandList(m_commandListIndex);
 
-	/*{
+	{
 		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
 		using MeshType = MeshComponent<BoxGeometry>;
-		
 		
 		auto begin = MeshType::Allocator::begin();
 		
 		// Create mesh data:
 		auto meshData = begin->Geometry().GenerateMeshData<EigenMeshData>();
 		auto vertices = VertexType::CreateFromMeshData(meshData);
-	}*/
 
+		// Create buffers:
+		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType));
+		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT);
+
+		// Create mesh:
+		auto mesh = std::make_shared<ImmutableMesh>("", std::move(vertexBuffer), std::move(indexBuffer));
+		mesh->AddSubmesh("Submesh", Submesh(meshData));
+		m_meshes.emplace(mesh->Name(), mesh);
+
+		StandardRenderItem renderItem(d3dDevice, mesh, "Submesh");
+
+		// Add instances:
+		{
+			ShaderBufferTypes::InstanceData instanceData;
+			instanceData.MaterialIndex = 0;
+			instanceData.ModelMatrix = Eigen::Affine3f::Identity();
+			renderItem.AddInstance(instanceData);
+		}
+
+		m_renderItems.emplace_back(std::move(renderItem));
+	}
 
 	// Cube Render Item:
 	{
@@ -273,6 +293,7 @@ void StandardScene::ProcessInput()
 void StandardScene::FrameUpdate(const Common::Timer& timer)
 {
 	UpdatePassBuffer();
+	UpdateInstancesBuffers();
 }
 
 bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
@@ -299,6 +320,8 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 	m_xAxis.Render(commandList);
 	m_yAxis.Render(commandList);
 	m_zAxis.Render(commandList);
+
+	m_renderItems.begin()->Render(commandList);
 	
 	return true;
 }
@@ -348,4 +371,16 @@ void StandardScene::UpdatePassBuffer()
 	}
 
 	m_passGPUBuffer[0] = passData;
+}
+void StandardScene::UpdateInstancesBuffers()
+{
+	using MeshType = MeshComponent<BoxGeometry>;
+
+	auto meshComponent = MeshType::Allocator::begin();
+	auto renderItem = m_renderItems.begin();
+	
+	ShaderBufferTypes::InstanceData instanceData = {};
+	instanceData.MaterialIndex = 0;
+	instanceData.ModelMatrix = meshComponent->GetTransform().GetWorldTransform();
+	renderItem->UpdateInstance(0, instanceData);
 }
