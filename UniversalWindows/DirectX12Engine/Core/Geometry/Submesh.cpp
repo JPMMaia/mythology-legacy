@@ -3,11 +3,11 @@
 
 using namespace DirectX12Engine;
 
-Submesh::Submesh(const MeshGenerator::MeshData& meshData) :
+Submesh::Submesh(const GameEngine::EigenMeshData& meshData) :
 	m_indexCount(static_cast<uint32_t>(meshData.Indices.size())),
 	m_startIndexLocation(0),
 	m_baseVertexLocation(0),
-	m_bounds(CreateBoundingBoxFromMesh(meshData.Vertices))
+	m_bounds()
 {
 }
 Submesh::Submesh(uint32_t indexCount, uint32_t startIndexLocation, uint32_t baseVertexLocation, const DirectX::BoundingBox& bounds) :

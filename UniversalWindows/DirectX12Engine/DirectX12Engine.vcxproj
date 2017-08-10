@@ -242,7 +242,6 @@
     <ClInclude Include="Core\Geometry\Buffers\VertexBuffer.h" />
     <ClInclude Include="Core\Geometry\IMesh.h" />
     <ClInclude Include="Core\Geometry\ImmutableMesh.h" />
-    <ClInclude Include="Core\Geometry\MeshGenerator.h" />
     <ClInclude Include="Core\Geometry\Submesh.h" />
     <ClInclude Include="Core\Geometry\VertexTypes.h" />
     <ClInclude Include="Core\Material\ColorMaterial.h" />
@@ -289,7 +288,6 @@
     <ClCompile Include="Core\Geometry\Buffers\IndexBuffer.cpp" />
     <ClCompile Include="Core\Geometry\Buffers\VertexBuffer.cpp" />
     <ClCompile Include="Core\Geometry\ImmutableMesh.cpp" />
-    <ClCompile Include="Core\Geometry\MeshGenerator.cpp" />
     <ClCompile Include="Core\Geometry\Submesh.cpp" />
     <ClCompile Include="Core\Geometry\VertexTypes.cpp" />
     <ClCompile Include="Core\Material\ColorMaterial.cpp" />

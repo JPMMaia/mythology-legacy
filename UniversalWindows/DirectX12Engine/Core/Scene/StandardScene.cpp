@@ -1,17 +1,20 @@
 ﻿#include "pch.h"
 #include "StandardScene.h"
 #include "Core/Geometry/ImmutableMesh.h"
-#include "Core/Geometry/MeshGenerator.h"
 #include "Core/Geometry/VertexTypes.h"
 #include "Core/Shader/ShaderBufferTypes.h"
 #include "RenderLayers.h"
 #include "Core/Textures/Texture.h"
 #include "GameEngine/Component/Cameras/CameraComponent.h"
 #include "GameEngine/Component/Lights/PointLightComponent.h"
+#include "GameEngine/Geometry/Primitives/BoxGeometry.h"
+#include "GameEngine/Geometry/MeshData.h"
+#include "GameEngine/Geometry/EigenGeometry.h"
 
 using namespace Common;
 using namespace DirectX;
 using namespace DirectX12Engine;
+using namespace GameEngine;
 
 StandardScene::StandardScene(const std::shared_ptr<DeviceResources>& deviceResources, CommandListManager& commandListManager, const std::shared_ptr<Mythology::MythologyGame>& game) :
 	m_deviceResources(deviceResources),
@@ -38,12 +41,25 @@ void StandardScene::CreateDeviceDependentResources()
 	m_commandListIndex = 0;
 	auto commandList = m_commandListManager.GetGraphicsCommandList(m_commandListIndex);
 
+	/*{
+		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
+		using MeshType = MeshComponent<BoxGeometry>;
+		
+		
+		auto begin = MeshType::Allocator::begin();
+		
+		// Create mesh data:
+		auto meshData = begin->Geometry().GenerateMeshData<EigenMeshData>();
+		auto vertices = VertexType::CreateFromMeshData(meshData);
+	}*/
+
+
 	// Cube Render Item:
 	{
 		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
 
 		// Create mesh data:
-		auto meshData = MeshGenerator::CreateBox(1.0f, 1.0f, 1.0f, 0);
+		auto meshData = EigenMeshGenerator::CreateBox(1.0f, 1.0f, 1.0f, 0);
 		auto vertices = VertexType::CreateFromMeshData(meshData);
 
 		// Create buffers:
@@ -63,7 +79,7 @@ void StandardScene::CreateDeviceDependentResources()
 		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
 
 		// Create mesh data:
-		auto meshData = MeshGenerator::CreateRectangle(-10.0f, 0.0f, 20.0f, 20.0f, 0.0f);
+		auto meshData = EigenMeshGenerator::CreateRectangle(-10.0f, 0.0f, 20.0f, 20.0f, 0.0f);
 		auto vertices = VertexType::CreateFromMeshData(meshData);
 
 		// Create buffers:
@@ -83,7 +99,7 @@ void StandardScene::CreateDeviceDependentResources()
 		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
 
 		// Create mesh data:
-		auto meshData = MeshGenerator::CreateBox(2.0f, 0.1f, 0.1f, 0);
+		auto meshData = EigenMeshGenerator::CreateBox(2.0f, 0.1f, 0.1f, 0);
 		auto vertices = VertexType::CreateFromMeshData(meshData);
 
 		// Create buffers:
@@ -103,7 +119,7 @@ void StandardScene::CreateDeviceDependentResources()
 		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
 
 		// Create mesh data:
-		auto meshData = MeshGenerator::CreateBox(0.1f, 2.0f, 0.1f, 0);
+		auto meshData = EigenMeshGenerator::CreateBox(0.1f, 2.0f, 0.1f, 0);
 		auto vertices = VertexType::CreateFromMeshData(meshData);
 
 		// Create buffers:
@@ -123,7 +139,7 @@ void StandardScene::CreateDeviceDependentResources()
 		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
 
 		// Create mesh data:
-		auto meshData = MeshGenerator::CreateBox(0.1f, 0.1f, 2.0f, 0);
+		auto meshData = EigenMeshGenerator::CreateBox(0.1f, 0.1f, 2.0f, 0);
 		auto vertices = VertexType::CreateFromMeshData(meshData);
 
 		// Create buffers:
@@ -143,7 +159,7 @@ void StandardScene::CreateDeviceDependentResources()
 		using VertexType = VertexTypes::PositionTextureCoordinatesVextex;
 
 		// Create mesh data:
-		auto meshData = MeshGenerator::CreateRectangle(-1.0f, 1.0f, 2.0f, 2.0f, 0.0f);
+		auto meshData = EigenMeshGenerator::CreateRectangle(-1.0f, 1.0f, 2.0f, 2.0f, 0.0f);
 		auto vertices = VertexType::CreateFromMeshData(meshData);
 
 		// Create buffers:

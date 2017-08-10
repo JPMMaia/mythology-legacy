@@ -1,9 +1,8 @@
 #pragma once
 
-#include <DirectXMath.h>
-#include <vector>
+#include "GameEngine/Geometry/EigenGeometry.h"
 
-#include "MeshGenerator.h"
+#include <vector>
 
 namespace DirectX12Engine
 {
@@ -11,34 +10,34 @@ namespace DirectX12Engine
 	{
 		struct PositionVertex
 		{
-			DirectX::XMFLOAT3 PositionL;
+			Eigen::Vector3f PositionL;
 
-			static std::vector<PositionVertex> CreateFromMeshData(const MeshGenerator::MeshData& meshData);
+			static std::vector<PositionVertex> CreateFromMeshData(const GameEngine::EigenMeshData& meshData);
 		};
 
 		struct PositionNormalVertex
 		{
-			DirectX::XMFLOAT3 PositionL;
-			DirectX::XMFLOAT3 NormalL;
+			Eigen::Vector3f PositionL;
+			Eigen::Vector3f NormalL;
 
-			static std::vector<PositionNormalVertex> CreateFromMeshData(const MeshGenerator::MeshData& meshData);
+			static std::vector<PositionNormalVertex> CreateFromMeshData(const GameEngine::EigenMeshData& meshData);
 		};
 
 		struct PositionNormalTextureCoordinatesVertex
 		{
-			DirectX::XMFLOAT3 PositionL;
-			DirectX::XMFLOAT3 NormalL;
-			DirectX::XMFLOAT2 TextureCoordinates;
+			Eigen::Vector3f PositionL;
+			Eigen::Vector3f NormalL;
+			Eigen::Vector2f TextureCoordinates;
 
-			static std::vector<PositionNormalTextureCoordinatesVertex> CreateFromMeshData(const MeshGenerator::MeshData& meshData);
+			static std::vector<PositionNormalTextureCoordinatesVertex> CreateFromMeshData(const GameEngine::EigenMeshData& meshData);
 		};
 
 		struct PositionTextureCoordinatesVextex
 		{
-			DirectX::XMFLOAT3 PositionL;
-			DirectX::XMFLOAT2 TextureCoordinates;
+			Eigen::Vector3f PositionL;
+			Eigen::Vector2f TextureCoordinates;
 
-			static std::vector<PositionTextureCoordinatesVextex> CreateFromMeshData(const MeshGenerator::MeshData& meshData);
+			static std::vector<PositionTextureCoordinatesVextex> CreateFromMeshData(const GameEngine::EigenMeshData& meshData);
 		};
 
 		using DefaultVertexType = PositionVertex;
