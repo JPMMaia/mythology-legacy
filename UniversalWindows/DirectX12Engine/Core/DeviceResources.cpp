@@ -425,8 +425,9 @@ void DeviceResources::EnableShaderBasedValidation() const
 
 void DeviceResources::CreateDevice()
 {
-	// Enable shader based validation (should be disabled for releases):
+#if defined(_DEBUG)
 	EnableShaderBasedValidation();
+#endif
 
 	// Create factory:
 	DX::ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&m_dxgiFactory)));

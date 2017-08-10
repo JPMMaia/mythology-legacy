@@ -160,7 +160,6 @@ void Renderer::LoadState()
 
 void Renderer::ProcessInput() const
 {
-	m_scene->ProcessInput();
 }
 void Renderer::FrameUpdate(const Common::Timer& timer)
 {
@@ -176,6 +175,7 @@ bool Renderer::Render(const Common::Timer& timer)
 	// Clear and set render targets for G-Buffer pass:
 	PIXBeginEvent(commandList, 0, L"Begin G-Buffer Pass");
 	{
+		// Indicate that the G-Buffer textures will be used as Render Targets:
 		{
 			std::array<CD3DX12_RESOURCE_BARRIER, 3> barriers =
 			{
@@ -231,6 +231,7 @@ bool Renderer::Render(const Common::Timer& timer)
 		// Set the graphics root signature:
 		m_rootSignatureManager.SetGraphicsRootSignature(commandList, "LightingPass");
 
+		// Indicate that the G-Buffer textures will be used as Pixel Shader Resources:
 		{
 			std::array<CD3DX12_RESOURCE_BARRIER, 3> barriers =
 			{
