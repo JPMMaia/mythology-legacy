@@ -385,7 +385,7 @@ void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter) const
 	ComPtr<IDXGIAdapter1> adapter;
 	*ppAdapter = nullptr;
 
-	UINT bestIndex(0);
+	UINT bestAdapterIndex(0);
 	std::size_t highestMemory(0);
 
 	for (UINT adapterIndex = 0; DXGI_ERROR_NOT_FOUND != m_dxgiFactory->EnumAdapters1(adapterIndex, &adapter); adapterIndex++)
@@ -405,18 +405,29 @@ void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter) const
 		{
 			if(desc.DedicatedVideoMemory > highestMemory)
 			{
-				bestIndex = adapterIndex;
+				bestAdapterIndex = adapterIndex;
 				highestMemory = desc.DedicatedVideoMemory;
 			}
 		}
 	}
 
-	m_dxgiFactory->EnumAdapters1(bestIndex, &adapter);
+	m_dxgiFactory->EnumAdapters1(bestAdapterIndex, &adapter);
 	*ppAdapter = adapter.Detach();
+}
+void DeviceResources::EnableShaderBasedValidation() const
+{
+	ComPtr<ID3D12Debug> spDebugController0;
+	ComPtr<ID3D12Debug1> spDebugController1;
+	DX::ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&spDebugController0)));
+	DX::ThrowIfFailed(spDebugController0->QueryInterface(IID_PPV_ARGS(&spDebugController1)));
+	spDebugController1->SetEnableGPUBasedValidation(true);
 }
 
 void DeviceResources::CreateDevice()
 {
+	// Enable shader based validation (should be disabled for releases):
+	EnableShaderBasedValidation();
+
 	// Create factory:
 	DX::ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&m_dxgiFactory)));
 

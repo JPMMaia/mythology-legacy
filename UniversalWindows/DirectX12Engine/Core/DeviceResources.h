@@ -73,6 +73,7 @@ namespace DirectX12Engine
 		void MoveToNextFrame();
 		DXGI_MODE_ROTATION ComputeDisplayRotation() const;
 		void GetHardwareAdapter(IDXGIAdapter1** ppAdapter) const;
+		void EnableShaderBasedValidation() const;
 
 	private:
 		void CreateDevice();

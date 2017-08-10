@@ -80,12 +80,13 @@ void Renderer::CreateWindowSizeDependentResources()
 				static_cast<UINT64>(outputSize.x),
 				static_cast<UINT64>(outputSize.y),
 				format,
-				D3D12_RESOURCE_STATE_RENDER_TARGET,
+				D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
 				&clearValue,
 				D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 			);
 			texture.CreateRenderTargetView(m_deviceResources, m_rtvDescriptorHeap, "RTV");
 			texture.CreateShaderResourceView(m_deviceResources, m_srvDescriptorHeap, "SRV");
+			DX::SetName(texture.GetResource(), L"GBuffer Position");
 		}
 
 		// Albedo:
@@ -100,12 +101,13 @@ void Renderer::CreateWindowSizeDependentResources()
 				static_cast<UINT64>(outputSize.x),
 				static_cast<UINT64>(outputSize.y),
 				format,
-				D3D12_RESOURCE_STATE_RENDER_TARGET,
+				D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
 				&clearValue,
 				D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 			);
 			texture.CreateRenderTargetView(m_deviceResources, m_rtvDescriptorHeap, "RTV");
 			texture.CreateShaderResourceView(m_deviceResources, m_srvDescriptorHeap, "SRV");
+			DX::SetName(texture.GetResource(), L"GBuffer Albedo");
 		}
 
 		// Normals:
@@ -120,12 +122,13 @@ void Renderer::CreateWindowSizeDependentResources()
 				static_cast<UINT64>(outputSize.x),
 				static_cast<UINT64>(outputSize.y),
 				format,
-				D3D12_RESOURCE_STATE_RENDER_TARGET,
+				D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
 				&clearValue,
 				D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 			);
 			texture.CreateRenderTargetView(m_deviceResources, m_rtvDescriptorHeap, "RTV");
 			texture.CreateShaderResourceView(m_deviceResources, m_srvDescriptorHeap, "SRV");
+			DX::SetName(texture.GetResource(), L"GBuffer Normal");
 		}
 	}
 
@@ -144,6 +147,7 @@ void Renderer::CreateWindowSizeDependentResources()
 			&clearValue,
 			D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
 		m_depthStencil.CreateDepthStencilView(m_deviceResources, m_dsvDescriptorHeap, "DSV");
+		DX::SetName(m_depthStencil.GetResource(), L"Renderer Depth Stencil");
 	}
 }
 
@@ -172,6 +176,16 @@ bool Renderer::Render(const Common::Timer& timer)
 	// Clear and set render targets for G-Buffer pass:
 	PIXBeginEvent(commandList, 0, L"Begin G-Buffer Pass");
 	{
+		{
+			std::array<CD3DX12_RESOURCE_BARRIER, 3> barriers =
+			{
+				CD3DX12_RESOURCE_BARRIER::Transition(m_positions.GetResource(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET),
+				CD3DX12_RESOURCE_BARRIER::Transition(m_albedo.GetResource(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET),
+				CD3DX12_RESOURCE_BARRIER::Transition(m_normals.GetResource(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET),
+			};
+			commandList->ResourceBarrier(static_cast<UINT>(barriers.size()), barriers.data());
+		}
+
 		std::array<D3D12_CPU_DESCRIPTOR_HANDLE, 3> renderTargetViews =
 		{
 			m_positions.CPUDescriptorHandle("RTV"),
@@ -216,6 +230,16 @@ bool Renderer::Render(const Common::Timer& timer)
 	{
 		// Set the graphics root signature:
 		m_rootSignatureManager.SetGraphicsRootSignature(commandList, "LightingPass");
+
+		{
+			std::array<CD3DX12_RESOURCE_BARRIER, 3> barriers =
+			{
+				CD3DX12_RESOURCE_BARRIER::Transition(m_positions.GetResource(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE),
+				CD3DX12_RESOURCE_BARRIER::Transition(m_albedo.GetResource(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE),
+				CD3DX12_RESOURCE_BARRIER::Transition(m_normals.GetResource(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE),
+			};
+			commandList->ResourceBarrier(static_cast<UINT>(barriers.size()), barriers.data());
+		}
 
 		// Set render targets for Lighting Pass:
 		auto renderTargetView = m_deviceResources->GetRenderTargetView();
