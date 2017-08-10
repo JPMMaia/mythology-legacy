@@ -44,9 +44,13 @@ void MythologyGame::Initialize()
 void MythologyGame::ProcessInput()
 {
 	m_gameManager->ProcessInput();
+}
+void MythologyGame::FixedUpdate(const Common::Timer& timer)
+{
+	m_gameManager->FixedUpdate(timer);
 
 	auto& cameraTransform = m_person.GetTransform();
-	
+
 	static constexpr auto movementSensibility = 0.125f;
 	auto& keyboard = m_gameManager->GetKeyboard();
 	if (keyboard.IsKeyDown('W'))
@@ -57,22 +61,18 @@ void MythologyGame::ProcessInput()
 		cameraTransform.MoveLocalZ(-movementSensibility);
 	if (keyboard.IsKeyDown('D'))
 		cameraTransform.MoveLocalX(-movementSensibility);
-	
+
 	static constexpr auto tiltSensibility = 0.0625f;
 	if (keyboard.IsKeyDown('Q'))
 		cameraTransform.Rotate(Vector3f::UnitZ(), -tiltSensibility);
 	if (keyboard.IsKeyDown('E'))
 		cameraTransform.Rotate(Vector3f::UnitZ(), tiltSensibility);
-	
+
 	static constexpr auto mouseSensibility = 1.0f / 512.0f;
 	auto& mouse = m_gameManager->GetMouse();
 	auto deltaMovement = mouse.DeltaMovement();
 	cameraTransform.Rotate(Vector3f::UnitX(), mouseSensibility * deltaMovement[1]);
 	cameraTransform.Rotate(Vector3f::UnitY(), -mouseSensibility * deltaMovement[0]);
-}
-void MythologyGame::FixedUpdate(const Common::Timer& timer) const
-{
-	m_gameManager->FixedUpdate(timer);
 }
 void MythologyGame::FrameUpdate(const Common::Timer& timer) const
 {

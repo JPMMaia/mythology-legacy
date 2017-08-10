@@ -1,15 +1,14 @@
 #pragma once
 
 #include <deque>
-#include <iterator>
 
 namespace GameEngine
 {
 	template<typename Type>
-	class MemoryPoolNode
+	class StandardAllocatorNode
 	{
 	public:
-		using NodeType = MemoryPoolNode<Type>;
+		using NodeType = StandardAllocatorNode<Type>;
 
 	private:
 		union State
@@ -30,11 +29,11 @@ namespace GameEngine
 		};
 
 	public:
-		MemoryPoolNode() = default;
-		~MemoryPoolNode() = default;
+		StandardAllocatorNode() = default;
+		~StandardAllocatorNode() = default;
 
 		template<typename... ArgumentsType>
-		explicit MemoryPoolNode(ArgumentsType&&... arguments) :
+		explicit StandardAllocatorNode(ArgumentsType&&... arguments) :
 			m_state(std::forward<ArgumentsType>(arguments)...),
 			m_initialized(true)
 		{
@@ -102,7 +101,7 @@ namespace GameEngine
 		using iterator_category = std::forward_iterator_tag;
 
 	private:
-		using node_type = MemoryPoolNode<value_type>;
+		using node_type = StandardAllocatorNode<value_type>;
 
 	public:
 		StandardAllocatorIterator() = default;
@@ -112,8 +111,7 @@ namespace GameEngine
 		StandardAllocatorIterator& operator=(const StandardAllocatorIterator& other) = default;
 		StandardAllocatorIterator& operator=(StandardAllocatorIterator&& other) noexcept = default;
 
-
-		StandardAllocatorIterator(const typename std::deque<MemoryPoolNode<T>>::iterator& begin, const typename std::deque<MemoryPoolNode<T>>::iterator& end)
+		StandardAllocatorIterator(const typename std::deque<StandardAllocatorNode<T>>::iterator& begin, const typename std::deque<StandardAllocatorNode<T>>::iterator& end)
 			: m_location(begin),
 			  m_end(end)
 		{
@@ -168,7 +166,7 @@ namespace GameEngine
 		using iterator = StandardAllocatorIterator<value_type>;
 
 	private:
-		using node_type = MemoryPoolNode<value_type>;
+		using node_type = StandardAllocatorNode<value_type>;
 
 	public:
 		static void Deleter(value_type* pointer)

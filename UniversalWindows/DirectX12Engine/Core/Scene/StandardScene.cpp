@@ -49,7 +49,7 @@ void StandardScene::CreateDeviceDependentResources()
 		auto begin = MeshType::Allocator::begin();
 		
 		// Create mesh data:
-		auto meshData = begin->Geometry().GenerateMeshData<EigenMeshData>();
+		auto meshData = begin->GetGeometry().GenerateMeshData<EigenMeshData>();
 		auto vertices = VertexType::CreateFromMeshData(meshData);
 
 		// Create buffers:
