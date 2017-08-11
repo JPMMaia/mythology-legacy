@@ -52,3 +52,13 @@ void StandardRenderItem::UpdateInstance(std::size_t index, const ShaderBufferTyp
 {
 	m_instancesGPUBuffer[index] = instanceData;
 }
+
+std::size_t StandardRenderItem::GetInstanceCount() const
+{
+	return m_instancesGPUBuffer.size();
+}
+void StandardRenderItem::SetInstanceCount(std::size_t count)
+{
+	if(count != m_instancesGPUBuffer.size())
+		m_instancesGPUBuffer.resize(count);
+}

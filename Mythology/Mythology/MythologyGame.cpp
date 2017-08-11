@@ -1,7 +1,6 @@
 #include "MythologyGame.h"
 #include "GameEngine/Component/Cameras/CameraComponent.h"
 #include "GameEngine/Component/Lights/PointLightComponent.h"
-#include "GameEngine/Component/Meshes/MeshComponent.h"
 #include "GameEngine/Geometry/Primitives/BoxGeometry.h"
 #include "Libraries/Eigen/Geometry"
 
@@ -19,25 +18,26 @@ void MythologyGame::Initialize()
 	m_gameManager = std::make_shared<GameEngine::GameManager>();
 
 	{
-		auto boxComponentPointer = new MeshComponent<BoxGeometry>(BoxGeometry(1.0f, 1.0f, 1.0f, 0));
-		std::shared_ptr<MeshComponent<BoxGeometry>> boxComponent(boxComponentPointer);
-		boxComponent->GetTransform().SetLocalPosition({ 0.0f, 0.0f, 0.0f });
-		m_person.AddComponent("Mesh", boxComponent);
+		auto mesh = MeshComponent<BoxGeometry>::CreateSharedPointer();
+		mesh->SetGeometry(BoxGeometry(1.0f, 1.0f, 1.0f, 0));
+		m_meshes.emplace("Box", std::move(mesh));
 	}
 
 	{
-		auto pointLightComponentPointer = new PointLightComponent(Eigen::Vector3f(0.8f, 0.8f, 0.8f), 10.0f, 50.0f);
-		std::shared_ptr<PointLightComponent> pointLightComponent(pointLightComponentPointer);
-		pointLightComponentPointer->GetTransform().SetLocalPosition(3.0f * Vector3f(0.0f, 1.0f, -2.0f));
-		m_person.AddComponent("Light", pointLightComponent);
+		m_person.AddComponent("Box", m_meshes.at("Box")->CreateInstance());
+	}
+
+	{
+		auto component = PointLightComponent::CreateSharedPointer(Eigen::Vector3f(0.8f, 0.8f, 0.8f), 10.0f, 50.0f);
+		component->GetTransform().SetLocalPosition(3.0f * Vector3f(0.0f, 1.0f, -2.0f));
+		m_person.AddComponent("Light", component);
 	}
 	
 	{
-		auto cameraComponentPointer = new CameraComponent();
-		std::shared_ptr<CameraComponent> cameraComponent(cameraComponentPointer);
-		cameraComponent->GetTransform().SetLocalRotation(Quaternionf::FromTwoVectors(Vector3f::UnitZ(), Vector3f(0.0f, -1.0f, 2.0f)));
-		cameraComponent->GetTransform().SetLocalPosition(3.0f * Vector3f(0.0f, 1.0f, -2.0f));
-		m_person.AddComponent("Camera", cameraComponent);
+		auto component = CameraComponent::CreateSharedPointer();
+		component->GetTransform().SetLocalRotation(Quaternionf::FromTwoVectors(Vector3f::UnitZ(), Vector3f(0.0f, -1.0f, 2.0f)));
+		component->GetTransform().SetLocalPosition(3.0f * Vector3f(0.0f, 1.0f, -2.0f));
+		m_person.AddComponent("Camera", component);
 	}
 }
 

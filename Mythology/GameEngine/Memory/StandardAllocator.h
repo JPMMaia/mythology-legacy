@@ -4,6 +4,8 @@
 
 namespace GameEngine
 {
+	class CameraComponent;
+
 	template<typename Type>
 	class StandardAllocatorNode
 	{
@@ -169,12 +171,6 @@ namespace GameEngine
 		using node_type = StandardAllocatorNode<value_type>;
 
 	public:
-		static void Deleter(value_type* pointer)
-		{
-			value_type::operator delete(pointer, sizeof(value_type));
-		}
-
-	public:
 		StandardAllocator() = default;
 		~StandardAllocator()
 		{
@@ -196,10 +192,10 @@ namespace GameEngine
 			if (!node)
 			{
 				// Emplace node at the end of the deque:
-				s_storage.emplace_back();
+				m_storage.emplace_back();
 
 				// Get emplaced node:
-				node = &s_storage.back();
+				node = &m_storage.back();
 			}
 
 			// Signal that node will be used to contain data:
@@ -211,17 +207,17 @@ namespace GameEngine
 		void deallocate(value_type* p, std::size_t n) noexcept
 		{
 			// Find node:
-			auto node = std::find_if(s_storage.begin(), s_storage.end(), [p](auto const& o)
+			auto node = std::find_if(m_storage.begin(), m_storage.end(), [p](auto const& o)
 			{
 				return o.GetElement() == p;
 			});
-			assert(node != s_storage.end());
+			assert(node != m_storage.end());
 
 			// Signal that the node will be used to store a reference to the next node:
 			node->Shutdown();
 
 			// If node is not at the end, set as the front node:
-			if (std::distance(node, s_storage.end()) > 1)
+			if (std::distance(node, m_storage.end()) > 1)
 			{
 				PushFront(&(*node));
 			}
@@ -230,36 +226,36 @@ namespace GameEngine
 			else
 			{
 				// Remove back node:
-				s_storage.pop_back();
+				m_storage.pop_back();
 
 				// Remove all nodes at the end of the deque that are not initialized:
-				for (auto iterator = s_storage.rbegin(); iterator != s_storage.rend() && !iterator->IsInitialized(); iterator = s_storage.rbegin())
+				for (auto iterator = m_storage.rbegin(); iterator != m_storage.rend() && !iterator->IsInitialized(); iterator = m_storage.rbegin())
 				{
 					// Remove node from available nodes:
 					RemoveAt(iterator);
 
 					// Decrease storage:
-					s_storage.pop_back();
+					m_storage.pop_back();
 				}
 			}
 		}
 
-		static iterator begin()
+		iterator begin()
 		{
-			return iterator(s_storage.begin(), s_storage.end());
+			return iterator(m_storage.begin(), m_storage.end());
 		}
-		static iterator end()
+		iterator end()
 		{
-			return iterator(s_storage.end(), s_storage.end());
+			return iterator(m_storage.end(), m_storage.end());
 		}
 
-		static std::size_t size()
+		std::size_t size() const
 		{
-			return s_storage.size();
+			return m_storage.size();
 		}
 
 	private:
-		static void PushFront(node_type* node)
+		void PushFront(node_type* node)
 		{
 			if (node)
 			{
@@ -267,39 +263,39 @@ namespace GameEngine
 				node->SetPrevious(nullptr);
 
 				// Set the front node as the next of the pushed node:
-				node->SetNext(s_front);
+				node->SetNext(m_front);
 			}
 
-			if (s_front)
+			if (m_front)
 			{
 				// Set the previous node of the old front:
-				s_front->SetPrevious(node);
+				m_front->SetPrevious(node);
 			}
 
 			// Set the pushed node as the front:
-			s_front = node;
+			m_front = node;
 		}
-		static node_type* PopFront()
+		node_type* PopFront()
 		{
 			node_type* node = nullptr;
 
 			// If a node is available:
-			if (s_front)
+			if (m_front)
 			{
 				// Get node at the front:
-				node = s_front;
+				node = m_front;
 
 				// Assign new front:
-				s_front = s_front->GetNext();
+				m_front = m_front->GetNext();
 
 				// Set previous to null:
-				if (s_front)
-					s_front->SetPrevious(nullptr);
+				if (m_front)
+					m_front->SetPrevious(nullptr);
 			}
 
 			return node;
 		}
-		static void RemoveAt(typename std::deque<node_type>::reverse_iterator location)
+		void RemoveAt(typename std::deque<node_type>::reverse_iterator location)
 		{
 			// Get previous node:
 			auto previous = location->GetPrevious();
@@ -315,15 +311,9 @@ namespace GameEngine
 		}
 
 	private:
-		static std::deque<node_type> s_storage;
-		static node_type* s_front;
+		std::deque<node_type> m_storage;
+		node_type* m_front = nullptr;
 	};
-
-	template<class T>
-	std::deque<typename StandardAllocator<T>::node_type> StandardAllocator<T>::s_storage;
-
-	template<class T>
-	typename StandardAllocator<T>::node_type* StandardAllocator<T>::s_front;
 
 	template <class T, class U>
 	bool operator==(const StandardAllocator<T>& a, const StandardAllocator<U>& b)
@@ -337,21 +327,3 @@ namespace GameEngine
 		return !(a == b);
 	}
 }
-
-#define DEFINE_ALLOCATOR(Type) \
-	public:	\
-		using Allocator = StandardAllocator<Type>; \
-	public:	\
-		void* operator new(std::size_t size)	\
-		{	\
-			return s_storage.allocate(size);	\
-		}	\
-		void operator delete(void* pointer, std::size_t size) noexcept	\
-		{	\
-			s_storage.deallocate(reinterpret_cast<Type*>(pointer), size);	\
-		}	\
-	private:	\
-		static StandardAllocator<Type> s_storage;
-
-#define IMPLEMENT_ALLOCATOR(Type) \
-	StandardAllocator<Type> Type::s_storage;

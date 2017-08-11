@@ -23,8 +23,8 @@ StandardScene::StandardScene(const std::shared_ptr<DeviceResources>& deviceResou
 	m_materialsGPUBuffer(GPUAllocator<ShaderBufferTypes::MaterialData>(deviceResources->GetD3DDevice(), false)),
 	m_passGPUBuffer(GPUAllocator<ShaderBufferTypes::PassData>(deviceResources->GetD3DDevice(), false)),
 	m_cubeRenderItem(deviceResources->GetD3DDevice()),
-	m_rectangleRenderItem(deviceResources->GetD3DDevice()),
 	m_floor(deviceResources->GetD3DDevice()),
+	m_rectangleRenderItem(deviceResources->GetD3DDevice()),
 	m_xAxis(deviceResources->GetD3DDevice()),
 	m_yAxis(deviceResources->GetD3DDevice()),
 	m_zAxis(deviceResources->GetD3DDevice()),
@@ -45,9 +45,9 @@ void StandardScene::CreateDeviceDependentResources()
 	{
 		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
 		using MeshType = MeshComponent<BoxGeometry>;
-		
+
 		auto begin = MeshType::Allocator::begin();
-		
+
 		// Create mesh data:
 		auto meshData = begin->GetGeometry().GenerateMeshData<EigenMeshData>();
 		auto vertices = VertexType::CreateFromMeshData(meshData);
@@ -62,14 +62,6 @@ void StandardScene::CreateDeviceDependentResources()
 		m_meshes.emplace(mesh->Name(), mesh);
 
 		StandardRenderItem renderItem(d3dDevice, mesh, "Submesh");
-
-		// Add instances:
-		{
-			ShaderBufferTypes::InstanceData instanceData;
-			instanceData.MaterialIndex = 0;
-			instanceData.ModelMatrix = Eigen::Affine3f::Identity();
-			renderItem.AddInstance(instanceData);
-		}
 
 		m_renderItems.emplace_back(std::move(renderItem));
 	}
@@ -303,7 +295,7 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 	// Bind pass buffer:
 	commandList->SetGraphicsRootConstantBufferView(2, m_passGPUBuffer.get_allocator().GetGPUVirtualAddress(0));
 
-	if(renderLayer == RenderLayer::LightingPass)
+	if (renderLayer == RenderLayer::LightingPass)
 	{
 		m_rectangleRenderItem.RenderNonInstanced(commandList);
 		return true;
@@ -322,7 +314,7 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 	m_zAxis.Render(commandList);
 
 	m_renderItems.begin()->Render(commandList);
-	
+
 	return true;
 }
 
@@ -358,14 +350,14 @@ void StandardScene::UpdatePassBuffer()
 		auto pointLightIt = GameEngine::PointLightComponent::Allocator::begin();
 		auto end = GameEngine::PointLightComponent::Allocator::end();
 
-		for(std::size_t i = 0; i < ShaderBufferTypes::PassData::MaxNumLights && pointLightIt != end; ++i)
+		for (std::size_t i = 0; i < ShaderBufferTypes::PassData::MaxNumLights && pointLightIt != end; ++i)
 		{
 			auto& light = passData.Lights[i];
 			light.Strength = pointLightIt->GetStrength();
 			light.FalloffStart = pointLightIt->GetFalloffStart();
 			light.FalloffEnd = pointLightIt->GetFalloffEnd();
 			light.Position = pointLightIt->GetWorldPosition();
-			
+
 			++pointLightIt;
 		}
 	}
@@ -376,11 +368,18 @@ void StandardScene::UpdateInstancesBuffers()
 {
 	using MeshType = MeshComponent<BoxGeometry>;
 
-	auto meshComponent = MeshType::Allocator::begin();
 	auto renderItem = m_renderItems.begin();
-	
-	ShaderBufferTypes::InstanceData instanceData = {};
-	instanceData.MaterialIndex = 0;
-	instanceData.ModelMatrix = meshComponent->GetTransform().GetWorldTransform();
-	renderItem->UpdateInstance(0, instanceData);
+	for (auto mesh = MeshType::Allocator::begin(); mesh != MeshType::Allocator::end(); ++mesh)
+	{
+		renderItem->SetInstanceCount(mesh->GetInstanceCount());
+
+		std::size_t index = 0;
+		for(auto instance = mesh->InstancesBegin(); instance != mesh->InstancesEnd(); ++instance)
+		{
+			ShaderBufferTypes::InstanceData shaderData;
+			shaderData.MaterialIndex = (*instance)->GetMaterialIndex();
+			shaderData.ModelMatrix = (*instance)->GetTransform().GetWorldTransform();
+			renderItem->UpdateInstance(index++, shaderData);
+		}
+	}
 }

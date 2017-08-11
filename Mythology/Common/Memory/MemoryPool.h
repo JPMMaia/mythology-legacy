@@ -160,7 +160,7 @@ namespace Common
 	class MemoryPool
 	{
 	public:
-		using Iterator = MemoryPool<T>;
+		using Iterator = MemoryPoolIterator<T>;
 
 	private:		
 		using Node = MemoryPoolNode<T>;

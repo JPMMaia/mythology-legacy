@@ -22,21 +22,17 @@ namespace MythologyTestProject
 		{
 			// Test destruction:
 			{
-				auto componentPointer = new CameraComponent;
-				std::shared_ptr<CameraComponent> test(componentPointer, CameraComponent::Allocator::Deleter);
-				Assert::AreEqual(std::size_t(1), StandardAllocator<CameraComponent>::size());
+				auto test = CameraComponent::CreateSharedPointer();
+				Assert::AreEqual(std::size_t(1), CameraComponent::GetStorage().size());
 			}
-			Assert::AreEqual(std::size_t(0), StandardAllocator<CameraComponent>::size());
+			Assert::AreEqual(std::size_t(0), CameraComponent::GetStorage().size());
 
 			static constexpr std::size_t componentCount = 10;
 			std::vector<std::shared_ptr<CameraComponent>> components;
 			components.reserve(componentCount);
 			for (std::size_t i = 0; i < componentCount; ++i)
-			{
-				auto componentPointer = new CameraComponent;
-				components.emplace_back(std::shared_ptr<CameraComponent>(componentPointer, CameraComponent::Allocator::Deleter));
-			}	
-			Assert::AreEqual(componentCount, StandardAllocator<CameraComponent>::size());
+				components.emplace_back(CameraComponent::CreateSharedPointer());	
+			Assert::AreEqual(componentCount, CameraComponent::GetStorage().size());
 			
 			// Set fov angle for a component:
 			components[8]->SetFovAngleY(90.0f);
@@ -48,10 +44,10 @@ namespace MythologyTestProject
 			Assert::IsTrue(90.0f == components[7]->GetFovAngleY());
 
 			// Check if removed node is initialized again:
-			Assert::AreEqual(std::size_t(10), StandardAllocator<CameraComponent>::size());
+			Assert::AreEqual(std::size_t(10), CameraComponent::GetStorage().size());
 			auto anotherComponentPointer = new CameraComponent;
 			auto anotherComponent = std::shared_ptr<CameraComponent>(anotherComponentPointer);
-			Assert::AreEqual(std::size_t(10), StandardAllocator<CameraComponent>::size());
+			Assert::AreEqual(std::size_t(10), CameraComponent::GetStorage().size());
 			anotherComponent->SetFarZ(70.0f);
 			Assert::IsTrue(anotherComponent->GetFarZ() == 70.0f);
 
@@ -59,7 +55,7 @@ namespace MythologyTestProject
 			components.erase(components.begin() + 7, components.end());
 
 			// Check if size decreased:
-			Assert::AreEqual(std::size_t(8), StandardAllocator<CameraComponent>::size());
+			Assert::AreEqual(std::size_t(7), CameraComponent::GetStorage().size());
 		}
 	};
 }

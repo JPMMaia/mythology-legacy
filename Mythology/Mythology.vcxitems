@@ -99,6 +99,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Input\Keyboard.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Input\Mouse.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Memory\StandardAllocator.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Memory\UseStorage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\DisplayOrientations.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IMaterial.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IRenderer.h" />

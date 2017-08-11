@@ -28,8 +28,7 @@ namespace MythologyTestProject
 			}
 
 			// Test components:
-			auto pointLightComponentPointer = new PointLightComponent();
-			std::shared_ptr<PointLightComponent> pointLightComponent(pointLightComponentPointer);
+			auto pointLightComponent = PointLightComponent::CreateSharedPointer();
 			{
 				gameObject.AddComponent("PointLight", pointLightComponent);
 				const auto& component = gameObject.GetComponent("PointLight");

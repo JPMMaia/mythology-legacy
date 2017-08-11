@@ -2,6 +2,7 @@
 #include "CppUnitTest.h"
 #include "GameEngine/Component/Meshes/InstancedMeshComponent.h"
 #include "GameEngine/Geometry/Primitives/BoxGeometry.h"
+#include "GameEngine/Component/Meshes/MeshComponent.h"
 
 using namespace GameEngine;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -13,7 +14,7 @@ namespace MythologyTestProject
 	public:
 		TEST_METHOD(MeshComponentTest1)
 		{
-			auto meshPointer = new MeshComponent<BoxGeometry>(BoxGeometry(1.0f, 1.0f, 1.0f, 0));
+			/*auto meshPointer = new MeshComponent<BoxGeometry>(BoxGeometry(1.0f, 1.0f, 1.0f, 0));
 			std::shared_ptr<MeshComponent<BoxGeometry>> mesh(meshPointer);
 
 			Assert::AreEqual(std::size_t(0), mesh->GetInstanceCount());
@@ -39,12 +40,18 @@ namespace MythologyTestProject
 			}
 			Assert::AreEqual(std::size_t(1), mesh->GetInstanceCount());
 
-			auto instance4 = std::make_shared<InstancedMeshComponent<BoxGeometry>>(mesh);
-			auto instance5 = std::make_shared<InstancedMeshComponent<BoxGeometry>>(mesh);
+			{
+				auto instance4 = std::make_shared<InstancedMeshComponent<BoxGeometry>>(mesh);
+				auto instance5 = std::make_shared<InstancedMeshComponent<BoxGeometry>>(mesh);
 
-			// Destroy instance and check if instance5 is still valid:
-			instance4.reset();
-			instance5->SetInstanceData(InstanceData());
+				InstanceData data;
+				data.MaterialIndex = 5;
+				instance5->SetInstanceData(data);
+
+				// Destroy instance and check if instance5 is still valid:
+				instance4.reset();
+				Assert::AreEqual(std::uint32_t(5), instance5->GetInstanceData().MaterialIndex);
+			}*/
 		}
 	};
 }

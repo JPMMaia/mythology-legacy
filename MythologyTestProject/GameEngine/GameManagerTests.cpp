@@ -29,17 +29,14 @@ namespace MythologyTestProject
 
 			GameObject gameObject1;
 
-			auto boxComponentPointer = new MeshComponent<BoxGeometry>(BoxGeometry(1.0f, 1.0f, 1.0f, 0));
-			std::shared_ptr<MeshComponent<BoxGeometry>> boxComponent(boxComponentPointer);
+			auto boxComponent = MeshComponent<BoxGeometry>::CreateSharedPointer(BoxGeometry(1.0f, 1.0f, 1.0f, 0));
 			gameObject1.AddComponent("Mesh", boxComponent);
 
-			auto pointLightComponentPointer = new PointLightComponent(Vector3f(0.8f, 0.8f, 0.8f), 2.0f, 5.0f);
-			std::shared_ptr<PointLightComponent> pointLightComponent(pointLightComponentPointer);
+			auto pointLightComponent = PointLightComponent::CreateSharedPointer(Vector3f(0.8f, 0.8f, 0.8f), 2.0f, 5.0f);
 			pointLightComponent->SetLocalPosition({ 0.0f, 2.0f, -1.0f });
 			gameObject1.AddComponent("Light", pointLightComponent);
 
-			auto cameraComponentPointer = new CameraComponent();
-			std::shared_ptr<CameraComponent> cameraComponent(cameraComponentPointer);
+			auto cameraComponent = CameraComponent::CreateSharedPointer();
 			cameraComponent->GetTransform().SetLocalPosition({ 0.0f, 2.0f, -1.0f });
 			cameraComponent->GetTransform().SetLocalRotation(Quaternionf::FromTwoVectors( Vector3f::UnitZ(), Vector3f(0.0f, -2.0f, 1.0f) ));
 			gameObject1.AddComponent("Camera", cameraComponent);

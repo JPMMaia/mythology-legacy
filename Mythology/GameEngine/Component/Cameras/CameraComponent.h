@@ -1,11 +1,11 @@
 #pragma once
 
 #include "GameEngine/Component/Base/BaseComponent.h"
-#include "GameEngine/Memory/StandardAllocator.h"
+#include "GameEngine/Memory/UseStorage.h"
 
 namespace GameEngine
 {
-	class CameraComponent : public BaseComponent
+	class CameraComponent : public BaseComponent, public UseStorage<CameraComponent>
 	{
 	public:
 		using Vector3 = Eigen::Vector3f;
@@ -51,7 +51,5 @@ namespace GameEngine
 		float m_nearZ, m_farZ;
 		Matrix m_viewMatrix;
 		Matrix m_projectionMatrix;
-
-		DEFINE_ALLOCATOR(CameraComponent);
 	};
 }

@@ -2,8 +2,6 @@
 
 using namespace GameEngine;
 
-IMPLEMENT_ALLOCATOR(CameraComponent);
-
 CameraComponent::CameraComponent() :
 	m_aspectRatio(16.0f / 9.0f),
 	m_fovAngleY(60.0f),
