@@ -20,11 +20,11 @@ void MythologyGame::Initialize()
 	{
 		auto mesh = MeshComponent<BoxGeometry>::CreateSharedPointer();
 		mesh->SetGeometry(BoxGeometry(1.0f, 1.0f, 1.0f, 0));
-		m_meshes.emplace("Box", std::move(mesh));
+		m_meshes.emplace("Box", mesh);
 	}
 
 	{
-		m_person.AddComponent("Box", m_meshes.at("Box")->CreateInstance());
+		m_person.AddComponent("Box", m_meshes.at("Box")->CreateInstance(0));
 	}
 
 	{

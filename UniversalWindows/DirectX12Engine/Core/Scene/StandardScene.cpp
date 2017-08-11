@@ -46,7 +46,7 @@ void StandardScene::CreateDeviceDependentResources()
 		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
 		using MeshType = MeshComponent<BoxGeometry>;
 
-		auto begin = MeshType::Allocator::begin();
+		auto begin = MeshType::begin();
 
 		// Create mesh data:
 		auto meshData = begin->GetGeometry().GenerateMeshData<EigenMeshData>();
@@ -347,8 +347,8 @@ void StandardScene::UpdatePassBuffer()
 
 	// Lights:
 	{
-		auto pointLightIt = GameEngine::PointLightComponent::Allocator::begin();
-		auto end = GameEngine::PointLightComponent::Allocator::end();
+		auto pointLightIt = PointLightComponent::begin();
+		auto end = PointLightComponent::end();
 
 		for (std::size_t i = 0; i < ShaderBufferTypes::PassData::MaxNumLights && pointLightIt != end; ++i)
 		{
@@ -369,7 +369,7 @@ void StandardScene::UpdateInstancesBuffers()
 	using MeshType = MeshComponent<BoxGeometry>;
 
 	auto renderItem = m_renderItems.begin();
-	for (auto mesh = MeshType::Allocator::begin(); mesh != MeshType::Allocator::end(); ++mesh)
+	for (auto mesh = MeshType::begin(); mesh != MeshType::end(); ++mesh)
 	{
 		renderItem->SetInstanceCount(mesh->GetInstanceCount());
 
@@ -377,8 +377,8 @@ void StandardScene::UpdateInstancesBuffers()
 		for(auto instance = mesh->InstancesBegin(); instance != mesh->InstancesEnd(); ++instance)
 		{
 			ShaderBufferTypes::InstanceData shaderData;
-			shaderData.MaterialIndex = (*instance)->GetMaterialIndex();
-			shaderData.ModelMatrix = (*instance)->GetTransform().GetWorldTransform();
+			shaderData.MaterialIndex = static_cast<std::uint32_t>(instance->GetMaterialIndex());
+			shaderData.ModelMatrix = instance->GetTransform().GetWorldTransform();
 			renderItem->UpdateInstance(index++, shaderData);
 		}
 	}
