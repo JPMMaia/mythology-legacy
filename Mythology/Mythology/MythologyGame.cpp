@@ -20,19 +20,45 @@ void MythologyGame::Initialize()
 {
 	m_gameManager = std::make_shared<GameEngine::GameManager>();
 
+	// Meshes:
 	{
-		auto mesh = MeshComponent<BoxGeometry>::CreateSharedPointer(BoxGeometry(1.0f, 1.0f, 1.0f, 0));
-		m_meshes.emplace("Box", mesh);
+		{
+			auto mesh = MeshComponent<BoxGeometry>::CreateSharedPointer(BoxGeometry(1.0f, 1.0f, 1.0f, 0));
+			m_meshes.emplace("Box", mesh);
+		}
+
+		{
+			auto floor = MeshComponent<RectangleGeometry>::CreateSharedPointer(RectangleGeometry(0.0f, 0.0f, 20.0f, 20.0f, 0.0f, 0));
+			m_meshes.emplace("Floor", floor);
+		}
 	}
 
+	// Materials:
 	{
-		auto floor = MeshComponent<RectangleGeometry>::CreateSharedPointer(RectangleGeometry(0.0f, 0.0f, 20.0f, 20.0f, 0.0f, 0));
-		m_meshes.emplace("Floor", floor);
+		{
+			auto material = StandardMaterial::CreateSharedPointer("Wood", Vector4f(1.0f, 1.0f, 1.0f, 1.0f), L"Resources/sandstonecliff-albedo.dds");
+			m_materials.emplace(material->GetName(), material);
+		}
+
+		{
+			auto material = StandardMaterial::CreateSharedPointer("Red", Vector4f(1.0f, 0.0f, 0.0f, 1.0f), L"Resources/sandstonecliff-albedo.dds");
+			m_materials.emplace(material->GetName(), material);
+		}
+
+		{
+			auto material = StandardMaterial::CreateSharedPointer("Green", Vector4f(0.0f, 1.0f, 0.0f, 1.0f), L"Resources/sandstonecliff-albedo.dds");
+			m_materials.emplace(material->GetName(), material);
+		}
+
+		{
+			auto material = StandardMaterial::CreateSharedPointer("Blue", Vector4f(0.0f, 0.0f, 1.0f, 1.0f), L"Resources/sandstonecliff-albedo.dds");
+			m_materials.emplace(material->GetName(), material);
+		}
 	}
 
 	// Person:
 	{
-		m_person.AddComponent("Box", m_meshes.at("Box")->CreateInstance(0));
+		m_person.AddComponent("Box", m_meshes.at("Box")->CreateInstance(m_materials.at("Wood")));
 
 		{
 			auto component = PointLightComponent::CreateSharedPointer(Eigen::Vector3f(0.8f, 0.8f, 0.8f), 10.0f, 50.0f);
@@ -53,21 +79,21 @@ void MythologyGame::Initialize()
 		auto& box = m_meshes.at("Box");
 
 		{
-			auto instance = box->CreateInstance(1);
+			auto instance = box->CreateInstance(m_materials.at("Red"));
 			instance->GetTransform().SetLocalScaling({ 2.0f, 0.1f, 0.1f });
 			instance->GetTransform().SetLocalPosition({ 1.0f, 0.0f, 0.0f });
 			m_axis.AddComponent("X-axis", instance);
 		}
 
 		{
-			auto instance = box->CreateInstance(2);
+			auto instance = box->CreateInstance(m_materials.at("Green"));
 			instance->GetTransform().SetLocalScaling({ 0.1f, 2.0f, 0.1f });
 			instance->GetTransform().SetLocalPosition({ 0.0f, 1.0f, 0.0f });
 			m_axis.AddComponent("Y-axis", instance);
 		}
 
 		{
-			auto instance = box->CreateInstance(3);
+			auto instance = box->CreateInstance(m_materials.at("Blue"));
 			instance->GetTransform().SetLocalScaling({ 0.1f, 0.1f, 2.0f });
 			instance->GetTransform().SetLocalPosition({ 0.0f, 0.0f, 1.0f });
 			m_axis.AddComponent("Z-axis", instance);
@@ -76,7 +102,7 @@ void MythologyGame::Initialize()
 
 	// Floor:
 	{
-		auto instance = m_meshes.at("Floor")->CreateInstance(0);
+		auto instance = m_meshes.at("Floor")->CreateInstance(m_materials.at("Wood"));
 		instance->GetTransform().SetWorldRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
 		m_floor.AddComponent("Mesh", instance);
 	}

@@ -32,6 +32,7 @@ namespace Mythology
 		std::shared_ptr<GameEngine::GameManager> m_gameManager;
 		
 		std::unordered_map<std::string, std::shared_ptr<GameEngine::BaseMeshComponent>> m_meshes;
+		std::unordered_map<std::string, std::shared_ptr<GameEngine::StandardMaterial>> m_materials;
 		GameEngine::GameObject m_person;
 		GameEngine::GameObject m_floor;
 		GameEngine::GameObject m_axis;

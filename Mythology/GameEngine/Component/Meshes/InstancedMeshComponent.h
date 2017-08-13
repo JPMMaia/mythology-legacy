@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameEngine/Component/Base/BaseComponent.h"
+#include "StandardMaterial.h"
 
 namespace GameEngine
 {
@@ -9,16 +10,16 @@ namespace GameEngine
 	public:
 		InstancedMeshComponent() = default;
 		
-		explicit InstancedMeshComponent(std::size_t materialIndex) : 
-			m_materialIndex(materialIndex)
+		explicit InstancedMeshComponent(const std::shared_ptr<StandardMaterial>& material) : 
+			m_material(material)
 		{
 		}
 
 	public:
-		std::size_t GetMaterialIndex() const { return m_materialIndex; }
-		void SetMaterialIndex(std::size_t materialIndex) { m_materialIndex = materialIndex; };
+		const std::shared_ptr<StandardMaterial>& GetMaterial() const { return m_material; }
+		void SetMaterial(const std::shared_ptr<StandardMaterial>& material) { m_material = material; };
 
 	private:
-		std::size_t m_materialIndex = 0;
+		std::shared_ptr<StandardMaterial> m_material;
 	};
 }

@@ -1,15 +1,15 @@
 ﻿#pragma once
 
 #include "GraphicsEngineInterfaces/IScene.h"
-#include "GraphicsEngineInterfaces/IMaterial.h"
 #include "Core/DeviceResources.h"
 #include "Core/Command/CommandListManager.h"
-#include "Core/Geometry/IMesh.h"
 #include "Core/RenderItem/StandardRenderItem.h"
 #include "Core/Resources/GPUAllocator.h"
 #include "Core/Shader/ShaderBufferTypes.h"
+#include "Core/Textures/Texture.h"
 #include "Mythology/MythologyGame.h"
 
+#include <queue>
 #include <unordered_map>
 
 namespace DirectX12Engine
@@ -37,6 +37,8 @@ namespace DirectX12Engine
 		template<class MeshType, class VertexType>
 		void CreateRenderItems(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList);
 
+		void CreateTexture(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const std::wstring& path, bool isColorData);
+
 		void UpdatePassBuffer();
 		void UpdateInstancesBuffers();
 
@@ -48,14 +50,15 @@ namespace DirectX12Engine
 		CommandListManager& m_commandListManager;
 		std::size_t m_commandListIndex = 0;
 
-		std::unordered_map<std::string, std::shared_ptr<IMesh>> m_meshes;
-		std::unordered_map<std::string, std::shared_ptr<GraphicsEngine::IMaterial>> m_materials;
-
+		std::queue<Microsoft::WRL::ComPtr<ID3D12Resource>> m_temporaryUploadBuffers;
 		GPUUploadBuffer<ShaderBufferTypes::MaterialData> m_materialsGPUBuffer;
 		GPUUploadBuffer<ShaderBufferTypes::PassData> m_passGPUBuffer;
 
 		std::unique_ptr<StandardRenderItem> m_renderRectangle;
 		std::deque<StandardRenderItem> m_renderItems;
+		std::unordered_map<std::wstring, Texture> m_textures;
+
+		std::unordered_map<std::string, std::uint32_t> m_materialIndices;
 
 		std::shared_ptr<Mythology::MythologyGame> m_game;
 	};

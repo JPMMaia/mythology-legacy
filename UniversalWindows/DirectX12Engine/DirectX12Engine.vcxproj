@@ -246,7 +246,6 @@
     <ClInclude Include="Core\Geometry\VertexTypes.h" />
     <ClInclude Include="Core\Material\ColorMaterial.h" />
     <ClInclude Include="Core\Material\MaterialInstance.h" />
-    <ClInclude Include="Core\Material\StandardMaterial.h" />
     <ClInclude Include="Core\Pipeline\PipelineStateManager.h" />
     <ClInclude Include="Core\Pipeline\RootSignatureManager.h" />
     <ClInclude Include="Core\Renderer.h" />
@@ -293,7 +292,6 @@
     <ClCompile Include="Core\Geometry\VertexTypes.cpp" />
     <ClCompile Include="Core\Material\ColorMaterial.cpp" />
     <ClCompile Include="Core\Material\MaterialInstance.cpp" />
-    <ClCompile Include="Core\Material\StandardMaterial.cpp" />
     <ClCompile Include="Core\Pipeline\PipelineStateManager.cpp" />
     <ClCompile Include="Core\Pipeline\RootSignatureManager.cpp" />
     <ClCompile Include="Core\Renderer.cpp" />

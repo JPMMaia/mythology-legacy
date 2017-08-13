@@ -40,11 +40,30 @@ void StandardScene::CreateDeviceDependentResources()
 	// Create render rectangle:
 	m_renderRectangle = std::make_unique<StandardRenderItem>(RenderRectangle::Create(d3dDevice, commandList));
 
+	// Create render items:
 	{
 		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
 
 		CreateRenderItems<MeshComponent<BoxGeometry>, VertexType>(d3dDevice, commandList);
 		CreateRenderItems<MeshComponent<RectangleGeometry>, VertexType>(d3dDevice, commandList);
+	}
+
+	{
+		// Reserve space for material instances:
+		m_materialsGPUBuffer.reserve(StandardMaterial::GetStorage().size());
+
+		std::for_each(StandardMaterial::begin(), StandardMaterial::end(), [this, d3dDevice, commandList](auto& material)
+		{
+			// TODO Load texture:
+			//CreateTexture(d3dDevice, commandList, material.GetAlbedoMapName(), true);
+
+			ShaderBufferTypes::MaterialData materialData = {};
+			materialData.BaseColor = material.GetBaseColor();
+			materialData.AlbedoMapIndex = 0;
+
+			m_materialIndices.emplace(material.GetName(), static_cast<std::uint32_t>(m_materialsGPUBuffer.size()));
+			m_materialsGPUBuffer.emplace_back(materialData);
+		});
 	}
 
 	// Upload vertex and index buffers to the GPU in order to dispose the upload buffers:
@@ -55,34 +74,8 @@ void StandardScene::CreateDeviceDependentResources()
 		// Wait for the command list to finish executing; the vertex/index buffers need to be uploaded to the GPU before disposing the upload buffers:
 		m_deviceResources->WaitForGpu();
 
-		for (const auto& mesh : m_meshes)
-			mesh.second->DisposeUploadBuffers();
-	}
-
-	{
-		{
-			// Make materials:
-			{
-				m_materialsGPUBuffer.reserve(4);
-
-				ShaderBufferTypes::MaterialData materialData = {};
-				materialData.BaseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-				materialData.AlbedoMapIndex = 0;
-				m_materialsGPUBuffer.emplace_back(materialData);
-
-				materialData.BaseColor = { 1.0f, 0.0f, 0.0f, 1.0f };
-				materialData.AlbedoMapIndex = 0;
-				m_materialsGPUBuffer.emplace_back(materialData);
-
-				materialData.BaseColor = { 0.0f, 1.0f, 0.0f, 1.0f };
-				materialData.AlbedoMapIndex = 0;
-				m_materialsGPUBuffer.emplace_back(materialData);
-
-				materialData.BaseColor = { 0.0f, 0.0f, 1.0f, 1.0f };
-				materialData.AlbedoMapIndex = 0;
-				m_materialsGPUBuffer.emplace_back(materialData);
-			}
-		}
+		// TODO dispose mesh upload buffers:
+		// TODO dispose texture upload buffers
 	}
 
 	m_passGPUBuffer.reserve(1);
@@ -164,12 +157,37 @@ void StandardScene::CreateRenderItems(ID3D12Device* d3dDevice, ID3D12GraphicsCom
 		// Create mesh:
 		auto mesh = std::make_shared<ImmutableMesh>("", std::move(vertexBuffer), std::move(indexBuffer));
 		mesh->AddSubmesh("Submesh", Submesh(meshData));
-		m_meshes.emplace(mesh->Name(), mesh);
+		// TODO m_meshes.emplace(mesh->Name(), mesh);
 
 		StandardRenderItem renderItem(d3dDevice, mesh, "Submesh");
 
 		m_renderItems.emplace_back(std::move(renderItem));
 	});
+}
+void StandardScene::CreateTexture(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const std::wstring& path, bool isColorData)
+{
+	// Create temporary upload buffer:
+	m_temporaryUploadBuffers.emplace();
+	auto& uploadBuffer = m_temporaryUploadBuffers.back();
+
+	// Create texture:
+	Texture texture;
+
+	// Load texture:
+	DDS_ALPHA_MODE alphaMode;
+	bool isCubeMap;
+	texture.LoadTextureFromFile(
+		d3dDevice,
+		commandList,
+		path,
+		D3D12_RESOURCE_FLAG_NONE,
+		DDS_LOADER_FORCE_SRGB,
+		alphaMode,
+		isCubeMap,
+		uploadBuffer
+	);
+
+	m_textures.emplace(path, std::move(texture));
 }
 
 void StandardScene::UpdatePassBuffer()
@@ -223,16 +241,22 @@ void StandardScene::UpdateInstancesBuffers()
 template<class MeshType>
 void StandardScene::UpdateInstancesBuffer(std::deque<StandardRenderItem>::iterator& renderItem)
 {
-	std::for_each(MeshType::begin(), MeshType::end(), [&renderItem](auto& mesh)
+	std::for_each(MeshType::begin(), MeshType::end(), [this, &renderItem](auto& mesh)
 	{
 		renderItem->SetInstanceCount(mesh.GetInstanceCount());
 
 		std::size_t index = 0;
-		std::for_each(mesh.InstancesBegin(), mesh.InstancesEnd(), [&index, &renderItem](auto& instance)
+		std::for_each(mesh.InstancesBegin(), mesh.InstancesEnd(), [this, &index, &renderItem](auto& instance)
 		{
 			ShaderBufferTypes::InstanceData shaderData;
-			shaderData.MaterialIndex = static_cast<std::uint32_t>(instance.GetMaterialIndex());
+			
+			// Update material index:
+			shaderData.MaterialIndex = m_materialIndices.at(instance.GetMaterial()->GetName());
+
+			// Update model matrix:
 			shaderData.ModelMatrix = instance.GetTransform().GetWorldTransform();
+
+			// Update render item instance:
 			renderItem->UpdateInstance(index++, shaderData);
 		});
 
