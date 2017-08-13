@@ -8,6 +8,7 @@ StandardRenderItem::StandardRenderItem(ID3D12Device* d3dDevice) :
 	m_instancesGPUBuffer(GPUAllocator<ShaderBufferTypes::InstanceData>(d3dDevice, false))
 {
 }
+
 StandardRenderItem::StandardRenderItem(ID3D12Device* d3dDevice, std::shared_ptr<ImmutableMesh> mesh, const std::string& submeshName) :
 	m_submeshName(submeshName),
 	m_mesh(mesh),
@@ -46,4 +47,18 @@ void StandardRenderItem::ReserveSpaceForInstances(std::size_t newCapacity)
 void StandardRenderItem::AddInstance(const ShaderBufferTypes::InstanceData& instanceData)
 {
 	m_instancesGPUBuffer.push_back(instanceData);
+}
+void StandardRenderItem::UpdateInstance(std::size_t index, const ShaderBufferTypes::InstanceData& instanceData)
+{
+	m_instancesGPUBuffer[index] = instanceData;
+}
+
+std::size_t StandardRenderItem::GetInstanceCount() const
+{
+	return m_instancesGPUBuffer.size();
+}
+void StandardRenderItem::SetInstanceCount(std::size_t count)
+{
+	if(count != m_instancesGPUBuffer.size())
+		m_instancesGPUBuffer.resize(count);
 }

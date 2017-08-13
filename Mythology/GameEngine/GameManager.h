@@ -1,10 +1,8 @@
 #pragma once
 
-#include "Common/MemoryPool/MemoryPool.h"
-#include "Component/Meshes/MeshComponent.h"
 #include "Component/Transforms/TransformComponent.h"
-#include "Geometry/Primitives/BoxGeometry.h"
-#include "Common/Events/Event.h"
+#include "Input/Keyboard.h"
+#include "Input/Mouse.h"
 
 namespace Common
 {
@@ -13,23 +11,22 @@ namespace Common
 
 namespace GameEngine
 {
-	class GameManager
+	class GameManager : public std::enable_shared_from_this<GameManager>
 	{
 	public:
-		Common::Event<GameManager, std::string, void*, const MeshComponent<BoxGeometry>&> OnBoxCreatedEvent;
+		GameManager();
 
 	public:
-		void Initialize();
-
-		void FixedUpdate(const Common::Timer& timer);
-		void FrameUpdate(const Common::Timer& timer);
+		void ProcessInput();
+		void FixedUpdate(const Common::Timer& timer) const;
+		void FrameUpdate(const Common::Timer& timer) const;
 
 	public:
-		TransformComponent& CreateTransform();
-		MeshComponent<BoxGeometry>& CreateBox(const BoxGeometry& geometry);
+		Keyboard& GetKeyboard() { return m_keyboard; }
+		Mouse& GetMouse() { return m_mouse; }
 
 	private:
-		Common::MemoryPool<TransformComponent, 10> m_transforms;
-		Common::MemoryPool<MeshComponent<BoxGeometry>, 10> m_boxes;
+		Keyboard m_keyboard;
+		Mouse m_mouse;
 	};
 }

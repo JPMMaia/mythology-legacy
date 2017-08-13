@@ -122,6 +122,7 @@
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)Libraries\DirectXTK12\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,6 +139,7 @@
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)Libraries\DirectXTK12\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,6 +156,7 @@
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)Libraries\DirectXTK12\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -172,6 +175,7 @@
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)Libraries\DirectXTK12\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -191,6 +195,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/D_ITERATOR_DEBUG_LEVEL=1 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir)Libraries\DirectXTK12\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -210,6 +215,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/D_ITERATOR_DEBUG_LEVEL=1 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir)Libraries\DirectXTK12\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -236,22 +242,26 @@
     <ClInclude Include="Core\Geometry\Buffers\VertexBuffer.h" />
     <ClInclude Include="Core\Geometry\IMesh.h" />
     <ClInclude Include="Core\Geometry\ImmutableMesh.h" />
-    <ClInclude Include="Core\Geometry\MeshGenerator.h" />
     <ClInclude Include="Core\Geometry\Submesh.h" />
     <ClInclude Include="Core\Geometry\VertexTypes.h" />
-    <ClInclude Include="Core\Input\Keyboard.h" />
-    <ClInclude Include="Core\Input\Mouse.h" />
     <ClInclude Include="Core\Material\ColorMaterial.h" />
     <ClInclude Include="Core\Material\MaterialInstance.h" />
-    <ClInclude Include="Core\Material\StandardMaterial.h" />
     <ClInclude Include="Core\Pipeline\PipelineStateManager.h" />
     <ClInclude Include="Core\Pipeline\RootSignatureManager.h" />
     <ClInclude Include="Core\Renderer.h" />
     <ClInclude Include="Core\RenderItem\ColorRenderItem.h" />
+    <ClInclude Include="Core\RenderItem\Specific\RenderRectangle.h" />
     <ClInclude Include="Core\RenderItem\StandardRenderItem.h" />
     <ClInclude Include="Core\Resources\DescriptorHeap.h" />
     <ClInclude Include="Core\Resources\GPUAllocator.h" />
-    <ClInclude Include="Core\Sample3DSceneRenderer.h" />
+    <ClInclude Include="Core\Sample3DSceneRenderer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Core\Scene\RenderLayers.h" />
     <ClInclude Include="Core\Scene\StandardScene.h" />
     <ClInclude Include="Core\ShaderStructures.h" />
@@ -278,21 +288,25 @@
     <ClCompile Include="Core\Geometry\Buffers\IndexBuffer.cpp" />
     <ClCompile Include="Core\Geometry\Buffers\VertexBuffer.cpp" />
     <ClCompile Include="Core\Geometry\ImmutableMesh.cpp" />
-    <ClCompile Include="Core\Geometry\MeshGenerator.cpp" />
     <ClCompile Include="Core\Geometry\Submesh.cpp" />
     <ClCompile Include="Core\Geometry\VertexTypes.cpp" />
-    <ClCompile Include="Core\Input\Keyboard.cpp" />
-    <ClCompile Include="Core\Input\Mouse.cpp" />
     <ClCompile Include="Core\Material\ColorMaterial.cpp" />
     <ClCompile Include="Core\Material\MaterialInstance.cpp" />
-    <ClCompile Include="Core\Material\StandardMaterial.cpp" />
     <ClCompile Include="Core\Pipeline\PipelineStateManager.cpp" />
     <ClCompile Include="Core\Pipeline\RootSignatureManager.cpp" />
     <ClCompile Include="Core\Renderer.cpp" />
     <ClCompile Include="Core\RenderItem\ColorRenderItem.cpp" />
+    <ClCompile Include="Core\RenderItem\Specific\RenderRectangle.cpp" />
     <ClCompile Include="Core\RenderItem\StandardRenderItem.cpp" />
     <ClCompile Include="Core\Resources\DescriptorHeap.cpp" />
-    <ClCompile Include="Core\Sample3DSceneRenderer.cpp" />
+    <ClCompile Include="Core\Sample3DSceneRenderer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Core\Scene\StandardScene.cpp" />
     <ClCompile Include="Core\Shader\Shader.cpp" />
     <ClCompile Include="Core\Textures\Texture.cpp" />

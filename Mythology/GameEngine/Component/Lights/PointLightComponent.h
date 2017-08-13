@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameEngine/Component/Base/BaseComponent.h"
+#include "GameEngine/Memory/StandardAllocator.h"
 
 namespace GameEngine
 {
@@ -29,5 +30,7 @@ namespace GameEngine
 		Vector3Type m_strength;
 		float m_falloffStart;
 		float m_falloffEnd;
+
+		DEFINE_ALLOCATOR(PointLightComponent);
 	};
 }

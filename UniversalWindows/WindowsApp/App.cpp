@@ -43,7 +43,7 @@ App::App() :
 	m_windowVisible(true),
 	m_relativeMouseHandling(true)
 {
-	
+
 }
 
 // The first method called when the IFrameworkView is being created.
@@ -64,13 +64,13 @@ void App::Initialize(CoreApplicationView^ applicationView)
 // Called when the CoreWindow object is created (or re-created).
 void App::SetWindow(CoreWindow^ window)
 {
-	window->SizeChanged += 
+	window->SizeChanged +=
 		ref new TypedEventHandler<CoreWindow^, WindowSizeChangedEventArgs^>(this, &App::OnWindowSizeChanged);
 
 	window->VisibilityChanged +=
 		ref new TypedEventHandler<CoreWindow^, VisibilityChangedEventArgs^>(this, &App::OnVisibilityChanged);
 
-	window->Closed += 
+	window->Closed +=
 		ref new TypedEventHandler<CoreWindow^, CoreWindowEventArgs^>(this, &App::OnWindowClosed);
 
 	DisplayInformation^ currentDisplayInformation = DisplayInformation::GetForCurrentView();
@@ -109,21 +109,19 @@ void App::Load(Platform::String^ entryPoint)
 // This method is called after the window becomes active.
 void App::Run()
 {
+	// Ensure that the device resources are initialized:
+	GetDeviceResources();
+
 	while (!m_windowClosed)
 	{
 		if (m_windowVisible)
 		{
 			CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
 
-			auto commandQueue = GetDeviceResources()->GetCommandQueue();
-			PIXBeginEvent(commandQueue, 0, L"Update and render");
+			if (m_main->UpdateAndRender())
 			{
-				if (m_main->UpdateAndRender())
-				{
-					GetDeviceResources()->Present();
-				}
+				GetDeviceResources()->Present();
 			}
-			PIXEndEvent(commandQueue);
 		}
 		else
 		{
@@ -243,21 +241,21 @@ std::shared_ptr<DirectX12Engine::DeviceResources> App::GetDeviceResources()
 
 void App::OnKeyDown(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::KeyEventArgs^ args)
 {
-	m_deviceResources->Keyboard().PressKey(static_cast<std::uint8_t>(args->VirtualKey));
+	m_main->GetGame()->GameManager()->GetKeyboard().PressKey(static_cast<std::uint8_t>(args->VirtualKey));
 
 	args->Handled = true;
 }
 void WindowsApp::App::OnKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args)
 {
-	m_deviceResources->Keyboard().ReleaseKey(static_cast<std::uint8_t>(args->VirtualKey));
+	m_main->GetGame()->GameManager()->GetKeyboard().ReleaseKey(static_cast<std::uint8_t>(args->VirtualKey));
 
 	args->Handled = true;
 }
 void WindowsApp::App::OnPointerMoved(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args)
 {
-	if(args->CurrentPoint->PointerDevice->PointerDeviceType == PointerDeviceType::Mouse)
+	if (args->CurrentPoint->PointerDevice->PointerDeviceType == PointerDeviceType::Mouse)
 	{
-		if(m_relativeMouseHandling)
+		if (m_relativeMouseHandling)
 		{
 			args->Handled = true;
 			return;
@@ -269,7 +267,7 @@ void WindowsApp::App::OnMouseMoved(Windows::Devices::Input::MouseDevice ^sender,
 	if (!m_relativeMouseHandling)
 		return;
 
-	auto& mouse = m_deviceResources->Mouse();
+	auto& mouse = m_main->GetGame()->GameManager()->GetMouse();
 	mouse.ProcessMouseDelta(static_cast<float>(args->MouseDelta.X), static_cast<float>(args->MouseDelta.Y));
 }
 

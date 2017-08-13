@@ -14,8 +14,8 @@ Texture2D g_normals : register(t2, space0);
 
 float4 main(PixelInput input) : SV_TARGET
 {
-	float3 positionW = g_positions.Sample(g_samplerPointClamp, input.TextureCoordinates).xyz;
 	float4 albedo = g_albedo.Sample(g_samplerPointClamp, input.TextureCoordinates);
+	float3 positionW = g_positions.Sample(g_samplerPointClamp, input.TextureCoordinates).xyz;
 	float3 normalW = g_normals.Sample(g_samplerPointClamp, input.TextureCoordinates).xyz;
 
 	Material material;

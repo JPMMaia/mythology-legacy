@@ -3,7 +3,7 @@
 
 using namespace DirectX12Engine;
 
-std::vector<VertexTypes::PositionVertex> VertexTypes::PositionVertex::CreateFromMeshData(const MeshGenerator::MeshData& meshData)
+std::vector<VertexTypes::PositionVertex> VertexTypes::PositionVertex::CreateFromMeshData(const GameEngine::EigenMeshData& meshData)
 {
 	std::vector<PositionVertex> vertices;
 	vertices.reserve(meshData.Vertices.size());
@@ -14,7 +14,7 @@ std::vector<VertexTypes::PositionVertex> VertexTypes::PositionVertex::CreateFrom
 	return vertices;
 }
 
-std::vector<VertexTypes::PositionNormalVertex> VertexTypes::PositionNormalVertex::CreateFromMeshData(const MeshGenerator::MeshData& meshData)
+std::vector<VertexTypes::PositionNormalVertex> VertexTypes::PositionNormalVertex::CreateFromMeshData(const GameEngine::EigenMeshData& meshData)
 {
 	std::vector<PositionNormalVertex> vertices;
 	vertices.reserve(meshData.Vertices.size());
@@ -25,7 +25,7 @@ std::vector<VertexTypes::PositionNormalVertex> VertexTypes::PositionNormalVertex
 	return vertices;
 }
 
-std::vector<VertexTypes::PositionNormalTextureCoordinatesVertex> VertexTypes::PositionNormalTextureCoordinatesVertex::CreateFromMeshData(const MeshGenerator::MeshData& meshData)
+std::vector<VertexTypes::PositionNormalTextureCoordinatesVertex> VertexTypes::PositionNormalTextureCoordinatesVertex::CreateFromMeshData(const GameEngine::EigenMeshData& meshData)
 {
 	std::vector<PositionNormalTextureCoordinatesVertex> vertices;
 	vertices.reserve(meshData.Vertices.size());
@@ -36,7 +36,7 @@ std::vector<VertexTypes::PositionNormalTextureCoordinatesVertex> VertexTypes::Po
 	return vertices;
 }
 
-std::vector<VertexTypes::PositionTextureCoordinatesVextex> VertexTypes::PositionTextureCoordinatesVextex::CreateFromMeshData(const MeshGenerator::MeshData& meshData)
+std::vector<VertexTypes::PositionTextureCoordinatesVextex> VertexTypes::PositionTextureCoordinatesVextex::CreateFromMeshData(const GameEngine::EigenMeshData& meshData)
 {
 	std::vector<PositionTextureCoordinatesVextex> vertices;
 	vertices.reserve(meshData.Vertices.size());

@@ -117,10 +117,10 @@ TransformComponent::QuaternionType TransformComponent::GetWorldRotation() const
 {
 	auto rotation = m_localRotation;
 
-	auto transform = shared_from_this();
+	auto transform = this;
 	while (!transform->m_parent.expired())
 	{
-		transform = transform->m_parent.lock();
+		transform = transform->m_parent.lock().get();
 		rotation = transform->m_localRotation * rotation;
 	}
 
@@ -130,10 +130,10 @@ void TransformComponent::SetWorldRotation(QuaternionCRType worldRotation)
 {
 	auto parentsRotation = QuaternionType::Identity();
 
-	auto transform = shared_from_this();
+	auto transform = this;
 	while (!transform->m_parent.expired())
 	{
-		transform = transform->m_parent.lock();
+		transform = transform->m_parent.lock().get();
 		parentsRotation = transform->m_localRotation * parentsRotation;
 	}
 
@@ -219,12 +219,14 @@ void TransformComponent::UpdateTransformValuesToHoldWorldTransform(const std::sh
 	// Apply parent's transform:
 	auto localTransform = parentWorldTransform * CalculateLocalTransform();
 
-	// Apply translation:
-	m_localPosition = localTransform.translation();
-
 	// Apply rotation and scaling:
 	Matrix3f rotationMatrix, scalingMatrix;
 	localTransform.computeRotationScaling(&rotationMatrix, &scalingMatrix);
-	m_localRotation = Eigen::AngleAxis<float>(rotationMatrix);
 	m_localScaling = scalingMatrix.diagonal();
+	m_localRotation = Eigen::AngleAxis<float>(rotationMatrix);
+
+	// Apply translation:
+	m_localPosition = localTransform.translation();
+
+	assert(CalculateLocalTransform().isApprox(localTransform));
 }

@@ -6,9 +6,10 @@
 #include "Pipeline/RootSignatureManager.h"
 #include "Pipeline/PipelineStateManager.h"
 #include "Resources/DescriptorHeap.h"
-#include "Utilities/UploadBuffer.h"
 #include "Command/CommandListManager.h"
 #include "Textures/Texture.h"
+
+#include <array>
 
 namespace DirectX12Engine
 {
@@ -27,6 +28,10 @@ namespace DirectX12Engine
 		void FrameUpdate(const Common::Timer& timer) override;
 		bool Render(const Common::Timer& timer) override;
 
+	public:
+		CommandListManager& GetCommandListManager() { return m_commandListManager; }
+		void SetScene(const std::shared_ptr<IScene>& scene);
+
 	private:
 		void BeginRender();
 		void EndRender();
@@ -40,7 +45,7 @@ namespace DirectX12Engine
 		DescriptorHeap m_rtvDescriptorHeap;
 		DescriptorHeap m_dsvDescriptorHeap;
 		DescriptorHeap m_srvDescriptorHeap;
-		DescriptorHeap m_texturesDescriptorHeap;
+		std::array<float, 4> m_clearColor;
 
 		std::shared_ptr<IScene> m_scene;
 		Texture m_positions;

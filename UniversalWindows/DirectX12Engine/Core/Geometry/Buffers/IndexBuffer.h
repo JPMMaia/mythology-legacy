@@ -8,7 +8,7 @@ namespace DirectX12Engine
 	{
 	public:
 		IndexBuffer() = default;
-		IndexBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const void* indices, size_t indexCount, size_t indexByteSize, DXGI_FORMAT indexFormat);
+		IndexBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const void* indices, size_t indexCount, size_t indexByteSize, DXGI_FORMAT indexFormat, Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer);
 		IndexBuffer(const IndexBuffer& rhs) = default;
 		IndexBuffer& operator=(const IndexBuffer& rhs) = default;
 

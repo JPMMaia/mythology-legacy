@@ -11,7 +11,7 @@ namespace DirectX12Engine
 	class StandardRenderItem : public GraphicsEngine::IRenderItem
 	{
 	public:
-		explicit StandardRenderItem(ID3D12Device* d3dDevice);
+		StandardRenderItem(ID3D12Device* d3dDevice);
 		StandardRenderItem(ID3D12Device* d3dDevice, std::shared_ptr<ImmutableMesh> mesh, const std::string& submeshName);
 
 		void Render(ID3D12GraphicsCommandList* commandList) const;
@@ -19,6 +19,9 @@ namespace DirectX12Engine
 
 		void ReserveSpaceForInstances(std::size_t newCapacity);
 		void AddInstance(const ShaderBufferTypes::InstanceData& instanceData);
+		void UpdateInstance(std::size_t index, const ShaderBufferTypes::InstanceData& instanceData);
+		std::size_t GetInstanceCount() const;
+		void SetInstanceCount(std::size_t count);
 
 	private:
 		std::string m_submeshName;

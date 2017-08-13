@@ -1,29 +1,32 @@
 #include "GameManager.h"
 #include "GameObject/GameObject.h"
 
+#include "GameEngine/Component/Cameras/CameraComponent.h"
+
+using namespace Common;
 using namespace GameEngine;
 
-void GameManager::Initialize()
+GameManager::GameManager()
 {
 }
 
-void GameManager::FixedUpdate(const Common::Timer& timer)
+void GameManager::ProcessInput()
 {
-	for (auto iterator = m_transforms.Begin(); iterator != m_transforms.End(); ++iterator)
-		iterator->GetElement().FixedUpdate(timer);
-}
-void GameManager::FrameUpdate(const Common::Timer& timer)
-{
+	m_mouse.Update();
 }
 
-TransformComponent& GameManager::CreateTransform()
+template<class T>
+void FixedUpdate(const Timer& timer)
 {
-	return m_transforms.NewElement();
+	std::for_each(T::Allocator::begin(), T::Allocator::end(), [&timer](auto& element)
+	{
+		element.FixedUpdate(timer);
+	});
 }
-MeshComponent<BoxGeometry>& GameManager::CreateBox(const BoxGeometry& geometry)
+void GameManager::FixedUpdate(const Common::Timer& timer) const
 {
-	//auto& transform = m_transforms.NewElement();
-	auto& box = m_boxes.NewElement(geometry);
-	OnBoxCreatedEvent(this, box);
-	return box;
+	::FixedUpdate<CameraComponent>(timer);
+}
+void GameManager::FrameUpdate(const Common::Timer& timer) const
+{
 }

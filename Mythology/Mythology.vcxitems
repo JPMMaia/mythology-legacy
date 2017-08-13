@@ -44,6 +44,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\SpotLightComponent.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\StandardMaterial.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\PhysicsComponent.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -54,6 +57,12 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Input\Keyboard.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Input\Mouse.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\MythologyGame.cpp">
@@ -68,6 +77,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\InternalEvent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\MemoryPool\MemoryPool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\MemoryPool\MemoryPoolElement.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Common\Memory\MemoryPool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\PerformanceTimer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Task.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\TasksComponent.h" />
@@ -78,7 +88,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\DirectionalLightComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\PointLightComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\SpotLightComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\InstancedMeshComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\MeshComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\StandardMaterial.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\PhysicsComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Transforms\TransformComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameManager.h" />
@@ -87,53 +99,18 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\MeshData.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\MeshGenerator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Primitives\BoxGeometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Primitives\RectangleGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\VertexData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Input\Keyboard.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Input\Mouse.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Memory\StandardAllocator.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Memory\UseStorage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\DisplayOrientations.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IMaterial.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IRenderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IRenderItem.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IWindow.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\is_arithmetic_simd_component.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\is_floating_point_simd_component.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\is_integral_simd_component.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\is_simd_component.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\is_sized_bool.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\is_vec_component.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\mat2xR.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\mat3xR.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\mat4xR.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\matmult.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\simd2.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\simdN.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\simd\sse2\bool16x8.sse2.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\simd\sse2\bool64x2.sse2.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\simd\sse2\bool8x16.sse2.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\simd\sse2\float64x2.sse2.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\simd\sse2\int16x8.sse2.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\simd\sse2\int32x4.sse2.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\simd\sse2\int64x2.sse2.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\simd\sse2\int8x16.sse2.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\simd\sse2\uint16x8.sse2.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\simd\sse2\uint32x4.sse2.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\simd\sse2\uint64x2.sse2.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\simd\sse2\uint8x16.sse2.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\simd\sse\bool32x4.sse.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\simd\sse\float32x4.sse.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\simd_specializations.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\simd_support.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\vec2.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\vec3.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\detail_\vec4.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\mat.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\math.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\nocopy_cast.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\quat.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\simd.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\sized_bool.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\transform.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\unused.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tue\vec.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\MythologyGame.h" />
   </ItemGroup>
 </Project>

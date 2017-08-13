@@ -29,14 +29,14 @@ VertexOutput main(VertexInput input, uint instanceID : SV_InstanceID)
 	InstanceData instanceData = g_instanceData[instanceID];
 
 	// Transfrom position from local space to world space:
-	float4 positionW = mul(float4(input.PositionL, 1.0f), instanceData.ModelMatrix);
+	float4 positionW = mul(instanceData.ModelMatrix, float4(input.PositionL, 1.0f));
 	output.PositionW = positionW.xyz;
 
 	// Transfrom position from world space to projection space:
-	output.PositionH = mul(positionW, g_passData.ViewProjectionMatrix);
+	output.PositionH = mul(g_passData.ViewProjectionMatrix, positionW);
 
 	// Transfrom normal from local space to world space, assuming that there is no non-uniform transformation:
-	output.NormalW = mul(input.NormalL, (float3x3) instanceData.ModelMatrix);
+	output.NormalW = mul((float3x3) instanceData.ModelMatrix, input.NormalL);
 
 	// Output texture coordinates:
 	output.TextureCoordinates = input.TextureCoordinates;

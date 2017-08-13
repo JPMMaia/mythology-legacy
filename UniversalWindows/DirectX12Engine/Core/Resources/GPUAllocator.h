@@ -65,6 +65,8 @@ namespace DirectX12Engine
 	private:
 		T* CreateUploadBuffer(std::size_t size)
 		{
+			m_uploadBuffer.Reset();
+
 			auto bufferSize = m_isConstantBuffer ? DX::CalculateConstantBufferByteSize(sizeof(T)) : size * sizeof(T);
 
 			auto uploadHeapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_UPLOAD);

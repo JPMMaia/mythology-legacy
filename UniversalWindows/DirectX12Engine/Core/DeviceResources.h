@@ -5,8 +5,7 @@
 
 #include "GraphicsEngineInterfaces/IWindow.h"
 #include "Utilities/d3dx12.h"
-#include "Input/Keyboard.h"
-#include "Input/Mouse.h"
+#include "Libraries/Eigen/Geometry"
 
 namespace DirectX12Engine
 {
@@ -45,7 +44,7 @@ namespace DirectX12Engine
 		DXGI_FORMAT					GetBackBufferFormat() const			{ return m_backBufferFormat; }
 		DXGI_FORMAT					GetDepthBufferFormat() const		{ return m_depthBufferFormat; }
 		D3D12_VIEWPORT				GetScreenViewport() const			{ return m_screenViewport; }
-		DirectX::XMFLOAT4X4			GetOrientationTransform3D() const	{ return m_orientationTransform3D; }
+		Eigen::Matrix4f				GetOrientationTransform3D() const	{ return m_orientationTransform3D; }
 		UINT						GetCurrentFrameIndex() const		{ return m_currentFrame; }
 
 		CD3DX12_CPU_DESCRIPTOR_HANDLE GetRenderTargetView() const
@@ -66,9 +65,6 @@ namespace DirectX12Engine
 
 		static constexpr UINT GetFrameCount() { return c_frameCount; }
 
-		Keyboard& Keyboard() { return m_keyboard; }
-		Mouse& Mouse() { return m_mouse; }
-
 	private:
 		void CreateDeviceIndependentResources();
 		void CreateDeviceResources();
@@ -77,6 +73,7 @@ namespace DirectX12Engine
 		void MoveToNextFrame();
 		DXGI_MODE_ROTATION ComputeDisplayRotation() const;
 		void GetHardwareAdapter(IDXGIAdapter1** ppAdapter) const;
+		void EnableShaderBasedValidation() const;
 
 	private:
 		void CreateDevice();
@@ -127,7 +124,7 @@ namespace DirectX12Engine
 		float m_effectiveDpi;
 
 		// Transforms used for display orientation.
-		DirectX::XMFLOAT4X4	m_orientationTransform3D;
+		Eigen::Matrix4f	m_orientationTransform3D;
 
 		UINT m_cbvSrvUavDescriptorSize = 0;
 		UINT m_dsvDescriptorSize = 0;
@@ -135,8 +132,5 @@ namespace DirectX12Engine
 
 		UINT m_sampleCount = 1;
 		UINT m_sampleQuality = 0;
-
-		DirectX12Engine::Keyboard m_keyboard;
-		DirectX12Engine::Mouse m_mouse;
 	};
 }

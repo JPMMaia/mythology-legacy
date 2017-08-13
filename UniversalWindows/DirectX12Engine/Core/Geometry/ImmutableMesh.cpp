@@ -27,12 +27,6 @@ void ImmutableMesh::Render(ID3D12GraphicsCommandList* commandList, const std::st
 	commandList->DrawIndexedInstanced(submesh.IndexCount(), instanceCount, submesh.StartIndexLocation(), submesh.BaseVertexLocation(), 0);
 }
 
-void ImmutableMesh::DisposeUploadBuffers()
-{
-	m_vertexBuffer.DisposeUploadBuffer();
-	m_indexBuffer.DisposeUploadBuffer();
-}
-
 const std::string& ImmutableMesh::Name() const
 {
 	return m_name;

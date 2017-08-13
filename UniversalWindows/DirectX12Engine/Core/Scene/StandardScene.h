@@ -1,15 +1,14 @@
 ﻿#pragma once
 
 #include "GraphicsEngineInterfaces/IScene.h"
-#include "GraphicsEngineInterfaces/IRenderItem.h"
-#include "GraphicsEngineInterfaces/IMaterial.h"
 #include "Core/DeviceResources.h"
 #include "Core/Command/CommandListManager.h"
-#include "Core/Geometry/IMesh.h"
 #include "Core/RenderItem/StandardRenderItem.h"
 #include "Core/Resources/GPUAllocator.h"
-#include "Core/Camera/Camera.h"
 #include "Core/Shader/ShaderBufferTypes.h"
+#include "Core/Textures/Texture.h"
+#include "Core/Resources/DescriptorHeap.h"
+#include "Mythology/MythologyGame.h"
 
 #include <unordered_map>
 
@@ -20,7 +19,7 @@ namespace DirectX12Engine
 	class StandardScene : public IScene
 	{
 	public:
-		StandardScene(const std::shared_ptr<DeviceResources>& deviceResources, CommandListManager& commandListManager);
+		StandardScene(const std::shared_ptr<DeviceResources>& deviceResources, CommandListManager& commandListManager, const std::shared_ptr<Mythology::MythologyGame>& game);
 		~StandardScene();
 
 		void CreateDeviceDependentResources() override;
@@ -34,25 +33,36 @@ namespace DirectX12Engine
 
 		bool Render(const Common::Timer& timer, RenderLayer renderLayer) override;
 
-		StandardRenderItem& GetCubeRenderItem();
-
 	private:
+		template<class MeshType, class VertexType>
+		void CreateRenderItems(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList);
+
+		void CreateMaterial(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::StandardMaterial& material);
+		void CreateTexture(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const std::wstring& path, bool isColorData);
+
 		void UpdatePassBuffer();
+		void UpdateInstancesBuffers();
+
+		template<class MeshType>
+		void UpdateInstancesBuffer(std::deque<StandardRenderItem>::iterator& renderItem);
 
 	private:
 		std::shared_ptr<DeviceResources> m_deviceResources;
 		CommandListManager& m_commandListManager;
 		std::size_t m_commandListIndex = 0;
 
-		Camera m_camera;
-		std::unordered_map<std::string, std::shared_ptr<IMesh>> m_meshes;
-		std::unordered_map<std::string, std::shared_ptr<GraphicsEngine::IMaterial>> m_materials;
-		std::unordered_map<std::string, std::shared_ptr<GraphicsEngine::IRenderItem>> m_renderItems;
-
+		std::deque<Microsoft::WRL::ComPtr<ID3D12Resource>> m_temporaryUploadBuffers;
 		GPUUploadBuffer<ShaderBufferTypes::MaterialData> m_materialsGPUBuffer;
 		GPUUploadBuffer<ShaderBufferTypes::PassData> m_passGPUBuffer;
 
-		StandardRenderItem m_cubeRenderItem;
-		StandardRenderItem m_rectangleRenderItem;
+		std::unique_ptr<StandardRenderItem> m_renderRectangle;
+		std::deque<StandardRenderItem> m_renderItems;
+		std::unordered_map<std::wstring, Texture> m_textures;
+		DescriptorHeap m_texturesDescriptorHeap;
+
+		std::unordered_map<std::string, std::uint32_t> m_materialIndices;
+		std::unordered_map<std::wstring, std::uint32_t> m_textureIndices;
+
+		std::shared_ptr<Mythology::MythologyGame> m_game;
 	};
 }

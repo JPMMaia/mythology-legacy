@@ -3,8 +3,8 @@
 
 using namespace DirectX12Engine;
 
-IndexBuffer::IndexBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const void* indices, size_t indexCount, size_t indexByteSize, DXGI_FORMAT indexFormat) :
-	BaseGeometryBuffer(device, commandList, indices, indexCount, indexByteSize),
+IndexBuffer::IndexBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const void* indices, size_t indexCount, size_t indexByteSize, DXGI_FORMAT indexFormat, Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer) :
+	BaseGeometryBuffer(device, commandList, indices, indexCount, indexByteSize, uploadBuffer),
 	m_indexFormat(indexFormat),
 	m_view({ m_bufferGPU->GetGPUVirtualAddress(), m_bufferByteSize, m_indexFormat })
 {

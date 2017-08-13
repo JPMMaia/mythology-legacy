@@ -16,7 +16,10 @@ namespace DirectX12Engine
 		static void SetGraphicsRootDescriptorTable(ID3D12GraphicsCommandList* commandList, UINT rootParameterIndex, CD3DX12_GPU_DESCRIPTOR_HANDLE baseDescriptor);
 
 		ID3D12RootSignature* GetRootSignature(const std::string& name) const;
-				
+			
+	private:
+		void CreateRootSignature(ID3D12Device* d3dDevice, const std::string name, UINT numParameters, const D3D12_ROOT_PARAMETER* rootParameters);
+
 	private:
 		std::shared_ptr<DeviceResources> m_deviceResources;
 

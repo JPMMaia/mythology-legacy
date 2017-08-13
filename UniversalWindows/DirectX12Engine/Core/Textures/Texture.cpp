@@ -3,7 +3,7 @@
 #include "Core/DeviceResources.h"
 #include "Core/Resources/DescriptorHeap.h"
 #include "DDSTextureLoader.h"
-#include "Core/Material/StandardMaterial.h"
+#include "Core/Utilities/DirectXHelper.h"
 
 using namespace DirectX12Engine;
 
@@ -63,7 +63,7 @@ void Texture::LoadTextureFromFile(ID3D12Device* d3dDevice, ID3D12GraphicsCommand
 
 void Texture::CreateDepthStencilView(const std::shared_ptr<DeviceResources>& deviceResources, DescriptorHeap& descriptorHeap, const std::string& name)
 {
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDescription = {};
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDescription;
 	dsvDescription.Format = m_format;
 	dsvDescription.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 	dsvDescription.Flags = D3D12_DSV_FLAG_NONE;

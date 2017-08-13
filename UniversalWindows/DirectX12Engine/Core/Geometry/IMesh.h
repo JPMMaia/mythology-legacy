@@ -7,8 +7,5 @@ namespace DirectX12Engine
 	public:
 		IMesh() = default;
 		virtual ~IMesh() = default;
-
-	public:
-		virtual void DisposeUploadBuffers() = 0;
 	};
 }

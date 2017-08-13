@@ -1,14 +1,15 @@
 ﻿#pragma once
 
 #include <DirectXCollision.h>
-#include "MeshGenerator.h"
+
+#include "GameEngine/Geometry/EigenGeometry.h"
 
 namespace DirectX12Engine
 {
 	class Submesh
 	{
 	public:
-		template<typename VertexType>
+		/*template<typename VertexType>
 		static DirectX::BoundingBox CreateBoundingBoxFromMesh(const std::vector<VertexType>& vertices)
 		{
 			using namespace DirectX;
@@ -29,10 +30,10 @@ namespace DirectX12Engine
 			XMStoreFloat3(&bounds.Extents, 0.5f * (positionMax - positionMin));
 
 			return bounds;
-		}
+		}*/
 
 	public:
-		explicit Submesh(const MeshGenerator::MeshData& meshData);
+		explicit Submesh(const GameEngine::EigenMeshData& meshData);
 		Submesh(uint32_t indexCount, uint32_t startIndexLocation, uint32_t baseVertexLocation, const DirectX::BoundingBox& bounds);
 
 		uint32_t IndexCount() const;
