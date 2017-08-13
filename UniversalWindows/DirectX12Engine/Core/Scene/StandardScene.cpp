@@ -12,6 +12,7 @@
 #include "GameEngine/Geometry/EigenGeometry.h"
 #include "GameEngine/Component/Meshes/MeshComponent.h"
 #include "Core/RenderItem/Specific/RenderRectangle.h"
+#include <set>
 
 using namespace Common;
 using namespace DirectX;
@@ -56,17 +57,22 @@ void StandardScene::CreateDeviceDependentResources()
 		// Reserve space for material instances:
 		m_materialsGPUBuffer.reserve(StandardMaterial::GetStorage().size());
 
+		// Create textures descriptor heap:
+		{
+			// Count number of textures:
+			std::set<std::wstring> texturePaths;
+			std::for_each(StandardMaterial::begin(), StandardMaterial::end(), [&texturePaths](auto& material)
+			{
+				texturePaths.emplace(material.GetAlbedoMapName());
+			});
+
+			// Create descriptor heap:
+			m_texturesDescriptorHeap.CreateDeviceDependentResources(m_deviceResources, texturePaths.size(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
+		}
+
 		std::for_each(StandardMaterial::begin(), StandardMaterial::end(), [this, d3dDevice, commandList](auto& material)
 		{
-			// TODO Load texture:
-			//CreateTexture(d3dDevice, commandList, material.GetAlbedoMapName(), true);
-
-			ShaderBufferTypes::MaterialData materialData = {};
-			materialData.BaseColor = material.GetBaseColor();
-			materialData.AlbedoMapIndex = 0;
-
-			m_materialIndices.emplace(material.GetName(), static_cast<std::uint32_t>(m_materialsGPUBuffer.size()));
-			m_materialsGPUBuffer.emplace_back(materialData);
+			CreateMaterial(d3dDevice, commandList, material);
 		});
 	}
 
@@ -134,6 +140,11 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 		return true;
 	}
 
+	// Set textures:
+	std::array<ID3D12DescriptorHeap*, 1> descriptorHeaps = { m_texturesDescriptorHeap.Get() };
+	commandList->SetDescriptorHeaps(static_cast<UINT>(descriptorHeaps.size()), descriptorHeaps.data());
+	commandList->SetGraphicsRootDescriptorTable(3, m_texturesDescriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart());
+
 	// Bind materials buffer:
 	commandList->SetGraphicsRootShaderResourceView(1, m_materialsGPUBuffer.get_allocator().GetGPUVirtualAddress(0));
 
@@ -171,8 +182,24 @@ void StandardScene::CreateRenderItems(ID3D12Device* d3dDevice, ID3D12GraphicsCom
 		m_renderItems.emplace_back(std::move(renderItem));
 	});
 }
+
+void StandardScene::CreateMaterial(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::StandardMaterial& material)
+{
+	CreateTexture(d3dDevice, commandList, material.GetAlbedoMapName(), true);
+
+	ShaderBufferTypes::MaterialData materialData = {};
+	materialData.BaseColor = material.GetBaseColor();
+	materialData.AlbedoMapIndex = m_textureIndices.at(material.GetAlbedoMapName());
+
+	m_materialIndices.emplace(material.GetName(), static_cast<std::uint32_t>(m_materialsGPUBuffer.size()));
+	m_materialsGPUBuffer.emplace_back(materialData);
+}
 void StandardScene::CreateTexture(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const std::wstring& path, bool isColorData)
 {
+	// Check if texture was already created:
+	if (m_textures.find(path) != m_textures.end())
+		return;
+
 	// Create temporary upload buffer:
 	m_temporaryUploadBuffers.emplace_back();
 	auto& uploadBuffer = m_temporaryUploadBuffers.back();
@@ -188,12 +215,19 @@ void StandardScene::CreateTexture(ID3D12Device* d3dDevice, ID3D12GraphicsCommand
 		commandList,
 		path,
 		D3D12_RESOURCE_FLAG_NONE,
-		DDS_LOADER_FORCE_SRGB,
+		isColorData ? DDS_LOADER_FORCE_SRGB : DDS_LOADER_DEFAULT,
 		alphaMode,
 		isCubeMap,
 		uploadBuffer
 	);
 
+	// Create shader resource view:
+	texture.CreateShaderResourceView(m_deviceResources, m_texturesDescriptorHeap, "SRV");
+
+	// Add index of texture in the descriptor heap:
+	m_textureIndices.emplace(path, static_cast<uint32_t>(m_textures.size()));
+
+	// Add texture:
 	m_textures.emplace(path, std::move(texture));
 }
 

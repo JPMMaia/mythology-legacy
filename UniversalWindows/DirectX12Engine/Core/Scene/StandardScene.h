@@ -7,6 +7,7 @@
 #include "Core/Resources/GPUAllocator.h"
 #include "Core/Shader/ShaderBufferTypes.h"
 #include "Core/Textures/Texture.h"
+#include "Core/Resources/DescriptorHeap.h"
 #include "Mythology/MythologyGame.h"
 
 #include <unordered_map>
@@ -36,6 +37,7 @@ namespace DirectX12Engine
 		template<class MeshType, class VertexType>
 		void CreateRenderItems(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList);
 
+		void CreateMaterial(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::StandardMaterial& material);
 		void CreateTexture(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const std::wstring& path, bool isColorData);
 
 		void UpdatePassBuffer();
@@ -56,8 +58,10 @@ namespace DirectX12Engine
 		std::unique_ptr<StandardRenderItem> m_renderRectangle;
 		std::deque<StandardRenderItem> m_renderItems;
 		std::unordered_map<std::wstring, Texture> m_textures;
+		DescriptorHeap m_texturesDescriptorHeap;
 
 		std::unordered_map<std::string, std::uint32_t> m_materialIndices;
+		std::unordered_map<std::wstring, std::uint32_t> m_textureIndices;
 
 		std::shared_ptr<Mythology::MythologyGame> m_game;
 	};
