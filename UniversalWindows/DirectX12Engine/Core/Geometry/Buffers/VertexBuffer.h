@@ -8,7 +8,7 @@ namespace DirectX12Engine
 	{
 	public:
 		VertexBuffer() = default;
-		explicit VertexBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const void* vertices, size_t vertexCount, size_t vertexByteSize);
+		explicit VertexBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const void* vertices, size_t vertexCount, size_t vertexByteSize, Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer);
 		VertexBuffer(const VertexBuffer& rhs) = default;
 		VertexBuffer& operator=(const VertexBuffer& rhs) = default;
 

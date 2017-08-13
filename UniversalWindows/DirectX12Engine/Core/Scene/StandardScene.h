@@ -9,7 +9,6 @@
 #include "Core/Textures/Texture.h"
 #include "Mythology/MythologyGame.h"
 
-#include <queue>
 #include <unordered_map>
 
 namespace DirectX12Engine
@@ -50,7 +49,7 @@ namespace DirectX12Engine
 		CommandListManager& m_commandListManager;
 		std::size_t m_commandListIndex = 0;
 
-		std::queue<Microsoft::WRL::ComPtr<ID3D12Resource>> m_temporaryUploadBuffers;
+		std::deque<Microsoft::WRL::ComPtr<ID3D12Resource>> m_temporaryUploadBuffers;
 		GPUUploadBuffer<ShaderBufferTypes::MaterialData> m_materialsGPUBuffer;
 		GPUUploadBuffer<ShaderBufferTypes::PassData> m_passGPUBuffer;
 

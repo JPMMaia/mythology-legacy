@@ -38,7 +38,11 @@ void StandardScene::CreateDeviceDependentResources()
 	auto commandList = m_commandListManager.GetGraphicsCommandList(m_commandListIndex);
 
 	// Create render rectangle:
-	m_renderRectangle = std::make_unique<StandardRenderItem>(RenderRectangle::Create(d3dDevice, commandList));
+	{
+		m_temporaryUploadBuffers.emplace_back(); auto& vertexUploadBuffer = m_temporaryUploadBuffers.back();
+		m_temporaryUploadBuffers.emplace_back(); auto& indexUploadBuffer = m_temporaryUploadBuffers.back();
+		m_renderRectangle = std::make_unique<StandardRenderItem>(RenderRectangle::Create(d3dDevice, commandList, vertexUploadBuffer, indexUploadBuffer));
+	}
 
 	// Create render items:
 	{
@@ -71,11 +75,11 @@ void StandardScene::CreateDeviceDependentResources()
 		commandList->Close();
 		m_commandListManager.ExecuteCommandList(m_commandListIndex);
 
-		// Wait for the command list to finish executing; the vertex/index buffers need to be uploaded to the GPU before disposing the upload buffers:
+		// Wait for the command list to finish executing; the content of the upload buffers need to be uploaded to the GPU before disposing the upload buffers:
 		m_deviceResources->WaitForGpu();
 
-		// TODO dispose mesh upload buffers:
-		// TODO dispose texture upload buffers
+		// Dispose upload buffers:
+		m_temporaryUploadBuffers.clear();
 	}
 
 	m_passGPUBuffer.reserve(1);
@@ -144,20 +148,23 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 template <class MeshType, class VertexType>
 void StandardScene::CreateRenderItems(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList)
 {
-	std::for_each(MeshType::begin(), MeshType::end(), [d3dDevice, commandList, this](auto& meshType)
+	std::for_each(MeshType::begin(), MeshType::end(), [this, d3dDevice, commandList](auto& meshType)
 	{
 		// Create mesh data:
 		auto meshData = meshType.GetGeometry().GenerateMeshData<EigenMeshData>();
 		auto vertices = VertexType::CreateFromMeshData(meshData);
 
+		// Create temporary upload buffers:
+		m_temporaryUploadBuffers.emplace_back(); auto& vertexUploadBuffer = m_temporaryUploadBuffers.back();
+		m_temporaryUploadBuffers.emplace_back(); auto& indexUploadBuffer = m_temporaryUploadBuffers.back();
+
 		// Create buffers:
-		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType));
-		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT);
+		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType), vertexUploadBuffer);
+		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT, indexUploadBuffer);
 
 		// Create mesh:
 		auto mesh = std::make_shared<ImmutableMesh>("", std::move(vertexBuffer), std::move(indexBuffer));
 		mesh->AddSubmesh("Submesh", Submesh(meshData));
-		// TODO m_meshes.emplace(mesh->Name(), mesh);
 
 		StandardRenderItem renderItem(d3dDevice, mesh, "Submesh");
 
@@ -167,7 +174,7 @@ void StandardScene::CreateRenderItems(ID3D12Device* d3dDevice, ID3D12GraphicsCom
 void StandardScene::CreateTexture(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const std::wstring& path, bool isColorData)
 {
 	// Create temporary upload buffer:
-	m_temporaryUploadBuffers.emplace();
+	m_temporaryUploadBuffers.emplace_back();
 	auto& uploadBuffer = m_temporaryUploadBuffers.back();
 
 	// Create texture:

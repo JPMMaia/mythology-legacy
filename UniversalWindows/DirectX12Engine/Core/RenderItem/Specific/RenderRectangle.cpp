@@ -9,7 +9,7 @@
 using namespace DirectX12Engine;
 using namespace GameEngine;
 
-StandardRenderItem RenderRectangle::Create(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList)
+StandardRenderItem RenderRectangle::Create(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, Microsoft::WRL::ComPtr<ID3D12Resource>& vertexUploadBuffer, Microsoft::WRL::ComPtr<ID3D12Resource>& indexUploadBuffer)
 {
 	using VertexType = VertexTypes::PositionTextureCoordinatesVextex;
 
@@ -18,8 +18,8 @@ StandardRenderItem RenderRectangle::Create(ID3D12Device* d3dDevice, ID3D12Graphi
 	auto vertices = VertexType::CreateFromMeshData(meshData);
 
 	// Create buffers:
-	VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType));
-	IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT);
+	VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType), vertexUploadBuffer);
+	IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT, indexUploadBuffer);
 
 	// Create mesh:		
 	auto mesh = std::make_shared<ImmutableMesh>("RenderRectangle", std::move(vertexBuffer), std::move(indexBuffer));

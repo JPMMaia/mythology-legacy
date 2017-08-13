@@ -8,7 +8,7 @@
 using namespace Common;
 using namespace DirectX12Engine;
 
-BaseGeometryBuffer::BaseGeometryBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const void* data, size_t count, size_t elementByteSize) :
+BaseGeometryBuffer::BaseGeometryBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const void* data, size_t count, size_t elementByteSize, Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer) :
 	m_bufferByteSize(static_cast<uint32_t>(count * elementByteSize))
 {
 	// Create CPU buffer and copy vertex data:
@@ -18,13 +18,9 @@ BaseGeometryBuffer::BaseGeometryBuffer(ID3D12Device* device, ID3D12GraphicsComma
 	CopyMemory(m_bufferCPU->GetBufferPointer(), data, m_bufferByteSize);
 
 	// Create GPU buffer:
-	m_bufferGPU = DX::CreateDefaultBuffer(device, commandList, data, m_bufferByteSize, m_uploadBuffer);
+	m_bufferGPU = DX::CreateDefaultBuffer(device, commandList, data, m_bufferByteSize, uploadBuffer);
 }
 
-void BaseGeometryBuffer::DisposeUploadBuffer()
-{
-	m_uploadBuffer = nullptr;
-}
 ID3DBlob* BaseGeometryBuffer::GetBufferCPU() const
 {
 	return m_bufferCPU.Get();

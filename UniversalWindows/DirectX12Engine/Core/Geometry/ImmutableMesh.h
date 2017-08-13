@@ -18,8 +18,6 @@ namespace DirectX12Engine
 
 		void Render(ID3D12GraphicsCommandList* commandList, const std::string& submeshName, UINT instanceCount) const;
 
-		void DisposeUploadBuffers() override;
-
 		const std::string& Name() const;
 
 	private:
