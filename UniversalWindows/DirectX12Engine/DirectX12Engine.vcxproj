@@ -251,6 +251,7 @@
     <ClInclude Include="Core\Pipeline\RootSignatureManager.h" />
     <ClInclude Include="Core\Renderer.h" />
     <ClInclude Include="Core\RenderItem\ColorRenderItem.h" />
+    <ClInclude Include="Core\RenderItem\Specific\RenderRectangle.h" />
     <ClInclude Include="Core\RenderItem\StandardRenderItem.h" />
     <ClInclude Include="Core\Resources\DescriptorHeap.h" />
     <ClInclude Include="Core\Resources\GPUAllocator.h" />
@@ -297,6 +298,7 @@
     <ClCompile Include="Core\Pipeline\RootSignatureManager.cpp" />
     <ClCompile Include="Core\Renderer.cpp" />
     <ClCompile Include="Core\RenderItem\ColorRenderItem.cpp" />
+    <ClCompile Include="Core\RenderItem\Specific\RenderRectangle.cpp" />
     <ClCompile Include="Core\RenderItem\StandardRenderItem.cpp" />
     <ClCompile Include="Core\Resources\DescriptorHeap.cpp" />
     <ClCompile Include="Core\Sample3DSceneRenderer.cpp">

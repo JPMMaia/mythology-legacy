@@ -60,5 +60,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\InstancedMeshComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Memory\MemoryPool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Memory\UseStorage.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Primitives\RectangleGeometry.h" />
   </ItemGroup>
 </Project>

@@ -3,6 +3,9 @@
 #include "GameEngine/Component/Lights/PointLightComponent.h"
 #include "GameEngine/Geometry/Primitives/BoxGeometry.h"
 #include "Libraries/Eigen/Geometry"
+#include "GameEngine/Geometry/Primitives/RectangleGeometry.h"
+
+#include <cmath>
 
 using namespace Eigen;
 using namespace Mythology;
@@ -18,26 +21,64 @@ void MythologyGame::Initialize()
 	m_gameManager = std::make_shared<GameEngine::GameManager>();
 
 	{
-		auto mesh = MeshComponent<BoxGeometry>::CreateSharedPointer();
-		mesh->SetGeometry(BoxGeometry(1.0f, 1.0f, 1.0f, 0));
+		auto mesh = MeshComponent<BoxGeometry>::CreateSharedPointer(BoxGeometry(1.0f, 1.0f, 1.0f, 0));
 		m_meshes.emplace("Box", mesh);
 	}
 
 	{
-		m_person.AddComponent("Box", m_meshes.at("Box")->CreateInstance(0));
+		auto floor = MeshComponent<RectangleGeometry>::CreateSharedPointer(RectangleGeometry(0.0f, 0.0f, 20.0f, 20.0f, 0.0f, 0));
+		m_meshes.emplace("Floor", floor);
 	}
 
+	// Person:
 	{
-		auto component = PointLightComponent::CreateSharedPointer(Eigen::Vector3f(0.8f, 0.8f, 0.8f), 10.0f, 50.0f);
-		component->GetTransform().SetLocalPosition(3.0f * Vector3f(0.0f, 1.0f, -2.0f));
-		m_person.AddComponent("Light", component);
+		m_person.AddComponent("Box", m_meshes.at("Box")->CreateInstance(0));
+
+		{
+			auto component = PointLightComponent::CreateSharedPointer(Eigen::Vector3f(0.8f, 0.8f, 0.8f), 10.0f, 50.0f);
+			component->GetTransform().SetLocalPosition(3.0f * Vector3f(0.0f, 1.0f, -2.0f));
+			m_person.AddComponent("Light", component);
+		}
+
+		{
+			auto component = CameraComponent::CreateSharedPointer();
+			component->GetTransform().SetLocalRotation(Quaternionf::FromTwoVectors(Vector3f::UnitZ(), Vector3f(0.0f, -1.0f, 2.0f)));
+			component->GetTransform().SetLocalPosition(3.0f * Vector3f(0.0f, 1.0f, -2.0f));
+			m_person.AddComponent("Camera", component);
+		}
 	}
-	
+
+	// Axis:
 	{
-		auto component = CameraComponent::CreateSharedPointer();
-		component->GetTransform().SetLocalRotation(Quaternionf::FromTwoVectors(Vector3f::UnitZ(), Vector3f(0.0f, -1.0f, 2.0f)));
-		component->GetTransform().SetLocalPosition(3.0f * Vector3f(0.0f, 1.0f, -2.0f));
-		m_person.AddComponent("Camera", component);
+		auto& box = m_meshes.at("Box");
+
+		{
+			auto instance = box->CreateInstance(1);
+			instance->GetTransform().SetLocalScaling({ 2.0f, 0.1f, 0.1f });
+			instance->GetTransform().SetLocalPosition({ 1.0f, 0.0f, 0.0f });
+			m_axis.AddComponent("X-axis", instance);
+		}
+
+		{
+			auto instance = box->CreateInstance(2);
+			instance->GetTransform().SetLocalScaling({ 0.1f, 2.0f, 0.1f });
+			instance->GetTransform().SetLocalPosition({ 0.0f, 1.0f, 0.0f });
+			m_axis.AddComponent("Y-axis", instance);
+		}
+
+		{
+			auto instance = box->CreateInstance(3);
+			instance->GetTransform().SetLocalScaling({ 0.1f, 0.1f, 2.0f });
+			instance->GetTransform().SetLocalPosition({ 0.0f, 0.0f, 1.0f });
+			m_axis.AddComponent("Z-axis", instance);
+		}
+	}
+
+	// Floor:
+	{
+		auto instance = m_meshes.at("Floor")->CreateInstance(0);
+		instance->GetTransform().SetWorldRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
+		m_floor.AddComponent("Mesh", instance);
 	}
 }
 

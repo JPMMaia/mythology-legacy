@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "GraphicsEngineInterfaces/IScene.h"
-#include "GraphicsEngineInterfaces/IRenderItem.h"
 #include "GraphicsEngineInterfaces/IMaterial.h"
 #include "Core/DeviceResources.h"
 #include "Core/Command/CommandListManager.h"
@@ -34,11 +33,15 @@ namespace DirectX12Engine
 
 		bool Render(const Common::Timer& timer, RenderLayer renderLayer) override;
 
-		StandardRenderItem& GetCubeRenderItem();
-
 	private:
+		template<class MeshType, class VertexType>
+		void CreateRenderItems(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList);
+
 		void UpdatePassBuffer();
 		void UpdateInstancesBuffers();
+
+		template<class MeshType>
+		void UpdateInstancesBuffer(std::deque<StandardRenderItem>::iterator& renderItem);
 
 	private:
 		std::shared_ptr<DeviceResources> m_deviceResources;
@@ -47,20 +50,12 @@ namespace DirectX12Engine
 
 		std::unordered_map<std::string, std::shared_ptr<IMesh>> m_meshes;
 		std::unordered_map<std::string, std::shared_ptr<GraphicsEngine::IMaterial>> m_materials;
-		//std::unordered_map<std::string, std::shared_ptr<GraphicsEngine::IRenderItem>> m_renderItems;
 
 		GPUUploadBuffer<ShaderBufferTypes::MaterialData> m_materialsGPUBuffer;
 		GPUUploadBuffer<ShaderBufferTypes::PassData> m_passGPUBuffer;
 
+		std::unique_ptr<StandardRenderItem> m_renderRectangle;
 		std::deque<StandardRenderItem> m_renderItems;
-
-		StandardRenderItem m_cubeRenderItem;
-		StandardRenderItem m_floor;
-		StandardRenderItem m_rectangleRenderItem;
-		
-		StandardRenderItem m_xAxis;
-		StandardRenderItem m_yAxis;
-		StandardRenderItem m_zAxis;
 
 		std::shared_ptr<Mythology::MythologyGame> m_game;
 	};

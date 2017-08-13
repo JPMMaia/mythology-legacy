@@ -35,6 +35,7 @@
     <ClCompile Include="Core\Resources\DescriptorHeap.cpp" />
     <ClCompile Include="Core\Textures\Samplers.cpp" />
     <ClCompile Include="Core\Textures\Texture.cpp" />
+    <ClCompile Include="Core\RenderItem\Specific\RenderRectangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -72,6 +73,7 @@
     <ClInclude Include="Core\Textures\Samplers.h" />
     <ClInclude Include="Core\Scene\RenderLayers.h" />
     <ClInclude Include="Core\Textures\Texture.h" />
+    <ClInclude Include="Core\RenderItem\Specific\RenderRectangle.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\SamplePixelShader.hlsl" />

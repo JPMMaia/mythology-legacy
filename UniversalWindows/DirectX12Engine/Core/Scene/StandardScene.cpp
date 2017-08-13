@@ -8,9 +8,10 @@
 #include "GameEngine/Component/Cameras/CameraComponent.h"
 #include "GameEngine/Component/Lights/PointLightComponent.h"
 #include "GameEngine/Geometry/Primitives/BoxGeometry.h"
-#include "GameEngine/Geometry/MeshData.h"
+#include "GameEngine/Geometry/Primitives/RectangleGeometry.h"
 #include "GameEngine/Geometry/EigenGeometry.h"
 #include "GameEngine/Component/Meshes/MeshComponent.h"
+#include "Core/RenderItem/Specific/RenderRectangle.h"
 
 using namespace Common;
 using namespace DirectX;
@@ -22,12 +23,6 @@ StandardScene::StandardScene(const std::shared_ptr<DeviceResources>& deviceResou
 	m_commandListManager(commandListManager),
 	m_materialsGPUBuffer(GPUAllocator<ShaderBufferTypes::MaterialData>(deviceResources->GetD3DDevice(), false)),
 	m_passGPUBuffer(GPUAllocator<ShaderBufferTypes::PassData>(deviceResources->GetD3DDevice(), false)),
-	m_cubeRenderItem(deviceResources->GetD3DDevice()),
-	m_floor(deviceResources->GetD3DDevice()),
-	m_rectangleRenderItem(deviceResources->GetD3DDevice()),
-	m_xAxis(deviceResources->GetD3DDevice()),
-	m_yAxis(deviceResources->GetD3DDevice()),
-	m_zAxis(deviceResources->GetD3DDevice()),
 	m_game(game)
 {
 }
@@ -42,148 +37,14 @@ void StandardScene::CreateDeviceDependentResources()
 	m_commandListIndex = 0;
 	auto commandList = m_commandListManager.GetGraphicsCommandList(m_commandListIndex);
 
-	{
-		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
-		using MeshType = MeshComponent<BoxGeometry>;
+	// Create render rectangle:
+	m_renderRectangle = std::make_unique<StandardRenderItem>(RenderRectangle::Create(d3dDevice, commandList));
 
-		auto begin = MeshType::begin();
-
-		// Create mesh data:
-		auto meshData = begin->GetGeometry().GenerateMeshData<EigenMeshData>();
-		auto vertices = VertexType::CreateFromMeshData(meshData);
-
-		// Create buffers:
-		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType));
-		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT);
-
-		// Create mesh:
-		auto mesh = std::make_shared<ImmutableMesh>("", std::move(vertexBuffer), std::move(indexBuffer));
-		mesh->AddSubmesh("Submesh", Submesh(meshData));
-		m_meshes.emplace(mesh->Name(), mesh);
-
-		StandardRenderItem renderItem(d3dDevice, mesh, "Submesh");
-
-		m_renderItems.emplace_back(std::move(renderItem));
-	}
-
-	// Cube Render Item:
 	{
 		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
 
-		// Create mesh data:
-		auto meshData = EigenMeshGenerator::CreateBox(1.0f, 1.0f, 1.0f, 0);
-		auto vertices = VertexType::CreateFromMeshData(meshData);
-
-		// Create buffers:
-		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType));
-		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT);
-
-		// Create mesh:
-		auto mesh = std::make_shared<ImmutableMesh>("CubeMesh", std::move(vertexBuffer), std::move(indexBuffer));
-		mesh->AddSubmesh("CubeSubmesh", Submesh(meshData));
-		m_meshes.emplace(mesh->Name(), mesh);
-
-		m_cubeRenderItem = StandardRenderItem(d3dDevice, mesh, "CubeSubmesh");
-	}
-
-	// Floor:
-	{
-		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
-
-		// Create mesh data:
-		auto meshData = EigenMeshGenerator::CreateRectangle(-10.0f, 0.0f, 20.0f, 20.0f, 0.0f);
-		auto vertices = VertexType::CreateFromMeshData(meshData);
-
-		// Create buffers:
-		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType));
-		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT);
-
-		// Create mesh:
-		auto mesh = std::make_shared<ImmutableMesh>("Floor", std::move(vertexBuffer), std::move(indexBuffer));
-		mesh->AddSubmesh("Submesh", Submesh(meshData));
-		m_meshes.emplace(mesh->Name(), mesh);
-
-		m_floor = StandardRenderItem(d3dDevice, mesh, "Submesh");
-	}
-
-	// X-axis:
-	{
-		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
-
-		// Create mesh data:
-		auto meshData = EigenMeshGenerator::CreateBox(2.0f, 0.1f, 0.1f, 0);
-		auto vertices = VertexType::CreateFromMeshData(meshData);
-
-		// Create buffers:
-		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType));
-		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT);
-
-		// Create mesh:
-		auto mesh = std::make_shared<ImmutableMesh>("X-axis", std::move(vertexBuffer), std::move(indexBuffer));
-		mesh->AddSubmesh("Submesh", Submesh(meshData));
-		m_meshes.emplace(mesh->Name(), mesh);
-
-		m_xAxis = StandardRenderItem(d3dDevice, mesh, "Submesh");
-	}
-
-	// Y-axis:
-	{
-		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
-
-		// Create mesh data:
-		auto meshData = EigenMeshGenerator::CreateBox(0.1f, 2.0f, 0.1f, 0);
-		auto vertices = VertexType::CreateFromMeshData(meshData);
-
-		// Create buffers:
-		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType));
-		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT);
-
-		// Create mesh:
-		auto mesh = std::make_shared<ImmutableMesh>("Y-axis", std::move(vertexBuffer), std::move(indexBuffer));
-		mesh->AddSubmesh("Submesh", Submesh(meshData));
-		m_meshes.emplace(mesh->Name(), mesh);
-
-		m_yAxis = StandardRenderItem(d3dDevice, mesh, "Submesh");
-	}
-
-	// Z-axis:
-	{
-		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
-
-		// Create mesh data:
-		auto meshData = EigenMeshGenerator::CreateBox(0.1f, 0.1f, 2.0f, 0);
-		auto vertices = VertexType::CreateFromMeshData(meshData);
-
-		// Create buffers:
-		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType));
-		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT);
-
-		// Create mesh:
-		auto mesh = std::make_shared<ImmutableMesh>("Z-axis", std::move(vertexBuffer), std::move(indexBuffer));
-		mesh->AddSubmesh("Submesh", Submesh(meshData));
-		m_meshes.emplace(mesh->Name(), mesh);
-
-		m_zAxis = StandardRenderItem(d3dDevice, mesh, "Submesh");
-	}
-
-	// Render Rectangle Render Item
-	{
-		using VertexType = VertexTypes::PositionTextureCoordinatesVextex;
-
-		// Create mesh data:
-		auto meshData = EigenMeshGenerator::CreateRectangle(-1.0f, 1.0f, 2.0f, 2.0f, 0.0f);
-		auto vertices = VertexType::CreateFromMeshData(meshData);
-
-		// Create buffers:
-		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType));
-		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT);
-
-		// Create mesh:		
-		auto mesh = std::make_shared<ImmutableMesh>("RectangleMesh", std::move(vertexBuffer), std::move(indexBuffer));
-		mesh->AddSubmesh("RectangleSubmesh", Submesh(meshData));
-		m_meshes.emplace(mesh->Name(), mesh);
-
-		m_rectangleRenderItem = StandardRenderItem(d3dDevice, mesh, "RectangleSubmesh");
+		CreateRenderItems<MeshComponent<BoxGeometry>, VertexType>(d3dDevice, commandList);
+		CreateRenderItems<MeshComponent<RectangleGeometry>, VertexType>(d3dDevice, commandList);
 	}
 
 	// Upload vertex and index buffers to the GPU in order to dispose the upload buffers:
@@ -221,31 +82,6 @@ void StandardScene::CreateDeviceDependentResources()
 				materialData.AlbedoMapIndex = 0;
 				m_materialsGPUBuffer.emplace_back(materialData);
 			}
-
-			// Make an instance:
-			ShaderBufferTypes::InstanceData instanceData;
-			instanceData.MaterialIndex = 0;
-			instanceData.ModelMatrix = Eigen::Affine3f::Identity();
-			//instanceData.ModelMatrix = Eigen::AngleAxisf(-90.0f * std::acos(-1.0f) / 180.0f, Eigen::Vector3f::UnitX()).matrix();
-			//auto rotation = DirectX::XMMatrixRotationX(-90.0f * DirectX::XM_PI / 180.0f);
-			//XMStoreFloat4x4(&instanceData.ModelMatrix, rotation);
-			m_cubeRenderItem.AddInstance(instanceData);
-
-			instanceData.MaterialIndex = 0;
-			instanceData.ModelMatrix = Eigen::AngleAxisf(-90.0f * std::acos(-1.0f) / 180.0f, Eigen::Vector3f::UnitX()).matrix();
-			m_floor.AddInstance(instanceData);
-
-			instanceData.MaterialIndex = 1;
-			instanceData.ModelMatrix = Eigen::Translation<float, 3>(1.0f, 0.0f, 0.0f);
-			m_xAxis.AddInstance(instanceData);
-
-			instanceData.MaterialIndex = 2;
-			instanceData.ModelMatrix = Eigen::Translation<float, 3>(0.0f, 1.0f, 0.0f);
-			m_yAxis.AddInstance(instanceData);
-
-			instanceData.MaterialIndex = 3;
-			instanceData.ModelMatrix = Eigen::Translation<float, 3>(0.0f, 0.0f, 1.0f);
-			m_zAxis.AddInstance(instanceData);
 		}
 	}
 
@@ -297,30 +133,43 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 
 	if (renderLayer == RenderLayer::LightingPass)
 	{
-		m_rectangleRenderItem.RenderNonInstanced(commandList);
+		m_renderRectangle->RenderNonInstanced(commandList);
 		return true;
 	}
 
 	// Bind materials buffer:
 	commandList->SetGraphicsRootShaderResourceView(1, m_materialsGPUBuffer.get_allocator().GetGPUVirtualAddress(0));
 
-	// Render cube:
-	m_cubeRenderItem.Render(commandList);
-
-	m_floor.Render(commandList);
-
-	m_xAxis.Render(commandList);
-	m_yAxis.Render(commandList);
-	m_zAxis.Render(commandList);
-
-	m_renderItems.begin()->Render(commandList);
+	std::for_each(m_renderItems.begin(), m_renderItems.end(), [commandList](auto& renderItem)
+	{
+		renderItem.Render(commandList);
+	});
 
 	return true;
 }
 
-StandardRenderItem& StandardScene::GetCubeRenderItem()
+template <class MeshType, class VertexType>
+void StandardScene::CreateRenderItems(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList)
 {
-	return m_cubeRenderItem;
+	std::for_each(MeshType::begin(), MeshType::end(), [d3dDevice, commandList, this](auto& meshType)
+	{
+		// Create mesh data:
+		auto meshData = meshType.GetGeometry().GenerateMeshData<EigenMeshData>();
+		auto vertices = VertexType::CreateFromMeshData(meshData);
+
+		// Create buffers:
+		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType));
+		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT);
+
+		// Create mesh:
+		auto mesh = std::make_shared<ImmutableMesh>("", std::move(vertexBuffer), std::move(indexBuffer));
+		mesh->AddSubmesh("Submesh", Submesh(meshData));
+		m_meshes.emplace(mesh->Name(), mesh);
+
+		StandardRenderItem renderItem(d3dDevice, mesh, "Submesh");
+
+		m_renderItems.emplace_back(std::move(renderItem));
+	});
 }
 
 void StandardScene::UpdatePassBuffer()
@@ -366,20 +215,27 @@ void StandardScene::UpdatePassBuffer()
 }
 void StandardScene::UpdateInstancesBuffers()
 {
-	using MeshType = MeshComponent<BoxGeometry>;
-
 	auto renderItem = m_renderItems.begin();
-	for (auto mesh = MeshType::begin(); mesh != MeshType::end(); ++mesh)
+	UpdateInstancesBuffer<MeshComponent<BoxGeometry>>(renderItem);
+	UpdateInstancesBuffer<MeshComponent<RectangleGeometry>>(renderItem);
+}
+
+template<class MeshType>
+void StandardScene::UpdateInstancesBuffer(std::deque<StandardRenderItem>::iterator& renderItem)
+{
+	std::for_each(MeshType::begin(), MeshType::end(), [&renderItem](auto& mesh)
 	{
-		renderItem->SetInstanceCount(mesh->GetInstanceCount());
+		renderItem->SetInstanceCount(mesh.GetInstanceCount());
 
 		std::size_t index = 0;
-		for(auto instance = mesh->InstancesBegin(); instance != mesh->InstancesEnd(); ++instance)
+		std::for_each(mesh.InstancesBegin(), mesh.InstancesEnd(), [&index, &renderItem](auto& instance)
 		{
 			ShaderBufferTypes::InstanceData shaderData;
-			shaderData.MaterialIndex = static_cast<std::uint32_t>(instance->GetMaterialIndex());
-			shaderData.ModelMatrix = instance->GetTransform().GetWorldTransform();
+			shaderData.MaterialIndex = static_cast<std::uint32_t>(instance.GetMaterialIndex());
+			shaderData.ModelMatrix = instance.GetTransform().GetWorldTransform();
 			renderItem->UpdateInstance(index++, shaderData);
-		}
-	}
+		});
+
+		++renderItem;
+	});
 }
