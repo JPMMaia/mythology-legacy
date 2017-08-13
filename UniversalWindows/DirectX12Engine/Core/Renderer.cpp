@@ -27,33 +27,10 @@ void Renderer::CreateDeviceDependentResources()
 	m_dsvDescriptorHeap.CreateDeviceDependentResources(m_deviceResources, 1, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
 	m_rtvDescriptorHeap.CreateDeviceDependentResources(m_deviceResources, 3, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
 	m_srvDescriptorHeap.CreateDeviceDependentResources(m_deviceResources, 3, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
-	m_texturesDescriptorHeap.CreateDeviceDependentResources(m_deviceResources, 1, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
 
-	{
-		ID3D12GraphicsCommandList* commandList;
-		m_commandListManager.CreateGraphicsCommandList(commandList);
-
-		Microsoft::WRL::ComPtr<ID3D12Resource> uploadBuffer;
-		DDS_ALPHA_MODE alphaMode;
-		bool isCubeMap;
-		m_albedoTexture.LoadTextureFromFile(
-			m_deviceResources->GetD3DDevice(),
-			commandList,
-			L"Resources/sandstonecliff-albedo.dds",
-			D3D12_RESOURCE_FLAG_NONE,
-			DDS_LOADER_FORCE_SRGB,
-			alphaMode,
-			isCubeMap,
-			uploadBuffer
-		);
-
-		commandList->Close();
-		m_commandListManager.ExecuteCommandList(0);
-		m_deviceResources->WaitForGpu();
-		m_commandListManager.ResetGraphicsCommandList(0);
-
-		m_albedoTexture.CreateShaderResourceView(m_deviceResources, m_texturesDescriptorHeap, "SRV");
-	}
+	// Create graphics command list:
+	ID3D12GraphicsCommandList* commandList;
+	m_commandListManager.CreateGraphicsCommandList(commandList);
 }
 void Renderer::CreateWindowSizeDependentResources()
 {
@@ -208,11 +185,6 @@ bool Renderer::Render(const Common::Timer& timer)
 
 		// Set the graphics root signature:
 		m_rootSignatureManager.SetGraphicsRootSignature(commandList, "GBufferPass");
-
-		// Set textures:
-		std::array<ID3D12DescriptorHeap*, 1> descriptorHeaps = { m_texturesDescriptorHeap.Get() };
-		commandList->SetDescriptorHeaps(static_cast<UINT>(descriptorHeaps.size()), descriptorHeaps.data());
-		commandList->SetGraphicsRootDescriptorTable(3, m_texturesDescriptorHeap.Get()->GetGPUDescriptorHandleForHeapStart());
 	}
 	PIXEndEvent(commandList);
 
