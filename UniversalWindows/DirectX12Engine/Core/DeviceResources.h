@@ -11,7 +11,7 @@ namespace DirectX12Engine
 {
 	static const UINT c_frameCount = 3;		// Use triple buffering.
 
-	// Controls all the DirectX device resources.
+											// Controls all the DirectX device resources.
 	class DeviceResources
 	{
 	public:
@@ -25,27 +25,27 @@ namespace DirectX12Engine
 		void WaitForGpu();
 
 		// The size of the render target, in pixels.
-		DirectX::XMFLOAT2	GetOutputSize() const				{ return m_outputSize; }
+		DirectX::XMFLOAT2	GetOutputSize() const { return m_outputSize; }
 		float	GetAspectRatio() const { return m_outputSize.x / m_outputSize.y; }
 
 		// The size of the render target, in dips.
-		DirectX::XMFLOAT2	GetLogicalSize() const				{ return m_logicalSize; }
+		DirectX::XMFLOAT2	GetLogicalSize() const { return m_logicalSize; }
 
-		float						GetDpi() const						{ return m_effectiveDpi; }
-		bool						IsDeviceRemoved() const				{ return m_deviceRemoved; }
+		float						GetDpi() const { return m_effectiveDpi; }
+		bool						IsDeviceRemoved() const { return m_deviceRemoved; }
 
 		// D3D Accessors.
-		ID3D12Device*				GetD3DDevice() const				{ return m_d3dDevice.Get(); }
-		IDXGISwapChain3*			GetSwapChain() const				{ return m_swapChain.Get(); }
-		ID3D12Resource*				GetRenderTarget() const				{ return m_renderTargets[m_currentFrame].Get(); }
-		ID3D12Resource*				GetDepthStencil() const				{ return m_depthStencil.Get(); }
-		ID3D12CommandQueue*			GetCommandQueue() const				{ return m_commandQueue.Get(); }
-		ID3D12CommandAllocator*		GetCommandAllocator() const			{ return m_commandAllocators[m_currentFrame].Get(); }
-		DXGI_FORMAT					GetBackBufferFormat() const			{ return m_backBufferFormat; }
-		DXGI_FORMAT					GetDepthBufferFormat() const		{ return m_depthBufferFormat; }
-		D3D12_VIEWPORT				GetScreenViewport() const			{ return m_screenViewport; }
-		Eigen::Matrix4f				GetOrientationTransform3D() const	{ return m_orientationTransform3D; }
-		UINT						GetCurrentFrameIndex() const		{ return m_currentFrame; }
+		ID3D12Device*				GetD3DDevice() const { return m_d3dDevice.Get(); }
+		IDXGISwapChain3*			GetSwapChain() const { return m_swapChain.Get(); }
+		ID3D12Resource*				GetRenderTarget() const { return m_renderTargets[m_currentFrame].Get(); }
+		ID3D12Resource*				GetDepthStencil() const { return m_depthStencil.Get(); }
+		ID3D12CommandQueue*			GetCommandQueue() const { return m_commandQueue.Get(); }
+		ID3D12CommandAllocator*		GetCommandAllocator() const { return m_commandAllocators[m_currentFrame].Get(); }
+		DXGI_FORMAT					GetBackBufferFormat() const { return m_backBufferFormat; }
+		DXGI_FORMAT					GetDepthBufferFormat() const { return m_depthBufferFormat; }
+		D3D12_VIEWPORT				GetScreenViewport() const { return m_screenViewport; }
+		Eigen::Matrix4f				GetOrientationTransform3D() const { return m_orientationTransform3D; }
+		UINT						GetCurrentFrameIndex() const { return m_currentFrame; }
 
 		CD3DX12_CPU_DESCRIPTOR_HANDLE GetRenderTargetView() const
 		{

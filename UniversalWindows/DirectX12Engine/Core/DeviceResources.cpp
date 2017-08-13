@@ -3,6 +3,7 @@
 #include "Utilities/DirectXHelper.h"
 #include "GraphicsEngineInterfaces/DisplayOrientations.h"
 
+using namespace Eigen;
 using namespace DirectX;
 using namespace DirectX12Engine;
 using namespace Microsoft::WRL;
@@ -24,40 +25,77 @@ namespace DisplayMetrics
 	static const float WidthThreshold = 1920.0f;	// 1080p width.
 	static const float HeightThreshold = 1080.0f;	// 1080p height.
 };
-namespace ScreenRotation
+
+class ScreenRotation
 {
-	// 0-degree Z-rotation
-	static const XMFLOAT4X4 Rotation0(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
+public:
+	static void Initialize()
+	{
+		s_rotation0 = Matrix4f::Identity();
 
-	// 90-degree Z-rotation
-	static const XMFLOAT4X4 Rotation90(
-		0.0f, 1.0f, 0.0f, 0.0f,
-		-1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
+		s_rotation90 <<
+			0.0f, 1.0f, 0.0f, 0.0f,
+			-1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f;
 
-	// 180-degree Z-rotation
-	static const XMFLOAT4X4 Rotation180(
-		-1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, -1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
+		s_rotation180 <<
+			-1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, -1.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f;
 
-	// 270-degree Z-rotation
-	static const XMFLOAT4X4 Rotation270(
-		0.0f, -1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
+		s_rotation270 <<
+			0.0f, -1.0f, 0.0f, 0.0f,
+			1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f;
+
+		s_initialized = true;
+	}
+
+	static const Matrix4f& GetRotation0()
+	{
+		if (!s_initialized)
+			Initialize();
+
+		return s_rotation0;
+	}
+	static const Matrix4f& GetRotation90()
+	{
+		if (!s_initialized)
+			Initialize();
+
+		return s_rotation90;
+	}
+	static const Matrix4f& GetRotation180()
+	{
+		if (!s_initialized)
+			Initialize();
+
+		return s_rotation180;
+	}
+	static const Matrix4f& GetRotation270()
+	{
+		if (!s_initialized)
+			Initialize();
+
+		return s_rotation270;
+	}
+
+private:
+	static Matrix4f s_rotation0;
+	static Matrix4f s_rotation90;
+	static Matrix4f s_rotation180;
+	static Matrix4f s_rotation270;
+	static bool s_initialized;
 };
+
+Matrix4f ScreenRotation::s_rotation0;
+Matrix4f ScreenRotation::s_rotation90;
+Matrix4f ScreenRotation::s_rotation180;
+Matrix4f ScreenRotation::s_rotation270;
+bool ScreenRotation::s_initialized(false);
 
 DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT depthBufferFormat) :
 	m_currentFrame(0),
@@ -236,7 +274,7 @@ void DeviceResources::Present()
 	// The first argument instructs DXGI to block until VSync, putting the application
 	// to sleep until the next VSync. This ensures we don't waste any cycles rendering
 	// frames that will never be displayed to the screen.
-	HRESULT hr = m_swapChain->Present(1, 0);
+	auto hr = m_swapChain->Present(1, 0);
 
 	// If the device was removed either by a disconnection or a driver upgrade, we 
 	// must recreate all device resources.
@@ -266,7 +304,7 @@ void DeviceResources::WaitForGpu()
 void DeviceResources::MoveToNextFrame()
 {
 	// Schedule a Signal command in the queue.
-	const UINT64 currentFenceValue = m_fenceValues[m_currentFrame];
+	const auto currentFenceValue = m_fenceValues[m_currentFrame];
 	DX::ThrowIfFailed(m_commandQueue->Signal(m_fence.Get(), currentFenceValue));
 
 	// Advance the frame index.
@@ -347,8 +385,8 @@ void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter) const
 	ComPtr<IDXGIAdapter1> adapter;
 	*ppAdapter = nullptr;
 
-	std::size_t bestAdapterIndex(0);
-	UINT highestDedicatedVideoMemory(0);
+	UINT bestAdapterIndex(0);
+	std::size_t highestMemory(0);
 
 	for (UINT adapterIndex = 0; DXGI_ERROR_NOT_FOUND != m_dxgiFactory->EnumAdapters1(adapterIndex, &adapter); adapterIndex++)
 	{
@@ -365,10 +403,10 @@ void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter) const
 		// actual device yet.
 		if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), nullptr)))
 		{
-			if(desc.DedicatedVideoMemory > highestDedicatedVideoMemory)
+			if (desc.DedicatedVideoMemory > highestMemory)
 			{
 				bestAdapterIndex = adapterIndex;
-				highestDedicatedVideoMemory = desc.DedicatedVideoMemory;
+				highestMemory = desc.DedicatedVideoMemory;
 			}
 		}
 	}
@@ -376,9 +414,21 @@ void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter) const
 	m_dxgiFactory->EnumAdapters1(bestAdapterIndex, &adapter);
 	*ppAdapter = adapter.Detach();
 }
+void DeviceResources::EnableShaderBasedValidation() const
+{
+	ComPtr<ID3D12Debug> spDebugController0;
+	ComPtr<ID3D12Debug1> spDebugController1;
+	DX::ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&spDebugController0)));
+	DX::ThrowIfFailed(spDebugController0->QueryInterface(IID_PPV_ARGS(&spDebugController1)));
+	spDebugController1->SetEnableGPUBasedValidation(true);
+}
 
 void DeviceResources::CreateDevice()
 {
+#if defined(_DEBUG)
+	EnableShaderBasedValidation();
+#endif
+
 	// Create factory:
 	DX::ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&m_dxgiFactory)));
 
@@ -387,7 +437,7 @@ void DeviceResources::CreateDevice()
 	GetHardwareAdapter(&adapter);
 
 	// Create device:
-	static constexpr auto minimunFeatureLevel = D3D_FEATURE_LEVEL_12_0;
+	static constexpr auto minimunFeatureLevel = D3D_FEATURE_LEVEL_11_0;
 	auto hr = D3D12CreateDevice(
 		adapter.Get(),
 		minimunFeatureLevel,
@@ -428,7 +478,7 @@ void DeviceResources::QueryDescriptorSizes()
 }
 void DeviceResources::QueryMultisampleQualityLevels()
 {
-	D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS multisampleQualityLevels = {};
+	D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS multisampleQualityLevels;
 	multisampleQualityLevels.Format = m_backBufferFormat;
 	multisampleQualityLevels.SampleCount = 4;
 	multisampleQualityLevels.Flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;
@@ -501,8 +551,8 @@ void DeviceResources::CreateSwapChain()
 		{
 			// ReSharper disable once CppUnreachableCode
 			auto scaling = DisplayMetrics::SupportHighResolutions ? DXGI_SCALING_NONE : DXGI_SCALING_STRETCH;
-		
-			DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
+
+			DXGI_SWAP_CHAIN_DESC1 swapChainDesc;
 			swapChainDesc.Width = backBufferWidth;
 			swapChainDesc.Height = backBufferHeight;
 			swapChainDesc.Format = m_backBufferFormat;
@@ -538,19 +588,19 @@ void DeviceResources::CreateSwapChain()
 		switch (displayRotation)
 		{
 		case DXGI_MODE_ROTATION_IDENTITY:
-			m_orientationTransform3D = ScreenRotation::Rotation0;
+			m_orientationTransform3D = ScreenRotation::GetRotation0();
 			break;
 
 		case DXGI_MODE_ROTATION_ROTATE90:
-			m_orientationTransform3D = ScreenRotation::Rotation270;
+			m_orientationTransform3D = ScreenRotation::GetRotation270();
 			break;
 
 		case DXGI_MODE_ROTATION_ROTATE180:
-			m_orientationTransform3D = ScreenRotation::Rotation180;
+			m_orientationTransform3D = ScreenRotation::GetRotation180();
 			break;
 
 		case DXGI_MODE_ROTATION_ROTATE270:
-			m_orientationTransform3D = ScreenRotation::Rotation90;
+			m_orientationTransform3D = ScreenRotation::GetRotation90();
 			break;
 
 		default:
@@ -573,7 +623,7 @@ void DeviceResources::CreateDescriptorHeaps()
 		DX::ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
 		NAME_D3D12_OBJECT(m_rtvHeap);
 	}
-	
+
 	// Create DSV descriptor heaps:
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
@@ -587,7 +637,7 @@ void DeviceResources::CreateDescriptorHeaps()
 void DeviceResources::CreateRenderTargetView()
 {
 	m_currentFrame = m_swapChain->GetCurrentBackBufferIndex();
-	
+
 	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvDescriptor(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
 	for (UINT n = 0; n < c_frameCount; n++)
 	{
