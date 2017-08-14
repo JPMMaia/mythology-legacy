@@ -6,6 +6,7 @@
 #include "GameEngine/Geometry/Primitives/RectangleGeometry.h"
 
 #include <cmath>
+#include "GameEngine/Geometry/Importer/SceneImporter.h"
 
 using namespace Eigen;
 using namespace Mythology;
@@ -19,6 +20,8 @@ MythologyGame::MythologyGame()
 void MythologyGame::Initialize()
 {
 	m_gameManager = std::make_shared<GameEngine::GameManager>();
+
+	SceneImporter::Test();
 
 	// Meshes:
 	{
