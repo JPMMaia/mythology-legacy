@@ -34,12 +34,20 @@ namespace DirectX12TestProject
 		{
 			auto deviceResources = std::make_shared<DeviceResources>();
 
-			std::vector<float, GPUAllocator<float>> numbers(4, GPUAllocator<float>(deviceResources->GetD3DDevice(), false));
+			GPUUploadBuffer<float> numbers(4, GPUAllocator<float>(deviceResources->GetD3DDevice(), false));
 
 			std::iota(numbers.begin(), numbers.end(), 1.0f);
 
+			std::for_each(numbers.begin(), numbers.end(), [](const auto& number)
+			{
+				Assert::AreEqual(1.0f, number);
+			});
+
 			numbers.clear();
+			Assert::AreEqual(std::size_t(0), numbers.size());
+
 			numbers.shrink_to_fit();
+			Assert::AreEqual(std::size_t(0), numbers.capacity());
 		}
     };
 }

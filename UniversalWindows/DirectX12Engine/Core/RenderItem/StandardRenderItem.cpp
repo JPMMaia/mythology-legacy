@@ -4,8 +4,7 @@
 
 using namespace DirectX12Engine;
 
-StandardRenderItem::StandardRenderItem(ID3D12Device* d3dDevice) :
-	m_instancesGPUBuffer(GPUAllocator<ShaderBufferTypes::InstanceData>(d3dDevice, false))
+StandardRenderItem::StandardRenderItem(ID3D12Device* d3dDevice)
 {
 }
 
@@ -59,6 +58,8 @@ std::size_t StandardRenderItem::GetInstanceCount() const
 }
 void StandardRenderItem::SetInstanceCount(std::size_t count)
 {
+	std::vector<int> x;
+	x.push_back(1);
 	if(count != m_instancesGPUBuffer.size())
 		m_instancesGPUBuffer.resize(count);
 }
