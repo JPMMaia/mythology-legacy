@@ -338,8 +338,7 @@ namespace DirectX12Engine
 		{
 			if (capacity > m_capacity)
 			{
-				// Make a copy of the elements:
-				std::vector<value_type> copy(cbegin(), cend());
+				std::vector<value_type> copy(begin(), end());
 
 				// Clear memory:
 				clear();
@@ -349,10 +348,10 @@ namespace DirectX12Engine
 				m_capacity = capacity;
 
 				// Copy data back to new allocated memory:
-				m_size = capacity;
+				m_size = copy.size();
 
 				iterator dataIterator = begin();
-				for(auto copyIterator = copy.cbegin(); copyIterator != copy.cbegin() + m_size; ++copyIterator)
+				for (auto copyIterator = copy.cbegin(); copyIterator != copy.cend() && dataIterator != end(); ++copyIterator)
 				{
 					*dataIterator = *copyIterator;
 					++dataIterator;
@@ -483,9 +482,6 @@ namespace DirectX12Engine
 		std::size_t m_size = 0;
 		allocator_type m_allocator;
 	};
-
-	/*template<class DataType>
-	using GPUUploadBuffer = std::vector<DataType, GPUAllocator<DataType>>;*/
 
 	template <class DataType>
 	using GPUUploadBuffer = gpu_vector<DataType, GPUAllocator<DataType>>;

@@ -57,5 +57,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="DirectX12TestProject_TemporaryKey.pfx" />
+    <None Include="DirectX12TestProject.runsettings" />
   </ItemGroup>
 </Project>

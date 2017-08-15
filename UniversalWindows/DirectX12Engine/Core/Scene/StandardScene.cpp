@@ -192,7 +192,7 @@ void StandardScene::CreateMaterial(ID3D12Device* d3dDevice, ID3D12GraphicsComman
 	materialData.AlbedoMapIndex = m_textureIndices.at(material.GetAlbedoMapName());
 
 	m_materialIndices.emplace(material.GetName(), static_cast<std::uint32_t>(m_materialsGPUBuffer.size()));
-	m_materialsGPUBuffer.emplace_back(materialData);
+	m_materialsGPUBuffer.emplace_back(std::move(materialData));
 }
 void StandardScene::CreateTexture(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const std::wstring& path, bool isColorData)
 {
