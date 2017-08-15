@@ -36,5 +36,6 @@ namespace Mythology
 		GameEngine::GameObject m_person;
 		GameEngine::GameObject m_floor;
 		GameEngine::GameObject m_axis;
+		GameEngine::GameObject m_box;
 	};
 }

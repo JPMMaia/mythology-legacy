@@ -175,7 +175,7 @@ void DeviceResources::UpdateRenderTargetSize()
 		// When the device is in portrait orientation, height > width. Compare the
 		// larger dimension against the width threshold and the smaller dimension
 		// against the height threshold.
-		if (max(width, height) > DisplayMetrics::WidthThreshold && min(width, height) > DisplayMetrics::HeightThreshold)
+		if (std::max(width, height) > DisplayMetrics::WidthThreshold && std::min(width, height) > DisplayMetrics::HeightThreshold)
 		{
 			// To scale the app we change the effective DPI. Logical size does not change.
 			m_effectiveDpi /= 2.0f;
@@ -187,8 +187,8 @@ void DeviceResources::UpdateRenderTargetSize()
 	m_outputSize.y = DX::ConvertDipsToPixels(m_logicalSize.y, m_effectiveDpi);
 
 	// Prevent zero size DirectX content from being created:
-	m_outputSize.x = max(m_outputSize.x, 1.0f);
-	m_outputSize.y = max(m_outputSize.y, 1.0f);
+	m_outputSize.x = std::max(m_outputSize.x, 1.0f);
+	m_outputSize.y = std::max(m_outputSize.y, 1.0f);
 }
 void DeviceResources::SetWindow(const std::shared_ptr<GraphicsEngine::IWindow>& window)
 {

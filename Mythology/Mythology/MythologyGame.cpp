@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include "GameEngine/Geometry/Importer/SceneImporter.h"
+#include "GameEngine/Geometry/Primitives/CustomGeometry.h"
 
 using namespace Eigen;
 using namespace Mythology;
@@ -21,7 +22,13 @@ void MythologyGame::Initialize()
 {
 	m_gameManager = std::make_shared<GameEngine::GameManager>();
 
-	SceneImporter::Test();
+	{
+		SceneImporter::ImportedScene scene;
+		SceneImporter::Import(L"Resources/Box.gltf", scene);
+
+		auto mesh = MeshComponent<CustomGeometry<EigenMeshData>>(CustomGeometry<EigenMeshData>(std::move(scene.Geometries[0].MeshData)));
+		m_meshes.emplace("Imported Box", mesh);
+	}
 
 	// Meshes:
 	{
