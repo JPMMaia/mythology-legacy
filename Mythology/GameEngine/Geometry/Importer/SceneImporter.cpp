@@ -29,7 +29,13 @@ void SceneImporter::Import(const std::wstring& filePath, ImportedScene& imported
 		Geometry geometry;
 		geometry.Name = mesh->mName.C_Str();
 		geometry.MeshData = CreateMeshData(*mesh);
+		geometry.MaterialIndex = mesh->mMaterialIndex;
 		importedScene.Geometries.emplace_back(std::move(geometry));
+	}
+
+	for(std::size_t i = 0; i < scene->mNumMaterials; ++i)
+	{
+		importedScene.Materials.emplace_back(scene->mMaterials[i]);
 	}
 }
 
@@ -83,4 +89,11 @@ SceneImporter::MeshDataType SceneImporter::CreateMeshData(const aiMesh& mesh)
 	}
 		
 	return meshData;
+}
+
+SceneImporter::Material SceneImporter::CreateMaterial(const aiMaterial& material)
+{
+	Material data;
+
+	return data;
 }

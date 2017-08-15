@@ -24,10 +24,10 @@ void MythologyGame::Initialize()
 
 	{
 		SceneImporter::ImportedScene scene;
-		SceneImporter::Import(L"Resources/Box.gltf", scene);
+		SceneImporter::Import(L"Resources/BoxTextured.gltf", scene);
 
 		auto mesh = MeshComponent<CustomGeometry<EigenMeshData>>(CustomGeometry<EigenMeshData>(std::move(scene.Geometries[0].MeshData)));
-		m_meshes.emplace("Imported Box", mesh);
+		//m_meshes.emplace("Imported Box", mesh);
 	}
 
 	// Meshes:

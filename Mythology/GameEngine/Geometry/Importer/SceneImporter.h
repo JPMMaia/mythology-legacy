@@ -4,6 +4,7 @@
 
 #include <deque>
 
+struct aiMaterial;
 struct aiMesh;
 
 namespace GameEngine
@@ -19,10 +20,16 @@ namespace GameEngine
 		{
 			std::string Name;
 			MeshDataType MeshData;
+			std::size_t MaterialIndex;
+		};
+		struct Material
+		{
+			
 		};
 		struct ImportedScene
 		{
 			std::deque<Geometry> Geometries;
+			std::deque<Material> Materials;
 		};
 
 	public:
@@ -30,5 +37,6 @@ namespace GameEngine
 
 	private:
 		static MeshDataType CreateMeshData(const aiMesh& mesh);
+		static Material CreateMaterial(const aiMaterial& material);
 	};
 }
