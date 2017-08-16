@@ -80,7 +80,7 @@ SceneImporter::MeshDataType SceneImporter::CreateMeshData(const aiMesh& mesh)
 		meshData.Indices.reserve(mesh.mNumFaces * 3);
 		for (std::size_t i = 0; i < mesh.mNumFaces; ++i)
 		{
-			const auto& faceIndices = mesh.mFaces->mIndices;
+			const auto& faceIndices = mesh.mFaces[i].mIndices;
 
 			meshData.Indices.emplace_back(faceIndices[0]);
 			meshData.Indices.emplace_back(faceIndices[1]);
