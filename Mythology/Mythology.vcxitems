@@ -110,12 +110,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Input\Mouse.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Memory\StandardAllocator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Memory\UseStorage.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\DisplayOrientations.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IMaterial.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IRenderer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IRenderItem.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IScene.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IWindow.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\DisplayOrientations.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IDirectory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IFileSystem.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IRenderer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\MythologyGame.h" />
   </ItemGroup>
 </Project>

@@ -7,6 +7,7 @@
 #include "GameEngine/Geometry/Importer/SceneImporter.h"
 #include "GameEngine/Geometry/Primitives/CustomGeometry.h"
 #include "Common/Helpers.h"
+#include "Interfaces/IFileSystem.h"
 
 #include <cmath>
 
@@ -15,7 +16,8 @@ using namespace Eigen;
 using namespace Mythology;
 using namespace GameEngine;
 
-MythologyGame::MythologyGame()
+MythologyGame::MythologyGame(const std::shared_ptr<IFileSystem>& fileSystem) :
+	m_fileSystem(fileSystem)
 {
 	Initialize();
 }
@@ -111,9 +113,19 @@ void MythologyGame::Initialize()
 		m_floor.AddComponent("Mesh", instance);
 	}
 
-	/*{
+	{
 		SceneImporter::ImportedScene scene;
-		SceneImporter::Import(L"Resources/kasumi/DOA5_Kasumi_MMD.fbx", scene);
+		//SceneImporter::Import(L"Resources/kasumi/DOA5_Kasumi_MMD.fbx", scene);
+
+		{
+			auto workingDirectory = m_fileSystem->GetWorkingDirectory();
+
+			auto filePath = workingDirectory + L"kasumi.bin";
+			//std::ofstream file(filePath, std::ios::out | std::fstream::binary);
+			//file << scene;
+			std::ifstream file(filePath, std::ios::in | std::ios::binary);
+			file >> scene;
+		}
 
 		for(std::size_t i = 0; i < scene.Geometries.size(); ++i)
 		{
@@ -124,7 +136,7 @@ void MythologyGame::Initialize()
 			m_meshes.emplace("kasumi" + std::to_string(i), mesh);
 			
 			const auto& baseColor = material.FloatProperties.at("$clr.diffuse");
-			const auto& albedoMap = L"Resources" + Helpers::GetFilename(Helpers::StringToWString(material.DiffuseTexturePath)) + L".dds";
+			const auto& albedoMap = L"Resources/kasumi/" + Helpers::GetFilename(Helpers::StringToWString(material.DiffuseTexturePath)) + L".dds";
 			auto standardMaterial = StandardMaterial::CreateSharedPointer("kasumi" + std::to_string(i), Vector4f(baseColor[0], baseColor[1], baseColor[2], 1.0f), albedoMap);
 			m_materials.emplace(standardMaterial->GetName(), standardMaterial);
 
@@ -134,7 +146,7 @@ void MythologyGame::Initialize()
 		}
 
 		m_box.GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
-	}*/
+	}
 }
 
 void MythologyGame::ProcessInput()

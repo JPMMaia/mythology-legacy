@@ -1,6 +1,6 @@
 #pragma once
 
-namespace GraphicsEngine
+namespace DirectX12Engine
 {
 	enum class DisplayOrientations
 	{

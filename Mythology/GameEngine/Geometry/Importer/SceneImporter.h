@@ -23,6 +23,9 @@ namespace GameEngine
 			std::string Name;
 			MeshDataType MeshData;
 			std::size_t MaterialIndex;
+
+			friend std::ostream& operator<<(std::ostream& outputStream, const Geometry& geometry);
+			friend std::istream& operator>>(std::istream& inputStream, Geometry& geometry);
 		};
 		struct Material
 		{
@@ -31,11 +34,19 @@ namespace GameEngine
 			std::unordered_map<std::string, std::vector<double>> DoubleProperties;
 			std::unordered_map<std::string, std::string> StringProperties;
 			std::string DiffuseTexturePath;
+
+			template<class KeyType, class ValueType, class MapType>
+			friend void InputMap(std::istream& inputStream, MapType& map);
+			friend std::ostream& operator<<(std::ostream& outputStream, const Material& material);
+			friend std::istream& operator>>(std::istream& inputStream, Material& material);
 		};
 		struct ImportedScene
 		{
 			std::deque<Geometry> Geometries;
 			std::deque<Material> Materials;
+
+			friend std::ostream& operator<<(std::ostream& outputStream, const ImportedScene& importedScene);
+			friend std::istream& operator>>(std::istream& inputStream, ImportedScene& importedScene);
 		};
 
 	public:

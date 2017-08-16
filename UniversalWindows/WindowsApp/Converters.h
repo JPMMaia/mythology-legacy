@@ -1,27 +1,27 @@
 #pragma once
 
-#include "GraphicsEngineInterfaces/DisplayOrientations.h"
-#include "GraphicsEngineInterfaces/IWindow.h"
+#include "Core/DisplayOrientations.h"
+#include "Core/IWindow.h"
 
 namespace WindowsApp
 {
 	namespace Converters
 	{
-		inline GraphicsEngine::DisplayOrientations UWPToNative(Windows::Graphics::Display::DisplayOrientations orientation)
+		inline DirectX12Engine::DisplayOrientations UWPToNative(Windows::Graphics::Display::DisplayOrientations orientation)
 		{
 			using namespace Windows::Graphics::Display;
 			switch (orientation)
 			{
-			case DisplayOrientations::None: return GraphicsEngine::DisplayOrientations::None;
-			case DisplayOrientations::Landscape: return GraphicsEngine::DisplayOrientations::Landscape;
-			case DisplayOrientations::Portrait: return GraphicsEngine::DisplayOrientations::Portrait;
-			case DisplayOrientations::LandscapeFlipped: return GraphicsEngine::DisplayOrientations::LandscapeFlipped;
-			case DisplayOrientations::PortraitFlipped: return GraphicsEngine::DisplayOrientations::PortraitFlipped;
-			default: return GraphicsEngine::DisplayOrientations::None;
+			case DisplayOrientations::None: return DirectX12Engine::DisplayOrientations::None;
+			case DisplayOrientations::Landscape: return DirectX12Engine::DisplayOrientations::Landscape;
+			case DisplayOrientations::Portrait: return DirectX12Engine::DisplayOrientations::Portrait;
+			case DisplayOrientations::LandscapeFlipped: return DirectX12Engine::DisplayOrientations::LandscapeFlipped;
+			case DisplayOrientations::PortraitFlipped: return DirectX12Engine::DisplayOrientations::PortraitFlipped;
+			default: return DirectX12Engine::DisplayOrientations::None;
 			}
 		}
 
-		class NativeWindow : public GraphicsEngine::IWindow
+		class NativeWindow : public DirectX12Engine::IWindow
 		{
 		public:
 			explicit NativeWindow(Windows::UI::Core::CoreWindow^ window) :
@@ -37,12 +37,12 @@ namespace WindowsApp
 			{
 				return DirectX::XMFLOAT2(m_window->Bounds.Width, m_window->Bounds.Height);
 			}
-			GraphicsEngine::DisplayOrientations NativeOrientation() override
+			DirectX12Engine::DisplayOrientations NativeOrientation() override
 			{
 				auto currentDisplayInformation = Windows::Graphics::Display::DisplayInformation::GetForCurrentView();
 				return UWPToNative(currentDisplayInformation->NativeOrientation);
 			}
-			GraphicsEngine::DisplayOrientations CurrentOrientation() override
+			DirectX12Engine::DisplayOrientations CurrentOrientation() override
 			{
 				auto currentDisplayInformation = Windows::Graphics::Display::DisplayInformation::GetForCurrentView();
 				return UWPToNative(currentDisplayInformation->CurrentOrientation);

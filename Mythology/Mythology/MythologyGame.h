@@ -9,12 +9,17 @@ namespace Common
 	class Timer;
 }
 
+namespace GameEngine
+{
+	class IFileSystem;
+}
+
 namespace Mythology
 {
 	class MythologyGame
 	{
 	public:
-		MythologyGame();
+		MythologyGame(const std::shared_ptr<GameEngine::IFileSystem>& directory);
 
 		void Initialize();
 
@@ -29,6 +34,7 @@ namespace Mythology
 		const GameEngine::GameObject& GetPerson() const { return m_person; }
 
 	private:
+		std::shared_ptr<GameEngine::IFileSystem> m_fileSystem;
 		std::shared_ptr<GameEngine::GameManager> m_gameManager;
 		
 		std::unordered_map<std::string, std::shared_ptr<GameEngine::BaseMeshComponent>> m_meshes;

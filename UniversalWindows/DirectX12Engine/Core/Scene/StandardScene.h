@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "GraphicsEngineInterfaces/IScene.h"
+#include "IScene.h"
 #include "Core/DeviceResources.h"
 #include "Core/Command/CommandListManager.h"
 #include "Core/RenderItem/StandardRenderItem.h"

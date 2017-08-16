@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "DeviceResources.h"
 #include "Utilities/DirectXHelper.h"
-#include "GraphicsEngineInterfaces/DisplayOrientations.h"
+#include "DisplayOrientations.h"
 
 using namespace Eigen;
 using namespace DirectX;
@@ -108,8 +108,8 @@ DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT depth
 	m_d3dRenderTargetSize(),
 	m_outputSize(),
 	m_logicalSize(),
-	m_nativeOrientation(GraphicsEngine::DisplayOrientations::None),
-	m_currentOrientation(GraphicsEngine::DisplayOrientations::None),
+	m_nativeOrientation(DisplayOrientations::None),
+	m_currentOrientation(DisplayOrientations::None),
 	m_dpi(-1.0f),
 	m_effectiveDpi(-1.0f),
 	m_rtvDescriptorSize(0)
@@ -190,7 +190,7 @@ void DeviceResources::UpdateRenderTargetSize()
 	m_outputSize.x = std::max(m_outputSize.x, 1.0f);
 	m_outputSize.y = std::max(m_outputSize.y, 1.0f);
 }
-void DeviceResources::SetWindow(const std::shared_ptr<GraphicsEngine::IWindow>& window)
+void DeviceResources::SetWindow(const std::shared_ptr<IWindow>& window)
 {
 	m_window = window;
 	m_logicalSize = window->Size();
@@ -221,7 +221,7 @@ void DeviceResources::SetDpi(float dpi)
 		CreateWindowSizeDependentResources();
 	}
 }
-void DeviceResources::SetCurrentOrientation(GraphicsEngine::DisplayOrientations currentOrientation)
+void DeviceResources::SetCurrentOrientation(DisplayOrientations currentOrientation)
 {
 	if (m_currentOrientation != currentOrientation)
 	{
@@ -331,47 +331,47 @@ DXGI_MODE_ROTATION DeviceResources::ComputeDisplayRotation() const
 	// ReSharper disable once CppDefaultCaseNotHandledInSwitchStatement
 	switch (m_nativeOrientation)
 	{
-	case GraphicsEngine::DisplayOrientations::Landscape:
+	case DisplayOrientations::Landscape:
 		// ReSharper disable once CppDefaultCaseNotHandledInSwitchStatement
 		// ReSharper disable once CppIncompleteSwitchStatement
 		switch (m_currentOrientation)
 		{
-		case GraphicsEngine::DisplayOrientations::Landscape:
+		case DisplayOrientations::Landscape:
 			rotation = DXGI_MODE_ROTATION_IDENTITY;
 			break;
 
-		case GraphicsEngine::DisplayOrientations::Portrait:
+		case DisplayOrientations::Portrait:
 			rotation = DXGI_MODE_ROTATION_ROTATE270;
 			break;
 
-		case GraphicsEngine::DisplayOrientations::LandscapeFlipped:
+		case DisplayOrientations::LandscapeFlipped:
 			rotation = DXGI_MODE_ROTATION_ROTATE180;
 			break;
 
-		case GraphicsEngine::DisplayOrientations::PortraitFlipped:
+		case DisplayOrientations::PortraitFlipped:
 			rotation = DXGI_MODE_ROTATION_ROTATE90;
 			break;
 		}
 		break;
 
-	case GraphicsEngine::DisplayOrientations::Portrait:
+	case DisplayOrientations::Portrait:
 		// ReSharper disable once CppIncompleteSwitchStatement
 		// ReSharper disable once CppDefaultCaseNotHandledInSwitchStatement
 		switch (m_currentOrientation)
 		{
-		case GraphicsEngine::DisplayOrientations::Landscape:
+		case DisplayOrientations::Landscape:
 			rotation = DXGI_MODE_ROTATION_ROTATE90;
 			break;
 
-		case GraphicsEngine::DisplayOrientations::Portrait:
+		case DisplayOrientations::Portrait:
 			rotation = DXGI_MODE_ROTATION_IDENTITY;
 			break;
 
-		case GraphicsEngine::DisplayOrientations::LandscapeFlipped:
+		case DisplayOrientations::LandscapeFlipped:
 			rotation = DXGI_MODE_ROTATION_ROTATE270;
 			break;
 
-		case GraphicsEngine::DisplayOrientations::PortraitFlipped:
+		case DisplayOrientations::PortraitFlipped:
 			rotation = DXGI_MODE_ROTATION_ROTATE180;
 			break;
 		}

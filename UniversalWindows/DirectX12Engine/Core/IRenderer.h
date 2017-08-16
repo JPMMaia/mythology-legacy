@@ -5,7 +5,7 @@ namespace Common
 	class Timer;
 }
 
-namespace GraphicsEngine
+namespace DirectX12Engine
 {
 	class IRenderer
 	{

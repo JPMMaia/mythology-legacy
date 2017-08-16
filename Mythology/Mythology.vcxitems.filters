@@ -28,14 +28,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Task.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\TasksComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Timer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\DisplayOrientations.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IMaterial.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IRenderer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IRenderItem.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\IComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsEngineInterfaces\IWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\MeshGenerator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\VertexData.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\MeshData.h" />
@@ -66,5 +60,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\StandardMaterial.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Importer\SceneImporter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Primitives\CustomGeometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\DisplayOrientations.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IRenderer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IDirectory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IScene.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IFileSystem.h" />
   </ItemGroup>
 </Project>

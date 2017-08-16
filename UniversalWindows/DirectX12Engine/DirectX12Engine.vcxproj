@@ -235,6 +235,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Core\DeviceResources.h" />
+    <ClInclude Include="Core\DisplayOrientations.h" />
     <ClInclude Include="Core\Geometry\Buffers\BaseGeometryBuffer.h" />
     <ClInclude Include="Core\Geometry\Buffers\IndexBuffer.h" />
     <ClInclude Include="Core\Geometry\Buffers\VertexBuffer.h" />
@@ -242,12 +243,12 @@
     <ClInclude Include="Core\Geometry\ImmutableMesh.h" />
     <ClInclude Include="Core\Geometry\Submesh.h" />
     <ClInclude Include="Core\Geometry\VertexTypes.h" />
-    <ClInclude Include="Core\Material\ColorMaterial.h" />
-    <ClInclude Include="Core\Material\MaterialInstance.h" />
+    <ClInclude Include="Core\IRenderer.h" />
+    <ClInclude Include="Core\IWindow.h" />
     <ClInclude Include="Core\Pipeline\PipelineStateManager.h" />
     <ClInclude Include="Core\Pipeline\RootSignatureManager.h" />
     <ClInclude Include="Core\Renderer.h" />
-    <ClInclude Include="Core\RenderItem\ColorRenderItem.h" />
+    <ClInclude Include="Core\RenderItem\IRenderItem.h" />
     <ClInclude Include="Core\RenderItem\Specific\RenderRectangle.h" />
     <ClInclude Include="Core\RenderItem\StandardRenderItem.h" />
     <ClInclude Include="Core\Resources\DescriptorHeap.h" />
@@ -260,6 +261,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Core\Scene\IScene.h" />
     <ClInclude Include="Core\Scene\RenderLayers.h" />
     <ClInclude Include="Core\Scene\StandardScene.h" />
     <ClInclude Include="Core\ShaderStructures.h" />
@@ -288,12 +290,9 @@
     <ClCompile Include="Core\Geometry\ImmutableMesh.cpp" />
     <ClCompile Include="Core\Geometry\Submesh.cpp" />
     <ClCompile Include="Core\Geometry\VertexTypes.cpp" />
-    <ClCompile Include="Core\Material\ColorMaterial.cpp" />
-    <ClCompile Include="Core\Material\MaterialInstance.cpp" />
     <ClCompile Include="Core\Pipeline\PipelineStateManager.cpp" />
     <ClCompile Include="Core\Pipeline\RootSignatureManager.cpp" />
     <ClCompile Include="Core\Renderer.cpp" />
-    <ClCompile Include="Core\RenderItem\ColorRenderItem.cpp" />
     <ClCompile Include="Core\RenderItem\Specific\RenderRectangle.cpp" />
     <ClCompile Include="Core\RenderItem\StandardRenderItem.cpp" />
     <ClCompile Include="Core\Resources\DescriptorHeap.cpp" />

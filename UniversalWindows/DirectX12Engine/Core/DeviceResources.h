@@ -3,7 +3,7 @@
 #include <d3d12.h>
 #include <dxgi1_4.h>
 
-#include "GraphicsEngineInterfaces/IWindow.h"
+#include "IWindow.h"
 #include "Utilities/d3dx12.h"
 #include "Libraries/Eigen/Geometry"
 
@@ -16,9 +16,9 @@ namespace DirectX12Engine
 	{
 	public:
 		explicit DeviceResources(DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D32_FLOAT);
-		void SetWindow(const std::shared_ptr<GraphicsEngine::IWindow>& window);
+		void SetWindow(const std::shared_ptr<IWindow>& window);
 		void SetLogicalSize(const DirectX::XMFLOAT2& logicalSize);
-		void SetCurrentOrientation(GraphicsEngine::DisplayOrientations currentOrientation);
+		void SetCurrentOrientation(DisplayOrientations currentOrientation);
 		void SetDpi(float dpi);
 		void ValidateDevice();
 		void Present();
@@ -105,7 +105,7 @@ namespace DirectX12Engine
 		UINT m_numMultisampleQualityLevels;
 		bool m_deviceRemoved;
 
-		std::shared_ptr<GraphicsEngine::IWindow> m_window;
+		std::shared_ptr<IWindow> m_window;
 
 		// CPU/GPU Synchronization.
 		Microsoft::WRL::ComPtr<ID3D12Fence>	m_fence;
@@ -116,8 +116,8 @@ namespace DirectX12Engine
 		DirectX::XMFLOAT2 m_d3dRenderTargetSize;
 		DirectX::XMFLOAT2 m_outputSize;
 		DirectX::XMFLOAT2 m_logicalSize;
-		GraphicsEngine::DisplayOrientations	m_nativeOrientation;
-		GraphicsEngine::DisplayOrientations	m_currentOrientation;
+		DisplayOrientations	m_nativeOrientation;
+		DisplayOrientations	m_currentOrientation;
 		float m_dpi;
 
 		// This is the DPI that will be reported back to the app. It takes into account whether the app supports high resolution screens or not.

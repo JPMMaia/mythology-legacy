@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "GraphicsEngineInterfaces/IRenderer.h"
-#include "GraphicsEngineInterfaces/IScene.h"
+#include "IRenderer.h"
+#include "Scene/IScene.h"
 #include "DeviceResources.h"
 #include "Pipeline/RootSignatureManager.h"
 #include "Pipeline/PipelineStateManager.h"
@@ -13,7 +13,7 @@
 
 namespace DirectX12Engine
 {
-	class Renderer : public GraphicsEngine::IRenderer
+	class Renderer : public IRenderer
 	{
 	public:
 		explicit Renderer(const std::shared_ptr<DeviceResources>& deviceResources);
