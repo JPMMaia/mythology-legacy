@@ -12,7 +12,6 @@
 #include "GameEngine/Geometry/EigenGeometry.h"
 #include "GameEngine/Component/Meshes/MeshComponent.h"
 #include "Core/RenderItem/Specific/RenderRectangle.h"
-#include <set>
 #include "GameEngine/Geometry/Primitives/CustomGeometry.h"
 
 using namespace Common;
@@ -62,14 +61,10 @@ void StandardScene::CreateDeviceDependentResources()
 		// Create textures descriptor heap:
 		{
 			// Count number of textures:
-			std::set<std::wstring> texturePaths;
-			std::for_each(StandardMaterial::begin(), StandardMaterial::end(), [&texturePaths](auto& material)
-			{
-				texturePaths.emplace(material.GetAlbedoMapName());
-			});
+			auto textureCount = StandardMaterial::GetTextureCount();
 
 			// Create descriptor heap:
-			m_texturesDescriptorHeap.CreateDeviceDependentResources(m_deviceResources, texturePaths.size(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
+			m_texturesDescriptorHeap.CreateDeviceDependentResources(m_deviceResources, textureCount, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
 		}
 
 		std::for_each(StandardMaterial::begin(), StandardMaterial::end(), [this, d3dDevice, commandList](auto& material)

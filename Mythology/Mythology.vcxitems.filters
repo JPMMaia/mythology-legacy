@@ -20,7 +20,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Input\Mouse.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\StandardMaterial.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Importer\SceneImporter.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Importer\GLTFImporter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
@@ -67,9 +66,5 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\StandardMaterial.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Importer\SceneImporter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Primitives\CustomGeometry.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tinygltf\stb_image.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tinygltf\picojson.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\tinygltf\tiny_gltf.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Importer\GLTFImporter.h" />
   </ItemGroup>
 </Project>

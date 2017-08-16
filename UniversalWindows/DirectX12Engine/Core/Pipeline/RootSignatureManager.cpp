@@ -4,6 +4,7 @@
 #include "Common/Helpers.h"
 #include "Core/Utilities/DirectXHelper.h"
 #include "Core/Textures/Samplers.h"
+#include "GameEngine/Component/Meshes/StandardMaterial.h"
 
 using namespace Common;
 using namespace DirectX12Engine;
@@ -26,9 +27,10 @@ void RootSignatureManager::CreateDeviceDependentResources()
 
 		{
 			// Textures for G-Buffer pass:
+			auto textureCount = GameEngine::StandardMaterial::GetTextureCount();
 			std::array<D3D12_DESCRIPTOR_RANGE, 1> descriptorRanges =
 			{
-				CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 2, 0, 2)
+				CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, static_cast<UINT>(textureCount), 0, 2)
 			};
 			rootParameters[3].InitAsDescriptorTable(static_cast<UINT>(descriptorRanges.size()), descriptorRanges.data());
 

@@ -1,6 +1,10 @@
 #include "../Common/MaterialData.hlsli"
 #include "../Common/Samplers.hlsli"
 
+#ifndef TEXTURE_COUNT
+#define TEXTURE_COUNT 1
+#endif
+
 struct PixelInput
 {
 	float4 PositionH : SV_POSITION;
@@ -17,7 +21,7 @@ struct PixelOutput
 };
 
 StructuredBuffer<MaterialData> g_materialData : register(t1, space1);
-Texture2D g_albedoMaps[2] : register(t0, space2);
+Texture2D g_albedoMaps[TEXTURE_COUNT] : register(t0, space2);
 
 PixelOutput main(PixelInput input)
 {

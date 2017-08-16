@@ -4,6 +4,7 @@
 #include "Core/Utilities/DirectXHelper.h"
 
 #include <filesystem>
+#include "GameEngine/Component/Meshes/StandardMaterial.h"
 
 using namespace Common;
 using namespace DirectX12Engine;
@@ -49,8 +50,14 @@ void PipelineStateManager::InitializeShadersAndInputLayout()
 
 	// GBufferPass:
 	{
+		auto textureCount = std::to_string(GameEngine::StandardMaterial::GetTextureCount());
+		std::array<D3D_SHADER_MACRO, 2> defines = 
+		{ 
+			"TEXTURE_COUNT", textureCount.c_str(),
+			nullptr, nullptr
+		};
 		m_shaders["GBufferPassVS"] = Shader::CompileShader(L"Shaders/Standard/GBufferPassVertexShader.hlsl", nullptr, "main", "vs_5_1");
-		m_shaders["GBufferPassPS"] = Shader::CompileShader(L"Shaders/Standard/GBufferPassPixelShader.hlsl", nullptr, "main", "ps_5_1");
+		m_shaders["GBufferPassPS"] = Shader::CompileShader(L"Shaders/Standard/GBufferPassPixelShader.hlsl", defines.data(), "main", "ps_5_1");
 	}
 
 	// LightingPass:

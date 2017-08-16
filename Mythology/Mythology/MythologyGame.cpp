@@ -6,6 +6,7 @@
 #include "GameEngine/Geometry/Primitives/RectangleGeometry.h"
 #include "GameEngine/Geometry/Importer/SceneImporter.h"
 #include "GameEngine/Geometry/Primitives/CustomGeometry.h"
+#include "Common/Helpers.h"
 
 #include <cmath>
 
@@ -110,21 +111,30 @@ void MythologyGame::Initialize()
 		m_floor.AddComponent("Mesh", instance);
 	}
 
-	{
+	/*{
 		SceneImporter::ImportedScene scene;
-		SceneImporter::Import(L"Resources/RiggedSimple.gltf", scene);
+		SceneImporter::Import(L"Resources/kasumi/DOA5_Kasumi_MMD.fbx", scene);
 
-		auto mesh = MeshComponent<CustomGeometry<EigenMeshData>>::CreateSharedPointer(CustomGeometry<EigenMeshData>(std::move(scene.Geometries[0].MeshData)));
-		m_meshes.emplace("RiggedSimple", mesh);
-		
-		auto material = StandardMaterial::CreateSharedPointer("ImportedMaterial", Vector4f(1.0f, 1.0f, 1.0f, 1.0f), L"Resources/sandstonecliff-albedo.dds");
-		m_materials.emplace(material->GetName(), material);
+		for(std::size_t i = 0; i < scene.Geometries.size(); ++i)
+		{
+			const auto& geometry = scene.Geometries[i];
+			const auto& material = scene.Materials[geometry.MaterialIndex];
 
-		auto instance = mesh->CreateInstance(material);
-		instance->GetTransform().SetLocalPosition({ 0.0f, 5.0f, 0.0f });
-		instance->GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
-		m_box.AddComponent("Instance", instance);
-	}
+			auto mesh = MeshComponent<CustomGeometry<EigenMeshData>>::CreateSharedPointer(CustomGeometry<EigenMeshData>(std::move(geometry.MeshData)));
+			m_meshes.emplace("kasumi" + std::to_string(i), mesh);
+			
+			const auto& baseColor = material.FloatProperties.at("$clr.diffuse");
+			const auto& albedoMap = L"Resources" + Helpers::GetFilename(Helpers::StringToWString(material.DiffuseTexturePath)) + L".dds";
+			auto standardMaterial = StandardMaterial::CreateSharedPointer("kasumi" + std::to_string(i), Vector4f(baseColor[0], baseColor[1], baseColor[2], 1.0f), albedoMap);
+			m_materials.emplace(standardMaterial->GetName(), standardMaterial);
+
+			auto instance = mesh->CreateInstance(standardMaterial);
+			
+			m_box.AddComponent("Instance" + std::to_string(i), instance);
+		}
+
+		m_box.GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
+	}*/
 }
 
 void MythologyGame::ProcessInput()
