@@ -17,7 +17,8 @@ namespace GameEngine
 		}
 
 	public:
-		const MeshDataType& GenerateMeshData() const
+		template<class T, typename = std::enable_if_t<std::is_same<T, MeshDataType>::value>>
+		const T& GenerateMeshData() const
 		{
 			return m_meshData;
 		}

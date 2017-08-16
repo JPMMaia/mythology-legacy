@@ -4,11 +4,13 @@
 #include "GameEngine/Geometry/Primitives/BoxGeometry.h"
 #include "Libraries/Eigen/Geometry"
 #include "GameEngine/Geometry/Primitives/RectangleGeometry.h"
-
-#include <cmath>
+#include "Common/Helpers.h"
 #include "GameEngine/Geometry/Importer/SceneImporter.h"
 #include "GameEngine/Geometry/Primitives/CustomGeometry.h"
 
+#include <cmath>
+
+using namespace Common;
 using namespace Eigen;
 using namespace Mythology;
 using namespace GameEngine;
@@ -21,14 +23,6 @@ MythologyGame::MythologyGame()
 void MythologyGame::Initialize()
 {
 	m_gameManager = std::make_shared<GameEngine::GameManager>();
-
-	{
-		SceneImporter::ImportedScene scene;
-		SceneImporter::Import(L"Resources/BoxTextured.gltf", scene);
-
-		auto mesh = MeshComponent<CustomGeometry<EigenMeshData>>(CustomGeometry<EigenMeshData>(std::move(scene.Geometries[0].MeshData)));
-		//m_meshes.emplace("Imported Box", mesh);
-	}
 
 	// Meshes:
 	{
@@ -115,6 +109,21 @@ void MythologyGame::Initialize()
 		auto instance = m_meshes.at("Floor")->CreateInstance(m_materials.at("Wood"));
 		instance->GetTransform().SetWorldRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
 		m_floor.AddComponent("Mesh", instance);
+	}
+
+	{
+		SceneImporter::ImportedScene scene;
+		SceneImporter::Import(L"Resources/BoxTextured.gltf", scene);
+
+		auto mesh = MeshComponent<CustomGeometry<EigenMeshData>>::CreateSharedPointer(CustomGeometry<EigenMeshData>(std::move(scene.Geometries[0].MeshData)));
+		m_meshes.emplace("Imported Box", mesh);
+
+		auto material = StandardMaterial::CreateSharedPointer("ImportedMaterial", Vector4f(1.0f, 1.0f, 1.0f, 1.0f), L"Resources/" + Helpers::StringToWString(scene.Materials[0].DiffuseTexturePath));
+		m_materials.emplace(material->GetName(), material);
+
+		auto instance = mesh->CreateInstance(material);
+		instance->GetTransform().SetLocalPosition({ 0.0f, 2.0f, 0.0f });
+		m_box.AddComponent("Instance", instance);
 	}
 }
 

@@ -13,6 +13,7 @@
 #include "GameEngine/Component/Meshes/MeshComponent.h"
 #include "Core/RenderItem/Specific/RenderRectangle.h"
 #include <set>
+#include "GameEngine/Geometry/Primitives/CustomGeometry.h"
 
 using namespace Common;
 using namespace DirectX;
@@ -51,6 +52,7 @@ void StandardScene::CreateDeviceDependentResources()
 
 		CreateRenderItems<MeshComponent<BoxGeometry>, VertexType>(d3dDevice, commandList);
 		CreateRenderItems<MeshComponent<RectangleGeometry>, VertexType>(d3dDevice, commandList);
+		CreateRenderItems<MeshComponent<CustomGeometry<EigenMeshData>>, VertexType>(d3dDevice, commandList);
 	}
 
 	{
@@ -277,6 +279,7 @@ void StandardScene::UpdateInstancesBuffers()
 	auto renderItem = m_renderItems.begin();
 	UpdateInstancesBuffer<MeshComponent<BoxGeometry>>(renderItem);
 	UpdateInstancesBuffer<MeshComponent<RectangleGeometry>>(renderItem);
+	UpdateInstancesBuffer<MeshComponent<CustomGeometry<EigenMeshData>>>(renderItem);
 }
 
 template<class MeshType>
@@ -290,7 +293,7 @@ void StandardScene::UpdateInstancesBuffer(std::deque<StandardRenderItem>::iterat
 		std::for_each(mesh.InstancesBegin(), mesh.InstancesEnd(), [this, &index, &renderItem](auto& instance)
 		{
 			ShaderBufferTypes::InstanceData shaderData;
-			
+
 			// Update material index:
 			shaderData.MaterialIndex = m_materialIndices.at(instance.GetMaterial()->GetName());
 

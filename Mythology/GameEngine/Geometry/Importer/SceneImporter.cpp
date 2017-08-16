@@ -35,7 +35,7 @@ void SceneImporter::Import(const std::wstring& filePath, ImportedScene& imported
 
 	for(std::size_t i = 0; i < scene->mNumMaterials; ++i)
 	{
-		importedScene.Materials.emplace_back(scene->mMaterials[i]);
+		importedScene.Materials.emplace_back(CreateMaterial(*scene->mMaterials[i]));
 	}
 }
 
@@ -95,5 +95,42 @@ SceneImporter::Material SceneImporter::CreateMaterial(const aiMaterial& material
 {
 	Material data;
 
+	aiString texturePath;
+	material.GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
+	data.DiffuseTexturePath = texturePath.C_Str();
+
+	for(std::size_t i = 0; i < material.mNumProperties; ++i)
+	{
+		auto property = material.mProperties[i];
+		
+		switch (property->mType)
+		{
+		case aiPTI_Float: 
+			data.FloatProperties[property->mKey.C_Str()] = ParseArray<std::vector<float>, float>(*property);
+			break;
+		case aiPTI_Double:
+			data.DoubleProperties[property->mKey.C_Str()] = ParseArray<std::vector<double>, double>(*property);
+			break;
+		case aiPTI_String:
+			data.StringProperties[property->mKey.C_Str()] = ParseArray<std::string, char>(*property);
+			break;
+		case aiPTI_Integer:
+			data.IntegerProperties[property->mKey.C_Str()] = ParseArray<std::vector<std::int32_t>, std::int32_t>(*property);
+			break;
+
+		default: 
+			break;
+		}
+	}
+
 	return data;
+}
+
+template <typename ContainerType, typename DataType>
+ContainerType SceneImporter::ParseArray(const aiMaterialProperty& property)
+{
+	ContainerType container;
+	container.resize(property.mDataLength / sizeof(std::uint8_t));
+	std::memcpy(reinterpret_cast<void*>(&container[0]), property.mData, property.mDataLength);
+	return container;
 }
