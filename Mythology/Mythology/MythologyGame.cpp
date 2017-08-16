@@ -4,7 +4,6 @@
 #include "GameEngine/Geometry/Primitives/BoxGeometry.h"
 #include "Libraries/Eigen/Geometry"
 #include "GameEngine/Geometry/Primitives/RectangleGeometry.h"
-#include "Common/Helpers.h"
 #include "GameEngine/Geometry/Importer/SceneImporter.h"
 #include "GameEngine/Geometry/Primitives/CustomGeometry.h"
 
@@ -113,16 +112,17 @@ void MythologyGame::Initialize()
 
 	{
 		SceneImporter::ImportedScene scene;
-		SceneImporter::Import(L"Resources/BoxTextured.gltf", scene);
+		SceneImporter::Import(L"Resources/RiggedSimple.gltf", scene);
 
 		auto mesh = MeshComponent<CustomGeometry<EigenMeshData>>::CreateSharedPointer(CustomGeometry<EigenMeshData>(std::move(scene.Geometries[0].MeshData)));
-		m_meshes.emplace("Imported Box", mesh);
-
-		auto material = StandardMaterial::CreateSharedPointer("ImportedMaterial", Vector4f(1.0f, 1.0f, 1.0f, 1.0f), L"Resources/" + Helpers::StringToWString(scene.Materials[0].DiffuseTexturePath));
+		m_meshes.emplace("RiggedSimple", mesh);
+		
+		auto material = StandardMaterial::CreateSharedPointer("ImportedMaterial", Vector4f(1.0f, 1.0f, 1.0f, 1.0f), L"Resources/sandstonecliff-albedo.dds");
 		m_materials.emplace(material->GetName(), material);
 
 		auto instance = mesh->CreateInstance(material);
-		instance->GetTransform().SetLocalPosition({ 0.0f, 2.0f, 0.0f });
+		instance->GetTransform().SetLocalPosition({ 0.0f, 5.0f, 0.0f });
+		instance->GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
 		m_box.AddComponent("Instance", instance);
 	}
 }

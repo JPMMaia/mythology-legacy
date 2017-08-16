@@ -16,6 +16,7 @@ void SceneImporter::Import(const std::wstring& filePath, ImportedScene& imported
 		aiProcess_CalcTangentSpace |
 		aiProcess_Triangulate |
 		aiProcess_GenNormals |
+		aiProcess_GenUVCoords |
 		aiProcess_SortByPType;
 	auto scene = importer.ReadFile(Helpers::WStringToString(filePath), flags);
 
@@ -73,7 +74,6 @@ SceneImporter::MeshDataType SceneImporter::CreateMeshData(const aiMesh& mesh)
 				vertices[i].TextureCoordinates = { textureCoordinates.x, textureCoordinates.y };
 			}	
 		}
-			
 	}
 	
 	{
@@ -129,8 +129,10 @@ SceneImporter::Material SceneImporter::CreateMaterial(const aiMaterial& material
 template <typename ContainerType, typename DataType>
 ContainerType SceneImporter::ParseArray(const aiMaterialProperty& property)
 {
+	auto count = static_cast<std::size_t>(property.mDataLength / sizeof(DataType));
+
 	ContainerType container;
-	container.resize(property.mDataLength / sizeof(std::uint8_t));
+	container.resize(count);
 	std::memcpy(reinterpret_cast<void*>(&container[0]), property.mData, property.mDataLength);
 	return container;
 }
