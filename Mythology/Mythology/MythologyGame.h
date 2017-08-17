@@ -25,7 +25,7 @@ namespace Mythology
 
 		void ProcessInput();
 		void FixedUpdate(const Common::Timer& timer);
-		void FrameUpdate(const Common::Timer& timer) const;
+		void FrameUpdate(const Common::Timer& timer);
 
 	public:
 		std::shared_ptr<GameEngine::GameManager> GameManager() const;

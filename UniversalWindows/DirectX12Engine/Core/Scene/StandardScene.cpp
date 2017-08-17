@@ -13,6 +13,7 @@
 #include "GameEngine/Component/Meshes/MeshComponent.h"
 #include "Core/RenderItem/Specific/RenderRectangle.h"
 #include "GameEngine/Geometry/Primitives/CustomGeometry.h"
+#include "Common/Timer.h"
 
 using namespace Common;
 using namespace DirectX;

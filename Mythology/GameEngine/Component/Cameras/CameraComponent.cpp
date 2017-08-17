@@ -7,7 +7,6 @@ CameraComponent::CameraComponent() :
 	m_fovAngleY(60.0f),
 	m_nearZ(0.0625f),
 	m_farZ(50.0f),
-	m_viewMatrix(Matrix::Identity()),
 	m_projectionMatrix(BuildProjectionMatrix(m_aspectRatio, m_fovAngleY, m_nearZ, m_farZ, Matrix::Identity()))
 {
 }
@@ -16,24 +15,16 @@ CameraComponent::CameraComponent(float aspectRatio, float fovAngleY, float nearZ
 	m_fovAngleY(fovAngleY),
 	m_nearZ(nearZ),
 	m_farZ(farZ),
-	m_viewMatrix(Matrix::Identity()),
 	m_projectionMatrix(BuildProjectionMatrix(aspectRatio, fovAngleY, nearZ, farZ, orientationMatrix))
 {
 }
 
-void CameraComponent::FixedUpdate(const Common::Timer& timer)
+CameraComponent::Matrix CameraComponent::GetViewMatrix() const
 {
-	BaseComponent::FixedUpdate(timer);
-
 	const auto& transform = GetTransform();
-	m_viewMatrix = BuildViewMatrix(transform);
+	return BuildViewMatrix(transform);
 }
-
-CameraComponent::MatrixCR CameraComponent::GetViewMatrix() const
-{
-	return m_viewMatrix;
-}
-CameraComponent::MatrixCR CameraComponent::GetProjectionMatrix() const
+CameraComponent::Matrix CameraComponent::GetProjectionMatrix() const
 {
 	return m_projectionMatrix;
 }

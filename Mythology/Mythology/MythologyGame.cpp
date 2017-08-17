@@ -10,6 +10,7 @@
 #include "Interfaces/IFileSystem.h"
 
 #include <cmath>
+#include <WinString.h>
 
 using namespace Common;
 using namespace Eigen;
@@ -142,10 +143,10 @@ void MythologyGame::Initialize()
 
 			auto instance = mesh->CreateInstance(standardMaterial);
 			
-			m_box.AddComponent("Instance" + std::to_string(i), instance);
+			m_person.AddComponent("Instance" + std::to_string(i), instance);
 		}
 
-		m_box.GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
+		//m_box.GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
 	}
 }
 
@@ -156,6 +157,10 @@ void MythologyGame::ProcessInput()
 void MythologyGame::FixedUpdate(const Common::Timer& timer)
 {
 	m_gameManager->FixedUpdate(timer);
+}
+void MythologyGame::FrameUpdate(const Common::Timer& timer)
+{
+	m_gameManager->FrameUpdate(timer);
 
 	auto& cameraTransform = m_person.GetTransform();
 
@@ -181,10 +186,6 @@ void MythologyGame::FixedUpdate(const Common::Timer& timer)
 	auto deltaMovement = mouse.DeltaMovement();
 	cameraTransform.Rotate(Vector3f::UnitX(), mouseSensibility * deltaMovement[1]);
 	cameraTransform.Rotate(Vector3f::UnitY(), -mouseSensibility * deltaMovement[0]);
-}
-void MythologyGame::FrameUpdate(const Common::Timer& timer) const
-{
-	m_gameManager->FrameUpdate(timer);
 }
 
 std::shared_ptr<GameManager> MythologyGame::GameManager() const

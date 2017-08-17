@@ -104,7 +104,8 @@ void WindowsAppMain::FixedUpdate(const Common::Timer& timer)
 	m_game->FixedUpdate(timer);
 }
 void WindowsAppMain::FrameUpdate(const Common::Timer& timer)
-{	
+{
+	m_game->FrameUpdate(timer);
 	m_renderer->FrameUpdate(timer);
 }
 void WindowsAppMain::Render(const Common::Timer& timer)
