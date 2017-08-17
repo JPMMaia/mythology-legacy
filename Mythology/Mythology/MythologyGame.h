@@ -31,7 +31,7 @@ namespace Mythology
 		std::shared_ptr<GameEngine::GameManager> GameManager() const;
 
 	public:
-		const GameEngine::GameObject& GetPerson() const { return m_person; }
+		GameEngine::GameObject::PointerType<GameEngine::CameraComponent> GetMainCamera() const;
 
 	private:
 		std::shared_ptr<GameEngine::IFileSystem> m_fileSystem;

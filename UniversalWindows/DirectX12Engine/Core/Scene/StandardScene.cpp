@@ -93,17 +93,11 @@ void StandardScene::CreateWindowSizeDependentResources()
 {
 	auto outputSize = m_deviceResources->GetOutputSize();
 	auto aspectRatio = outputSize.x / outputSize.y;
-	auto fovAngleY = 60.0f * XM_PI / 180.0f;
-
-	if (aspectRatio < 1.0f)
-	{
-		fovAngleY *= 2.0f;
-	}
+	auto fovAngleY = XM_PI / 2.0f;
 
 	auto orientation = m_deviceResources->GetOrientationTransform3D();
 
-	const auto& person = m_game->GetPerson();
-	auto camera = person.GetComponent<GameEngine::CameraComponent>("Camera");
+	auto camera = m_game->GetMainCamera();
 	camera->SetAspectRatio(aspectRatio);
 	camera->SetFovAngleY(fovAngleY);
 	camera->SetOrientationMatrix(Eigen::Affine3f(orientation));
@@ -233,11 +227,9 @@ void StandardScene::UpdatePassBuffer()
 {
 	ShaderBufferTypes::PassData passData = {};
 
-	const auto& person = m_game->GetPerson();
-
 	// Matrices:
 	{
-		auto camera = person.GetComponent<GameEngine::CameraComponent>("Camera");
+		auto camera = m_game->GetMainCamera();
 
 		const auto& viewMatrix = camera->GetViewMatrix();
 		const auto& projectionMatrix = camera->GetProjectionMatrix();

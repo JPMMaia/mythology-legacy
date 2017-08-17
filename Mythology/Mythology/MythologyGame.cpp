@@ -43,22 +43,22 @@ void MythologyGame::Initialize()
 	// Materials:
 	{
 		{
-			auto material = StandardMaterial::CreateSharedPointer("Wood", Vector4f(1.0f, 1.0f, 1.0f, 1.0f), L"Resources/sandstonecliff-albedo.dds");
+			auto material = StandardMaterial::CreateSharedPointer("Wood", Vector4f(1.0f, 1.0f, 1.0f, 1.0f), L"Resources/bamboo-wood/bamboo-wood-semigloss-albedo.dds");
 			m_materials.emplace(material->GetName(), material);
 		}
 
 		{
-			auto material = StandardMaterial::CreateSharedPointer("Red", Vector4f(1.0f, 0.0f, 0.0f, 1.0f), L"Resources/sandstonecliff-albedo.dds");
+			auto material = StandardMaterial::CreateSharedPointer("Red", Vector4f(1.0f, 0.0f, 0.0f, 1.0f), L"Resources/white.dds");
 			m_materials.emplace(material->GetName(), material);
 		}
 
 		{
-			auto material = StandardMaterial::CreateSharedPointer("Green", Vector4f(0.0f, 1.0f, 0.0f, 1.0f), L"Resources/sandstonecliff-albedo.dds");
+			auto material = StandardMaterial::CreateSharedPointer("Green", Vector4f(0.0f, 1.0f, 0.0f, 1.0f), L"Resources/white.dds");
 			m_materials.emplace(material->GetName(), material);
 		}
 
 		{
-			auto material = StandardMaterial::CreateSharedPointer("Blue", Vector4f(0.0f, 0.0f, 1.0f, 1.0f), L"Resources/sandstonecliff-albedo.dds");
+			auto material = StandardMaterial::CreateSharedPointer("Blue", Vector4f(0.0f, 0.0f, 1.0f, 1.0f), L"Resources/white.dds");
 			m_materials.emplace(material->GetName(), material);
 		}
 	}
@@ -142,8 +142,8 @@ void MythologyGame::Initialize()
 			m_materials.emplace(standardMaterial->GetName(), standardMaterial);
 
 			auto instance = mesh->CreateInstance(standardMaterial);
-			
-			m_person.AddComponent("Instance" + std::to_string(i), instance);
+			instance->GetTransform().SetWorldRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
+			m_box.AddComponent("Instance" + std::to_string(i), instance);
 		}
 
 		//m_box.GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
@@ -191,4 +191,9 @@ void MythologyGame::FrameUpdate(const Common::Timer& timer)
 std::shared_ptr<GameManager> MythologyGame::GameManager() const
 {
 	return m_gameManager;
+}
+
+GameObject::PointerType<CameraComponent> MythologyGame::GetMainCamera() const
+{
+	return m_person.GetComponent<CameraComponent>("Camera");
 }
