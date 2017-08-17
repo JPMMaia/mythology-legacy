@@ -20,6 +20,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Input\Mouse.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\StandardMaterial.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Importer\SceneImporter.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\SkinnedData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
@@ -65,5 +66,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IDirectory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IFileSystem.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\AnimationClip.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\SkinnedData.h" />
   </ItemGroup>
 </Project>

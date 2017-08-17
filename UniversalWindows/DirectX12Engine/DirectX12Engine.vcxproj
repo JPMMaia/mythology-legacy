@@ -398,6 +398,7 @@
     <None Include="Shaders\Common\MaterialData.hlsli" />
     <None Include="Shaders\Common\PassData.hlsli" />
     <None Include="Shaders\Common\Samplers.hlsli" />
+    <None Include="Shaders\Common\SkinnedData.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
