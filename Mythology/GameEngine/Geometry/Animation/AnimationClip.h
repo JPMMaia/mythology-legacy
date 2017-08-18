@@ -1,16 +1,17 @@
 #pragma once
 
-#include <vector>
+#include "BoneAnimation.h"
 
 namespace GameEngine
 {
 	class AnimationClip
 	{
 	public:
+		void Interpolate(float timePosition, std::vector<Eigen::Affine3f>& boneTransforms) const;
+
+	public:
 		float GetClipStartTime() const;
 		float GetClipEndTime() const;
-
-		void Interpolate(float time, std::vector<Eigen::Affine3f>& boneTransforms) const;
 
 	private:
 		std::vector<BoneAnimation> m_boneAnimations;

@@ -116,7 +116,7 @@ void MythologyGame::Initialize()
 
 	{
 		SceneImporter::ImportedScene scene;
-		//SceneImporter::Import(L"Resources/kasumi/DOA5_Kasumi_MMD.fbx", scene);
+		SceneImporter::Import(L"Resources/kasumi/DOA5_Kasumi_MMD.fbx", scene);
 
 		{
 			auto workingDirectory = m_fileSystem->GetWorkingDirectory();

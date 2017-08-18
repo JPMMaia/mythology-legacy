@@ -59,6 +59,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\AnimationClip.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\BoneAnimation.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\SkinnedData.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -79,6 +85,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\Event.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\InternalEventsComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Common\EigenHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Helpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\InternalEvent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\MemoryPool\MemoryPool.h" />
@@ -102,6 +109,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\AnimationClip.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\BoneAnimation.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\Keyframe.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\SkinnedData.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\EigenGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Importer\SceneImporter.h" />
