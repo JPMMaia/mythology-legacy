@@ -14,12 +14,12 @@ void BoneAnimation::Interpolate(float timePosition, Eigen::Affine3f& matrix) con
 	if(timePosition < GetStartTime())
 	{
 		const auto& keyframe =  m_keyframes.front();
-		matrix.fromPositionOrientationScale(keyframe.Translation, keyframe.Rotation, keyframe.Scale);
+		matrix.fromPositionOrientationScale(keyframe.Translation, keyframe.Rotation, keyframe.Scaling);
 	}
 	else if(timePosition > GetEndTime())
 	{
 		const auto& keyframe = m_keyframes.back();
-		matrix.fromPositionOrientationScale(keyframe.Translation, keyframe.Rotation, keyframe.Scale);
+		matrix.fromPositionOrientationScale(keyframe.Translation, keyframe.Rotation, keyframe.Scaling);
 	}
 	else
 	{
@@ -34,7 +34,7 @@ void BoneAnimation::Interpolate(float timePosition, Eigen::Affine3f& matrix) con
 				
 				auto translation = EigenHelpers::LinearInterpolate(keyframe.Translation, followingKeyframe.Translation, percentage);
 				auto rotation = keyframe.Rotation.slerp(percentage, followingKeyframe.Rotation);
-				auto scale = EigenHelpers::LinearInterpolate(keyframe.Scale, followingKeyframe.Scale, percentage);
+				auto scale = EigenHelpers::LinearInterpolate(keyframe.Scaling, followingKeyframe.Scaling, percentage);
 
 				matrix.fromPositionOrientationScale(translation, rotation, scale);
 

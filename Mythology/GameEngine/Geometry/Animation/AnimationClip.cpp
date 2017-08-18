@@ -2,6 +2,11 @@
 
 using namespace GameEngine;
 
+AnimationClip::AnimationClip(const std::vector<BoneAnimation>& boneAnimations):
+	m_boneAnimations(boneAnimations)
+{
+}
+
 void AnimationClip::Interpolate(float timePosition, std::vector<Eigen::Affine3f>& boneTransforms) const
 {
 	for(std::size_t i = 0; i < m_boneAnimations.size(); ++i)

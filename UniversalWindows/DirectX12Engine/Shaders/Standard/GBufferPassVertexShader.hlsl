@@ -1,5 +1,3 @@
-#define SKINNED 1
-
 #include "../Common/InstanceData.hlsli"
 #include "../Common/PassData.hlsli"
 #include "../Common/MaterialData.hlsli"

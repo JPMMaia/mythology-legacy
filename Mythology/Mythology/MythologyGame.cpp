@@ -115,6 +115,32 @@ void MythologyGame::Initialize()
 	}
 
 	{
+		std::wstring basePath(L"Resources/Tiny/");
+		std::string modelName = "tiny";
+		SceneImporter::ImportedScene scene;
+		SceneImporter::Import(basePath + L"tiny.x", scene);
+
+		for (std::size_t i = 0; i < scene.Geometries.size(); ++i)
+		{
+			const auto& geometry = scene.Geometries[i];
+			const auto& material = scene.Materials[geometry.MaterialIndex];
+
+			auto mesh = MeshComponent<CustomGeometry<EigenMeshData>>::CreateSharedPointer(CustomGeometry<EigenMeshData>(std::move(geometry.MeshData)));
+			m_meshes.emplace(modelName + std::to_string(i), mesh);
+
+			const auto& baseColor = material.FloatProperties.at("$clr.diffuse");
+			const auto& albedoMap = basePath + Helpers::GetFilename(Helpers::StringToWString(material.DiffuseTexturePath)) + L".dds";
+			auto standardMaterial = StandardMaterial::CreateSharedPointer(modelName + std::to_string(i), Vector4f(baseColor[0], baseColor[1], baseColor[2], 1.0f), albedoMap);
+			m_materials.emplace(standardMaterial->GetName(), standardMaterial);
+
+			auto instance = mesh->CreateInstance(standardMaterial);
+			//instance->GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
+			instance->GetTransform().SetLocalScaling(Vector3f(1.0f, 1.0f, 1.0f) * 0.01f);
+			m_box.AddComponent("Instance" + std::to_string(i), instance);
+		}
+	}
+
+	/*{
 		SceneImporter::ImportedScene scene;
 		SceneImporter::Import(L"Resources/kasumi/DOA5_Kasumi_MMD.fbx", scene);
 
@@ -147,7 +173,7 @@ void MythologyGame::Initialize()
 		}
 
 		//m_box.GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
-	}
+	}*/
 }
 
 void MythologyGame::ProcessInput()

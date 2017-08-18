@@ -6,6 +6,8 @@
 
 #include <iterator>
 #include <unordered_set>
+#include "GameEngine/Geometry/Animation/AnimationClip.h"
+#include <queue>
 
 using namespace Assimp;
 using namespace Common;
@@ -249,6 +251,12 @@ void SceneImporter::Import(const std::wstring& filePath, ImportedScene& imported
 		aiProcess_Triangulate |
 		aiProcess_GenNormals |
 		aiProcess_GenUVCoords |
+		aiProcess_FindInvalidData |
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_LimitBoneWeights |
+		aiProcess_ImproveCacheLocality |
+		aiProcess_ValidateDataStructure |
+		aiProcess_FlipUVs |
 		aiProcess_SortByPType;
 	auto scene = importer.ReadFile(Helpers::WStringToString(filePath), flags);
 
@@ -266,23 +274,33 @@ void SceneImporter::Import(const std::wstring& filePath, ImportedScene& imported
 		importedScene.Geometries.emplace_back(std::move(geometry));
 	}
 
-	auto skeleton = CreateSkeleton(*scene);
-	for (std::size_t i = 0; i < scene->mNumMeshes; ++i)
 	{
-		auto mesh = scene->mMeshes[i];
-		auto& geometry = importedScene.Geometries[i];
+		// Create skeleton:
+		auto skeleton = CreateSkeleton(*scene);
 
-		AddBoneData(skeleton, *mesh, geometry);
+		// Add bone weights and indices to the mesh data:
+		for (std::size_t i = 0; i < scene->mNumMeshes; ++i)
+		{
+			auto mesh = scene->mMeshes[i];
+			auto& geometry = importedScene.Geometries[i];
+
+			AddBoneData(skeleton, *mesh, geometry);
+		}
+
+		// Create animation clips:
+		std::unordered_map<std::string, AnimationClip> animations;
+		for (std::size_t i = 0; i < scene->mNumAnimations; ++i)
+		{
+			auto animationData = scene->mAnimations[i];
+			animations.emplace(animationData->mName.C_Str(), CreateSkinnedAnimation(*animationData, skeleton));
+		}
+
+		importedScene.SkinnedData = SkinnedData(skeleton.BoneHierarchy, skeleton.BoneOffsets, animations);
 	}
 
 	for (std::size_t i = 0; i < scene->mNumMaterials; ++i)
 	{
 		importedScene.Materials.emplace_back(CreateMaterial(*scene->mMaterials[i]));
-	}
-
-	for (std::size_t i = 0; i < scene->mNumAnimations; ++i)
-	{
-		importedScene.Animations.emplace_back(CreateAnimation(*scene->mAnimations[i]));
 	}
 }
 
@@ -383,15 +401,42 @@ ContainerType SceneImporter::ParseArray(const aiMaterialProperty& property)
 	return container;
 }
 
-SceneImporter::Animation SceneImporter::CreateAnimation(const aiAnimation& animationData)
+AnimationClip SceneImporter::CreateSkinnedAnimation(const aiAnimation& animationData, const Skeleton& skeleton)
 {
-	Animation animation;
+	std::vector<BoneAnimation> boneAnimations;
+	boneAnimations.resize(static_cast<std::size_t>(animationData.mNumChannels));
+	for (std::size_t channelIndex = 0; channelIndex < animationData.mNumChannels; ++channelIndex)
+	{
+		auto channel = animationData.mChannels[channelIndex];
 
-	animation.Name = animationData.mName.C_Str();
+		// Do not add animations that do not refer to a bone:
+		if (std::find(skeleton.Bones.begin(), skeleton.Bones.end(), channel->mNodeName.C_Str()) == skeleton.Bones.end())
+			continue;
 
+		std::vector<Keyframe> keyframes(channel->mNumPositionKeys);
+		for (std::size_t keyIndex = 0; keyIndex < keyframes.size(); ++keyIndex)
+		{
+			{
+				const auto& key = channel->mPositionKeys[keyIndex];
+				keyframes[keyIndex].TimePosition = static_cast<float>(key.mTime);
+				keyframes[keyIndex].Translation = { key.mValue.x, key.mValue.y, key.mValue.z };
+			}
 
+			{
+				const auto& key = channel->mRotationKeys[keyIndex];
+				keyframes[keyIndex].Rotation = { key.mValue.x, key.mValue.y, key.mValue.z, key.mValue.w };
+			}
 
-	return animation;
+			{
+				const auto& key = channel->mScalingKeys[keyIndex];
+				keyframes[keyIndex].Scaling = { key.mValue.x, key.mValue.y, key.mValue.z };
+			}
+		}
+
+		boneAnimations[channelIndex] = BoneAnimation(keyframes);
+	}
+
+	return AnimationClip(boneAnimations);
 }
 
 SceneImporter::Skeleton SceneImporter::CreateSkeleton(const aiScene& scene)
@@ -400,6 +445,7 @@ SceneImporter::Skeleton SceneImporter::CreateSkeleton(const aiScene& scene)
 
 	// Find all bones:
 	std::unordered_set<std::string> boneNames;
+	std::unordered_map<std::string, Eigen::Affine3f> boneOffsets;
 	for (std::size_t meshIndex = 0; meshIndex < scene.mNumMeshes; ++meshIndex)
 	{
 		auto mesh = scene.mMeshes[meshIndex];
@@ -408,6 +454,18 @@ SceneImporter::Skeleton SceneImporter::CreateSkeleton(const aiScene& scene)
 		{
 			auto bone = mesh->mBones[boneIndex];
 			boneNames.emplace(bone->mName.C_Str());
+
+			Eigen::Matrix4f offsetMatrix;
+			{
+				const auto& m = bone->mOffsetMatrix;
+				offsetMatrix <<
+					m.a1, m.a2, m.a3, m.a4,
+					m.b1, m.b2, m.b3, m.b4,
+					m.c1, m.c2, m.c3, m.c4,
+					m.d1, m.d2, m.d3, m.d4;
+			}
+
+			boneOffsets.emplace(bone->mName.C_Str(), Eigen::Affine3f(offsetMatrix));
 		}
 	}
 
@@ -433,17 +491,43 @@ SceneImporter::Skeleton SceneImporter::CreateSkeleton(const aiScene& scene)
 		}
 	}
 
-	// Add bone names to a list, so that a child node never appears before a parent node:
-	auto& bones = skeleton.Bones;
-	bones.resize(boneNodes.size());
-	std::function<void(aiNode*)> appendChildrenToHierarchy = [&bones, &appendChildrenToHierarchy](aiNode* node)
 	{
-		bones.emplace_back(node->mName.C_Str());
+		// Build hierachy such that a child node never appears before a parent node:
+		auto& boneHierarchy = skeleton.BoneHierarchy;
+		auto& bones = skeleton.Bones;
+		std::function<void(aiNode*)> appendChildrenToHierarchy = [&bones, &boneNames, &boneHierarchy, &boneNodes, &appendChildrenToHierarchy](aiNode* node)
+		{
+			std::string nodeName(node->mName.C_Str());
+			if (boneNames.find(nodeName) != boneNames.end())
+			{
+				bones.emplace_back(nodeName);
 
-		for (std::size_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex)
-			appendChildrenToHierarchy(node->mChildren[childIndex]);
-	};
-	appendChildrenToHierarchy(boneNodes.at(rootNodeName));
+				const auto& boneNode = boneNodes.at(nodeName);
+				auto parentLocation = std::find(bones.begin(), bones.end(), boneNode->mParent->mName.C_Str());
+
+				// If root bone:
+				if (parentLocation == bones.end())
+				{
+					boneHierarchy.emplace_back(-1);
+				}
+				// If not root bone:
+				else
+				{
+					auto indexOfParent = std::distance(bones.begin(), parentLocation);
+					boneHierarchy.emplace_back(static_cast<EigenVertex::BoneIndexType>(indexOfParent));
+				}
+			}
+
+			for (std::size_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex)
+				appendChildrenToHierarchy(node->mChildren[childIndex]);
+		};
+		appendChildrenToHierarchy(boneNodes.at(rootNodeName));
+	}
+
+	// Insert bone offsets in the correct order:
+	skeleton.BoneOffsets.reserve(skeleton.Bones.size());
+	for(const auto& boneName : skeleton.Bones)
+		skeleton.BoneOffsets.emplace_back(boneOffsets.at(boneName));
 
 	return skeleton;
 }
@@ -459,13 +543,13 @@ void SceneImporter::AddBoneData(const Skeleton& skeleton, const aiMesh& mesh, Ge
 		auto boneLocation = std::find(skeleton.Bones.begin(), skeleton.Bones.end(), bone->mName.C_Str());
 		auto indexOf = std::distance(skeleton.Bones.begin(), boneLocation);
 
-		for(std::size_t vertexWeightIndex = 0; vertexWeightIndex < bone->mNumWeights; ++vertexWeightIndex)
+		for (std::size_t vertexWeightIndex = 0; vertexWeightIndex < bone->mNumWeights; ++vertexWeightIndex)
 		{
 			const auto& vertexWeight = bone->mWeights[vertexWeightIndex];
 
 			auto& vertex = vertices[vertexWeight.mVertexId];
 			vertex.BoneWeights.push_back(vertexWeight.mWeight);
-			vertex.BoneIndices.push_back(indexOf);
+			vertex.BoneIndices.push_back(static_cast<EigenVertex::BoneIndexType>(indexOf));
 		}
 	}
 }

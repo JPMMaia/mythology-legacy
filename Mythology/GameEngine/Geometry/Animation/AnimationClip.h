@@ -7,6 +7,10 @@ namespace GameEngine
 	class AnimationClip
 	{
 	public:
+		AnimationClip() = default;
+		explicit AnimationClip(const std::vector<BoneAnimation>& boneAnimations);
+
+	public:
 		void Interpolate(float timePosition, std::vector<Eigen::Affine3f>& boneTransforms) const;
 
 	public:

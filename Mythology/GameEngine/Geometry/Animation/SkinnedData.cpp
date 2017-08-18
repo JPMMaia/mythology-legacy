@@ -2,7 +2,7 @@
 
 using namespace GameEngine;
 
-SkinnedData::SkinnedData(const std::vector<std::int32_t>& boneHierarchy, const std::vector<Eigen::Affine3f>& boneOffsets, const std::unordered_map<std::string, AnimationClip>& animations) :
+SkinnedData::SkinnedData(const std::vector<std::int8_t>& boneHierarchy, const std::vector<Eigen::Affine3f>& boneOffsets, const std::unordered_map<std::string, AnimationClip>& animations) :
 	m_boneHierarchy(boneHierarchy),
 	m_boneOffsets(boneOffsets),
 	m_animations(animations)
@@ -25,7 +25,7 @@ std::size_t SkinnedData::GetBoneCount() const
 }
 void SkinnedData::GetFinalTransforms(const std::string& clipName, float timePosition, std::vector<Eigen::Affine3f>& finalTransforms) const
 {
-	std::size_t boneCount = m_boneOffsets.size();
+	auto boneCount = m_boneOffsets.size();
 
 	std::vector<Eigen::Affine3f> toParentTransforms(boneCount);
 	auto clip = m_animations.at(clipName);

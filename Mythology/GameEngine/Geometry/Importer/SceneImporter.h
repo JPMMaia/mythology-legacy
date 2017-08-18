@@ -1,10 +1,11 @@
 #pragma once
 
 #include "GameEngine/Geometry/EigenGeometry.h"
+#include "GameEngine/Geometry/Animation/AnimationClip.h"
+#include "GameEngine/Geometry/Animation/SkinnedData.h"
 
 #include <deque>
 #include <unordered_map>
-#include <assimp/scene.h>
 
 struct aiScene;
 struct aiMaterialProperty;
@@ -50,13 +51,14 @@ namespace GameEngine
 		struct Skeleton
 		{
 			std::deque<std::string> Bones;
+			std::vector<Eigen::Affine3f> BoneOffsets;
+			std::vector<std::int8_t> BoneHierarchy;
 		};
 		struct ImportedScene
 		{
 			std::deque<Geometry> Geometries;
 			std::deque<Material> Materials;
-			std::deque<Animation> Animations;
-			Skeleton Skeleton;
+			SkinnedData SkinnedData;
 
 			friend std::ostream& operator<<(std::ostream& outputStream, const ImportedScene& importedScene);
 			friend std::istream& operator>>(std::istream& inputStream, ImportedScene& importedScene);
@@ -68,7 +70,7 @@ namespace GameEngine
 	private:
 		static MeshDataType CreateMeshData(const aiMesh& mesh);
 		static Material CreateMaterial(const aiMaterial& material);
-		static Animation CreateAnimation(const aiAnimation& animationData);
+		static AnimationClip CreateSkinnedAnimation(const aiAnimation& animationData, const Skeleton& skeleton);
 		static Skeleton CreateSkeleton(const aiScene& scene);
 		static void AddBoneData(const Skeleton& skeleton, const aiMesh& mesh, Geometry& geometry);
 
