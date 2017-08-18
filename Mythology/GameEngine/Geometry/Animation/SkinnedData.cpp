@@ -28,8 +28,8 @@ void SkinnedData::GetFinalTransforms(const std::string& clipName, float timePosi
 	std::size_t boneCount = m_boneOffsets.size();
 
 	std::vector<Eigen::Affine3f> toParentTransforms(boneCount);
-	auto clip = m_animations.find(clipName);
-	clip->second.Interpolate(timePosition, toParentTransforms);
+	auto clip = m_animations.at(clipName);
+	clip.Interpolate(timePosition, toParentTransforms);
 
 	std::vector<Eigen::Affine3f> toRootTransforms(boneCount);
 	toRootTransforms[0] = toParentTransforms[0];

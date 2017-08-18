@@ -5,6 +5,7 @@
 #include "Common/Helpers.h"
 
 #include <iterator>
+#include <unordered_set>
 
 using namespace Assimp;
 using namespace Common;
@@ -109,7 +110,7 @@ std::ostream& GameEngine::operator<<(std::ostream& outputStream, const SceneImpo
 	outputMap(material.IntegerProperties);
 	outputMap(material.FloatProperties);
 	outputMap(material.DoubleProperties);
-	
+
 	{
 		const auto& map = material.StringProperties;
 		outputStream << map.size() << " ";
@@ -158,14 +159,14 @@ std::istream& GameEngine::operator>>(std::istream& inputStream, SceneImporter::M
 	InputMap<std::string, std::vector<std::int32_t>>(inputStream, material.IntegerProperties);
 	InputMap<std::string, std::vector<float>>(inputStream, material.FloatProperties);
 	InputMap<std::string, std::vector<double>>(inputStream, material.DoubleProperties);
-	
+
 	{
 		auto& map = material.StringProperties;
 
 		std::size_t elementCount;
 		inputStream >> elementCount;
 
-		for(std::size_t i = 0; i < elementCount; ++i)
+		for (std::size_t i = 0; i < elementCount; ++i)
 		{
 			std::string key, value;
 			inputStream >> key >> value;
@@ -265,9 +266,23 @@ void SceneImporter::Import(const std::wstring& filePath, ImportedScene& imported
 		importedScene.Geometries.emplace_back(std::move(geometry));
 	}
 
+	auto skeleton = CreateSkeleton(*scene);
+	for (std::size_t i = 0; i < scene->mNumMeshes; ++i)
+	{
+		auto mesh = scene->mMeshes[i];
+		auto& geometry = importedScene.Geometries[i];
+
+		AddBoneData(skeleton, *mesh, geometry);
+	}
+
 	for (std::size_t i = 0; i < scene->mNumMaterials; ++i)
 	{
 		importedScene.Materials.emplace_back(CreateMaterial(*scene->mMaterials[i]));
+	}
+
+	for (std::size_t i = 0; i < scene->mNumAnimations; ++i)
+	{
+		importedScene.Animations.emplace_back(CreateAnimation(*scene->mAnimations[i]));
 	}
 }
 
@@ -366,4 +381,91 @@ ContainerType SceneImporter::ParseArray(const aiMaterialProperty& property)
 	container.resize(count);
 	std::memcpy(reinterpret_cast<void*>(&container[0]), property.mData, property.mDataLength);
 	return container;
+}
+
+SceneImporter::Animation SceneImporter::CreateAnimation(const aiAnimation& animationData)
+{
+	Animation animation;
+
+	animation.Name = animationData.mName.C_Str();
+
+
+
+	return animation;
+}
+
+SceneImporter::Skeleton SceneImporter::CreateSkeleton(const aiScene& scene)
+{
+	Skeleton skeleton;
+
+	// Find all bones:
+	std::unordered_set<std::string> boneNames;
+	for (std::size_t meshIndex = 0; meshIndex < scene.mNumMeshes; ++meshIndex)
+	{
+		auto mesh = scene.mMeshes[meshIndex];
+
+		for (std::size_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+		{
+			auto bone = mesh->mBones[boneIndex];
+			boneNames.emplace(bone->mName.C_Str());
+		}
+	}
+
+	// Find the node of each bone:
+	std::unordered_map<std::string, aiNode*> boneNodes;
+	for (const auto& boneName : boneNames)
+		boneNodes.emplace(boneName, scene.mRootNode->FindNode(boneName.c_str()));
+
+	// Find the root node of the skeleton:
+	auto lowestDistance = (std::numeric_limits<std::size_t>::max)();
+	std::string rootNodeName;
+	for (const auto& boneNode : boneNodes)
+	{
+		std::size_t distance = 0;
+
+		for (auto currentNode = boneNode.second->mParent; currentNode != nullptr; currentNode = currentNode->mParent)
+			++distance;
+
+		if (distance < lowestDistance)
+		{
+			rootNodeName = boneNode.first;
+			lowestDistance = distance;
+		}
+	}
+
+	// Add bone names to a list, so that a child node never appears before a parent node:
+	auto& bones = skeleton.Bones;
+	bones.resize(boneNodes.size());
+	std::function<void(aiNode*)> appendChildrenToHierarchy = [&bones, &appendChildrenToHierarchy](aiNode* node)
+	{
+		bones.emplace_back(node->mName.C_Str());
+
+		for (std::size_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex)
+			appendChildrenToHierarchy(node->mChildren[childIndex]);
+	};
+	appendChildrenToHierarchy(boneNodes.at(rootNodeName));
+
+	return skeleton;
+}
+
+void SceneImporter::AddBoneData(const Skeleton& skeleton, const aiMesh& mesh, Geometry& geometry)
+{
+	auto& vertices = geometry.MeshData.Vertices;
+
+	for (std::size_t boneIndex = 0; boneIndex < mesh.mNumBones; ++boneIndex)
+	{
+		auto bone = mesh.mBones[boneIndex];
+
+		auto boneLocation = std::find(skeleton.Bones.begin(), skeleton.Bones.end(), bone->mName.C_Str());
+		auto indexOf = std::distance(skeleton.Bones.begin(), boneLocation);
+
+		for(std::size_t vertexWeightIndex = 0; vertexWeightIndex < bone->mNumWeights; ++vertexWeightIndex)
+		{
+			const auto& vertexWeight = bone->mWeights[vertexWeightIndex];
+
+			auto& vertex = vertices[vertexWeight.mVertexId];
+			vertex.BoneWeights.push_back(vertexWeight.mWeight);
+			vertex.BoneIndices.push_back(indexOf);
+		}
+	}
 }
