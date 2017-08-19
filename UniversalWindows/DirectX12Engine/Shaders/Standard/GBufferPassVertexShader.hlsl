@@ -40,6 +40,8 @@ VertexOutput main(VertexInput input, uint instanceID : SV_InstanceID)
 	InstanceData instanceData = g_instanceData[instanceID];
 
 #if defined(SKINNED)
+	//float3 positionL = input.PositionL;
+	//float3 normalL = input.NormalL;
 	float3 positionL = float3(0.0f, 0.0f, 0.0f);
 	float3 normalL = float3(0.0f, 0.0f, 0.0f);
 	{

@@ -114,10 +114,10 @@ void MythologyGame::Initialize()
 	}
 
 	{
-		std::wstring basePath(L"Resources/Tiny/");
-		std::string modelName = "tiny";
+		std::wstring basePath(L"Resources/");
+		std::string modelName = "test";
 		SceneImporter::ImportedScene scene;
-		SceneImporter::Import(basePath + L"tiny.x", scene);
+		SceneImporter::Import(basePath + L"TestAnimation.fbx", scene);
 
 		for (std::size_t i = 0; i < scene.Geometries.size(); ++i)
 		{
@@ -128,7 +128,8 @@ void MythologyGame::Initialize()
 			m_meshes.emplace(mesh->GetName(), mesh);
 
 			const auto& baseColor = material.FloatProperties.at("$clr.diffuse");
-			const auto& albedoMap = basePath + Helpers::GetFilename(Helpers::StringToWString(material.DiffuseTexturePath)) + L".dds";
+			//const auto& albedoMap = basePath + Helpers::GetFilename(Helpers::StringToWString(material.DiffuseTexturePath)) + L".dds";
+			const auto& albedoMap = basePath + L"WhiteAlbedo" + L".dds";
 			auto standardMaterial = StandardMaterial::CreateSharedPointer(modelName + std::to_string(i), Vector4f(baseColor[0], baseColor[1], baseColor[2], 1.0f), albedoMap);
 			m_materials.emplace(standardMaterial->GetName(), standardMaterial);
 

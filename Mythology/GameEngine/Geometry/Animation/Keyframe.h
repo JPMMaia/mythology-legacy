@@ -33,3 +33,18 @@ namespace GameEngine
 		float TimePosition;
 	};
 }
+
+namespace std
+{
+	template<>
+	struct less<GameEngine::Keyframe>
+	{
+	public:
+		using value_type = GameEngine::Keyframe;
+
+		constexpr bool operator()(const value_type& lhs, const value_type& rhs) const
+		{
+			return lhs.TimePosition < rhs.TimePosition;
+		}
+	};
+}

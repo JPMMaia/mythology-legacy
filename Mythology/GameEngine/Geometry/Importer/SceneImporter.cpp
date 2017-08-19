@@ -414,28 +414,31 @@ AnimationClip SceneImporter::CreateSkinnedAnimation(const aiAnimation& animation
 		if (std::find(skeleton.Bones.begin(), skeleton.Bones.end(), channel->mNodeName.C_Str()) == skeleton.Bones.end())
 			continue;
 
-		std::vector<Keyframe> keyframes(channel->mNumPositionKeys);
-		for (std::size_t keyIndex = 0; keyIndex < keyframes.size(); ++keyIndex)
+		std::unordered_map<float, Keyframe> keyframes;
+
+		for (std::size_t keyIndex = 0; keyIndex < channel->mNumPositionKeys; ++keyIndex)
 		{
-			{
-				const auto& key = channel->mPositionKeys[keyIndex];
-				keyframes[keyIndex].TimePosition = static_cast<float>(key.mTime);
-				keyframes[keyIndex].Translation = { key.mValue.x, key.mValue.y, key.mValue.z };
-			}
-
-			{
-				const auto& key = channel->mRotationKeys[keyIndex];
-				keyframes[keyIndex].Rotation = { key.mValue.x, key.mValue.y, key.mValue.z, key.mValue.w };
-			}
-
-			{
-				const auto& key = channel->mScalingKeys[keyIndex];
-				keyframes[keyIndex].Scaling = { key.mValue.x, key.mValue.y, key.mValue.z };
-			}
+			const auto& key = channel->mPositionKeys[keyIndex];
+			keyframes[static_cast<float>(key.mTime)].Translation = { key.mValue.x, key.mValue.y, key.mValue.z };
+		}
+		for (std::size_t keyIndex = 0; keyIndex < channel->mNumRotationKeys; ++keyIndex)
+		{
+			const auto& key = channel->mRotationKeys[keyIndex];
+			keyframes[static_cast<float>(key.mTime)].Rotation = { key.mValue.x, key.mValue.y, key.mValue.z, key.mValue.w };
+		}
+		for (std::size_t keyIndex = 0; keyIndex < channel->mNumScalingKeys; ++keyIndex)
+		{
+			const auto& key = channel->mScalingKeys[keyIndex];
+			keyframes[static_cast<float>(key.mTime)].Scaling = { key.mValue.x, key.mValue.y, key.mValue.z };
 		}
 
 		if(!keyframes.empty())
-			boneAnimations.emplace_back(keyframes);
+		{
+			std::priority_queue<Keyframe, std::deque<Keyframe>> orderedKeyframes;
+			orderedKeyframes.emplace()
+
+			//boneAnimations.emplace_back(keyframes);
+		}
 	}
 
 	return AnimationClip(boneAnimations);
