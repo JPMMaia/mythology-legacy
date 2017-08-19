@@ -40,6 +40,8 @@ VertexOutput main(VertexInput input, uint instanceID : SV_InstanceID)
 	InstanceData instanceData = g_instanceData[instanceID];
 
 #if defined(SKINNED)
+	float3 positionL = float3(0.0f, 0.0f, 0.0f);
+	float3 normalL = float3(0.0f, 0.0f, 0.0f);
 	{
 		float weights[4] =
 		{
@@ -49,30 +51,27 @@ VertexOutput main(VertexInput input, uint instanceID : SV_InstanceID)
 			1.0f - input.BoneWeights.x - input.BoneWeights.y - input.BoneWeights.z
 		};
 
-		float3 positionL = float3(0.0f, 0.0f, 0.0f);
-		float3 normalL = float3(0.0f, 0.0f, 0.0f);
-
 		for (uint i = 0; i < 4; ++i)
 		{
 			float4x4 boneTransform = g_skinnedData.BoneTransforms[input.BoneIndices[i]];
 			positionL += weights[i] * mul(boneTransform, float4(input.PositionL, 1.0f)).xyz;
 			positionL += weights[i] * mul((float3x3) boneTransform, input.NormalL);
 		}
-
-		input.PositionL = positionL;
-		input.NormalL = normalL;
 	}
+#else
+	float3 positionL = input.PositionL;
+	float3 normalL = input.NormalL;
 #endif
 
 	// Transfrom position from local space to world space:
-	float4 positionW = mul(instanceData.ModelMatrix, float4(input.PositionL, 1.0f));
+	float4 positionW = mul(instanceData.ModelMatrix, float4(positionL, 1.0f));
 	output.PositionW = positionW.xyz;
 
 	// Transfrom position from world space to projection space:
 	output.PositionH = mul(g_passData.ViewProjectionMatrix, positionW);
 
 	// Transfrom normal from local space to world space, assuming that there is no non-uniform transformation:
-	output.NormalW = mul((float3x3) instanceData.ModelMatrix, input.NormalL);
+	output.NormalW = mul((float3x3) instanceData.ModelMatrix, normalL);
 
 	// Output texture coordinates:
 	output.TextureCoordinates = input.TextureCoordinates;

@@ -143,6 +143,7 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 	// Bind materials buffer:
 	commandList->SetGraphicsRootShaderResourceView(1, m_materialsGPUBuffer.get_allocator().GetGPUVirtualAddress(0));
 
+	if(renderLayer == RenderLayer::Opaque)
 	{
 		const auto& renderItems = m_renderItemsPerLayer.at(RenderLayer::Opaque);
 		std::for_each(renderItems.begin(), renderItems.end(), [commandList](auto renderItem)
@@ -150,8 +151,13 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 			renderItem->Render(commandList);
 		});
 	}
-
+	else if(renderLayer == RenderLayer::SkinnedOpaque)
 	{
+		// Bind skinned constant buffer:
+		commandList->SetGraphicsRootConstantBufferView(4, m_skinnedGPUBuffer.get_allocator().GetGPUVirtualAddress(0));
+
+		// TODO render render items associated with this particular skinned data
+
 		const auto& renderItems = m_renderItemsPerLayer.at(RenderLayer::SkinnedOpaque);
 		std::for_each(renderItems.begin(), renderItems.end(), [commandList](auto renderItem)
 		{
@@ -170,7 +176,7 @@ VertexBuffer StandardScene::CreateVertexBuffer(ID3D12Device* d3dDevice, ID3D12Gr
 
 	if (meshData.ContainsSkinnedData)
 	{
-		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
+		using VertexType = VertexTypes::PositionNormalTextureCoordinatesSkinnedVertex;
 		auto vertices = VertexType::CreateFromMeshData(meshData);
 		return VertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType), vertexUploadBuffer);
 	}

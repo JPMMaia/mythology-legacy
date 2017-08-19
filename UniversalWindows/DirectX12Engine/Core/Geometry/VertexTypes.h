@@ -42,13 +42,22 @@ namespace DirectX12Engine
 
 		struct PositionNormalTextureCoordinatesSkinnedVertex
 		{
+		public:
+			PositionNormalTextureCoordinatesSkinnedVertex() :
+				Weights({ 0.0f, 0.0f, 0.0f }),
+				BoneIndices({ 0, 0, 0, 0 })
+			{
+			}
+
+		public:
 			Eigen::Vector3f PositionL;
 			Eigen::Vector3f NormalL;
 			Eigen::Vector2f TextureCoordinates;
-			Eigen::Vector3f Weights;
-			std::uint8_t BoneIndices[4];
+			std::array<float, 3> Weights;
+			std::array<std::uint8_t, 4> BoneIndices;
 
-			static std::vector<PositionNormalTextureCoordinatesVertex> CreateFromMeshData(const GameEngine::EigenMeshData& meshData);
+		public:
+			static std::vector<PositionNormalTextureCoordinatesSkinnedVertex> CreateFromMeshData(const GameEngine::EigenMeshData& meshData);
 		};
 
 		using DefaultVertexType = PositionVertex;

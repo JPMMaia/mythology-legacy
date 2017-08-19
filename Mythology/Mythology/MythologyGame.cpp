@@ -134,7 +134,7 @@ void MythologyGame::Initialize()
 
 			auto instance = mesh->CreateInstance(standardMaterial);
 			//instance->GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
-			instance->GetTransform().SetLocalScaling(Vector3f(1.0f, 1.0f, 1.0f) * 0.01f);
+			//instance->GetTransform().SetLocalScaling(Vector3f(1.0f, 1.0f, 1.0f) * 0.01f);
 			m_box.AddComponent("Instance" + std::to_string(i), instance);
 		}
 		

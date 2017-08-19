@@ -74,7 +74,7 @@ void PipelineStateManager::InitializeShadersAndInputLayout()
 				"SKINNED", "1",
 				nullptr, nullptr
 			};
-			m_shaders["GBufferPassVS-Skinned"] = Shader::CompileShader(L"Shaders/Standard/GBufferPassVertexShader.hlsl", nullptr, "main", "vs_5_1");
+			m_shaders["GBufferPassVS-Skinned"] = Shader::CompileShader(L"Shaders/Standard/GBufferPassVertexShader.hlsl", defines.data(), "main", "vs_5_1");
 		}
 
 		// Pixel shader:
@@ -103,8 +103,6 @@ void PipelineStateManager::InitializePipelineStateObjects(const RootSignatureMan
 	// GBufferPass:
 	{
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC state = {};
-		const auto& inputLayout = m_inputLayouts.at("PositionNormalTextureCoordinates");
-		state.InputLayout = { inputLayout.data(), static_cast<uint32_t>(inputLayout.size()) };
 		state.pRootSignature = rootSignatureManager.GetRootSignature("GBufferPass");
 		state.PS = m_shaders["GBufferPassPS"].GetShaderBytecode();
 		state.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
@@ -123,6 +121,8 @@ void PipelineStateManager::InitializePipelineStateObjects(const RootSignatureMan
 
 		// Opaque:
 		{
+			const auto& inputLayout = m_inputLayouts.at("PositionNormalTextureCoordinates");
+			state.InputLayout = { inputLayout.data(), static_cast<uint32_t>(inputLayout.size()) };
 			state.VS = m_shaders["GBufferPassVS-Opaque"].GetShaderBytecode();
 
 			Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState;
@@ -132,6 +132,8 @@ void PipelineStateManager::InitializePipelineStateObjects(const RootSignatureMan
 
 		// Skinned:
 		{
+			const auto& inputLayout = m_inputLayouts.at("PositionNormalTextureCoordinatesBones");
+			state.InputLayout = { inputLayout.data(), static_cast<uint32_t>(inputLayout.size()) };
 			state.VS = m_shaders["GBufferPassVS-Skinned"].GetShaderBytecode();
 
 			Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState;

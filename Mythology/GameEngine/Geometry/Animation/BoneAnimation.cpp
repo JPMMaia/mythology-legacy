@@ -26,7 +26,7 @@ void BoneAnimation::Interpolate(float timePosition, Eigen::Affine3f& matrix) con
 		for(std::size_t i = 0; i < m_keyframes.size() - 1; ++i)
 		{
 			const auto& keyframe = m_keyframes[i];
-			const auto& followingKeyframe = m_keyframes[i];
+			const auto& followingKeyframe = m_keyframes[i + 1];
 
 			if(keyframe.TimePosition <= timePosition && timePosition <= followingKeyframe.TimePosition)
 			{
