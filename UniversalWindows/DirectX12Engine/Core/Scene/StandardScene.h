@@ -50,7 +50,7 @@ namespace DirectX12Engine
 		void UpdateInstancesBuffers();
 
 		template<class MeshType>
-		void UpdateInstancesBuffer(std::deque<StandardRenderItem*>::iterator& renderItem);
+		void UpdateInstancesBuffer();
 
 	private:
 		std::shared_ptr<DeviceResources> m_deviceResources;
@@ -62,8 +62,10 @@ namespace DirectX12Engine
 		GPUUploadBuffer<ShaderBufferTypes::PassData> m_passGPUBuffer;
 
 		std::unique_ptr<StandardRenderItem> m_renderRectangle;
-		std::deque<StandardRenderItem> m_renderItems;
+		std::deque<std::unique_ptr<StandardRenderItem>> m_renderItems;
 		std::unordered_map<RenderLayer, std::deque<StandardRenderItem*>> m_renderItemsPerLayer;
+		std::unordered_map<std::string, StandardRenderItem*> m_renderItemsPerGeometry;
+
 		std::unordered_map<std::wstring, Texture> m_textures;
 		DescriptorHeap m_texturesDescriptorHeap;
 

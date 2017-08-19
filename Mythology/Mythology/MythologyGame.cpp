@@ -10,7 +10,6 @@
 #include "Interfaces/IFileSystem.h"
 
 #include <cmath>
-#include <WinString.h>
 
 using namespace Common;
 using namespace Eigen;
@@ -30,13 +29,13 @@ void MythologyGame::Initialize()
 	// Meshes:
 	{
 		{
-			auto mesh = MeshComponent<BoxGeometry>::CreateSharedPointer(BoxGeometry(1.0f, 1.0f, 1.0f, 0));
-			m_meshes.emplace("Box", mesh);
+			auto mesh = MeshComponent<BoxGeometry>::CreateSharedPointer("Box", BoxGeometry(1.0f, 1.0f, 1.0f, 0));
+			m_meshes.emplace(mesh->GetName(), mesh);
 		}
 
 		{
-			auto floor = MeshComponent<RectangleGeometry>::CreateSharedPointer(RectangleGeometry(0.0f, 0.0f, 20.0f, 20.0f, 0.0f, 0));
-			m_meshes.emplace("Floor", floor);
+			auto mesh = MeshComponent<RectangleGeometry>::CreateSharedPointer("Floor", RectangleGeometry(0.0f, 0.0f, 20.0f, 20.0f, 0.0f, 0));
+			m_meshes.emplace(mesh->GetName(), mesh);
 		}
 	}
 
@@ -125,8 +124,8 @@ void MythologyGame::Initialize()
 			const auto& geometry = scene.Geometries[i];
 			const auto& material = scene.Materials[geometry.MaterialIndex];
 
-			auto mesh = MeshComponent<CustomGeometry<EigenMeshData>>::CreateSharedPointer(CustomGeometry<EigenMeshData>(std::move(geometry.MeshData)));
-			m_meshes.emplace(modelName + std::to_string(i), mesh);
+			auto mesh = MeshComponent<CustomGeometry<EigenMeshData>>::CreateSharedPointer(modelName + std::to_string(i), CustomGeometry<EigenMeshData>(std::move(geometry.MeshData)));
+			m_meshes.emplace(mesh->GetName(), mesh);
 
 			const auto& baseColor = material.FloatProperties.at("$clr.diffuse");
 			const auto& albedoMap = basePath + Helpers::GetFilename(Helpers::StringToWString(material.DiffuseTexturePath)) + L".dds";

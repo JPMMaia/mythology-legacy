@@ -193,9 +193,9 @@ void StandardScene::CreateRenderItems(ID3D12Device* d3dDevice, ID3D12GraphicsCom
 
 		auto renderItem = std::make_unique<StandardRenderItem>(d3dDevice, mesh, "Submesh");
 		m_renderItemsPerLayer[RenderLayer::Opaque].emplace_back(renderItem.get());
+		m_renderItemsPerGeometry.emplace(meshType.GetName(), renderItem.get());
 		m_renderItems.emplace_back(std::move(renderItem));
 	});
-	
 }
 
 void StandardScene::CreateMaterial(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::StandardMaterial& material)
@@ -287,19 +287,17 @@ void StandardScene::UpdatePassBuffer()
 }
 void StandardScene::UpdateInstancesBuffers()
 {
-	auto renderItem = m_renderItemsPerLayer.at(RenderLayer::Opaque).begin();
-	UpdateInstancesBuffer<MeshComponent<BoxGeometry>>(renderItem);
-	UpdateInstancesBuffer<MeshComponent<RectangleGeometry>>(renderItem);
-	UpdateInstancesBuffer<MeshComponent<CustomGeometry<EigenMeshData>>>(renderItem);
+	UpdateInstancesBuffer<MeshComponent<BoxGeometry>>();
+	UpdateInstancesBuffer<MeshComponent<RectangleGeometry>>();
+	UpdateInstancesBuffer<MeshComponent<CustomGeometry<EigenMeshData>>>();
 }
 
 template<class MeshType>
-void StandardScene::UpdateInstancesBuffer(std::deque<StandardRenderItem*>::iterator& renderItemIterator)
+void StandardScene::UpdateInstancesBuffer()
 {
-	auto renderItem = *renderItemIterator;
-
-	std::for_each(MeshType::begin(), MeshType::end(), [this, &renderItem](auto& mesh)
+	std::for_each(MeshType::begin(), MeshType::end(), [this](auto& mesh)
 	{
+		auto renderItem = m_renderItemsPerGeometry.at(mesh.GetName());
 		renderItem->SetInstanceCount(mesh.GetInstanceCount());
 
 		std::size_t index = 0;
