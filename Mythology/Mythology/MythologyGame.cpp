@@ -137,6 +137,8 @@ void MythologyGame::Initialize()
 			instance->GetTransform().SetLocalScaling(Vector3f(1.0f, 1.0f, 1.0f) * 0.01f);
 			m_box.AddComponent("Instance" + std::to_string(i), instance);
 		}
+		
+		m_tiny = SkinnedModelInstance(std::move(scene.SkinnedData));
 	}
 
 	/*{
@@ -186,6 +188,7 @@ void MythologyGame::FixedUpdate(const Common::Timer& timer)
 void MythologyGame::FrameUpdate(const Common::Timer& timer)
 {
 	m_gameManager->FrameUpdate(timer);
+	m_tiny.FrameUpdate(timer);
 
 	auto& cameraTransform = m_person.GetTransform();
 

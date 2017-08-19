@@ -138,11 +138,21 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 	// Bind materials buffer:
 	commandList->SetGraphicsRootShaderResourceView(1, m_materialsGPUBuffer.get_allocator().GetGPUVirtualAddress(0));
 
-	const auto& renderItems = m_renderItemsPerLayer.at(RenderLayer::Opaque);
-	std::for_each(renderItems.begin(), renderItems.end(), [commandList](auto renderItem)
 	{
-		renderItem->Render(commandList);
-	});
+		const auto& renderItems = m_renderItemsPerLayer.at(RenderLayer::Opaque);
+		std::for_each(renderItems.begin(), renderItems.end(), [commandList](auto renderItem)
+		{
+			renderItem->Render(commandList);
+		});
+	}
+
+	{
+		const auto& renderItems = m_renderItemsPerLayer.at(RenderLayer::SkinnedOpaque);
+		std::for_each(renderItems.begin(), renderItems.end(), [commandList](auto renderItem)
+		{
+			renderItem->Render(commandList);
+		});
+	}
 
 	return true;
 }
@@ -192,7 +202,8 @@ void StandardScene::CreateRenderItems(ID3D12Device* d3dDevice, ID3D12GraphicsCom
 		mesh->AddSubmesh("Submesh", Submesh(meshData));
 
 		auto renderItem = std::make_unique<StandardRenderItem>(d3dDevice, mesh, "Submesh");
-		m_renderItemsPerLayer[RenderLayer::Opaque].emplace_back(renderItem.get());
+		auto layer = meshData.ContainsSkinnedData ? RenderLayer::SkinnedOpaque : RenderLayer::Opaque;
+		m_renderItemsPerLayer[layer].emplace_back(renderItem.get());
 		m_renderItemsPerGeometry.emplace(meshType.GetName(), renderItem.get());
 		m_renderItems.emplace_back(std::move(renderItem));
 	});

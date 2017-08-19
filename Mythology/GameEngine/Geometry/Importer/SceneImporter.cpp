@@ -405,7 +405,7 @@ ContainerType SceneImporter::ParseArray(const aiMaterialProperty& property)
 AnimationClip SceneImporter::CreateSkinnedAnimation(const aiAnimation& animationData, const Skeleton& skeleton)
 {
 	std::vector<BoneAnimation> boneAnimations;
-	boneAnimations.resize(static_cast<std::size_t>(animationData.mNumChannels));
+	boneAnimations.reserve(static_cast<std::size_t>(animationData.mNumChannels));
 	for (std::size_t channelIndex = 0; channelIndex < animationData.mNumChannels; ++channelIndex)
 	{
 		auto channel = animationData.mChannels[channelIndex];
@@ -434,7 +434,8 @@ AnimationClip SceneImporter::CreateSkinnedAnimation(const aiAnimation& animation
 			}
 		}
 
-		boneAnimations[channelIndex] = BoneAnimation(keyframes);
+		if(!keyframes.empty())
+			boneAnimations.emplace_back(keyframes);
 	}
 
 	return AnimationClip(boneAnimations);

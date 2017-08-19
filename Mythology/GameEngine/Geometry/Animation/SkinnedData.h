@@ -17,6 +17,7 @@ namespace GameEngine
 		float GetClipStartTime(const std::string& clipName) const;
 		float GetClipEndTime(const std::string& clipName) const;
 		std::size_t GetBoneCount() const;
+		const std::string& GetDefaultAnimationClipName() const;
 		void GetFinalTransforms(const std::string& clipName, float timePosition, std::vector<Eigen::Affine3f>& finalTransforms) const;
 
 	private:

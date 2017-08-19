@@ -3,6 +3,7 @@
 #include "GameEngine/GameManager.h"
 #include "GameEngine/GameObject/GameObject.h"
 #include "GameEngine/Component/Meshes/MeshComponent.h"
+#include "GameEngine/Component/Meshes/SkinnedModelInstance.h"
 
 namespace Common 
 {
@@ -43,5 +44,6 @@ namespace Mythology
 		GameEngine::GameObject m_floor;
 		GameEngine::GameObject m_axis;
 		GameEngine::GameObject m_box;
+		GameEngine::SkinnedModelInstance m_tiny;
 	};
 }

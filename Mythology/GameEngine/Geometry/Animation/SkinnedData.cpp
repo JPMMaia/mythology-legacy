@@ -23,6 +23,10 @@ std::size_t SkinnedData::GetBoneCount() const
 {
 	return m_boneHierarchy.size();
 }
+const std::string& SkinnedData::GetDefaultAnimationClipName() const
+{
+	return m_animations.begin()->first;
+}
 void SkinnedData::GetFinalTransforms(const std::string& clipName, float timePosition, std::vector<Eigen::Affine3f>& finalTransforms) const
 {
 	auto boneCount = m_boneOffsets.size();
@@ -43,6 +47,7 @@ void SkinnedData::GetFinalTransforms(const std::string& clipName, float timePosi
 		toRootTransforms[i] = parentToRoot * toParent;
 	}
 
+	finalTransforms.resize(boneCount);
 	for (std::size_t i = 0; i < boneCount; ++i)
 	{
 		finalTransforms[i] = toRootTransforms[i] * m_boneOffsets[i];

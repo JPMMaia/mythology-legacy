@@ -191,7 +191,7 @@ bool Renderer::Render(const Common::Timer& timer)
 	PIXBeginEvent(commandList, 0, L"Draw");
 	{
 		// Set pipeline state:
-		m_pipelineStateManager.SetPipelineState(commandList, "GBufferPass");
+		m_pipelineStateManager.SetPipelineState(commandList, "GBufferPass-Opaque");
 
 		// Render scene:
 		m_scene->Render(timer, RenderLayer::Opaque);
