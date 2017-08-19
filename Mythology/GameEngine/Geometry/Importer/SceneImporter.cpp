@@ -283,6 +283,7 @@ void SceneImporter::Import(const std::wstring& filePath, ImportedScene& imported
 		{
 			auto mesh = scene->mMeshes[i];
 			auto& geometry = importedScene.Geometries[i];
+			geometry.MeshData.ContainsSkinnedData = true;
 
 			AddBoneData(skeleton, *mesh, geometry);
 		}

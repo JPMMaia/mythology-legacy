@@ -48,11 +48,9 @@ void StandardScene::CreateDeviceDependentResources()
 
 	// Create render items:
 	{
-		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
-
-		CreateRenderItems<MeshComponent<BoxGeometry>, VertexType>(d3dDevice, commandList);
-		CreateRenderItems<MeshComponent<RectangleGeometry>, VertexType>(d3dDevice, commandList);
-		CreateRenderItems<MeshComponent<CustomGeometry<EigenMeshData>>, VertexType>(d3dDevice, commandList);
+		CreateRenderItems<MeshComponent<BoxGeometry>>(d3dDevice, commandList);
+		CreateRenderItems<MeshComponent<RectangleGeometry>>(d3dDevice, commandList);
+		CreateRenderItems<MeshComponent<CustomGeometry<EigenMeshData>>>(d3dDevice, commandList);
 	}
 
 	{
@@ -140,39 +138,64 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 	// Bind materials buffer:
 	commandList->SetGraphicsRootShaderResourceView(1, m_materialsGPUBuffer.get_allocator().GetGPUVirtualAddress(0));
 
-	std::for_each(m_renderItems.begin(), m_renderItems.end(), [commandList](auto& renderItem)
+	const auto& renderItems = m_renderItemsPerLayer.at(RenderLayer::Opaque);
+	std::for_each(renderItems.begin(), renderItems.end(), [commandList](auto renderItem)
 	{
-		renderItem.Render(commandList);
+		renderItem->Render(commandList);
 	});
 
 	return true;
 }
 
-template <class MeshType, class VertexType>
+VertexBuffer StandardScene::CreateVertexBuffer(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const EigenMeshData& meshData)
+{
+	// Create a temporary upload buffer:
+	m_temporaryUploadBuffers.emplace_back();
+	auto& vertexUploadBuffer = m_temporaryUploadBuffers.back();
+
+	if (meshData.ContainsSkinnedData)
+	{
+		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
+		auto vertices = VertexType::CreateFromMeshData(meshData);
+		return VertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType), vertexUploadBuffer);
+	}
+	else
+	{
+		using VertexType = VertexTypes::PositionNormalTextureCoordinatesVertex;
+		auto vertices = VertexType::CreateFromMeshData(meshData);
+		return VertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType), vertexUploadBuffer);
+	}
+}
+IndexBuffer StandardScene::CreateIndexBuffer(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const EigenMeshData& meshData)
+{
+	// Create a temporary upload buffer:
+	m_temporaryUploadBuffers.emplace_back();
+	auto& indexUploadBuffer = m_temporaryUploadBuffers.back();
+
+	return	IndexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT, indexUploadBuffer);
+}
+
+template <class MeshType>
 void StandardScene::CreateRenderItems(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList)
 {
 	std::for_each(MeshType::begin(), MeshType::end(), [this, d3dDevice, commandList](auto& meshType)
 	{
 		// Create mesh data:
 		auto meshData = meshType.GetGeometry().GenerateMeshData<EigenMeshData>();
-		auto vertices = VertexType::CreateFromMeshData(meshData);
-
-		// Create temporary upload buffers:
-		m_temporaryUploadBuffers.emplace_back(); auto& vertexUploadBuffer = m_temporaryUploadBuffers.back();
-		m_temporaryUploadBuffers.emplace_back(); auto& indexUploadBuffer = m_temporaryUploadBuffers.back();
 
 		// Create buffers:
-		VertexBuffer vertexBuffer(d3dDevice, commandList, vertices.data(), vertices.size(), sizeof(VertexType), vertexUploadBuffer);
-		IndexBuffer indexBuffer(d3dDevice, commandList, meshData.Indices.data(), meshData.Indices.size(), sizeof(uint32_t), DXGI_FORMAT_R32_UINT, indexUploadBuffer);
+		auto vertexBuffer = CreateVertexBuffer(d3dDevice, commandList, meshData);
+		auto indexBuffer = CreateIndexBuffer(d3dDevice, commandList, meshData);
 
 		// Create mesh:
 		auto mesh = std::make_shared<ImmutableMesh>("", std::move(vertexBuffer), std::move(indexBuffer));
 		mesh->AddSubmesh("Submesh", Submesh(meshData));
 
-		StandardRenderItem renderItem(d3dDevice, mesh, "Submesh");
-
+		auto renderItem = std::make_unique<StandardRenderItem>(d3dDevice, mesh, "Submesh");
+		m_renderItemsPerLayer[RenderLayer::Opaque].emplace_back(renderItem.get());
 		m_renderItems.emplace_back(std::move(renderItem));
 	});
+	
 }
 
 void StandardScene::CreateMaterial(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::StandardMaterial& material)
@@ -264,15 +287,17 @@ void StandardScene::UpdatePassBuffer()
 }
 void StandardScene::UpdateInstancesBuffers()
 {
-	auto renderItem = m_renderItems.begin();
+	auto renderItem = m_renderItemsPerLayer.at(RenderLayer::Opaque).begin();
 	UpdateInstancesBuffer<MeshComponent<BoxGeometry>>(renderItem);
 	UpdateInstancesBuffer<MeshComponent<RectangleGeometry>>(renderItem);
 	UpdateInstancesBuffer<MeshComponent<CustomGeometry<EigenMeshData>>>(renderItem);
 }
 
 template<class MeshType>
-void StandardScene::UpdateInstancesBuffer(std::deque<StandardRenderItem>::iterator& renderItem)
+void StandardScene::UpdateInstancesBuffer(std::deque<StandardRenderItem*>::iterator& renderItemIterator)
 {
+	auto renderItem = *renderItemIterator;
+
 	std::for_each(MeshType::begin(), MeshType::end(), [this, &renderItem](auto& mesh)
 	{
 		renderItem->SetInstanceCount(mesh.GetInstanceCount());

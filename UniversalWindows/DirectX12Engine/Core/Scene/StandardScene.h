@@ -11,6 +11,9 @@
 #include "Mythology/MythologyGame.h"
 
 #include <unordered_map>
+#include "GameEngine/Geometry/EigenGeometry.h"
+#include "Core/Geometry/Buffers/VertexBuffer.h"
+#include "Core/Geometry/Buffers/IndexBuffer.h"
 
 namespace DirectX12Engine
 {
@@ -34,7 +37,10 @@ namespace DirectX12Engine
 		bool Render(const Common::Timer& timer, RenderLayer renderLayer) override;
 
 	private:
-		template<class MeshType, class VertexType>
+		VertexBuffer CreateVertexBuffer(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::EigenMeshData& meshData);
+		IndexBuffer CreateIndexBuffer(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::EigenMeshData& meshData);
+
+		template<class MeshType>
 		void CreateRenderItems(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList);
 
 		void CreateMaterial(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::StandardMaterial& material);
@@ -44,7 +50,7 @@ namespace DirectX12Engine
 		void UpdateInstancesBuffers();
 
 		template<class MeshType>
-		void UpdateInstancesBuffer(std::deque<StandardRenderItem>::iterator& renderItem);
+		void UpdateInstancesBuffer(std::deque<StandardRenderItem*>::iterator& renderItem);
 
 	private:
 		std::shared_ptr<DeviceResources> m_deviceResources;
@@ -57,6 +63,7 @@ namespace DirectX12Engine
 
 		std::unique_ptr<StandardRenderItem> m_renderRectangle;
 		std::deque<StandardRenderItem> m_renderItems;
+		std::unordered_map<RenderLayer, std::deque<StandardRenderItem*>> m_renderItemsPerLayer;
 		std::unordered_map<std::wstring, Texture> m_textures;
 		DescriptorHeap m_texturesDescriptorHeap;
 
