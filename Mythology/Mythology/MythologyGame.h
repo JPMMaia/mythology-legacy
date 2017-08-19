@@ -33,6 +33,7 @@ namespace Mythology
 
 	public:
 		GameEngine::GameObject::PointerType<GameEngine::CameraComponent> GetMainCamera() const;
+		const GameEngine::SkinnedModelInstance& GetTiny() const { return m_tiny; }
 
 	private:
 		std::shared_ptr<GameEngine::IFileSystem> m_fileSystem;

@@ -25,6 +25,7 @@ StandardScene::StandardScene(const std::shared_ptr<DeviceResources>& deviceResou
 	m_commandListManager(commandListManager),
 	m_materialsGPUBuffer(GPUAllocator<ShaderBufferTypes::MaterialData>(deviceResources->GetD3DDevice(), false)),
 	m_passGPUBuffer(GPUAllocator<ShaderBufferTypes::PassData>(deviceResources->GetD3DDevice(), false)),
+	m_skinnedGPUBuffer(GPUAllocator<ShaderBufferTypes::SkinnedData>(deviceResources->GetD3DDevice(), false)),
 	m_game(game)
 {
 }
@@ -86,6 +87,9 @@ void StandardScene::CreateDeviceDependentResources()
 
 	m_passGPUBuffer.reserve(1);
 	m_passGPUBuffer.push_back(ShaderBufferTypes::PassData());
+
+	m_skinnedGPUBuffer.reserve(1);
+	m_skinnedGPUBuffer.emplace_back();
 }
 void StandardScene::CreateWindowSizeDependentResources()
 {
@@ -114,6 +118,7 @@ void StandardScene::ProcessInput()
 void StandardScene::FrameUpdate(const Common::Timer& timer)
 {
 	UpdatePassBuffer();
+	UpdateSkinnedBuffers();
 	UpdateInstancesBuffers();
 }
 
@@ -295,6 +300,19 @@ void StandardScene::UpdatePassBuffer()
 	}
 
 	m_passGPUBuffer[0] = passData;
+}
+void StandardScene::UpdateSkinnedBuffers()
+{
+	const auto& tiny = m_game->GetTiny();
+
+	const auto& finalTransforms = tiny.GetFinalTransforms();
+	
+	ShaderBufferTypes::SkinnedData skinnedData;
+
+	const auto minSize = (std::min)(finalTransforms.size(), ShaderBufferTypes::SkinnedData::MaxNumBones);
+	std::copy_n(finalTransforms.begin(), minSize, skinnedData.BoneTransforms.begin());
+
+	m_skinnedGPUBuffer[0] = skinnedData;
 }
 void StandardScene::UpdateInstancesBuffers()
 {

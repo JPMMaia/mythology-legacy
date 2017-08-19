@@ -45,8 +45,14 @@ namespace DirectX12Engine
 			Eigen::Vector3f CameraPositionW;
 			float Padding;
 
-			static constexpr auto MaxNumLights = 8;
+			static constexpr std::size_t MaxNumLights = 8;
 			std::array<LightData, MaxNumLights> Lights;
+		};
+
+		struct SkinnedData
+		{
+			static constexpr std::size_t MaxNumBones = 96;
+			std::array<Eigen::Affine3f, MaxNumBones> BoneTransforms;
 		};
 	}
 }

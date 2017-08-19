@@ -47,6 +47,7 @@ namespace DirectX12Engine
 		void CreateTexture(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const std::wstring& path, bool isColorData);
 
 		void UpdatePassBuffer();
+		void UpdateSkinnedBuffers();
 		void UpdateInstancesBuffers();
 
 		template<class MeshType>
@@ -73,5 +74,7 @@ namespace DirectX12Engine
 		std::unordered_map<std::wstring, std::uint32_t> m_textureIndices;
 
 		std::shared_ptr<Mythology::MythologyGame> m_game;
+		
+		GPUUploadBuffer<ShaderBufferTypes::SkinnedData> m_skinnedGPUBuffer;
 	};
 }
