@@ -71,6 +71,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\SkinnedData.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\EigenGeometry.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Importer\SceneImporter.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>

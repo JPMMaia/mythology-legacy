@@ -24,6 +24,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\BoneAnimation.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\AnimationClip.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\SkinnedModelInstance.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\EigenGeometry.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
