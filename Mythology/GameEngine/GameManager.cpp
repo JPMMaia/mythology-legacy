@@ -18,7 +18,7 @@ void GameManager::ProcessInput()
 template<class T>
 void FixedUpdate(const Timer& timer)
 {
-	std::for_each(T::Allocator::begin(), T::Allocator::end(), [&timer](auto& element)
+	std::for_each(T::begin(), T::end(), [&timer](auto& element)
 	{
 		element.FixedUpdate(timer);
 	});

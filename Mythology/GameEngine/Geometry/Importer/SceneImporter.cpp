@@ -435,7 +435,7 @@ AnimationClip SceneImporter::CreateSkinnedAnimation(const aiAnimation& animation
 		if(!keyframes.empty())
 		{
 			std::priority_queue<Keyframe, std::deque<Keyframe>> orderedKeyframes;
-			orderedKeyframes.emplace()
+			//orderedKeyframes.emplace()
 
 			//boneAnimations.emplace_back(keyframes);
 		}

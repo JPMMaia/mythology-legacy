@@ -9,7 +9,7 @@ namespace GameEngine
 		using VertexType = typename MeshDataType::VertexType;
 
 	public:
-		static MeshDataType CreateRectangle(float originX, float originY, float width, float height, float depth)
+		static MeshDataType CreateRectangle(float originX, float originY, float width, float height, float depth, std::size_t numberOfSubdivisions)
 		{
 			MeshDataType meshData;
 
@@ -26,6 +26,9 @@ namespace GameEngine
 				0, 1, 2,
 				0, 2, 3,
 			};
+
+			for (std::size_t i = 0; i < numberOfSubdivisions; ++i)
+				meshData.Subdivide(meshData);
 
 			return meshData;
 		}

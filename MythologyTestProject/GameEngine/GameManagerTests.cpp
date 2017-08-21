@@ -29,8 +29,8 @@ namespace MythologyTestProject
 
 			GameObject gameObject1;
 
-			auto boxComponent = MeshComponent<BoxGeometry>::CreateSharedPointer(BoxGeometry(1.0f, 1.0f, 1.0f, 0));
-			gameObject1.AddComponent("Mesh", boxComponent);
+			auto boxComponent = MeshComponent<BoxGeometry>::CreateSharedPointer("Mesh", BoxGeometry(1.0f, 1.0f, 1.0f, 0));
+			gameObject1.AddComponent(boxComponent->GetName(), boxComponent);
 
 			auto pointLightComponent = PointLightComponent::CreateSharedPointer(Vector3f(0.8f, 0.8f, 0.8f), 2.0f, 5.0f);
 			pointLightComponent->SetLocalPosition({ 0.0f, 2.0f, -1.0f });

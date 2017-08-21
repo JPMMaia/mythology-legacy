@@ -6,15 +6,17 @@
 
 namespace GameEngine
 {
-	template<typename TwoDType, typename ThreeDType, typename IndexType>
+	template<typename Vector2, typename Vector3, typename IndexTypeT>
 	struct MeshData
 	{
 	public:
-		using VertexType = Vertex<TwoDType, ThreeDType>;
+		using VertexType = Vertex<Vector2, Vector3>;
+		using IndexType = IndexTypeT;
 
 	public:
 		std::vector<VertexType> Vertices;
 		std::vector<IndexType> Indices;
+		bool ContainsSkinnedData = false;
 
 	public:
 		static MeshData Subdivide(const MeshData& meshData)

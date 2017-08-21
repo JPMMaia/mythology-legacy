@@ -105,7 +105,7 @@
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>assimpd.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -116,7 +116,7 @@
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -127,7 +127,7 @@
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>assimpd.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -138,7 +138,7 @@
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -149,7 +149,7 @@
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>assimpd.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -160,7 +160,7 @@
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
