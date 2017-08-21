@@ -14,7 +14,7 @@ namespace GameEngine
 		{
 		}
 
-		Vector3Type Position;
+		Vector3Type Position; 
 		Vector3Type Normal;
 		Vector3Type Tangent;
 		Vector2Type TextureCoordinates;

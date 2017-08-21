@@ -2,8 +2,6 @@
 
 using namespace GameEngine;
 
-IMPLEMENT_ALLOCATOR(PointLightComponent);
-
 PointLightComponent::PointLightComponent() :
 	m_strength(Vector3Type::Zero()),
 	m_falloffStart(0.0f),

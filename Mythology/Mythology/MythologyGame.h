@@ -3,7 +3,9 @@
 #include "GameEngine/GameManager.h"
 #include "GameEngine/GameObject/GameObject.h"
 #include "GameEngine/Component/Meshes/MeshComponent.h"
+#include "GameEngine/Component/Meshes/StandardMaterial.h"
 #include "GameEngine/Component/Meshes/SkinnedModelInstance.h"
+#include "GameEngine/Component/Cameras/CameraComponent.h"
 
 namespace Common 
 {
