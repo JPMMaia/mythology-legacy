@@ -114,10 +114,10 @@ void MythologyGame::Initialize()
 	}
 
 	{
-		std::wstring basePath(L"Resources/");
-		std::string modelName = "test";
+		std::wstring basePath(L"Resources/tiny/");
+		std::string modelName = "tiny";
 		SceneImporter::ImportedScene scene;
-		SceneImporter::Import(basePath + L"TestAnimation.fbx", scene);
+		SceneImporter::Import(basePath + L"tiny.x", scene);
 
 		for (std::size_t i = 0; i < scene.Geometries.size(); ++i)
 		{
@@ -128,14 +128,14 @@ void MythologyGame::Initialize()
 			m_meshes.emplace(mesh->GetName(), mesh);
 
 			const auto& baseColor = material.FloatProperties.at("$clr.diffuse");
-			//const auto& albedoMap = basePath + Helpers::GetFilename(Helpers::StringToWString(material.DiffuseTexturePath)) + L".dds";
-			const auto& albedoMap = basePath + L"WhiteAlbedo" + L".dds";
+			const auto& albedoMap = basePath + Helpers::GetFilename(Helpers::StringToWString(material.DiffuseTexturePath)) + L".dds";
+			//const auto& albedoMap = basePath + L"WhiteAlbedo" + L".dds";
 			auto standardMaterial = StandardMaterial::CreateSharedPointer(modelName + std::to_string(i), Vector4f(baseColor[0], baseColor[1], baseColor[2], 1.0f), albedoMap);
 			m_materials.emplace(standardMaterial->GetName(), standardMaterial);
 
 			auto instance = mesh->CreateInstance(standardMaterial);
 			//instance->GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
-			//instance->GetTransform().SetLocalScaling(Vector3f(1.0f, 1.0f, 1.0f) * 0.01f);
+			instance->GetTransform().SetLocalScaling(Vector3f(1.0f, 1.0f, 1.0f) * 0.01f);
 			m_box.AddComponent("Instance" + std::to_string(i), instance);
 		}
 		
