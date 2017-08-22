@@ -4,43 +4,36 @@
 
 namespace GameEngine
 {
+	template<typename ValueTypeT>
 	struct Keyframe
 	{
 	public:
-		using Vector3 = Eigen::Vector3f;
-		using Quaternion = Eigen::Quaternionf;
+		using ValueType = ValueTypeT;
 
 	public:
 		Keyframe() :
-			Translation({ 0.0f, 0.0f, 0.0f }),
-			Rotation({ 0.0f, 0.0f, 0.0f, 1.0f }),
-			Scaling({ 1.0f, 1.0f, 1.0f }),
 			TimePosition(0.0f)
 		{
 		}
-		Keyframe(const Vector3& translation, const Quaternion& rotation, const Vector3& scale, float timePosition) :
-			Translation(translation),
-			Rotation(rotation),
-			Scaling(scale),
-			TimePosition(timePosition)
+		Keyframe(float timePosition, const ValueType& value) :
+			TimePosition(timePosition),
+			Value(value)
 		{
 		}
 
 	public:
-		Vector3 Translation;
-		Quaternion Rotation;
-		Vector3 Scaling;
 		float TimePosition;
+		ValueType Value;
 	};
 }
 
 namespace std
 {
-	template<>
-	struct less<GameEngine::Keyframe>
+	template<typename T>
+	struct less<GameEngine::Keyframe<T>>
 	{
 	public:
-		using value_type = GameEngine::Keyframe;
+		using value_type = GameEngine::Keyframe<T>;
 
 		constexpr bool operator()(const value_type& lhs, const value_type& rhs) const
 		{

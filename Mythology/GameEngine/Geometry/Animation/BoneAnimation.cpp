@@ -4,51 +4,107 @@
 using namespace Common;
 using namespace GameEngine;
 
-BoneAnimation::BoneAnimation(const std::vector<Keyframe>& keyframes) :
-	m_keyframes(keyframes)
+BoneAnimation::BoneAnimation(const std::vector<Keyframe<Vector3>>& positionKeyframes, const std::vector<Keyframe<Quaternion>>& rotationKeyframes, const std::vector<Keyframe<Vector3>>& scalingKeyframes) :
+	m_positionKeyframes(positionKeyframes),
+	m_rotationKeyframes(rotationKeyframes),
+	m_scaleKeyframes(scalingKeyframes)
 {
 }
 
 void BoneAnimation::Interpolate(float timePosition, Eigen::Affine3f& matrix) const
 {
-	if(timePosition < GetStartTime())
+	if (timePosition < GetStartTime())
 	{
-		const auto& keyframe =  m_keyframes.front();
-		matrix.fromPositionOrientationScale(keyframe.Translation, keyframe.Rotation, keyframe.Scaling);
+		matrix.fromPositionOrientationScale(m_positionKeyframes.front().Value, m_rotationKeyframes.front().Value, m_scaleKeyframes.front().Value);
 	}
-	else if(timePosition > GetEndTime())
+	else if (timePosition > GetEndTime())
 	{
-		const auto& keyframe = m_keyframes.back();
-		matrix.fromPositionOrientationScale(keyframe.Translation, keyframe.Rotation, keyframe.Scaling);
+		matrix.fromPositionOrientationScale(m_positionKeyframes.back().Value, m_rotationKeyframes.back().Value, m_scaleKeyframes.back().Value);
 	}
 	else
 	{
-		for(std::size_t i = 0; i < m_keyframes.size() - 1; ++i)
+		Eigen::Vector3f position;
 		{
-			const auto& keyframe = m_keyframes[i];
-			const auto& followingKeyframe = m_keyframes[i + 1];
-
-			if(keyframe.TimePosition <= timePosition && timePosition <= followingKeyframe.TimePosition)
+			const auto& keyframes = m_positionKeyframes;
+			for (std::size_t i = 0; i < keyframes.size() - 1; ++i)
 			{
-				auto percentage = (timePosition - keyframe.TimePosition) / (followingKeyframe.TimePosition - keyframe.TimePosition);
-				
-				auto translation = EigenHelpers::LinearInterpolate(keyframe.Translation, followingKeyframe.Translation, percentage);
-				auto rotation = keyframe.Rotation.slerp(percentage, followingKeyframe.Rotation);
-				auto scale = EigenHelpers::LinearInterpolate(keyframe.Scaling, followingKeyframe.Scaling, percentage);
+				const auto& keyframe = keyframes[i];
+				const auto& followingKeyframe = keyframes[i + 1];
 
-				matrix.fromPositionOrientationScale(translation, rotation, scale);
-
-				break;
+				if (keyframe.TimePosition <= timePosition && timePosition <= followingKeyframe.TimePosition)
+				{
+					auto percentage = (timePosition - keyframe.TimePosition) / (followingKeyframe.TimePosition - keyframe.TimePosition);
+					position = EigenHelpers::LinearInterpolate(keyframe.Value, followingKeyframe.Value, percentage);
+					break;
+				}
 			}
 		}
+
+		Eigen::Quaternionf rotation;
+		{
+			const auto& keyframes = m_rotationKeyframes;
+			for (std::size_t i = 0; i < keyframes.size() - 1; ++i)
+			{
+				const auto& keyframe = keyframes[i];
+				const auto& followingKeyframe = keyframes[i + 1];
+
+				if (keyframe.TimePosition <= timePosition && timePosition <= followingKeyframe.TimePosition)
+				{
+					auto percentage = (timePosition - keyframe.TimePosition) / (followingKeyframe.TimePosition - keyframe.TimePosition);
+					rotation = keyframe.Value.slerp(percentage, followingKeyframe.Value);
+					break;
+				}
+			}
+		}
+
+		Eigen::Vector3f scale;
+		{
+			const auto& keyframes = m_scaleKeyframes;
+			for (std::size_t i = 0; i < keyframes.size() - 1; ++i)
+			{
+				const auto& keyframe = keyframes[i];
+				const auto& followingKeyframe = keyframes[i + 1];
+
+				if (keyframe.TimePosition <= timePosition && timePosition <= followingKeyframe.TimePosition)
+				{
+					auto percentage = (timePosition - keyframe.TimePosition) / (followingKeyframe.TimePosition - keyframe.TimePosition);
+					scale = EigenHelpers::LinearInterpolate(keyframe.Value, followingKeyframe.Value, percentage);
+					break;
+				}
+			}
+		}
+
+		matrix.fromPositionOrientationScale(position, rotation, scale);
 	}
 }
 
 float BoneAnimation::GetStartTime() const
 {
-	return m_keyframes.front().TimePosition;
+	auto value = (std::numeric_limits<float>::max)();
+
+	auto findMinimum = [&value](const auto& keyframes)
+	{
+		for (const auto& element : keyframes)
+			value = (std::min)(value, element.TimePosition);
+	};
+	findMinimum(m_positionKeyframes);
+	findMinimum(m_rotationKeyframes);
+	findMinimum(m_scaleKeyframes);
+
+	return value;
 }
 float BoneAnimation::GetEndTime() const
 {
-	return m_keyframes.back().TimePosition;
+	auto value = 0.0f;
+
+	auto findMaximum = [&value](const auto& keyframes)
+	{
+		for (const auto& element : keyframes)
+			value = (std::max)(value, element.TimePosition);
+	};
+	findMaximum(m_positionKeyframes);
+	findMaximum(m_rotationKeyframes);
+	findMaximum(m_scaleKeyframes);
+
+	return value;
 }
