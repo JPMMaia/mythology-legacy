@@ -414,30 +414,43 @@ AnimationClip SceneImporter::CreateSkinnedAnimation(const aiAnimation& animation
 		if (std::find(skeleton.Bones.begin(), skeleton.Bones.end(), channel->mNodeName.C_Str()) == skeleton.Bones.end())
 			continue;
 
-		std::unordered_map<float, Keyframe> keyframes;
-
-		for (std::size_t keyIndex = 0; keyIndex < channel->mNumPositionKeys; ++keyIndex)
+		std::vector<Keyframe<Eigen::Vector3f>> positionKeyframes(channel->mNumPositionKeys);
 		{
-			const auto& key = channel->mPositionKeys[keyIndex];
-			keyframes[static_cast<float>(key.mTime)].Translation = { key.mValue.x, key.mValue.y, key.mValue.z };
-		}
-		for (std::size_t keyIndex = 0; keyIndex < channel->mNumRotationKeys; ++keyIndex)
-		{
-			const auto& key = channel->mRotationKeys[keyIndex];
-			keyframes[static_cast<float>(key.mTime)].Rotation = { key.mValue.x, key.mValue.y, key.mValue.z, key.mValue.w };
-		}
-		for (std::size_t keyIndex = 0; keyIndex < channel->mNumScalingKeys; ++keyIndex)
-		{
-			const auto& key = channel->mScalingKeys[keyIndex];
-			keyframes[static_cast<float>(key.mTime)].Scaling = { key.mValue.x, key.mValue.y, key.mValue.z };
+			auto& keyframes = positionKeyframes;
+			for (std::size_t keyIndex = 0; keyIndex < keyframes.size(); ++keyIndex)
+			{
+				const auto& key = channel->mPositionKeys[keyIndex];
+				keyframes[keyIndex].TimePosition = static_cast<float>(key.mTime);
+				keyframes[keyIndex].Value = { key.mValue.x, key.mValue.y, key.mValue.z };
+			}
 		}
 
-		if(!keyframes.empty())
+		std::vector<Keyframe<Eigen::Quaternionf>> rotationKeyframes(channel->mNumRotationKeys);
 		{
-			std::priority_queue<Keyframe, std::deque<Keyframe>> orderedKeyframes;
-			//orderedKeyframes.emplace()
+			auto& keyframes = rotationKeyframes;
+			for (std::size_t keyIndex = 0; keyIndex < keyframes.size(); ++keyIndex)
+			{
+				const auto& key = channel->mRotationKeys[keyIndex];
+				keyframes[keyIndex].TimePosition = static_cast<float>(key.mTime);
+				keyframes[keyIndex].Value = { key.mValue.x, key.mValue.y, key.mValue.z, key.mValue.w };
+			}
+		}
 
-			//boneAnimations.emplace_back(keyframes);
+		std::vector<Keyframe<Eigen::Vector3f>> scaleKeyframes(channel->mNumScalingKeys);
+		{
+			auto& keyframes = scaleKeyframes;
+			for (std::size_t keyIndex = 0; keyIndex < keyframes.size(); ++keyIndex)
+			{
+				const auto& key = channel->mScalingKeys[keyIndex];
+				keyframes[keyIndex].TimePosition = static_cast<float>(key.mTime);
+				keyframes[keyIndex].Value = { key.mValue.x, key.mValue.y, key.mValue.z };
+			}
+		}
+		
+
+		if(!positionKeyframes.empty() || !rotationKeyframes.empty() || !scaleKeyframes.empty())
+		{
+			boneAnimations.emplace_back(positionKeyframes, rotationKeyframes, scaleKeyframes);
 		}
 	}
 

@@ -57,7 +57,7 @@ VertexOutput main(VertexInput input, uint instanceID : SV_InstanceID)
 		{
 			float4x4 boneTransform = g_skinnedData.BoneTransforms[input.BoneIndices[i]];
 			positionL += weights[i] * mul(boneTransform, float4(input.PositionL, 1.0f)).xyz;
-			positionL += weights[i] * mul((float3x3) boneTransform, input.NormalL);
+			normalL += weights[i] * mul((float3x3) boneTransform, input.NormalL);
 		}
 	}
 #else
