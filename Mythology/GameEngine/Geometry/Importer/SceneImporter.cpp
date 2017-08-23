@@ -446,9 +446,9 @@ AnimationClip SceneImporter::CreateSkinnedAnimation(const aiAnimation& animation
 				keyframes[keyIndex].Value = { key.mValue.x, key.mValue.y, key.mValue.z };
 			}
 		}
-		
 
-		if(!positionKeyframes.empty() || !rotationKeyframes.empty() || !scaleKeyframes.empty())
+
+		if (!positionKeyframes.empty() || !rotationKeyframes.empty() || !scaleKeyframes.empty())
 		{
 			boneAnimations.emplace_back(positionKeyframes, rotationKeyframes, scaleKeyframes);
 		}
@@ -472,18 +472,6 @@ SceneImporter::Skeleton SceneImporter::CreateSkeleton(const aiScene& scene)
 		{
 			auto bone = mesh->mBones[boneIndex];
 			boneNames.emplace(bone->mName.C_Str());
-
-			Eigen::Matrix4f offsetMatrix;
-			{
-				const auto& m = bone->mOffsetMatrix;
-				offsetMatrix <<
-					m.a1, m.a2, m.a3, m.a4,
-					m.b1, m.b2, m.b3, m.b4,
-					m.c1, m.c2, m.c3, m.c4,
-					m.d1, m.d2, m.d3, m.d4;
-			}
-
-			boneOffsets.emplace(bone->mName.C_Str(), Eigen::Affine3f(offsetMatrix));
 		}
 	}
 
@@ -513,21 +501,25 @@ SceneImporter::Skeleton SceneImporter::CreateSkeleton(const aiScene& scene)
 		// Build hierachy such that a child node never appears before a parent node:
 		auto& boneHierarchy = skeleton.BoneHierarchy;
 		auto& bones = skeleton.Bones;
-		std::function<void(aiNode*)> appendChildrenToHierarchy = [&bones, &boneNames, &boneHierarchy, &boneNodes, &appendChildrenToHierarchy](aiNode* node)
+		auto& transforms = skeleton.BoneTransforms;
+		std::function<void(aiNode*)> appendChildrenToHierarchy = [&bones, &boneNames, &boneHierarchy, &boneNodes, &transforms, &appendChildrenToHierarchy](aiNode* node)
 		{
 			std::string nodeName(node->mName.C_Str());
-			if (boneNames.find(nodeName) != boneNames.end())
+			bones.emplace_back(nodeName);
+
+			// Get the bone node:
+			const auto& boneNode = boneNodes.at(nodeName);
+			
 			{
-				bones.emplace_back(nodeName);
-
-				const auto& boneNode = boneNodes.at(nodeName);
+				// Find the parent of the node:
 				auto parentLocation = std::find(bones.begin(), bones.end(), boneNode->mParent->mName.C_Str());
-
+				
 				// If root bone:
 				if (parentLocation == bones.end())
 				{
 					boneHierarchy.emplace_back(-1);
 				}
+
 				// If not root bone:
 				else
 				{
@@ -536,16 +528,25 @@ SceneImporter::Skeleton SceneImporter::CreateSkeleton(const aiScene& scene)
 				}
 			}
 
+			{
+				Eigen::Matrix4f transform;
+				{
+					const auto& m = boneNode->mTransformation;
+					transform <<
+						m.a1, m.a2, m.a3, m.a4,
+						m.b1, m.b2, m.b3, m.b4,
+						m.c1, m.c2, m.c3, m.c4,
+						m.d1, m.d2, m.d3, m.d4;
+				}
+
+				transforms.emplace_back(Eigen::Affine3f(transform));
+			}
+
 			for (std::size_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex)
 				appendChildrenToHierarchy(node->mChildren[childIndex]);
 		};
 		appendChildrenToHierarchy(boneNodes.at(rootNodeName));
 	}
-
-	// Insert bone offsets in the correct order:
-	skeleton.BoneOffsets.reserve(skeleton.Bones.size());
-	for(const auto& boneName : skeleton.Bones)
-		skeleton.BoneOffsets.emplace_back(boneOffsets.at(boneName));
 
 	return skeleton;
 }

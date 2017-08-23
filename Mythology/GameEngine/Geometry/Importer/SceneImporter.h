@@ -51,7 +51,7 @@ namespace GameEngine
 		struct Skeleton
 		{
 			std::deque<std::string> Bones;
-			std::vector<Eigen::Affine3f> BoneOffsets;
+			std::vector<Eigen::Affine3f> BoneTransforms;
 			std::vector<std::int8_t> BoneHierarchy;
 		};
 		struct ImportedScene

@@ -2,9 +2,9 @@
 
 using namespace GameEngine;
 
-SkinnedData::SkinnedData(const std::vector<std::int8_t>& boneHierarchy, const std::vector<Eigen::Affine3f>& boneOffsets, const std::unordered_map<std::string, AnimationClip>& animations) :
+SkinnedData::SkinnedData(const std::vector<std::int8_t>& boneHierarchy, const std::vector<Eigen::Affine3f>& boneTransforms, const std::unordered_map<std::string, AnimationClip>& animations) :
 	m_boneHierarchy(boneHierarchy),
-	m_boneOffsets(boneOffsets),
+	m_boneTransforms(boneTransforms),
 	m_animations(animations)
 {
 }
@@ -29,9 +29,37 @@ const std::string& SkinnedData::GetDefaultAnimationClipName() const
 }
 void SkinnedData::GetFinalTransforms(const std::string& clipName, float timePosition, std::vector<Eigen::Affine3f>& finalTransforms) const
 {
-	auto boneCount = m_boneOffsets.size();
+	auto boneCount = m_boneHierarchy.size();
 
-	std::vector<Eigen::Affine3f> toParentTransforms(boneCount);
+	std::vector<Eigen::Affine3f> inverseBindPoseMatrices;
+	{
+		// Reserve memory:
+		inverseBindPoseMatrices.reserve(boneCount);
+
+		// Calculate the first offset:
+		inverseBindPoseMatrices.emplace_back(m_boneTransforms.at(0).inverse());
+
+		// Calculate the remaining offsets:
+		for (std::size_t i = 1; i < boneCount; ++i)
+		{
+			const auto& parentOffset = inverseBindPoseMatrices.at(m_boneHierarchy[i]);
+			inverseBindPoseMatrices.emplace_back(m_boneTransforms.at(i).inverse() * parentOffset);
+		}
+	}
+
+	// Calculate the animation matrices:
+	std::vector<Eigen::Affine3f> animationMatrices(boneCount);
+	const auto& clip = m_animations.at(clipName);
+	clip.Interpolate(timePosition, animationMatrices);
+	
+	// Calculate the final transforms:
+	finalTransforms.reserve(boneCount);
+	for (std::size_t i = 0; i < boneCount; ++i)
+	{
+		// TODO
+	}
+
+	/*
 	auto clip = m_animations.at(clipName);
 	clip.Interpolate(timePosition, toParentTransforms);
 
@@ -51,5 +79,5 @@ void SkinnedData::GetFinalTransforms(const std::string& clipName, float timePosi
 	for (std::size_t i = 0; i < boneCount; ++i)
 	{
 		finalTransforms[i] = toRootTransforms[i] * m_boneOffsets[i];
-	}
+	}*/
 }
