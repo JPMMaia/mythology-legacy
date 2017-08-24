@@ -15,11 +15,9 @@ void BoneAnimation::Interpolate(float timePosition, Eigen::Affine3f& matrix) con
 {
 	if (timePosition <= GetStartTime())
 	{
-		//matrix.fromPositionOrientationScale(m_positionKeyframes.front().Value, m_rotationKeyframes.front().Value, m_scaleKeyframes.front().Value);
-		//matrix.fromPositionOrientationScale(m_positionKeyframes.front().Value, Quaternion::Identity(), Vector3(1.0f, 1.0f, 1.0f));
-		matrix = Eigen::Affine3f::Identity();
+		matrix.fromPositionOrientationScale(m_positionKeyframes.front().Value, m_rotationKeyframes.front().Value, m_scaleKeyframes.front().Value);
 	}
-	else if (timePosition > GetEndTime())
+	else if (timePosition >= GetEndTime())
 	{
 		matrix.fromPositionOrientationScale(m_positionKeyframes.back().Value, m_rotationKeyframes.back().Value, m_scaleKeyframes.back().Value);
 	}

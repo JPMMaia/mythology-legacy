@@ -296,7 +296,7 @@ void SceneImporter::Import(const std::wstring& filePath, ImportedScene& imported
 			animations.emplace(animationData->mName.C_Str(), CreateSkinnedAnimation(*animationData, skeleton));
 		}
 
-		importedScene.SkinnedData = SkinnedData(skeleton.BoneHierarchy, skeleton.BoneOffsets, animations);
+		importedScene.SkinnedData = SkinnedData(skeleton.BoneHierarchy, skeleton.BoneTransforms, animations);
 	}
 
 	for (std::size_t i = 0; i < scene->mNumMaterials; ++i)
@@ -432,7 +432,7 @@ AnimationClip SceneImporter::CreateSkinnedAnimation(const aiAnimation& animation
 			{
 				const auto& key = channel->mRotationKeys[keyIndex];
 				keyframes[keyIndex].TimePosition = static_cast<float>(key.mTime);
-				keyframes[keyIndex].Value = { key.mValue.x, key.mValue.y, key.mValue.z, key.mValue.w };
+				keyframes[keyIndex].Value = { key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z };
 			}
 		}
 
@@ -502,17 +502,14 @@ SceneImporter::Skeleton SceneImporter::CreateSkeleton(const aiScene& scene)
 		auto& boneHierarchy = skeleton.BoneHierarchy;
 		auto& bones = skeleton.Bones;
 		auto& transforms = skeleton.BoneTransforms;
-		std::function<void(aiNode*)> appendChildrenToHierarchy = [&bones, &boneNames, &boneHierarchy, &boneNodes, &transforms, &appendChildrenToHierarchy](aiNode* node)
+		std::function<void(aiNode*)> appendChildrenToHierarchy = [&bones, &boneNames, &boneHierarchy, &boneNodes, &transforms, &scene, &appendChildrenToHierarchy](aiNode* node)
 		{
 			std::string nodeName(node->mName.C_Str());
 			bones.emplace_back(nodeName);
-
-			// Get the bone node:
-			const auto& boneNode = boneNodes.at(nodeName);
 			
 			{
 				// Find the parent of the node:
-				auto parentLocation = std::find(bones.begin(), bones.end(), boneNode->mParent->mName.C_Str());
+				auto parentLocation = std::find(bones.begin(), bones.end(), node->mParent->mName.C_Str());
 				
 				// If root bone:
 				if (parentLocation == bones.end())
@@ -531,12 +528,13 @@ SceneImporter::Skeleton SceneImporter::CreateSkeleton(const aiScene& scene)
 			{
 				Eigen::Matrix4f transform;
 				{
-					const auto& m = boneNode->mTransformation;
+					const auto& m = node->mTransformation;
 					transform <<
 						m.a1, m.a2, m.a3, m.a4,
 						m.b1, m.b2, m.b3, m.b4,
 						m.c1, m.c2, m.c3, m.c4,
 						m.d1, m.d2, m.d3, m.d4;
+					//transform.transposeInPlace();
 				}
 
 				transforms.emplace_back(Eigen::Affine3f(transform));

@@ -42,42 +42,34 @@ void SkinnedData::GetFinalTransforms(const std::string& clipName, float timePosi
 		// Calculate the remaining offsets:
 		for (std::size_t i = 1; i < boneCount; ++i)
 		{
-			const auto& parentOffset = inverseBindPoseMatrices.at(m_boneHierarchy[i]);
-			inverseBindPoseMatrices.emplace_back(m_boneTransforms.at(i).inverse() * parentOffset);
+			const auto& parentOffset = inverseBindPoseMatrices[m_boneHierarchy[i]];
+			inverseBindPoseMatrices.emplace_back(m_boneTransforms[i].inverse() * parentOffset);
+		}
+	}
+	
+	std::vector<Eigen::Affine3f> parentTransforms;
+	{
+		// Calculate the animation matrices:
+		std::vector<Eigen::Affine3f> animationMatrices;
+		{
+			const auto& clip = m_animations.at(clipName);
+			clip.Interpolate(timePosition, animationMatrices);
+		}
+
+		// Calculate the parent transforms:
+		parentTransforms.reserve(boneCount);
+		parentTransforms.emplace_back(m_boneTransforms[0] * animationMatrices[0]);
+		for (std::size_t i = 1; i < boneCount; ++i)
+		{
+			const auto& parentTransform = parentTransforms[m_boneHierarchy[i]];
+			parentTransforms.emplace_back(parentTransform * m_boneTransforms[i] * animationMatrices[i]);
 		}
 	}
 
-	// Calculate the animation matrices:
-	std::vector<Eigen::Affine3f> animationMatrices(boneCount);
-	const auto& clip = m_animations.at(clipName);
-	clip.Interpolate(timePosition, animationMatrices);
-	
 	// Calculate the final transforms:
 	finalTransforms.reserve(boneCount);
 	for (std::size_t i = 0; i < boneCount; ++i)
 	{
-		// TODO
+		finalTransforms.emplace_back(parentTransforms[i] * inverseBindPoseMatrices[i]);
 	}
-
-	/*
-	auto clip = m_animations.at(clipName);
-	clip.Interpolate(timePosition, toParentTransforms);
-
-	std::vector<Eigen::Affine3f> toRootTransforms(boneCount);
-	toRootTransforms[0] = toParentTransforms[0];
-	for (std::size_t i = 1; i < boneCount; ++i)
-	{
-		const auto& toParent = toParentTransforms[i];
-
-		auto parentIndex = m_boneHierarchy[i];
-		const auto& parentToRoot = toRootTransforms[parentIndex];
-
-		toRootTransforms[i] = parentToRoot * toParent;
-	}
-
-	finalTransforms.resize(boneCount);
-	for (std::size_t i = 0; i < boneCount; ++i)
-	{
-		finalTransforms[i] = toRootTransforms[i] * m_boneOffsets[i];
-	}*/
 }
