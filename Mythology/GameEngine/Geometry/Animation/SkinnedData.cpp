@@ -67,9 +67,9 @@ void SkinnedData::GetFinalTransforms(const std::string& clipName, float timePosi
 	}
 
 	// Calculate the final transforms:
-	finalTransforms.reserve(boneCount);
+	finalTransforms.resize(boneCount);
 	for (std::size_t i = 0; i < boneCount; ++i)
 	{
-		finalTransforms.emplace_back(parentTransforms[i] * inverseBindPoseMatrices[i]);
+		finalTransforms[i] = parentTransforms[i] * inverseBindPoseMatrices[i];
 	}
 }

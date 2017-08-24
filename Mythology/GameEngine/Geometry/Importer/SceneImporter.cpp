@@ -432,7 +432,7 @@ AnimationClip SceneImporter::CreateSkinnedAnimation(const aiAnimation& animation
 			{
 				const auto& key = channel->mRotationKeys[keyIndex];
 				keyframes[keyIndex].TimePosition = static_cast<float>(key.mTime);
-				keyframes[keyIndex].Value = { key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z };
+				keyframes[keyIndex].Value = Eigen::Quaternionf(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z);
 			}
 		}
 
