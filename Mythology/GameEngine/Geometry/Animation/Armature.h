@@ -7,11 +7,11 @@
 
 namespace GameEngine
 {
-	class SkinnedData
+	class Armature
 	{
 	public:
-		SkinnedData() = default;
-		SkinnedData(const std::vector<std::int8_t>& boneHierarchy, const std::vector<Eigen::Affine3f>& boneTransforms, const std::unordered_map<std::string, AnimationClip>& animations);
+		Armature() = default;
+		Armature(const std::vector<std::int8_t>& boneHierarchy, const std::vector<Eigen::Affine3f>& boneTransforms, const std::unordered_map<std::string, AnimationClip>& animations);
 
 	public:
 		float GetClipStartTime(const std::string& clipName) const;

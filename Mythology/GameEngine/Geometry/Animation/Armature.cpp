@@ -1,34 +1,49 @@
-#include "SkinnedData.h"
+#include "Armature.h"
 
 using namespace GameEngine;
 
-SkinnedData::SkinnedData(const std::vector<std::int8_t>& boneHierarchy, const std::vector<Eigen::Affine3f>& boneTransforms, const std::unordered_map<std::string, AnimationClip>& animations) :
+Armature::Armature(const std::vector<std::int8_t>& boneHierarchy, const std::vector<Eigen::Affine3f>& boneTransforms, const std::unordered_map<std::string, AnimationClip>& animations) :
 	m_boneHierarchy(boneHierarchy),
 	m_boneTransforms(boneTransforms),
 	m_animations(animations)
 {
 }
 
-float SkinnedData::GetClipStartTime(const std::string& clipName) const
+float Armature::GetClipStartTime(const std::string& clipName) const
 {
 	const auto& clip = m_animations.at(clipName);
 	return clip.GetClipStartTime();
 }
-float SkinnedData::GetClipEndTime(const std::string& clipName) const
+float Armature::GetClipEndTime(const std::string& clipName) const
 {
 	const auto& clip = m_animations.at(clipName);
 	return clip.GetClipEndTime();
 }
-std::size_t SkinnedData::GetBoneCount() const
+std::size_t Armature::GetBoneCount() const
 {
 	return m_boneHierarchy.size();
 }
-const std::string& SkinnedData::GetDefaultAnimationClipName() const
+const std::string& Armature::GetDefaultAnimationClipName() const
 {
 	return m_animations.begin()->first;
 }
-void SkinnedData::GetFinalTransforms(const std::string& clipName, float timePosition, std::vector<Eigen::Affine3f>& finalTransforms) const
+void Armature::GetFinalTransforms(const std::string& clipName, float timePosition, std::vector<Eigen::Affine3f>& finalTransforms) const
 {
+	//    (Root * B0 * B1 * B2)^-1 * V
+	//    VL = (Mesh * Root * VG)
+	//    VG = Root^(-1) * Mesh^(-1) * VL
+	//    VB = B2 * B1 * B0 * Root * Root^(-1) * Mesh^(-1) * VL
+
+	//               Root
+	//                 |
+	//             --------
+	//             |       |
+	//           Mesh      B0
+	//                     |
+	//                     B1
+	//                     |
+	//                     B2
+
 	auto boneCount = m_boneHierarchy.size();
 
 	std::vector<Eigen::Affine3f> inverseBindPoseMatrices;

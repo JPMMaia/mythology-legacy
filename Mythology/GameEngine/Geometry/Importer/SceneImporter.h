@@ -2,7 +2,7 @@
 
 #include "GameEngine/Geometry/EigenGeometry.h"
 #include "GameEngine/Geometry/Animation/AnimationClip.h"
-#include "GameEngine/Geometry/Animation/SkinnedData.h"
+#include "GameEngine/Geometry/Animation/Armature.h"
 
 #include <deque>
 #include <unordered_map>
@@ -54,11 +54,17 @@ namespace GameEngine
 			std::vector<Eigen::Affine3f> BoneTransforms;
 			std::vector<std::int8_t> BoneHierarchy;
 		};
+		struct Object
+		{
+			std::queue<Geometry> Geometries;
+			Skeleton Skeleton;
+			bool IsAnimated;
+		};
 		struct ImportedScene
 		{
-			std::deque<Geometry> Geometries;
+			std::deque<Object> Objects;
 			std::deque<Material> Materials;
-			SkinnedData SkinnedData;
+			Armature Armature;
 
 			friend std::ostream& operator<<(std::ostream& outputStream, const ImportedScene& importedScene);
 			friend std::istream& operator>>(std::istream& inputStream, ImportedScene& importedScene);

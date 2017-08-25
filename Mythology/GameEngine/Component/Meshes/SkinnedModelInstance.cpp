@@ -2,9 +2,9 @@
 
 using namespace GameEngine;
 
-SkinnedModelInstance::SkinnedModelInstance(SkinnedData&& skinnedData) :
-	m_skinnedData(std::move(skinnedData)),
-	m_currentAnimationClipName(m_skinnedData.GetDefaultAnimationClipName())
+SkinnedModelInstance::SkinnedModelInstance(Armature&& armature) :
+	m_armature(std::move(armature)),
+	m_currentAnimationClipName(m_armature.GetDefaultAnimationClipName())
 {
 }
 
@@ -14,10 +14,10 @@ void SkinnedModelInstance::FrameUpdate(const Common::Timer& timer)
 
 	m_timePosition += milliseconds(timer.GetDeltaTime()).count();
 
-	if (m_timePosition > m_skinnedData.GetClipEndTime(m_currentAnimationClipName))
+	if (m_timePosition > m_armature.GetClipEndTime(m_currentAnimationClipName))
 		m_timePosition = 0.0f;
 
-	m_skinnedData.GetFinalTransforms(m_currentAnimationClipName, m_timePosition, m_finalTransforms);
+	m_armature.GetFinalTransforms(m_currentAnimationClipName, m_timePosition, m_finalTransforms);
 }
 
 const std::string& SkinnedModelInstance::GetCurrentAnimationClip() const

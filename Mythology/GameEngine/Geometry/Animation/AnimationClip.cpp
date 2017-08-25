@@ -23,12 +23,18 @@ AnimationClip::AnimationClip(const std::vector<BoneAnimation>& boneAnimations) :
 	positions[2].TimePosition = 4000.0f;
 
 	std::vector<Keyframe<Quaternion>> rotations(3, Keyframe<Quaternion>(0.0f, Quaternion(1.0f, 0.0f, 0.0f, 0.0f)));
+	rotations[1].TimePosition = 2000.0f;
+	rotations[1].Value = Quaternion(Eigen::AngleAxisf(M_PI, Vector3::UnitZ()));
 	rotations[2].TimePosition = 4000.0f;
 	std::vector<Keyframe<Vector3>> scales(3, Keyframe<Vector3>(0.0f, Vector3(1.0f, 1.0f, 1.0f)));
 	scales[2].TimePosition = 4000.0f;
+	
 	m_boneAnimations[0] = BoneAnimation(positions, rotations, scales);
-
 	m_boneAnimations[boneAnimations.size() - 1] = BoneAnimation(positions, rotations, scales);
+	
+	positions[1].Value = Vector3(0.0f, 0.0f, 0.0f);
+	rotations[1].Value = Quaternion(Eigen::AngleAxisf(M_PI, Vector3::UnitZ()));
+	//m_boneAnimations[5] = BoneAnimation(positions, rotations, scales);
 }
 
 void AnimationClip::Interpolate(float timePosition, std::vector<Eigen::Affine3f>& boneTransforms) const

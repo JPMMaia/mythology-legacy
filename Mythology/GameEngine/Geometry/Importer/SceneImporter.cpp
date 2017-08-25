@@ -296,7 +296,7 @@ void SceneImporter::Import(const std::wstring& filePath, ImportedScene& imported
 			animations.emplace(animationData->mName.C_Str(), CreateSkinnedAnimation(*animationData, skeleton));
 		}
 
-		importedScene.SkinnedData = SkinnedData(skeleton.BoneHierarchy, skeleton.BoneTransforms, animations);
+		importedScene.SkinnedData = Armature(skeleton.BoneHierarchy, skeleton.BoneTransforms, animations);
 	}
 
 	for (std::size_t i = 0; i < scene->mNumMaterials; ++i)
@@ -457,60 +457,227 @@ AnimationClip SceneImporter::CreateSkinnedAnimation(const aiAnimation& animation
 	return AnimationClip(boneAnimations);
 }
 
+class Mesh
+{
+public:
+	Mesh(aiScene* scene, aiNode* node, std::size_t index) :
+		m_scene(scene),
+		m_node(node),
+		m_index(index)
+	{
+	}
+
+public:
+	Eigen::Affine3f GetTransform() const
+	{
+		Eigen::Matrix4f transform;
+
+		const auto& m = m_node->mTransformation;
+		transform <<
+			m.a1, m.a2, m.a3, m.a4,
+			m.b1, m.b2, m.b3, m.b4,
+			m.c1, m.c2, m.c3, m.c4,
+			m.d1, m.d2, m.d3, m.d4;
+
+		return Eigen::Affine3f(transform);
+	}
+
+	aiNode* GetNode() const
+	{
+		return m_node;
+	}
+
+public:
+	aiMesh* operator->() const
+	{
+		auto meshIndex = m_node->mMeshes[m_index];
+		return m_scene->mMeshes[meshIndex];
+	}
+
+private:
+	aiScene* m_scene;
+	aiNode* m_node;
+	std::size_t m_index;
+};
+
 SceneImporter::Skeleton SceneImporter::CreateSkeleton(const aiScene& scene)
 {
 	Skeleton skeleton;
 
-	// Find all bones:
-	std::unordered_set<std::string> boneNames;
-	std::unordered_map<std::string, Eigen::Affine3f> boneOffsets;
-	for (std::size_t meshIndex = 0; meshIndex < scene.mNumMeshes; ++meshIndex)
+	// Find node with meshes:
+	aiNode* meshesNode;
 	{
-		auto mesh = scene.mMeshes[meshIndex];
-
-		for (std::size_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+		std::function<void(aiNode*)> findMeshesNode = [&scene, &meshesNode, &findMeshesNode](aiNode* node)
 		{
-			auto bone = mesh->mBones[boneIndex];
-			boneNames.emplace(bone->mName.C_Str());
-		}
+			if (node->mNumChildren > 0)
+			{
+				meshesNode = node;
+				return;
+			}
+
+			for (std::size_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex)
+			{
+				findMeshesNode(node->mChildren[childIndex]);
+				if (meshesNode != nullptr)
+					return;
+			}
+		};
+		findMeshesNode(scene.mRootNode);
 	}
 
-	// Find the node of each bone:
-	std::unordered_map<std::string, aiNode*> boneNodes;
-	for (const auto& boneName : boneNames)
-		boneNodes.emplace(boneName, scene.mRootNode->FindNode(boneName.c_str()));
+	// Find all bones:
+	std::unordered_set<aiNode*> neededBones;
+	{
+		for (auto meshIndex = 0; meshIndex < meshesNode->mNumMeshes; meshIndex++)
+		{
+			auto mesh = scene.mMeshes[meshesNode->mMeshes[meshIndex]];
+			for (std::size_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+			{
+				auto bone = mesh->mBones[boneIndex];
+
+				// Mark bone and all its parents as needed, until the mesh node or the parent of the mesh node is found:
+				for (auto boneNode = scene.mRootNode->FindNode(bone->mName); boneNode != nullptr; boneNode = boneNode->mParent)
+				{
+					// Stop if mesh node or parent of the mesh node:
+					if (boneNode == meshesNode || boneNode == meshesNode->mParent)
+						break;
+
+					// Mark bone as needed:
+					neededBones.emplace(boneNode);
+				}
+			}
+		}
+
+		// Ensure that all bone children are in the list:
+		for (auto boneNode : neededBones)
+			for (std::size_t childIndex = 0; childIndex < boneNode->mNumChildren; ++childIndex)
+				neededBones.emplace(boneNode->mChildren[childIndex]);
+	}
 
 	// Find the root node of the skeleton:
 	auto lowestDistance = (std::numeric_limits<std::size_t>::max)();
-	std::string rootNodeName;
-	for (const auto& boneNode : boneNodes)
+	aiNode* rootNode;
 	{
-		std::size_t distance = 0;
-
-		for (auto currentNode = boneNode.second->mParent; currentNode != nullptr; currentNode = currentNode->mParent)
-			++distance;
-
-		if (distance < lowestDistance)
+		for (const auto& boneNode : neededBones)
 		{
-			rootNodeName = boneNode.first;
-			lowestDistance = distance;
+			std::size_t distance = 0;
+
+			for (auto currentNode = boneNode->mParent; currentNode != nullptr; currentNode = currentNode->mParent)
+				++distance;
+
+			if (distance < lowestDistance)
+			{
+				rootNode = boneNode;
+				lowestDistance = distance;
+			}
 		}
 	}
+
+	// Find the root offset matrix:
+	/*Eigen::Affine3f rootOffsetMatrix;
+	{
+		for (std::size_t meshIndex = 0; meshIndex < scene.mNumMeshes; ++meshIndex)
+		{
+			auto mesh = scene.mMeshes[meshIndex];
+
+			for (std::size_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+			{
+				auto bone = mesh->mBones[boneIndex];
+				if (bone->mName.C_Str() == rootNodeName)
+				{
+					Eigen::Matrix4f transform;
+					const auto& m = bone->mOffsetMatrix;
+					transform <<
+						m.a1, m.a2, m.a3, m.a4,
+						m.b1, m.b2, m.b3, m.b4,
+						m.c1, m.c2, m.c3, m.c4,
+						m.d1, m.d2, m.d3, m.d4;
+
+					rootOffsetMatrix = Eigen::Affine3f(transform);
+					break;
+				}
+			}
+		}
+	}
+
+	class Mesh
+	{
+	public:
+		Mesh(const aiScene& scene, const aiNode& node, std::size_t index) :
+			m_scene(scene),
+			m_node(node),
+			m_index(index)
+		{
+		}
+
+	public:
+		Eigen::Affine3f GetTransform() const
+		{
+			Eigen::Matrix4f transform;
+
+			const auto& m = m_node.mTransformation;
+			transform << 
+				m.a1, m.a2, m.a3, m.a4,
+				m.b1, m.b2, m.b3, m.b4,
+				m.c1, m.c2, m.c3, m.c4,
+				m.d1, m.d2, m.d3, m.d4;
+
+			return Eigen::Affine3f(transform);
+		}
+
+	public:
+		aiMesh* operator->()
+		{
+			auto meshIndex = m_node.mMeshes[m_index];
+			return m_scene.mMeshes[meshIndex];
+		}
+
+	private:
+		const aiScene& m_scene;
+		const aiNode& m_node;
+		std::size_t m_index;
+	};
+
+	// Find all meshes:
+	std::deque<Mesh> meshes;
+	{
+		std::function<void(aiNode*)> findMesh = [&scene, &meshes, &findMesh](aiNode* node)
+		{
+			for (std::size_t meshIndex = 0; meshIndex < node->mNumMeshes; ++meshIndex)
+				meshes.emplace_back(scene, *node, meshIndex);
+
+			for (std::size_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex)
+				findMesh(node->mChildren[childIndex]);
+		};
+		findMesh(scene.mRootNode);
+	}
+
+	class Skeleton
+	{
+	public:
+
+	private:
+		const aiNode& m_rootNode;
+
+	};
+
+	// Find all skeletons:
+
 
 	{
 		// Build hierachy such that a child node never appears before a parent node:
 		auto& boneHierarchy = skeleton.BoneHierarchy;
 		auto& bones = skeleton.Bones;
 		auto& transforms = skeleton.BoneTransforms;
-		std::function<void(aiNode*)> appendChildrenToHierarchy = [&bones, &boneNames, &boneHierarchy, &boneNodes, &transforms, &scene, &appendChildrenToHierarchy](aiNode* node)
+		std::function<void(aiNode*)> appendChildrenToHierarchy = [&bones, &boneNames, &boneHierarchy, &boneNodes, &transforms, &scene, &rootOffsetMatrix, &appendChildrenToHierarchy](aiNode* node)
 		{
 			std::string nodeName(node->mName.C_Str());
 			bones.emplace_back(nodeName);
-			
+
 			{
 				// Find the parent of the node:
 				auto parentLocation = std::find(bones.begin(), bones.end(), node->mParent->mName.C_Str());
-				
+
 				// If root bone:
 				if (parentLocation == bones.end())
 				{
@@ -536,6 +703,9 @@ SceneImporter::Skeleton SceneImporter::CreateSkeleton(const aiScene& scene)
 						m.d1, m.d2, m.d3, m.d4;
 					//transform.transposeInPlace();
 				}
+				// OM = T-1 * X
+				// X = T * OM;
+				auto X = Eigen::Affine3f(transform) * rootOffsetMatrix;
 
 				transforms.emplace_back(Eigen::Affine3f(transform));
 			}
@@ -544,7 +714,7 @@ SceneImporter::Skeleton SceneImporter::CreateSkeleton(const aiScene& scene)
 				appendChildrenToHierarchy(node->mChildren[childIndex]);
 		};
 		appendChildrenToHierarchy(boneNodes.at(rootNodeName));
-	}
+	}*/
 
 	return skeleton;
 }
