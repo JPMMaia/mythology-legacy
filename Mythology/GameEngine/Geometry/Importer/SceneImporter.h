@@ -12,6 +12,7 @@ struct aiMaterialProperty;
 struct aiAnimation;
 struct aiMaterial;
 struct aiMesh;
+struct aiNode;
 
 namespace GameEngine
 {
@@ -27,9 +28,6 @@ namespace GameEngine
 			std::string Name;
 			MeshDataType MeshData;
 			std::size_t MaterialIndex;
-
-			friend std::ostream& operator<<(std::ostream& outputStream, const Geometry& geometry);
-			friend std::istream& operator>>(std::istream& inputStream, Geometry& geometry);
 		};
 		struct Material
 		{
@@ -38,11 +36,6 @@ namespace GameEngine
 			std::unordered_map<std::string, std::vector<double>> DoubleProperties;
 			std::unordered_map<std::string, std::string> StringProperties;
 			std::string DiffuseTexturePath;
-
-			template<class KeyType, class ValueType, class MapType>
-			friend void InputMap(std::istream& inputStream, MapType& map);
-			friend std::ostream& operator<<(std::ostream& outputStream, const Material& material);
-			friend std::istream& operator>>(std::istream& inputStream, Material& material);
 		};
 		struct Animation
 		{
@@ -56,24 +49,24 @@ namespace GameEngine
 		};
 		struct Object
 		{
-			std::queue<Geometry> Geometries;
+			std::deque<Geometry> Geometries;
+			Eigen::Affine3f MeshToBoneRoot;
 			Skeleton Skeleton;
-			bool IsAnimated;
+			bool IsAnimated = false;
 		};
 		struct ImportedScene
 		{
 			std::deque<Object> Objects;
 			std::deque<Material> Materials;
-			Armature Armature;
-
-			friend std::ostream& operator<<(std::ostream& outputStream, const ImportedScene& importedScene);
-			friend std::istream& operator>>(std::istream& inputStream, ImportedScene& importedScene);
 		};
 
 	public:
 		static void Import(const std::wstring& filePath, ImportedScene& importedScene);
 
 	private:
+		static void ForEachNode(const aiNode& rootNode, const std::function<void(const aiNode&)>& function);
+		static void ForEachMeshOfNode(const aiScene& scene, const aiNode& node, const std::function<void(const aiMesh&)>& function);
+
 		static MeshDataType CreateMeshData(const aiMesh& mesh);
 		static Material CreateMaterial(const aiMaterial& material);
 		static AnimationClip CreateSkinnedAnimation(const aiAnimation& animationData, const Skeleton& skeleton);

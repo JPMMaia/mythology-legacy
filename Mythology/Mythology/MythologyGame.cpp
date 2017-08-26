@@ -119,7 +119,7 @@ void MythologyGame::Initialize()
 		SceneImporter::ImportedScene scene;
 		SceneImporter::Import(basePath + L"tiny.x", scene);
 
-		for (std::size_t i = 0; i < scene.Geometries.size(); ++i)
+		/*for (std::size_t i = 0; i < scene.Geometries.size(); ++i)
 		{
 			const auto& geometry = scene.Geometries[i];
 			const auto& material = scene.Materials[geometry.MaterialIndex];
@@ -137,9 +137,9 @@ void MythologyGame::Initialize()
 			//instance->GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
 			instance->GetTransform().SetLocalScaling(Vector3f(1.0f, 1.0f, 1.0f) * 0.01f);
 			m_box.AddComponent("Instance" + std::to_string(i), instance);
-		}
+		}*/
 		
-		m_tiny = SkinnedModelInstance(std::move(scene.SkinnedData));
+		//m_tiny = SkinnedModelInstance(std::move(scene.Objects));
 	}
 
 	/*{

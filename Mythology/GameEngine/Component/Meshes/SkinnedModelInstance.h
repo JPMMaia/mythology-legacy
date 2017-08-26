@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "GameEngine/Geometry/Animation/SkinnedData.h"
+#include "GameEngine/Geometry/Animation/Armature.h"
 #include "Common/Timer.h"
 #include "GameEngine/Geometry/EigenGeometry.h"
 
