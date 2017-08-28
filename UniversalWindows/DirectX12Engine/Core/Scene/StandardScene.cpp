@@ -169,22 +169,17 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 			for (std::size_t i = 0; i < mesh.GetInstancesCount(); ++i)
 			{
 				// Bind skinned constant buffer:
-				commandList->SetGraphicsRootConstantBufferView(4, m_skinnedMeshAnimationGPUBuffer.get_allocator().GetGPUVirtualAddress(bufferIndex));
-
-				// Bind instances' buffer:
-				commandList->SetGraphicsRootShaderResourceView(0, m_skinnedMeshInstancesGPUBuffer.get_allocator().GetGPUVirtualAddress(bufferIndex));
+				commandList->SetGraphicsRootConstantBufferView(4, m_skinnedMeshAnimationGPUBuffer.get_allocator().GetGPUVirtualAddress(bufferIndex++));
 
 				// Render:
 				auto materialBufferIndex = skinnedMeshInstanceStartIndex;
 				std::for_each(renderItems.begin(), renderItems.end(), [this, commandList, &materialBufferIndex](auto renderItem)
 				{
 					// Bind materials' buffer:
-					commandList->SetGraphicsRootShaderResourceView(5, m_skinnedMeshInstancesGPUBuffer.get_allocator().GetGPUVirtualAddress(materialBufferIndex++));
+					commandList->SetGraphicsRootConstantBufferView(5, m_skinnedMeshInstancesGPUBuffer.get_allocator().GetGPUVirtualAddress(materialBufferIndex++));
 
 					renderItem->RenderNonInstanced(commandList);
 				});
-
-				bufferIndex++;
 			}
 			skinnedMeshInstanceStartIndex += renderItems.size();
 		});
