@@ -15,7 +15,7 @@ StandardRenderItem::StandardRenderItem(ID3D12Device* d3dDevice, std::shared_ptr<
 {
 }
 
-void StandardRenderItem::Render(ID3D12GraphicsCommandList* commandList) const
+void StandardRenderItem::RenderInstanced(ID3D12GraphicsCommandList* commandList) const
 {
 	// Do not render if instances buffer is empty:
 	if (m_instancesGPUBuffer.empty())

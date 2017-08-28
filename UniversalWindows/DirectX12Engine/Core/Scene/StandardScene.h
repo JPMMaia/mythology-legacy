@@ -9,11 +9,12 @@
 #include "Core/Textures/Texture.h"
 #include "Core/Resources/DescriptorHeap.h"
 #include "Mythology/MythologyGame.h"
-
-#include <unordered_map>
+#include "GameEngine/Component/Meshes/SkinnedMeshComponent.h"
 #include "GameEngine/Geometry/EigenGeometry.h"
 #include "Core/Geometry/Buffers/VertexBuffer.h"
 #include "Core/Geometry/Buffers/IndexBuffer.h"
+
+#include <unordered_map>
 
 namespace DirectX12Engine
 {
@@ -37,7 +38,7 @@ namespace DirectX12Engine
 		bool Render(const Common::Timer& timer, RenderLayer renderLayer) override;
 
 	private:
-		VertexBuffer CreateVertexBuffer(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::EigenMeshData& meshData);
+		VertexBuffer CreateVertexBuffer(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::EigenMeshData& meshData, bool isSkinned);
 		IndexBuffer CreateIndexBuffer(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::EigenMeshData& meshData);
 
 		template<class MeshType>
@@ -47,7 +48,7 @@ namespace DirectX12Engine
 		void CreateTexture(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const std::wstring& path, bool isColorData);
 
 		void UpdatePassBuffer();
-		void UpdateSkinnedBuffers();
+		void UpdateSkinnedAnimationBuffers();
 		void UpdateInstancesBuffers();
 
 		template<class MeshType>
@@ -75,6 +76,9 @@ namespace DirectX12Engine
 
 		std::shared_ptr<Mythology::MythologyGame> m_game;
 		
-		GPUUploadBuffer<ShaderBufferTypes::SkinnedData> m_skinnedGPUBuffer;
+		GPUUploadBuffer<ShaderBufferTypes::SkinnedAnimationData> m_skinnedMeshAnimationGPUBuffer;
+		GPUUploadBuffer<ShaderBufferTypes::InstanceData> m_skinnedMeshInstancesGPUBuffer;
+		std::unordered_map<std::string, std::deque<StandardRenderItem*>> m_renderItemsPerSkinnedMesh;
+		std::unordered_map<StandardRenderItem*, std::uint32_t> m_skinnedRenderItemsMaterialIndices;
 	};
 }

@@ -49,10 +49,18 @@ namespace DirectX12Engine
 			std::array<LightData, MaxNumLights> Lights;
 		};
 
-		struct SkinnedData
+		struct SkinnedAnimationData
 		{
 			static constexpr std::size_t MaxNumBones = 96;
 			std::array<Eigen::Affine3f, MaxNumBones> BoneTransforms;
+			Eigen::Affine3f ModelMatrix;
+		};
+		struct SkinnedMeshData
+		{
+			std::uint32_t MaterialIndex;
+			std::uint32_t Pad0;
+			std::uint32_t Pad1;
+			std::uint32_t Pad2;
 		};
 	}
 }

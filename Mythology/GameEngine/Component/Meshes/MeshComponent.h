@@ -6,7 +6,7 @@
 
 namespace GameEngine
 {
-	class BaseMeshComponent : public BaseComponent
+	class BaseMeshComponent
 	{
 	public:
 		explicit BaseMeshComponent(const std::string& name) :
@@ -17,11 +17,11 @@ namespace GameEngine
 		template<typename... ArgumentsTypes>
 		std::shared_ptr<InstancedMeshComponent> CreateInstance(ArgumentsTypes&& ...arguments)
 		{
-			auto pointer = m_storage.allocate(sizeof(InstancedMeshComponent));
+			auto pointer = m_instances.allocate(sizeof(InstancedMeshComponent));
 
 			auto deleter = [this](void* pointer)
 			{
-				m_storage.deallocate(reinterpret_cast<InstancedMeshComponent*>(pointer), sizeof(InstancedMeshComponent));
+				m_instances.deallocate(reinterpret_cast<InstancedMeshComponent*>(pointer), sizeof(InstancedMeshComponent));
 			};
 			new (reinterpret_cast<void*>(pointer)) InstancedMeshComponent(std::forward<ArgumentsTypes>(arguments)...);
 
@@ -30,16 +30,16 @@ namespace GameEngine
 
 		StandardAllocatorIterator<InstancedMeshComponent> InstancesBegin()
 		{
-			return m_storage.begin();
+			return m_instances.begin();
 		}
 		StandardAllocatorIterator<InstancedMeshComponent> InstancesEnd()
 		{
-			return m_storage.end();
+			return m_instances.end();
 		}
 
 		std::size_t GetInstanceCount() const
 		{
-			return m_storage.size();
+			return m_instances.size();
 		}
 
 		const std::string& GetName() const
@@ -49,11 +49,11 @@ namespace GameEngine
 
 	private:
 		std::string m_name;
-		StandardAllocator<InstancedMeshComponent> m_storage;
+		StandardAllocator<InstancedMeshComponent> m_instances;
 	};
 
 	template<typename GeometryType>
-	class MeshComponent : public BaseMeshComponent, public UseStorage<MeshComponent<GeometryType>>
+	class MeshComponent : public BaseComponent, public BaseMeshComponent, public UseStorage<MeshComponent<GeometryType>>
 	{
 	public:
 		MeshComponent() = default;

@@ -6,6 +6,7 @@
 #include "GameEngine/Geometry/Primitives/RectangleGeometry.h"
 #include "GameEngine/Geometry/Importer/SceneImporter.h"
 #include "GameEngine/Geometry/Primitives/CustomGeometry.h"
+#include "GameEngine/Component/Meshes/SkinnedMeshComponent.h"
 #include "Common/Helpers.h"
 #include "Interfaces/IFileSystem.h"
 
@@ -118,6 +119,8 @@ void MythologyGame::Initialize()
 		std::string modelName = "test";
 		SceneImporter::ImportedScene scene;
 		SceneImporter::Import(basePath + L"test4.fbx", scene);
+		
+		auto skinnedMeshComponent = SkinnedMeshComponent::CreateSharedPointer(modelName);
 
 		const auto& object = scene.Objects[0];
 		for (std::size_t i = 0; i < object.Geometries.size(); ++i)
@@ -125,23 +128,25 @@ void MythologyGame::Initialize()
 			const auto& geometry = object.Geometries[i];
 			const auto& material = scene.Materials[geometry.MaterialIndex];
 
-			auto mesh = MeshComponent<CustomGeometry<EigenMeshData>>::CreateSharedPointer(modelName + std::to_string(i), CustomGeometry<EigenMeshData>(std::move(geometry.MeshData)));
-			m_meshes.emplace(mesh->GetName(), mesh);
-
 			const auto& baseColor = material.FloatProperties.at("$clr.diffuse");
 			//const auto& albedoMap = basePath + Helpers::GetFilename(Helpers::StringToWString(material.DiffuseTexturePath)) + L".dds";
 			const auto& albedoMap = basePath + L"white.dds";
 			auto standardMaterial = StandardMaterial::CreateSharedPointer(modelName + std::to_string(i), Vector4f(baseColor[0], baseColor[1], baseColor[2], 1.0f), albedoMap);
 			m_materials.emplace(standardMaterial->GetName(), standardMaterial);
 
-			auto instance = mesh->CreateInstance(standardMaterial);
-			instance->GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
-			//instance->GetTransform().SetLocalScaling(Vector3f(1.0f, 1.0f, 1.0f) * 0.01f);
-			m_box.AddComponent("Instance" + std::to_string(i), instance);
+			skinnedMeshComponent->AddMesh(CustomGeometry<EigenMeshData>(std::move(geometry.MeshData)), standardMaterial);
 		}
 		
-		auto& armature = scene.Armatures.at(object.ArmatureIndex);
-		m_tiny = SkinnedModelInstance(Armature(std::move(armature.BoneHierarchy), std::move(armature.BoneTransforms), std::move(armature.Animations)), object.MeshToParentOfBoneRoot);
+		auto& importedArmature = scene.Armatures.at(object.ArmatureIndex);
+		auto armature = std::make_shared<Armature>(std::move(importedArmature.BoneHierarchy), std::move(importedArmature.BoneTransforms), std::move(importedArmature.Animations));
+		m_armatures.emplace(importedArmature.Bones.front(), armature);
+
+		auto instance = skinnedMeshComponent->CreateInstance(armature, object.MeshToParentOfBoneRoot);
+		instance->GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
+		//instance->GetTransform().SetLocalScaling(Vector3f(1.0f, 1.0f, 1.0f) * 0.01f);
+		m_box.AddComponent("AnimationInstance", instance);
+
+		m_skinnedMeshes.emplace(modelName, skinnedMeshComponent);
 	}
 }
 
@@ -156,7 +161,6 @@ void MythologyGame::FixedUpdate(const Common::Timer& timer)
 void MythologyGame::FrameUpdate(const Common::Timer& timer)
 {
 	m_gameManager->FrameUpdate(timer);
-	m_tiny.FrameUpdate(timer);
 
 	auto& cameraTransform = m_person.GetTransform();
 

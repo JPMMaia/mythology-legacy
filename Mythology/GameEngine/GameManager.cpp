@@ -2,6 +2,7 @@
 #include "GameObject/GameObject.h"
 
 #include "GameEngine/Component/Cameras/CameraComponent.h"
+#include "GameEngine/Component/Meshes/SkinnedMeshComponent.h"
 
 using namespace Common;
 using namespace GameEngine;
@@ -27,6 +28,22 @@ void GameManager::FixedUpdate(const Common::Timer& timer) const
 {
 	::FixedUpdate<CameraComponent>(timer);
 }
+
+template<class T>
+void FrameUpdate(const Timer& timer)
+{
+	std::for_each(T::begin(), T::end(), [&timer](auto& element)
+	{
+		element.FrameUpdate(timer);
+	});
+}
 void GameManager::FrameUpdate(const Common::Timer& timer) const
 {
+	std::for_each(SkinnedMeshComponent::begin(), SkinnedMeshComponent::end(), [&timer](SkinnedMeshComponent& mesh)
+	{
+		std::for_each(mesh.AnimationsBegin(), mesh.AnimationsEnd(), [&timer](SkinnedAnimationComponent& animation)
+		{
+			animation.FrameUpdate(timer);
+		});
+	});
 }

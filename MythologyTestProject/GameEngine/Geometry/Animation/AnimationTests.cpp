@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "GameEngine/Component/Meshes/SkinnedModelInstance.h"
+#include "GameEngine/Component/Animations/SkinnedAnimationComponent.h"
 
 using namespace Eigen;
 using namespace GameEngine;
@@ -121,7 +121,7 @@ namespace MythologyTestProject
 			Affine3f meshToParentOfBoneRootMatrix;
 			meshToParentOfBoneRootMatrix.fromPositionOrientationScale(Vector3f(-1.0f, 3.0f, 3.0f), Quaternionf::FromTwoVectors(Vector3f(0.0f, 0.0f, 1.0f), Vector3f(1.0f, 0.0f, 0.0f)), Vector3f(1.0f, 1.0f, 1.0f));
 
-			SkinnedModelInstance skinnedModelInstace(Armature(boneHierarchy, boneTransforms, animations), meshToParentOfBoneRootMatrix);
+			SkinnedAnimationComponent skinnedModelInstace(std::make_shared<Armature>(boneHierarchy, boneTransforms, animations), meshToParentOfBoneRootMatrix);
 
 			Common::Timer timer(std::chrono::milliseconds(12));
 			timer.SetDeltaTime(std::chrono::milliseconds(0));
