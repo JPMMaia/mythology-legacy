@@ -53,7 +53,7 @@ namespace GameEngine
 			std::deque<Geometry> Geometries;
 			bool IsAnimated = false;
 			std::size_t ArmatureIndex;
-			Eigen::Affine3f MeshToBoneRoot;
+			Eigen::Affine3f MeshToParentOfBoneRoot;
 		};
 		struct ImportedScene
 		{

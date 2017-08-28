@@ -310,7 +310,6 @@ void StandardScene::UpdatePassBuffer()
 void StandardScene::UpdateSkinnedBuffers()
 {
 	const auto& tiny = m_game->GetTiny();
-
 	const auto& finalTransforms = tiny.GetFinalTransforms();
 	
 	ShaderBufferTypes::SkinnedData skinnedData;

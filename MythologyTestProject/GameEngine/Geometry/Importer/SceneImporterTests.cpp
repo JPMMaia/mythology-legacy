@@ -69,8 +69,8 @@ namespace MythologyTestProject
 				// Armature^(-1) * Mesh
 				auto armatureTransform = AssimpToEigen(armatureNode->mTransformation);
 				auto meshTransform = AssimpToEigen(meshNode->mTransformation);
-				auto meshToBoneRoot = armatureTransform.inverse() * meshTransform;
-				Assert::IsTrue(meshToBoneRoot.isApprox(object.MeshToBoneRoot));
+				auto meshToParentOfBoneRoot = meshTransform;
+				Assert::IsTrue(meshToParentOfBoneRoot.isApprox(object.MeshToParentOfBoneRoot));
 
 				// Find the RightHand bone:
 				const aiBone* rightHandBone = nullptr;
@@ -94,7 +94,7 @@ namespace MythologyTestProject
 				auto spineTransform = AssimpToEigen(armatureNode->FindNode("Spine")->mTransformation);
 				auto rightArmTransform = AssimpToEigen(armatureNode->FindNode("RightArm")->mTransformation);
 				auto rightHandTransform = AssimpToEigen(armatureNode->FindNode("RightHand")->mTransformation);
-				auto rightHandOffsetMatrix = rightHandTransform.inverse() * rightArmTransform.inverse() * spineTransform.inverse() * pelvisTransform.inverse() * meshToBoneRoot;
+				auto rightHandOffsetMatrix = rightHandTransform.inverse() * rightArmTransform.inverse() * spineTransform.inverse() * pelvisTransform.inverse() * armatureTransform.inverse() * meshToParentOfBoneRoot;
 				Assert::IsTrue(rightHandOffsetMatrix.isApprox(AssimpToEigen(rightHandBone->mOffsetMatrix), 0.1f));
 			}
 		}

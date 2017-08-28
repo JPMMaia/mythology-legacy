@@ -4,9 +4,23 @@ using namespace GameEngine;
 
 Armature::Armature(const std::vector<std::int8_t>& boneHierarchy, const std::vector<Eigen::Affine3f>& boneTransforms, const std::unordered_map<std::string, AnimationClip>& animations) :
 	m_boneHierarchy(boneHierarchy),
-	m_boneTransforms(boneTransforms),
 	m_animations(animations)
 {
+	auto boneCount = m_boneHierarchy.size();
+	{
+		// Reserve memory:
+		m_inverseBindPoseTransforms.reserve(boneCount);
+
+		// Calculate the first inverse bind pose matrix:
+		m_inverseBindPoseTransforms.emplace_back(boneTransforms[0].inverse());
+
+		// Calculate the remaining transforms:
+		for (std::size_t i = 1; i < boneCount; ++i)
+		{
+			const auto& parentOffset = m_inverseBindPoseTransforms[m_boneHierarchy[i]];
+			m_inverseBindPoseTransforms.emplace_back(boneTransforms[i].inverse() * parentOffset);
+		}
+	}
 }
 
 float Armature::GetClipStartTime(const std::string& clipName) const
@@ -27,50 +41,33 @@ const std::string& Armature::GetDefaultAnimationClipName() const
 {
 	return m_animations.begin()->first;
 }
-void Armature::GetFinalTransforms(const std::string& clipName, float timePosition, const Eigen::Affine3f& meshToBoneRootMatrix, std::vector<Eigen::Affine3f>& finalTransforms) const
+void Armature::GetFinalTransforms(const std::string& clipName, float timePosition, const Eigen::Affine3f& meshToParentOfBoneRootMatrix, std::vector<Eigen::Affine3f>& finalTransforms) const
 {
 	auto boneCount = m_boneHierarchy.size();
 
-	std::vector<Eigen::Affine3f> inverseBindPoseMatrices;
+	std::vector<Eigen::Affine3f> toParentTransforms;
 	{
-		// Reserve memory:
-		inverseBindPoseMatrices.reserve(boneCount);
-
-		// Calculate the first offset:
-		inverseBindPoseMatrices.emplace_back(m_boneTransforms.at(0).inverse() * meshToBoneRootMatrix);
-
-		// Calculate the remaining offsets:
-		for (std::size_t i = 1; i < boneCount; ++i)
-		{
-			const auto& parentOffset = inverseBindPoseMatrices[m_boneHierarchy[i]];
-			inverseBindPoseMatrices.emplace_back(m_boneTransforms[i].inverse() * parentOffset);
-		}
+		const auto& clip = m_animations.at(clipName);
+		clip.Interpolate(timePosition, toParentTransforms);
 	}
-	
-	std::vector<Eigen::Affine3f> parentTransforms;
-	{
-		// Calculate the animation matrices:
-		std::vector<Eigen::Affine3f> animationMatrices;
-		{
-			const auto& clip = m_animations.at(clipName);
-			clip.Interpolate(timePosition, animationMatrices);
-		}
 
-		// Calculate the parent transforms:
-		parentTransforms.reserve(boneCount);
-		parentTransforms.emplace_back(m_boneTransforms[0] * animationMatrices[0]);
+	std::vector<Eigen::Affine3f> toRootTransforms;
+	{
+		toRootTransforms.reserve(boneCount);
+		toRootTransforms.emplace_back(toParentTransforms[0]);
 		for (std::size_t i = 1; i < boneCount; ++i)
 		{
-			const auto& parentTransform = parentTransforms[m_boneHierarchy[i]];
-			parentTransforms.emplace_back(parentTransform * m_boneTransforms[i] * animationMatrices[i]);
+			const auto& toParentTransform = toParentTransforms[i];
+			const auto& toRootTransform = toRootTransforms[m_boneHierarchy[i]];
+			toRootTransforms.emplace_back(toRootTransform * toParentTransform);
 		}
 	}
 
 	// Calculate the final transforms:
 	finalTransforms.resize(boneCount);
-	auto boneRootToMeshMatrix = meshToBoneRootMatrix.inverse();
+	auto parentOfBoneRootToMeshMatrix = meshToParentOfBoneRootMatrix.inverse();
 	for (std::size_t i = 0; i < boneCount; ++i)
 	{
-		finalTransforms[i] = boneRootToMeshMatrix * parentTransforms[i] * inverseBindPoseMatrices[i];
+		finalTransforms[i] = parentOfBoneRootToMeshMatrix * toRootTransforms[i] * m_inverseBindPoseTransforms[i] * meshToParentOfBoneRootMatrix;
 	}
 }

@@ -18,11 +18,11 @@ namespace GameEngine
 		float GetClipEndTime(const std::string& clipName) const;
 		std::size_t GetBoneCount() const;
 		const std::string& GetDefaultAnimationClipName() const;
-		void GetFinalTransforms(const std::string& clipName, float timePosition, const Eigen::Affine3f& meshToBoneRootMatrix, std::vector<Eigen::Affine3f>& finalTransforms) const;
+		void GetFinalTransforms(const std::string& clipName, float timePosition, const Eigen::Affine3f& meshToParentOfBoneRootMatrix, std::vector<Eigen::Affine3f>& finalTransforms) const;
 
 	private:
 		std::vector<std::int8_t> m_boneHierarchy;
-		std::vector<Eigen::Affine3f> m_boneTransforms;
+		std::vector<Eigen::Affine3f> m_inverseBindPoseTransforms;
 		std::unordered_map<std::string, AnimationClip> m_animations;
 	};
 }

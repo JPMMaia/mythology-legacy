@@ -117,7 +117,7 @@ void MythologyGame::Initialize()
 		std::wstring basePath(L"Resources/");
 		std::string modelName = "test";
 		SceneImporter::ImportedScene scene;
-		SceneImporter::Import(basePath + L"test.fbx", scene);
+		SceneImporter::Import(basePath + L"test4.fbx", scene);
 
 		const auto& object = scene.Objects[0];
 		for (std::size_t i = 0; i < object.Geometries.size(); ++i)
@@ -141,7 +141,7 @@ void MythologyGame::Initialize()
 		}
 		
 		auto& armature = scene.Armatures.at(object.ArmatureIndex);
-		m_tiny = SkinnedModelInstance(Armature(std::move(armature.BoneHierarchy), std::move(armature.BoneTransforms), std::move(armature.Animations)), object.MeshToBoneRoot);
+		m_tiny = SkinnedModelInstance(Armature(std::move(armature.BoneHierarchy), std::move(armature.BoneTransforms), std::move(armature.Animations)), object.MeshToParentOfBoneRoot);
 	}
 }
 

@@ -18,7 +18,7 @@ void SkinnedModelInstance::FrameUpdate(const Common::Timer& timer)
 	if (m_timePosition > m_armature.GetClipEndTime(m_currentAnimationClipName))
 		m_timePosition = 0.0f;
 
-	m_armature.GetFinalTransforms(m_currentAnimationClipName, 0.0f, m_meshToBoneRoot, m_finalTransforms);
+	m_armature.GetFinalTransforms(m_currentAnimationClipName, m_timePosition, m_meshToBoneRoot, m_finalTransforms);
 }
 
 const std::string& SkinnedModelInstance::GetCurrentAnimationClip() const

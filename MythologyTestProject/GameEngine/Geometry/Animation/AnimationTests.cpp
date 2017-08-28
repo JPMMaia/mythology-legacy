@@ -56,10 +56,9 @@ namespace MythologyTestProject
 			boneAnimations.reserve(2);
 
 			{
-				std::vector<Keyframe<Vector3f>> positionKeyframes(3);
+				std::vector<Keyframe<Vector3f>> positionKeyframes(2);
 				positionKeyframes[0] = { 0.0f,{ 1.0f, 2.0f, 3.0f } };
 				positionKeyframes[1] = { 1000.0f,{ 0.0f, -2.0f, 5.0f } };
-				positionKeyframes[2] = { 2000.0f,{ 0.0f, -2.0f, 5.0f } };
 
 				boneAnimations.emplace_back(positionKeyframes, std::vector<Keyframe<Quaternionf>>(), std::vector<Keyframe<Vector3f>>());
 			}
@@ -67,14 +66,14 @@ namespace MythologyTestProject
 			{
 				std::vector<Keyframe<Quaternionf>> rotationKeyframes(2);
 				rotationKeyframes[0] = { 0.0f, Quaternionf(1.0f, 0.0f, 0.0f, 0.0f) };
-				rotationKeyframes[1] = { 2000.0f, Quaternionf(0.0f, 0.0f, 1.0f, 0.0f) };
+				rotationKeyframes[1] = { 3000.0f, Quaternionf(0.0f, 0.0f, 1.0f, 0.0f) };
 
 				boneAnimations.emplace_back(std::vector<Keyframe<Vector3f>>(), rotationKeyframes, std::vector<Keyframe<Vector3f>>());
 			}
 
 			AnimationClip animationClip(boneAnimations);
 			Assert::AreEqual(0.0f, animationClip.GetClipStartTime());
-			Assert::AreEqual(2000.0f, animationClip.GetClipEndTime());
+			Assert::AreEqual(3000.0f, animationClip.GetClipEndTime());
 
 			std::vector<Affine3f> transforms;
 			animationClip.Interpolate(1500.0f, transforms);
@@ -86,60 +85,81 @@ namespace MythologyTestProject
 			}
 			{
 				Affine3f expectedTransform;
-				expectedTransform.fromPositionOrientationScale(Vector3f(0.0f, 0.0f, 0.0f), Quaternionf(1.0f, 0.0f, 0.0f, 0.0f).slerp(1500.0f / 2000.0f, Quaternionf(0.0f, 0.0f, 1.0f, 0.0f)), Vector3f(1.0f, 1.0f, 1.0f));
+				expectedTransform.fromPositionOrientationScale(Vector3f(0.0f, 0.0f, 0.0f), Quaternionf(1.0f, 0.0f, 0.0f, 0.0f).slerp(1500.0f / 3000.0f, Quaternionf(0.0f, 0.0f, 1.0f, 0.0f)), Vector3f(1.0f, 1.0f, 1.0f));
 				Assert::IsTrue(expectedTransform.isApprox(transforms[1]));
 			}
 		}
 
 		TEST_METHOD(AnimationTest3)
 		{
-			// 0 - Armature -> Pelvis
-			// 1 - Pelvis -> Spine
-			// 2 - Spine -> RightArm, LeftArm, Head
-			// 3 - RightArm -> RightHand
-			// 4 - RightHand
-			// 5 - LeftArm -> LeftHand
-			// 6 - LeftHand
-			// 7 - Head
 			std::vector<std::int8_t> boneHierarchy =
 			{
-				-1, 0, 1, 2, 3, 2, 3, 2
+				-1, 0
 			};
-			std::vector<Affine3f> boneTransforms(8);
-			for (std::size_t i = 0; i < boneTransforms.size(); ++i)
-			{
-				auto& transform = boneTransforms[i];
-				transform.fromPositionOrientationScale(Vector3f(i * 1.0f, i * 2.0f, i * 3.0f), Quaternionf::FromTwoVectors(Vector3f(0.0f, 1.0f, 0.0f), Vector3f(1.0f, 0.0f, 0.0f)), Vector3f(1.0f, 1.0f, 1.0f));
-			}
+			std::vector<Affine3f> boneTransforms(boneHierarchy.size());
+			boneTransforms[0].fromPositionOrientationScale(Vector3f(0.0f, 1.0f, 0.0f), Quaternionf::Identity(), Vector3f(1.0f, 1.0f, 1.0f));
+			boneTransforms[1].fromPositionOrientationScale(Vector3f(0.0f, 2.0f, 0.0f), Quaternionf::Identity(), Vector3f(1.0f, 1.0f, 1.0f));
 
 			std::unordered_map<std::string, AnimationClip> animations;
 			{
-				std::vector<Keyframe<Vector3f>> positionKeyframes = { { 0.0f, Vector3f(0.0f, 0.0f, 0.0f) } };
-				std::vector<Keyframe<Quaternionf>> rotationKeyframes = { { 0.0f, Quaternionf::Identity() } };
-				std::vector<Keyframe<Vector3f>> scaleKeyframes = { { 0.0f, Vector3f(1.0f, 1.0f, 1.0f) } };;
-				AnimationClip testClip(std::vector<BoneAnimation>(boneHierarchy.size(), BoneAnimation(positionKeyframes, rotationKeyframes, scaleKeyframes)));
+				std::vector<BoneAnimation> boneAnimations(boneHierarchy.size());
+				std::vector<Keyframe<Vector3f>> positionKeyframes(2);
+				positionKeyframes[0] = { 0.0f, Vector3f(0.0f, 1.0f, 0.0f) };
+				positionKeyframes[1] = { 1000.0f, Vector3f(0.0f, 3.0f, 0.0f) };
+				std::vector<Keyframe<Quaternionf>> rotationKeyframes;
+				std::vector<Keyframe<Vector3f>> scaleKeyframes;
+				boneAnimations[0] = BoneAnimation(positionKeyframes, rotationKeyframes, scaleKeyframes);
+
+				positionKeyframes[0] = {0.0f, Vector3f(0.0f, 2.0f, 0.0f) };
+				positionKeyframes[1] = { 1000.0f, Vector3f(0.0f, 3.0f, 0.0f) };
+				boneAnimations[1] = BoneAnimation(positionKeyframes, rotationKeyframes, scaleKeyframes);
+
+				AnimationClip testClip(boneAnimations);
 				animations.emplace("test", std::move(testClip));
 			}
 
-			Affine3f meshToBoneRootMatrix;
-			meshToBoneRootMatrix.fromPositionOrientationScale(Vector3f(-1.0f, 3.0f, 3.0f), Quaternionf::FromTwoVectors(Vector3f(0.0f, 0.0f, 1.0f), Vector3f(1.0f, 0.0f, 0.0f)), Vector3f(1.0f, 1.0f, 1.0f));
+			Affine3f meshToParentOfBoneRootMatrix;
+			meshToParentOfBoneRootMatrix.fromPositionOrientationScale(Vector3f(-1.0f, 3.0f, 3.0f), Quaternionf::FromTwoVectors(Vector3f(0.0f, 0.0f, 1.0f), Vector3f(1.0f, 0.0f, 0.0f)), Vector3f(1.0f, 1.0f, 1.0f));
 
-			SkinnedModelInstance skinnedModelInstace(Armature(boneHierarchy, boneTransforms, animations), meshToBoneRootMatrix);
+			SkinnedModelInstance skinnedModelInstace(Armature(boneHierarchy, boneTransforms, animations), meshToParentOfBoneRootMatrix);
 
 			Common::Timer timer(std::chrono::milliseconds(12));
+			timer.SetDeltaTime(std::chrono::milliseconds(0));
 			skinnedModelInstace.FrameUpdate(timer);
 
 			const auto& finalTransforms = skinnedModelInstace.GetFinalTransforms();
-			auto identity = Affine3f::Identity();
-			for (const auto& transform : finalTransforms)
+			Assert::AreEqual(boneHierarchy.size(), finalTransforms.size());
+			
 			{
-				Assert::IsTrue(transform.isApprox(identity));
+				Affine3f expectedTransform;
+				expectedTransform.fromPositionOrientationScale(Vector3f(0.0f, 1.0f, 0.0f), Quaternionf::Identity(), Vector3f(1.0f, 1.0f, 1.0f));
+				expectedTransform = meshToParentOfBoneRootMatrix.inverse() * expectedTransform * boneTransforms[0].inverse() * meshToParentOfBoneRootMatrix;
+				Assert::IsTrue(expectedTransform.isApprox(finalTransforms[0]));
 			}
-		}
 
-		TEST_METHOD(AnimationTest4)
-		{
-			// TODO test armature update
+			{
+				Affine3f expectedTransform;
+				expectedTransform.fromPositionOrientationScale(Vector3f(0.0f, 3.0f, 0.0f), Quaternionf::Identity(), Vector3f(1.0f, 1.0f, 1.0f));
+				expectedTransform = meshToParentOfBoneRootMatrix.inverse() * expectedTransform * boneTransforms[1].inverse() * boneTransforms[0].inverse() * meshToParentOfBoneRootMatrix;
+				Assert::IsTrue(expectedTransform.isApprox(finalTransforms[1]));
+			}
+
+			timer.SetDeltaTime(std::chrono::milliseconds(1000));
+			skinnedModelInstace.FrameUpdate(timer);
+
+			{
+				Affine3f expectedTransform;
+				expectedTransform.fromPositionOrientationScale(Vector3f(0.0f, 3.0f, 0.0f), Quaternionf::Identity(), Vector3f(1.0f, 1.0f, 1.0f));
+				expectedTransform = meshToParentOfBoneRootMatrix.inverse() * expectedTransform * boneTransforms[0].inverse() * meshToParentOfBoneRootMatrix;
+				Assert::IsTrue(expectedTransform.isApprox(finalTransforms[0]));
+			}
+
+			{
+				Affine3f expectedTransform;
+				expectedTransform.fromPositionOrientationScale(Vector3f(0.0f, 6.0f, 0.0f), Quaternionf::Identity(), Vector3f(1.0f, 1.0f, 1.0f));
+				expectedTransform = meshToParentOfBoneRootMatrix.inverse() * expectedTransform * boneTransforms[1].inverse() * boneTransforms[0].inverse() * meshToParentOfBoneRootMatrix;
+				Assert::IsTrue(expectedTransform.isApprox(finalTransforms[1]));
+			}
 		}
 	};
 }

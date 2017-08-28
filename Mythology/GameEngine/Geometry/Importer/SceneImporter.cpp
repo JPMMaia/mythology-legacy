@@ -53,7 +53,7 @@ void SceneImporter::Import(const std::wstring& filePath, ImportedScene& imported
 			geometry.MaterialIndex = mesh.mMaterialIndex;
 			object.Geometries.emplace_back(std::move(geometry));
 		}
-		
+
 		objects.emplace_back(std::move(object));
 		objectNodes.emplace(&node, &objects.back());
 	});
@@ -64,7 +64,7 @@ void SceneImporter::Import(const std::wstring& filePath, ImportedScene& imported
 		const auto* node = objectNodePair.first;
 		auto* object = objectNodePair.second;
 
-		object->IsAnimated = false;		
+		object->IsAnimated = false;
 		for (std::size_t meshIndex = 0; meshIndex < node->mNumMeshes; ++meshIndex)
 		{
 			auto mesh = scene->mMeshes[node->mMeshes[meshIndex]];
@@ -307,12 +307,12 @@ SceneImporter::Armature SceneImporter::CreateArmature(const aiScene& scene, cons
 		appendChildrenToHierarchy(rootNode);
 	}
 
-	// Calculate the mesh to bone root space matrix:
+	// Calculate the mesh to the parent of bone root space matrix:
 	{
 		// MeshToSceneRoot = ROOT * M1 * M2 * ...
-		// BoneRootToSceneRoot = ROOT * O1 * O2 * BoneRoot
-		// SceneRootToBoneRoot = BoneRoot^(-1) * O2^(-1) * O1^(-1) * ROOT^(-1)
-		// MeshToBoneRoot = BoneRoot^(-1) * O2^(-1) * O1^(-1) * M1 * M2 * ...
+		// ParentOfBoneRootToSceneRoot = ROOT * O1 * P
+		// SceneRootToParentOfBoneRoot = P^(-1) * O1^(-1) * ROOT^(-1)
+		// MeshToParentOfBoneRoot = P^(-1) * O1^(-1) * M1 * M2 * ...
 
 		auto meshToSceneRoot = Eigen::Affine3f::Identity();
 		for (auto currentNode = &meshesNode; currentNode != scene.mRootNode; currentNode = currentNode->mParent)
@@ -330,8 +330,8 @@ SceneImporter::Armature SceneImporter::CreateArmature(const aiScene& scene, cons
 			meshToSceneRoot = Eigen::Affine3f(transform) * meshToSceneRoot;
 		}
 
-		auto sceneRootToBoneRoot = Eigen::Affine3f::Identity();
-		for (auto currentNode = rootNode; currentNode != scene.mRootNode; currentNode = currentNode->mParent)
+		auto sceneRootToParentOfBoneRoot = Eigen::Affine3f::Identity();
+		for (auto currentNode = rootNode->mParent; currentNode != scene.mRootNode; currentNode = currentNode->mParent)
 		{
 			Eigen::Matrix4f transform;
 			{
@@ -342,11 +342,11 @@ SceneImporter::Armature SceneImporter::CreateArmature(const aiScene& scene, cons
 					m.c1, m.c2, m.c3, m.c4,
 					m.d1, m.d2, m.d3, m.d4;
 			}
-			
-			sceneRootToBoneRoot = sceneRootToBoneRoot * Eigen::Affine3f(transform).inverse();
+
+			sceneRootToParentOfBoneRoot = sceneRootToParentOfBoneRoot * Eigen::Affine3f(transform).inverse();
 		}
 
-		object.MeshToBoneRoot = sceneRootToBoneRoot * meshToSceneRoot;
+		object.MeshToParentOfBoneRoot = sceneRootToParentOfBoneRoot * meshToSceneRoot;
 	}
 
 	return armature;
@@ -374,6 +374,8 @@ void SceneImporter::AddBoneData(const Armature& armature, const aiMesh& mesh, Ge
 }
 AnimationClip SceneImporter::CreateSkinnedAnimation(const aiAnimation& animationData, const Armature& skeleton)
 {
+	auto timeScalar = animationData.mTicksPerSecond == 0 ? 1.0f : animationData.mTicksPerSecond;
+
 	std::vector<BoneAnimation> boneAnimations;
 	boneAnimations.reserve(static_cast<std::size_t>(animationData.mNumChannels));
 	for (std::size_t channelIndex = 0; channelIndex < animationData.mNumChannels; ++channelIndex)
@@ -390,7 +392,7 @@ AnimationClip SceneImporter::CreateSkinnedAnimation(const aiAnimation& animation
 			for (std::size_t keyIndex = 0; keyIndex < keyframes.size(); ++keyIndex)
 			{
 				const auto& key = channel->mPositionKeys[keyIndex];
-				keyframes[keyIndex].TimePosition = static_cast<float>(key.mTime);
+				keyframes[keyIndex].TimePosition = static_cast<float>(key.mTime * timeScalar);
 				keyframes[keyIndex].Value = { key.mValue.x, key.mValue.y, key.mValue.z };
 			}
 		}
@@ -401,7 +403,7 @@ AnimationClip SceneImporter::CreateSkinnedAnimation(const aiAnimation& animation
 			for (std::size_t keyIndex = 0; keyIndex < keyframes.size(); ++keyIndex)
 			{
 				const auto& key = channel->mRotationKeys[keyIndex];
-				keyframes[keyIndex].TimePosition = static_cast<float>(key.mTime);
+				keyframes[keyIndex].TimePosition = static_cast<float>(key.mTime * timeScalar);
 				keyframes[keyIndex].Value = Eigen::Quaternionf(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z);
 			}
 		}
@@ -412,16 +414,12 @@ AnimationClip SceneImporter::CreateSkinnedAnimation(const aiAnimation& animation
 			for (std::size_t keyIndex = 0; keyIndex < keyframes.size(); ++keyIndex)
 			{
 				const auto& key = channel->mScalingKeys[keyIndex];
-				keyframes[keyIndex].TimePosition = static_cast<float>(key.mTime);
+				keyframes[keyIndex].TimePosition = static_cast<float>(key.mTime * timeScalar);
 				keyframes[keyIndex].Value = { key.mValue.x, key.mValue.y, key.mValue.z };
 			}
 		}
 
-
-		if (!positionKeyframes.empty() || !rotationKeyframes.empty() || !scaleKeyframes.empty())
-		{
-			boneAnimations.emplace_back(positionKeyframes, rotationKeyframes, scaleKeyframes);
-		}
+		boneAnimations.emplace_back(positionKeyframes, rotationKeyframes, scaleKeyframes);
 	}
 
 	return AnimationClip(boneAnimations);
