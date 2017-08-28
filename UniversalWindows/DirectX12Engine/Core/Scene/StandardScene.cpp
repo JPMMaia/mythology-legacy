@@ -49,21 +49,6 @@ void StandardScene::CreateDeviceDependentResources()
 	m_commandListIndex = 0;
 	auto commandList = m_commandListManager.GetGraphicsCommandList(m_commandListIndex);
 
-	// Create render rectangle:
-	{
-		m_temporaryUploadBuffers.emplace_back(); auto& vertexUploadBuffer = m_temporaryUploadBuffers.back();
-		m_temporaryUploadBuffers.emplace_back(); auto& indexUploadBuffer = m_temporaryUploadBuffers.back();
-		m_renderRectangle = std::make_unique<StandardRenderItem>(RenderRectangle::Create(d3dDevice, commandList, vertexUploadBuffer, indexUploadBuffer));
-	}
-
-	// Create render items:
-	{
-		CreateRenderItems<MeshComponent<BoxGeometry>>(d3dDevice, commandList);
-		CreateRenderItems<MeshComponent<RectangleGeometry>>(d3dDevice, commandList);
-		CreateRenderItems<MeshComponent<CustomGeometry<EigenMeshData>>>(d3dDevice, commandList);
-		CreateRenderItems<SkinnedMeshComponent>(d3dDevice, commandList);
-	}
-
 	// Create materials:
 	{
 		// Reserve space for material instances:
@@ -82,6 +67,21 @@ void StandardScene::CreateDeviceDependentResources()
 		{
 			CreateMaterial(d3dDevice, commandList, material);
 		});
+	}
+
+	// Create render rectangle:
+	{
+		m_temporaryUploadBuffers.emplace_back(); auto& vertexUploadBuffer = m_temporaryUploadBuffers.back();
+		m_temporaryUploadBuffers.emplace_back(); auto& indexUploadBuffer = m_temporaryUploadBuffers.back();
+		m_renderRectangle = std::make_unique<StandardRenderItem>(RenderRectangle::Create(d3dDevice, commandList, vertexUploadBuffer, indexUploadBuffer));
+	}
+
+	// Create render items:
+	{
+		CreateRenderItems<MeshComponent<BoxGeometry>>(d3dDevice, commandList);
+		CreateRenderItems<MeshComponent<RectangleGeometry>>(d3dDevice, commandList);
+		CreateRenderItems<MeshComponent<CustomGeometry<EigenMeshData>>>(d3dDevice, commandList);
+		CreateRenderItems<SkinnedMeshComponent>(d3dDevice, commandList);
 	}
 
 	// Upload vertex and index buffers to the GPU in order to dispose the upload buffers:
@@ -162,8 +162,8 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 	else if (renderLayer == RenderLayer::SkinnedOpaque)
 	{
 		std::size_t bufferIndex = 0;
-
-		std::for_each(SkinnedMeshComponent::begin(), SkinnedMeshComponent::end(), [this, &commandList, &bufferIndex](SkinnedMeshComponent& mesh)
+		std::size_t skinnedMeshInstanceStartIndex = 0;
+		std::for_each(SkinnedMeshComponent::begin(), SkinnedMeshComponent::end(), [this, &commandList, &bufferIndex, &skinnedMeshInstanceStartIndex](SkinnedMeshComponent& mesh)
 		{
 			const auto& renderItems = m_renderItemsPerSkinnedMesh.at(mesh.GetName());
 			for (std::size_t i = 0; i < mesh.GetInstancesCount(); ++i)
@@ -175,14 +175,18 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 				commandList->SetGraphicsRootShaderResourceView(0, m_skinnedMeshInstancesGPUBuffer.get_allocator().GetGPUVirtualAddress(bufferIndex));
 
 				// Render:
-				std::for_each(renderItems.begin(), renderItems.end(), [this, commandList](auto renderItem)
+				auto materialBufferIndex = skinnedMeshInstanceStartIndex;
+				std::for_each(renderItems.begin(), renderItems.end(), [this, commandList, &materialBufferIndex](auto renderItem)
 				{
-					// Bind materials' buffer: TODO
-					commandList->SetGraphicsRootShaderResourceView(0, m_skinnedMeshInstancesGPUBuffer.get_allocator().GetGPUVirtualAddress(0));
+					// Bind materials' buffer:
+					commandList->SetGraphicsRootShaderResourceView(5, m_skinnedMeshInstancesGPUBuffer.get_allocator().GetGPUVirtualAddress(materialBufferIndex++));
 
 					renderItem->RenderNonInstanced(commandList);
 				});
+
+				bufferIndex++;
 			}
+			skinnedMeshInstanceStartIndex += renderItems.size();
 		});
 	}
 
@@ -383,15 +387,15 @@ void StandardScene::UpdateSkinnedAnimationBuffers()
 
 			// Update bone transforms:
 			{
-				const auto& finalTransforms = instance->GetAnimation().GetFinalTransforms();
+				const auto& finalTransforms = instance.GetAnimation().GetFinalTransforms();
 				const auto minSize = (std::min)(finalTransforms.size(), ShaderBufferTypes::SkinnedAnimationData::MaxNumBones);
 				std::copy_n(finalTransforms.begin(), minSize, skinnedData.BoneTransforms.begin());
 			}
 
 			// Update model matrix:
-			skinnedData.ModelMatrix = instance->GetTransform().GetWorldTransform();
+			skinnedData.ModelMatrix = instance.GetTransform().GetWorldTransform();
 
-			m_skinnedMeshAnimationGPUBuffer[bufferIndex] = skinnedData;
+			m_skinnedMeshAnimationGPUBuffer[bufferIndex++] = skinnedData;
 		});
 	});
 }
@@ -432,28 +436,30 @@ void StandardScene::UpdateInstancesBuffer()
 template<>
 void StandardScene::UpdateInstancesBuffer<SkinnedMeshComponent>()
 {
-	std::size_t index = 0;
-
-	for (const auto& pair : m_renderItemsPerSkinnedMesh)
+	std::size_t instancesCount = 0;
+	std::for_each(SkinnedMeshComponent::begin(), SkinnedMeshComponent::end(), [this, &instancesCount](SkinnedMeshComponent& mesh)
 	{
-		const auto& meshName = pair.first;
+		const auto& renderItems = m_renderItemsPerSkinnedMesh.at(mesh.GetName());
 
-	}
+		instancesCount += renderItems.size();
+	});
 
+	m_skinnedMeshInstancesGPUBuffer.resize(instancesCount);
 
-	std::for_each(SkinnedMeshComponent::begin(), SkinnedMeshComponent::end(), [this, &index](auto& mesh)
+	auto materialBufferIndex = 0;
+	std::for_each(SkinnedMeshComponent::begin(), SkinnedMeshComponent::end(), [this, &materialBufferIndex](SkinnedMeshComponent& mesh)
 	{
 		const auto& materials = mesh.GetMaterials();
 
-		for (const auto& material : materials)
+		for (std::size_t i = 0; i < materials.size(); ++i)
 		{
 			ShaderBufferTypes::SkinnedMeshData shaderData;
-
+			
 			// Update material index:
-			shaderData.MaterialIndex = m_materialIndices.at(material->GetName());
+			shaderData.MaterialIndex = m_materialIndices.at(materials[i]->GetName());
 
 			// Update skinned mesh buffer:
-			m_skinnedMeshInstancesGPUBuffer[index++] = shaderData;
+			m_skinnedMeshInstancesGPUBuffer[materialBufferIndex++] = shaderData;
 		}
 	});
 }

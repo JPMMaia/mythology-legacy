@@ -41,9 +41,9 @@ void GameManager::FrameUpdate(const Common::Timer& timer) const
 {
 	std::for_each(SkinnedMeshComponent::begin(), SkinnedMeshComponent::end(), [&timer](SkinnedMeshComponent& mesh)
 	{
-		std::for_each(mesh.AnimationsBegin(), mesh.AnimationsEnd(), [&timer](SkinnedAnimationComponent& animation)
+		std::for_each(mesh.GetInstancesBegin(), mesh.GetInstancesEnd(), [&timer](SkinnedMeshInstance& instance)
 		{
-			animation.FrameUpdate(timer);
+			instance.GetAnimation().FrameUpdate(timer);
 		});
 	});
 }

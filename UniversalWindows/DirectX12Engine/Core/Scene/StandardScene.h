@@ -77,7 +77,7 @@ namespace DirectX12Engine
 		std::shared_ptr<Mythology::MythologyGame> m_game;
 		
 		GPUUploadBuffer<ShaderBufferTypes::SkinnedAnimationData> m_skinnedMeshAnimationGPUBuffer;
-		GPUUploadBuffer<ShaderBufferTypes::InstanceData> m_skinnedMeshInstancesGPUBuffer;
+		GPUUploadBuffer<ShaderBufferTypes::SkinnedMeshData> m_skinnedMeshInstancesGPUBuffer;
 		std::unordered_map<std::string, std::deque<StandardRenderItem*>> m_renderItemsPerSkinnedMesh;
 		std::unordered_map<StandardRenderItem*, std::uint32_t> m_skinnedRenderItemsMaterialIndices;
 	};

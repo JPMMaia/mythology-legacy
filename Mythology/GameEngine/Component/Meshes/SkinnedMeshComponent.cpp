@@ -11,3 +11,8 @@ const std::vector<CustomGeometry<EigenMeshData>>& SkinnedMeshComponent::GetGeome
 {
 	return m_geometries;
 }
+
+const std::vector<std::shared_ptr<StandardMaterial>>& SkinnedMeshComponent::GetMaterials() const
+{
+	return m_materials;
+}

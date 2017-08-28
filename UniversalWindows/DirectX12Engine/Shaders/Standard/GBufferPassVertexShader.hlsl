@@ -3,8 +3,6 @@
 #include "../Common/MaterialData.hlsli"
 #include "../Common/SkinnedData.hlsli"
 
-#define SKINNED
-
 struct VertexInput
 {
 	float3 PositionL : POSITION;

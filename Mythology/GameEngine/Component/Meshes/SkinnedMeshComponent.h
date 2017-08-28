@@ -24,6 +24,10 @@ namespace GameEngine
 		{
 			return m_animation;
 		}
+		SkinnedAnimationComponent& GetAnimation()
+		{
+			return m_animation;
+		}
 
 	private:
 		SkinnedAnimationComponent m_animation;
