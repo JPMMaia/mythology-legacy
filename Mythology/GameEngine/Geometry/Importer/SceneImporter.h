@@ -41,23 +41,25 @@ namespace GameEngine
 		{
 			std::string Name;
 		};
-		struct Skeleton
+		struct Armature
 		{
 			std::deque<std::string> Bones;
 			std::vector<Eigen::Affine3f> BoneTransforms;
 			std::vector<std::int8_t> BoneHierarchy;
+			std::unordered_map<std::string, AnimationClip> Animations;
 		};
 		struct Object
 		{
 			std::deque<Geometry> Geometries;
-			Eigen::Affine3f MeshToBoneRoot;
-			Skeleton Skeleton;
 			bool IsAnimated = false;
+			std::size_t ArmatureIndex;
+			Eigen::Affine3f MeshToBoneRoot;
 		};
 		struct ImportedScene
 		{
 			std::deque<Object> Objects;
 			std::deque<Material> Materials;
+			std::deque<Armature> Armatures;
 		};
 
 	public:
@@ -69,9 +71,9 @@ namespace GameEngine
 
 		static MeshDataType CreateMeshData(const aiMesh& mesh);
 		static Material CreateMaterial(const aiMaterial& material);
-		static AnimationClip CreateSkinnedAnimation(const aiAnimation& animationData, const Skeleton& skeleton);
-		static Skeleton CreateSkeleton(const aiScene& scene);
-		static void AddBoneData(const Skeleton& skeleton, const aiMesh& mesh, Geometry& geometry);
+		static Armature CreateArmature(const aiScene& scene, const aiNode& meshesNode, Object& object);
+		static void AddBoneData(const Armature& armature, const aiMesh& mesh, Geometry& geometry);
+		static AnimationClip CreateSkinnedAnimation(const aiAnimation& animationData, const Armature& armature);
 
 		template <typename ContainerType, typename DataType>
 		static ContainerType ParseArray(const aiMaterialProperty& property);

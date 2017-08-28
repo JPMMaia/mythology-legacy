@@ -117,6 +117,9 @@
       <AdditionalDependencies>assimp.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Mythology\Libraries\assimp\Lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y /S "$(ProjectDir)Resources\*" "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -155,6 +158,9 @@
       <AdditionalDependencies>assimp.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Mythology\Libraries\assimp\Lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y /S "$(ProjectDir)Resources\*" "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -168,6 +174,8 @@
     <ClCompile Include="GameEngine\Component\TransformComponentTests.cpp" />
     <ClCompile Include="GameEngine\GameManagerTests.cpp" />
     <ClCompile Include="GameEngine\GameObject\GameObjectTests.cpp" />
+    <ClCompile Include="GameEngine\Geometry\Animation\AnimationTests.cpp" />
+    <ClCompile Include="GameEngine\Geometry\Importer\SceneImporterTests.cpp" />
     <ClCompile Include="GameEngine\Memory\StandardAllocatorTests.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -175,6 +183,15 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\test.fbx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

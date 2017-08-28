@@ -27,23 +27,8 @@ const std::string& Armature::GetDefaultAnimationClipName() const
 {
 	return m_animations.begin()->first;
 }
-void Armature::GetFinalTransforms(const std::string& clipName, float timePosition, std::vector<Eigen::Affine3f>& finalTransforms) const
+void Armature::GetFinalTransforms(const std::string& clipName, float timePosition, const Eigen::Affine3f& meshToBoneRootMatrix, std::vector<Eigen::Affine3f>& finalTransforms) const
 {
-	//    (Root * B0 * B1 * B2)^-1 * V
-	//    VL = (Mesh * Root * VG)
-	//    VG = Root^(-1) * Mesh^(-1) * VL
-	//    VB = B2 * B1 * B0 * Root * Root^(-1) * Mesh^(-1) * VL
-
-	//               Root
-	//                 |
-	//             --------
-	//             |       |
-	//           Mesh      B0
-	//                     |
-	//                     B1
-	//                     |
-	//                     B2
-
 	auto boneCount = m_boneHierarchy.size();
 
 	std::vector<Eigen::Affine3f> inverseBindPoseMatrices;
@@ -52,7 +37,7 @@ void Armature::GetFinalTransforms(const std::string& clipName, float timePositio
 		inverseBindPoseMatrices.reserve(boneCount);
 
 		// Calculate the first offset:
-		inverseBindPoseMatrices.emplace_back(m_boneTransforms.at(0).inverse());
+		inverseBindPoseMatrices.emplace_back(m_boneTransforms.at(0).inverse() * meshToBoneRootMatrix);
 
 		// Calculate the remaining offsets:
 		for (std::size_t i = 1; i < boneCount; ++i)
@@ -83,8 +68,9 @@ void Armature::GetFinalTransforms(const std::string& clipName, float timePositio
 
 	// Calculate the final transforms:
 	finalTransforms.resize(boneCount);
+	auto boneRootToMeshMatrix = meshToBoneRootMatrix.inverse();
 	for (std::size_t i = 0; i < boneCount; ++i)
 	{
-		finalTransforms[i] = parentTransforms[i] * inverseBindPoseMatrices[i];
+		finalTransforms[i] = boneRootToMeshMatrix * parentTransforms[i] * inverseBindPoseMatrices[i];
 	}
 }

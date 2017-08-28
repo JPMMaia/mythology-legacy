@@ -9,6 +9,18 @@ BoneAnimation::BoneAnimation(const std::vector<Keyframe<Vector3>>& positionKeyfr
 	m_rotationKeyframes(rotationKeyframes),
 	m_scaleKeyframes(scalingKeyframes)
 {
+	auto endTime = GetEndTime();
+	auto addStartAndEndKeyframes = [endTime](auto& keyframes, const auto& defaultValue)
+	{
+		if(keyframes.empty())
+			keyframes.push_back({ 0.0f, defaultValue });
+		if(keyframes.size() == 1)
+			keyframes.push_back({ endTime, keyframes.front().Value });
+	};
+
+	addStartAndEndKeyframes(m_positionKeyframes, Eigen::Vector3f(0.0f, 0.0f, 0.0f));
+	addStartAndEndKeyframes(m_rotationKeyframes, Eigen::Quaternionf::Identity());
+	addStartAndEndKeyframes(m_scaleKeyframes, Eigen::Vector3f(1.0f, 1.0f, 1.0f));
 }
 
 void BoneAnimation::Interpolate(float timePosition, Eigen::Affine3f& matrix) const

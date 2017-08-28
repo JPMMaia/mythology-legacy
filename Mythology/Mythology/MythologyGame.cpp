@@ -114,68 +114,35 @@ void MythologyGame::Initialize()
 	}
 
 	{
-		std::wstring basePath(L"Resources/tiny/");
-		std::string modelName = "tiny";
+		std::wstring basePath(L"Resources/");
+		std::string modelName = "test";
 		SceneImporter::ImportedScene scene;
-		SceneImporter::Import(basePath + L"tiny.x", scene);
+		SceneImporter::Import(basePath + L"test.fbx", scene);
 
-		/*for (std::size_t i = 0; i < scene.Geometries.size(); ++i)
+		const auto& object = scene.Objects[0];
+		for (std::size_t i = 0; i < object.Geometries.size(); ++i)
 		{
-			const auto& geometry = scene.Geometries[i];
+			const auto& geometry = object.Geometries[i];
 			const auto& material = scene.Materials[geometry.MaterialIndex];
 
 			auto mesh = MeshComponent<CustomGeometry<EigenMeshData>>::CreateSharedPointer(modelName + std::to_string(i), CustomGeometry<EigenMeshData>(std::move(geometry.MeshData)));
 			m_meshes.emplace(mesh->GetName(), mesh);
 
 			const auto& baseColor = material.FloatProperties.at("$clr.diffuse");
-			const auto& albedoMap = basePath + Helpers::GetFilename(Helpers::StringToWString(material.DiffuseTexturePath)) + L".dds";
-			//const auto& albedoMap = basePath + L"WhiteAlbedo" + L".dds";
+			//const auto& albedoMap = basePath + Helpers::GetFilename(Helpers::StringToWString(material.DiffuseTexturePath)) + L".dds";
+			const auto& albedoMap = basePath + L"white.dds";
 			auto standardMaterial = StandardMaterial::CreateSharedPointer(modelName + std::to_string(i), Vector4f(baseColor[0], baseColor[1], baseColor[2], 1.0f), albedoMap);
 			m_materials.emplace(standardMaterial->GetName(), standardMaterial);
 
 			auto instance = mesh->CreateInstance(standardMaterial);
-			//instance->GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
-			instance->GetTransform().SetLocalScaling(Vector3f(1.0f, 1.0f, 1.0f) * 0.01f);
+			instance->GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
+			//instance->GetTransform().SetLocalScaling(Vector3f(1.0f, 1.0f, 1.0f) * 0.01f);
 			m_box.AddComponent("Instance" + std::to_string(i), instance);
-		}*/
+		}
 		
-		//m_tiny = SkinnedModelInstance(std::move(scene.Objects));
+		auto& armature = scene.Armatures.at(object.ArmatureIndex);
+		m_tiny = SkinnedModelInstance(Armature(std::move(armature.BoneHierarchy), std::move(armature.BoneTransforms), std::move(armature.Animations)), object.MeshToBoneRoot);
 	}
-
-	/*{
-		SceneImporter::ImportedScene scene;
-		SceneImporter::Import(L"Resources/kasumi/DOA5_Kasumi_MMD.fbx", scene);
-
-		{
-			auto workingDirectory = m_fileSystem->GetWorkingDirectory();
-
-			auto filePath = workingDirectory + L"kasumi.bin";
-			//std::ofstream file(filePath, std::ios::out | std::fstream::binary);
-			//file << scene;
-			std::ifstream file(filePath, std::ios::in | std::ios::binary);
-			file >> scene;
-		}
-
-		for(std::size_t i = 0; i < scene.Geometries.size(); ++i)
-		{
-			const auto& geometry = scene.Geometries[i];
-			const auto& material = scene.Materials[geometry.MaterialIndex];
-
-			auto mesh = MeshComponent<CustomGeometry<EigenMeshData>>::CreateSharedPointer(CustomGeometry<EigenMeshData>(std::move(geometry.MeshData)));
-			m_meshes.emplace("kasumi" + std::to_string(i), mesh);
-			
-			const auto& baseColor = material.FloatProperties.at("$clr.diffuse");
-			const auto& albedoMap = L"Resources/kasumi/" + Helpers::GetFilename(Helpers::StringToWString(material.DiffuseTexturePath)) + L".dds";
-			auto standardMaterial = StandardMaterial::CreateSharedPointer("kasumi" + std::to_string(i), Vector4f(baseColor[0], baseColor[1], baseColor[2], 1.0f), albedoMap);
-			m_materials.emplace(standardMaterial->GetName(), standardMaterial);
-
-			auto instance = mesh->CreateInstance(standardMaterial);
-			instance->GetTransform().SetWorldRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
-			m_box.AddComponent("Instance" + std::to_string(i), instance);
-		}
-
-		//m_box.GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
-	}*/
 }
 
 void MythologyGame::ProcessInput()

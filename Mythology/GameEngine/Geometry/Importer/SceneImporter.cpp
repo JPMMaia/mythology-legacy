@@ -68,7 +68,7 @@ void SceneImporter::Import(const std::wstring& filePath, ImportedScene& imported
 		for (std::size_t meshIndex = 0; meshIndex < node->mNumMeshes; ++meshIndex)
 		{
 			auto mesh = scene->mMeshes[node->mMeshes[meshIndex]];
-			if (mesh->HasBones)
+			if (mesh->HasBones())
 			{
 				object->IsAnimated = true;
 				break;
@@ -77,8 +77,10 @@ void SceneImporter::Import(const std::wstring& filePath, ImportedScene& imported
 
 		if (object->IsAnimated)
 		{
-			// Create skeleton:
-			auto skeleton = CreateSkeleton(*scene);
+			// Create armature:
+			importedScene.Armatures.emplace_back(CreateArmature(*scene, *node, *object));
+			auto& armature = importedScene.Armatures.back();
+			object->ArmatureIndex = importedScene.Armatures.size() - 1;
 
 			// Add bone weights and indices to the mesh data:
 			for (std::size_t meshIndex = 0; meshIndex < node->mNumMeshes; ++meshIndex)
@@ -86,44 +88,18 @@ void SceneImporter::Import(const std::wstring& filePath, ImportedScene& imported
 				auto& mesh = *scene->mMeshes[node->mMeshes[meshIndex]];
 				auto& geometry = object->Geometries[meshIndex];
 				geometry.MeshData.ContainsSkinnedData = true;
-				AddBoneData(skeleton, mesh, geometry);
+				AddBoneData(armature, mesh, geometry);
 			}
 
 			// Create animation clips:
-			std::unordered_map<std::string, AnimationClip> animations;
+			auto& animations = armature.Animations;
 			for (std::size_t i = 0; i < scene->mNumAnimations; ++i)
 			{
 				const auto& animationData = *scene->mAnimations[i];
-				animations.emplace(animationData.mName.C_Str(), CreateSkinnedAnimation(animationData, skeleton));
+				animations.emplace(animationData.mName.C_Str(), CreateSkinnedAnimation(animationData, armature));
 			}
 		}
 	}
-
-	/*
-	{
-		// Create skeleton:
-		auto skeleton = CreateSkeleton(*scene);
-
-		// Add bone weights and indices to the mesh data:
-		for (std::size_t i = 0; i < scene->mNumMeshes; ++i)
-		{
-			auto mesh = scene->mMeshes[i];
-			auto& geometry = importedScene.Geometries[i];
-			geometry.MeshData.ContainsSkinnedData = true;
-
-			AddBoneData(skeleton, *mesh, geometry);
-		}
-
-		// Create animation clips:
-		std::unordered_map<std::string, AnimationClip> animations;
-		for (std::size_t i = 0; i < scene->mNumAnimations; ++i)
-		{
-			auto animationData = scene->mAnimations[i];
-			animations.emplace(animationData->mName.C_Str(), CreateSkinnedAnimation(*animationData, skeleton));
-		}
-
-		importedScene.SkinnedData = Armature(skeleton.BoneHierarchy, skeleton.BoneTransforms, animations);
-	}*/
 
 	for (std::size_t i = 0; i < scene->mNumMaterials; ++i)
 	{
@@ -198,7 +174,6 @@ SceneImporter::MeshDataType SceneImporter::CreateMeshData(const aiMesh& mesh)
 
 	return meshData;
 }
-
 SceneImporter::Material SceneImporter::CreateMaterial(const aiMaterial& material)
 {
 	Material data;
@@ -233,19 +208,171 @@ SceneImporter::Material SceneImporter::CreateMaterial(const aiMaterial& material
 
 	return data;
 }
-
-template <typename ContainerType, typename DataType>
-ContainerType SceneImporter::ParseArray(const aiMaterialProperty& property)
+SceneImporter::Armature SceneImporter::CreateArmature(const aiScene& scene, const aiNode& meshesNode, Object& object)
 {
-	auto count = static_cast<std::size_t>(property.mDataLength / sizeof(DataType));
+	Armature armature;
 
-	ContainerType container;
-	container.resize(count);
-	std::memcpy(reinterpret_cast<void*>(&container[0]), property.mData, property.mDataLength);
-	return container;
+	// Find all bones:
+	std::unordered_set<aiNode*> neededBones;
+	{
+		for (std::size_t meshIndex = 0; meshIndex < meshesNode.mNumMeshes; meshIndex++)
+		{
+			auto mesh = scene.mMeshes[meshesNode.mMeshes[meshIndex]];
+			for (std::size_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+			{
+				auto bone = mesh->mBones[boneIndex];
+
+				// Mark bone and all its parents as needed, until the mesh node or the parent of the mesh node is found:
+				for (auto boneNode = scene.mRootNode->FindNode(bone->mName); boneNode != nullptr; boneNode = boneNode->mParent)
+				{
+					// Stop if mesh node or parent of the mesh node:
+					if (boneNode == &meshesNode || boneNode == meshesNode.mParent)
+						break;
+
+					// Mark bone as needed:
+					neededBones.emplace(boneNode);
+				}
+			}
+		}
+
+		// Ensure that all bone children are in the list:
+		for (auto boneNode : neededBones)
+			for (std::size_t childIndex = 0; childIndex < boneNode->mNumChildren; ++childIndex)
+				neededBones.emplace(boneNode->mChildren[childIndex]);
+	}
+
+	// Find the root node of the skeleton:
+	auto lowestDistance = (std::numeric_limits<std::size_t>::max)();
+	aiNode* rootNode = nullptr;
+	{
+		for (const auto& boneNode : neededBones)
+		{
+			std::size_t distance = 0;
+
+			for (auto currentNode = boneNode->mParent; currentNode != nullptr; currentNode = currentNode->mParent)
+				++distance;
+
+			if (distance < lowestDistance)
+			{
+				rootNode = boneNode;
+				lowestDistance = distance;
+			}
+		}
+	}
+
+	{
+		// Build hierachy such that a child node never appears before a parent node:
+		auto& boneHierarchy = armature.BoneHierarchy;
+		auto& bones = armature.Bones;
+		auto& transforms = armature.BoneTransforms;
+		std::function<void(aiNode*)> appendChildrenToHierarchy = [&bones, &boneHierarchy, &transforms, &scene, &appendChildrenToHierarchy](aiNode* node)
+		{
+			std::string nodeName(node->mName.C_Str());
+			bones.emplace_back(nodeName);
+
+			{
+				// Find the parent of the node:
+				auto parentLocation = std::find(bones.begin(), bones.end(), node->mParent->mName.C_Str());
+
+				// If root bone:
+				if (parentLocation == bones.end())
+				{
+					boneHierarchy.emplace_back(-1);
+				}
+
+				// If not root bone:
+				else
+				{
+					auto indexOfParent = std::distance(bones.begin(), parentLocation);
+					boneHierarchy.emplace_back(static_cast<EigenVertex::BoneIndexType>(indexOfParent));
+				}
+			}
+
+			{
+				Eigen::Matrix4f transform;
+				{
+					const auto& m = node->mTransformation;
+					transform <<
+						m.a1, m.a2, m.a3, m.a4,
+						m.b1, m.b2, m.b3, m.b4,
+						m.c1, m.c2, m.c3, m.c4,
+						m.d1, m.d2, m.d3, m.d4;
+				}
+				transforms.emplace_back(Eigen::Affine3f(transform));
+			}
+
+			for (std::size_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex)
+				appendChildrenToHierarchy(node->mChildren[childIndex]);
+		};
+		appendChildrenToHierarchy(rootNode);
+	}
+
+	// Calculate the mesh to bone root space matrix:
+	{
+		// MeshToSceneRoot = ROOT * M1 * M2 * ...
+		// BoneRootToSceneRoot = ROOT * O1 * O2 * BoneRoot
+		// SceneRootToBoneRoot = BoneRoot^(-1) * O2^(-1) * O1^(-1) * ROOT^(-1)
+		// MeshToBoneRoot = BoneRoot^(-1) * O2^(-1) * O1^(-1) * M1 * M2 * ...
+
+		auto meshToSceneRoot = Eigen::Affine3f::Identity();
+		for (auto currentNode = &meshesNode; currentNode != scene.mRootNode; currentNode = currentNode->mParent)
+		{
+			Eigen::Matrix4f transform;
+			{
+				const auto& m = currentNode->mTransformation;
+				transform <<
+					m.a1, m.a2, m.a3, m.a4,
+					m.b1, m.b2, m.b3, m.b4,
+					m.c1, m.c2, m.c3, m.c4,
+					m.d1, m.d2, m.d3, m.d4;
+			}
+
+			meshToSceneRoot = Eigen::Affine3f(transform) * meshToSceneRoot;
+		}
+
+		auto sceneRootToBoneRoot = Eigen::Affine3f::Identity();
+		for (auto currentNode = rootNode; currentNode != scene.mRootNode; currentNode = currentNode->mParent)
+		{
+			Eigen::Matrix4f transform;
+			{
+				const auto& m = currentNode->mTransformation;
+				transform <<
+					m.a1, m.a2, m.a3, m.a4,
+					m.b1, m.b2, m.b3, m.b4,
+					m.c1, m.c2, m.c3, m.c4,
+					m.d1, m.d2, m.d3, m.d4;
+			}
+			
+			sceneRootToBoneRoot = sceneRootToBoneRoot * Eigen::Affine3f(transform).inverse();
+		}
+
+		object.MeshToBoneRoot = sceneRootToBoneRoot * meshToSceneRoot;
+	}
+
+	return armature;
 }
+void SceneImporter::AddBoneData(const Armature& armature, const aiMesh& mesh, Geometry& geometry)
+{
+	auto& vertices = geometry.MeshData.Vertices;
 
-AnimationClip SceneImporter::CreateSkinnedAnimation(const aiAnimation& animationData, const Skeleton& skeleton)
+	for (std::size_t boneIndex = 0; boneIndex < mesh.mNumBones; ++boneIndex)
+	{
+		auto bone = mesh.mBones[boneIndex];
+
+		auto boneLocation = std::find(armature.Bones.begin(), armature.Bones.end(), bone->mName.C_Str());
+		auto indexOf = std::distance(armature.Bones.begin(), boneLocation);
+
+		for (std::size_t vertexWeightIndex = 0; vertexWeightIndex < bone->mNumWeights; ++vertexWeightIndex)
+		{
+			const auto& vertexWeight = bone->mWeights[vertexWeightIndex];
+
+			auto& vertex = vertices[vertexWeight.mVertexId];
+			vertex.BoneWeights.push_back(vertexWeight.mWeight);
+			vertex.BoneIndices.push_back(static_cast<EigenVertex::BoneIndexType>(indexOf));
+		}
+	}
+}
+AnimationClip SceneImporter::CreateSkinnedAnimation(const aiAnimation& animationData, const Armature& skeleton)
 {
 	std::vector<BoneAnimation> boneAnimations;
 	boneAnimations.reserve(static_cast<std::size_t>(animationData.mNumChannels));
@@ -300,212 +427,13 @@ AnimationClip SceneImporter::CreateSkinnedAnimation(const aiAnimation& animation
 	return AnimationClip(boneAnimations);
 }
 
-class Mesh
+template <typename ContainerType, typename DataType>
+ContainerType SceneImporter::ParseArray(const aiMaterialProperty& property)
 {
-public:
-	Mesh(aiScene* scene, aiNode* node, std::size_t index) :
-		m_scene(scene),
-		m_node(node),
-		m_index(index)
-	{
-	}
+	auto count = static_cast<std::size_t>(property.mDataLength / sizeof(DataType));
 
-public:
-	Eigen::Affine3f GetTransform() const
-	{
-		Eigen::Matrix4f transform;
-
-		const auto& m = m_node->mTransformation;
-		transform <<
-			m.a1, m.a2, m.a3, m.a4,
-			m.b1, m.b2, m.b3, m.b4,
-			m.c1, m.c2, m.c3, m.c4,
-			m.d1, m.d2, m.d3, m.d4;
-
-		return Eigen::Affine3f(transform);
-	}
-
-	aiNode* GetNode() const
-	{
-		return m_node;
-	}
-
-public:
-	aiMesh* operator->() const
-	{
-		auto meshIndex = m_node->mMeshes[m_index];
-		return m_scene->mMeshes[meshIndex];
-	}
-
-private:
-	aiScene* m_scene;
-	aiNode* m_node;
-	std::size_t m_index;
-};
-
-SceneImporter::Skeleton SceneImporter::CreateSkeleton(const aiScene& scene, const aiNode& meshesNode, Object& object)
-{
-	Skeleton skeleton;
-
-	// Find all bones:
-	std::unordered_set<aiNode*> neededBones;
-	{
-		for (std::size_t meshIndex = 0; meshIndex < meshesNode.mNumMeshes; meshIndex++)
-		{
-			auto mesh = scene.mMeshes[meshesNode.mMeshes[meshIndex]];
-			for (std::size_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
-			{
-				auto bone = mesh->mBones[boneIndex];
-
-				// Mark bone and all its parents as needed, until the mesh node or the parent of the mesh node is found:
-				for (auto boneNode = scene.mRootNode->FindNode(bone->mName); boneNode != nullptr; boneNode = boneNode->mParent)
-				{
-					// Stop if mesh node or parent of the mesh node:
-					if (boneNode == &meshesNode || boneNode == meshesNode.mParent)
-						break;
-
-					// Mark bone as needed:
-					neededBones.emplace(boneNode);
-				}
-			}
-		}
-
-		// Ensure that all bone children are in the list:
-		for (auto boneNode : neededBones)
-			for (std::size_t childIndex = 0; childIndex < boneNode->mNumChildren; ++childIndex)
-				neededBones.emplace(boneNode->mChildren[childIndex]);
-	}
-
-	// Find the root node of the skeleton:
-	auto lowestDistance = (std::numeric_limits<std::size_t>::max)();
-	aiNode* rootNode;
-	{
-		for (const auto& boneNode : neededBones)
-		{
-			std::size_t distance = 0;
-
-			for (auto currentNode = boneNode->mParent; currentNode != nullptr; currentNode = currentNode->mParent)
-				++distance;
-
-			if (distance < lowestDistance)
-			{
-				rootNode = boneNode;
-				lowestDistance = distance;
-			}
-		}
-	}
-
-	{
-		// Build hierachy such that a child node never appears before a parent node:
-		auto& boneHierarchy = skeleton.BoneHierarchy;
-		auto& bones = skeleton.Bones;
-		auto& transforms = skeleton.BoneTransforms;
-		std::function<void(aiNode*)> appendChildrenToHierarchy = [&bones, &boneHierarchy, &transforms, &scene, &appendChildrenToHierarchy](aiNode* node)
-		{
-			std::string nodeName(node->mName.C_Str());
-			bones.emplace_back(nodeName);
-
-			{
-				// Find the parent of the node:
-				auto parentLocation = std::find(bones.begin(), bones.end(), node->mParent->mName.C_Str());
-
-				// If root bone:
-				if (parentLocation == bones.end())
-				{
-					boneHierarchy.emplace_back(-1);
-				}
-
-				// If not root bone:
-				else
-				{
-					auto indexOfParent = std::distance(bones.begin(), parentLocation);
-					boneHierarchy.emplace_back(static_cast<EigenVertex::BoneIndexType>(indexOfParent));
-				}
-			}
-
-			{
-				Eigen::Matrix4f transform;
-				{
-					const auto& m = node->mTransformation;
-					transform <<
-						m.a1, m.a2, m.a3, m.a4,
-						m.b1, m.b2, m.b3, m.b4,
-						m.c1, m.c2, m.c3, m.c4,
-						m.d1, m.d2, m.d3, m.d4;
-				}
-				transforms.emplace_back(Eigen::Affine3f(transform));
-			}
-
-			for (std::size_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex)
-				appendChildrenToHierarchy(node->mChildren[childIndex]);
-		};
-		appendChildrenToHierarchy(rootNode);
-	}
-
-	// Calculate the mesh to bone root space matrix:
-	{
-		// MeshToRoot = ROOT * M1 * M2 * ...
-		// BoneRootToRoot = ROOT * O1 * O2 * BoneRoot
-		// RootToBoneRoot = BoneRoot^(-1) * O2^(-1) * O1^(-1) * ROOT^(-1)
-		// MeshToBoneRoot = BoneRoot^(-1) * O2^(-1) * O1^(-1) * M1 * M2 * ...
-
-		auto meshToSceneRoot = Eigen::Affine3f::Identity();
-		for (auto currentNode = &meshesNode; currentNode != scene.mRootNode; currentNode = currentNode->mParent)
-		{
-			Eigen::Matrix4f transform;
-			{
-				const auto& m = currentNode->mTransformation;
-				transform <<
-					m.a1, m.a2, m.a3, m.a4,
-					m.b1, m.b2, m.b3, m.b4,
-					m.c1, m.c2, m.c3, m.c4,
-					m.d1, m.d2, m.d3, m.d4;
-			}
-
-			meshToSceneRoot = Eigen::Affine3f(transform) * meshToSceneRoot;
-		}
-
-		auto sceneRootToBoneRoot = Eigen::Affine3f::Identity();
-		for (auto currentNode = rootNode; currentNode != scene.mRootNode; currentNode = currentNode->mParent)
-		{
-			Eigen::Matrix4f transform;
-			{
-				const auto& m = currentNode->mTransformation;
-				transform <<
-					m.a1, m.a2, m.a3, m.a4,
-					m.b1, m.b2, m.b3, m.b4,
-					m.c1, m.c2, m.c3, m.c4,
-					m.d1, m.d2, m.d3, m.d4;
-			}
-
-			// TODO check:
-			sceneRootToBoneRoot = sceneRootToBoneRoot * Eigen::Affine3f(transform).inverse();
-		}
-
-		object.MeshToBoneRoot = sceneRootToBoneRoot * meshToSceneRoot;
-	}
-
-	return skeleton;
-}
-
-void SceneImporter::AddBoneData(const Skeleton& skeleton, const aiMesh& mesh, Geometry& geometry)
-{
-	auto& vertices = geometry.MeshData.Vertices;
-
-	for (std::size_t boneIndex = 0; boneIndex < mesh.mNumBones; ++boneIndex)
-	{
-		auto bone = mesh.mBones[boneIndex];
-
-		auto boneLocation = std::find(skeleton.Bones.begin(), skeleton.Bones.end(), bone->mName.C_Str());
-		auto indexOf = std::distance(skeleton.Bones.begin(), boneLocation);
-
-		for (std::size_t vertexWeightIndex = 0; vertexWeightIndex < bone->mNumWeights; ++vertexWeightIndex)
-		{
-			const auto& vertexWeight = bone->mWeights[vertexWeightIndex];
-
-			auto& vertex = vertices[vertexWeight.mVertexId];
-			vertex.BoneWeights.push_back(vertexWeight.mWeight);
-			vertex.BoneIndices.push_back(static_cast<EigenVertex::BoneIndexType>(indexOf));
-		}
-	}
+	ContainerType container;
+	container.resize(count);
+	std::memcpy(reinterpret_cast<void*>(&container[0]), property.mData, property.mDataLength);
+	return container;
 }

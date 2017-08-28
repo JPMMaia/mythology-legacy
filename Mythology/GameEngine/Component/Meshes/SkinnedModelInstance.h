@@ -10,7 +10,7 @@ namespace GameEngine
 	{
 	public:
 		SkinnedModelInstance() = default;
-		explicit SkinnedModelInstance(Armature&& armature);
+		explicit SkinnedModelInstance(Armature&& armature, const Eigen::Affine3f& meshToBoneRoot);
 
 	public:
 		void FrameUpdate(const Common::Timer& timer);
@@ -26,6 +26,6 @@ namespace GameEngine
 		std::vector<Eigen::Affine3f> m_finalTransforms;
 		std::string m_currentAnimationClipName;
 		float m_timePosition = 0.0f;
-		Eigen::Affine3f m_meshToRoot;
+		Eigen::Affine3f m_meshToBoneRoot;
 	};
 }
