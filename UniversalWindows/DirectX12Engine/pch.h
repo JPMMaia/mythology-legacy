@@ -13,15 +13,10 @@
 #include <pix.h>
 #include <DirectXColors.h>
 #include <DirectXMath.h>
-#include <memory>
-#include <vector>
 #include <concrt.h>
-#include <cstdint>
-#include <string>
-#include <array>
 
 #if defined(_DEBUG)
 #include <dxgidebug.h>
 #endif
 
-#include "Libraries/Eigen/Geometry"
+#include "MythologyAPI.h"

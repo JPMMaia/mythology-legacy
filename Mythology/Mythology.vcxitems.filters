@@ -78,5 +78,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\Armature.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Animations\SkinnedAnimationComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\SkinnedMeshComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MythologyAPI.h" />
   </ItemGroup>
 </Project>

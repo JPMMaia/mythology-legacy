@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "CppUnitTest.h"
 #include "GameEngine/Geometry/Importer/SceneImporter.h"
 #include "assimp/Importer.hpp"

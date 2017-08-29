@@ -17,13 +17,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UnitTestApp.xaml.cpp" />
-    <ClCompile Include="pch.cpp" />
     <ClCompile Include="Resources\GPUAllocatorTests.cpp" />
     <ClCompile Include="Textures\TextureTests.cpp" />
+    <ClCompile Include="pch.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h" />
     <ClInclude Include="UnitTestApp.xaml.h" />
+    <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="UnitTestApp.rd.xml" />

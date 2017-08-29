@@ -1,12 +1,18 @@
+#include "pch.h"
 #include "PhysicsComponent.h"
+#include "PxPhysicsAPI.h"
 
 using namespace GameEngine;
+using namespace physx;
 
-void PhysicsComponent::FixedUpdate(const Common::Timer& timer)
-{
+PhysicsComponent::PhysicsComponent()
+{	
+	static PxDefaultErrorCallback gDefaultErrorCallback;
+	static PxDefaultAllocator gDefaultAllocatorCallback;
+
+	auto foundation = PxCreateFoundation(PX_FOUNDATION_VERSION, gDefaultAllocatorCallback,
+		gDefaultErrorCallback);
+	if (!foundation)
+		throw std::exception("PxCreateFoundation failed!");
 }
 
-void PhysicsComponent::SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldPositionStays)
-{
-	m_transform.SetParent(parent, worldPositionStays);
-}

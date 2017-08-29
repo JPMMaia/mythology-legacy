@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "CppUnitTest.h"
 #include "GameEngine/GameManager.h"
 #include "Common/Timer.h"
@@ -16,10 +16,6 @@ namespace MythologyTestProject
 {
 	TEST_CLASS(GameManagerTests)
 	{
-	private:
-		template<class T>
-		using Allocator = std::allocator<T>;
-
 	public:
 		TEST_METHOD(GameManagerTest1)
 		{

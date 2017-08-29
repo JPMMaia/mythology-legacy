@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "UnitTestApp.xaml.h"
 #include "CppUnitTest.h"
 #include "Core/DeviceResources.h"
 #include "Core/Resources/GPUAllocator.h"

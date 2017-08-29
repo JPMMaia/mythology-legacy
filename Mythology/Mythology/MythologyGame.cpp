@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "MythologyGame.h"
 #include "GameEngine/Component/Cameras/CameraComponent.h"
 #include "GameEngine/Component/Lights/PointLightComponent.h"

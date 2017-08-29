@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "SceneImporter.h"
 #include "Common/Helpers.h"
 #include "GameEngine/Geometry/Animation/AnimationClip.h"

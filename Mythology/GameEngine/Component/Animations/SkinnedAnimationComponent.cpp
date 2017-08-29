@@ -1,4 +1,5 @@
-﻿#include "SkinnedAnimationComponent.h"
+﻿#include "pch.h"
+#include "SkinnedAnimationComponent.h"
 
 using namespace GameEngine;
 

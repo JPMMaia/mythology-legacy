@@ -1,0 +1,3 @@
+[submodule "Mythology/Libraries/PhysX"]
+	path = Mythology/Libraries/PhysX
+	url = https://github.com/NVIDIAGameWorks/PhysX-3.4.git

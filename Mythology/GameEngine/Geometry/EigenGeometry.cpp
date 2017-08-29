@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "EigenGeometry.h"
 
 using namespace GameEngine;

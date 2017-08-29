@@ -19,10 +19,6 @@
       <Configuration>Debug</Configuration>
       <Platform>ARM</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
@@ -31,20 +27,11 @@
       <Configuration>Release</Configuration>
       <Platform>ARM</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -54,13 +41,6 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v141</PlatformToolset>
-    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -78,12 +58,6 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -105,67 +79,57 @@
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDIr)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDIr)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Include;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;DirectXTK12.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Mythology\Libraries\assimp\Lib\$(Platform)\$(Configuration);$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Mythology\Libraries\assimp\Lib\$(Platform)\$(Configuration);$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Lib\$(Platform)\$(Configuration);$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Lib\vc14win64;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\lib\vc14win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDIr)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDIr)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Include;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;DirectXTK12.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Mythology\Libraries\assimp\Lib\$(Platform)\$(Configuration);$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Mythology\Libraries\assimp\Lib\$(Platform)\$(Configuration);$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Lib\$(Platform)\$(Configuration);$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Lib\vc14win64;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\lib\vc14win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDIr)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;DirectXTK12.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Mythology\Libraries\assimp\Lib\$(Platform)\$(Configuration);$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDIr)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;DirectXTK12.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Mythology\Libraries\assimp\Lib\$(Platform)\$(Configuration);$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDIr)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDIr)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Include;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;DirectXTK12.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Mythology\Libraries\assimp\Lib\$(Platform)\$(Configuration);$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Mythology\Libraries\assimp\Lib\$(Platform)\$(Configuration);$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Lib\$(Platform)\$(Configuration);$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Lib\vc14win64;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\lib\vc14win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDIr)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDIr)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Include;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;DirectXTK12.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Mythology\Libraries\assimp\Lib\$(Platform)\$(Configuration);$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Mythology\Libraries\assimp\Lib\$(Platform)\$(Configuration);$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Lib\$(Platform)\$(Configuration);$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Lib\vc14win64;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\lib\vc14win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -195,19 +159,17 @@
     <Image Include="Textures\White.dds" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Textures\TextureTests.cpp" />
-    <ClCompile Include="UnitTestApp.xaml.cpp">
-      <DependentUpon>UnitTestApp.xaml</DependentUpon>
-    </ClCompile>
-    <ClCompile Include="Resources\GPUAllocatorTests.cpp" />
     <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Textures\TextureTests.cpp" />
+    <ClCompile Include="UnitTestApp.xaml.cpp">
+      <DependentUpon>UnitTestApp.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="Resources\GPUAllocatorTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="CppUnitTestFramework.Universal, Version=$(UnitTestPlatformVersion)" />

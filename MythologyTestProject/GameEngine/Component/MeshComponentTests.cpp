@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+﻿#include "pch.h"
 #include "CppUnitTest.h"
 #include "GameEngine/Component/Meshes/InstancedMeshComponent.h"
 #include "GameEngine/Geometry/Primitives/BoxGeometry.h"
