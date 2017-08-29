@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "WindowsAppMain.h"
+#include "Interfaces/IFileSystem.h"
 
 using namespace Common;
 using namespace WindowsApp;
@@ -7,9 +8,23 @@ using namespace Windows::Foundation;
 using namespace Windows::System::Threading;
 using namespace Concurrency;
 
+namespace WindowsApp
+{
+	class FileSystem : public GameEngine::IFileSystem
+	{
+	public:
+		std::wstring GetWorkingDirectory() const override
+		{
+			Platform::String^ workingDirectory = Windows::Storage::ApplicationData::Current->LocalFolder->Path;
+			return std::wstring(workingDirectory->Begin()) + L"\\";
+		}
+	};
+}
+	
+
 WindowsAppMain::WindowsAppMain() :
 	m_timer(std::chrono::milliseconds(12)),
-	m_game(std::make_shared<Mythology::MythologyGame>())
+	m_game(std::make_shared<Mythology::MythologyGame>(std::make_shared<FileSystem>()))
 {
 }
 
@@ -89,7 +104,8 @@ void WindowsAppMain::FixedUpdate(const Common::Timer& timer)
 	m_game->FixedUpdate(timer);
 }
 void WindowsAppMain::FrameUpdate(const Common::Timer& timer)
-{	
+{
+	m_game->FrameUpdate(timer);
 	m_renderer->FrameUpdate(timer);
 }
 void WindowsAppMain::Render(const Common::Timer& timer)

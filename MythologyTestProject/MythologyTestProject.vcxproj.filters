@@ -50,5 +50,14 @@
     <ClCompile Include="GameEngine\Component\TransformComponentTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameEngine\Geometry\Importer\SceneImporterTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngine\Geometry\Animation\AnimationTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\test.fbx" />
   </ItemGroup>
 </Project>

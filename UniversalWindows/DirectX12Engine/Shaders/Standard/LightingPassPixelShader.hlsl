@@ -28,5 +28,5 @@ float4 main(PixelInput input) : SV_TARGET
 	float specularFactor = 1.0f;
 	float4 color = ComputeLighting(g_passData.Lights, material, positionW, normalW, toEyeDirection, shadowFactor, specularFactor);
 
-	return color;
+	return albedo;
 }

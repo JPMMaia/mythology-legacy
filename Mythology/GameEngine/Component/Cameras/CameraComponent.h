@@ -22,10 +22,8 @@ namespace GameEngine
 		CameraComponent(float aspectRatio, float fovAngleY, float nearZ, float farZ, AlignedMatrixCR orientationMatrix);
 
 	public:
-		void FixedUpdate(const Common::Timer& timer) override;
-
-		MatrixCR GetViewMatrix() const;
-		MatrixCR GetProjectionMatrix() const;
+		Matrix GetViewMatrix() const;
+		Matrix GetProjectionMatrix() const;
 
 		float GetAspectRatio() const;
 		void SetAspectRatio(float aspectRatio);
@@ -49,7 +47,6 @@ namespace GameEngine
 		float m_aspectRatio;
 		float m_fovAngleY;
 		float m_nearZ, m_farZ;
-		Matrix m_viewMatrix;
 		Matrix m_projectionMatrix;
 	};
 }

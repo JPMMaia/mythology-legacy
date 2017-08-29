@@ -1,6 +1,10 @@
 #include "../Common/MaterialData.hlsli"
 #include "../Common/Samplers.hlsli"
 
+#ifndef TEXTURE_COUNT
+#define TEXTURE_COUNT 1
+#endif
+
 struct PixelInput
 {
 	float4 PositionH : SV_POSITION;
@@ -17,7 +21,7 @@ struct PixelOutput
 };
 
 StructuredBuffer<MaterialData> g_materialData : register(t1, space1);
-Texture2D g_albedoMaps[1] : register(t0, space2);
+Texture2D g_albedoMaps[TEXTURE_COUNT] : register(t0, space2);
 
 PixelOutput main(PixelInput input)
 {
@@ -28,7 +32,7 @@ PixelOutput main(PixelInput input)
 
 	// Output values:
 	output.PositionW = float4(input.PositionW, 1.0f);
-	output.Albedo = materialData.BaseColor * g_albedoMaps[materialData.AlbedoMapIndex].Sample(g_samplerLinearClamp, input.TextureCoordinates);
+	output.Albedo = materialData.BaseColor * g_albedoMaps[materialData.AlbedoMapIndex].Sample(g_samplerLinearWrap, input.TextureCoordinates);
 	output.NormalAndRoughness = float4(normalize(input.NormalW), 1.0f);
 
 	return output;

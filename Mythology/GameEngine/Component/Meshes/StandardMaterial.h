@@ -8,6 +8,9 @@ namespace GameEngine
 	class StandardMaterial : public UseStorage<StandardMaterial>
 	{
 	public:
+		static std::size_t GetTextureCount();
+
+	public:
 		StandardMaterial();
 		StandardMaterial(const std::string& name, const Eigen::Vector4f& baseColor, const std::wstring& albedoMapName);
 

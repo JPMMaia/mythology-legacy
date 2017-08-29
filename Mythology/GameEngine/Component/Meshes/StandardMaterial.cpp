@@ -1,6 +1,18 @@
 #include "StandardMaterial.h"
+#include <set>
 
 using namespace GameEngine;
+
+std::size_t StandardMaterial::GetTextureCount()
+{
+	std::set<std::wstring> texturePaths;
+	std::for_each(StandardMaterial::begin(), StandardMaterial::end(), [&texturePaths](auto& material)
+	{
+		texturePaths.emplace(material.GetAlbedoMapName());
+	});
+
+	return texturePaths.size();
+}
 
 StandardMaterial::StandardMaterial() :
 	m_baseColor({ 0.0f, 0.0f, 0.0f, 1.0f })
