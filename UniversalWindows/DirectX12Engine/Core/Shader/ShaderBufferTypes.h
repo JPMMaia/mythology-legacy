@@ -36,7 +36,7 @@ namespace DirectX12Engine
 			float SpotPower = 64.0f;								// Spot light only
 		};
 
-		struct PassData
+		struct alignas(256) PassData
 		{
 			Eigen::Affine3f ViewMatrix;
 			Eigen::Affine3f ProjectionMatrix;
@@ -49,13 +49,14 @@ namespace DirectX12Engine
 			std::array<LightData, MaxNumLights> Lights;
 		};
 
-		struct SkinnedAnimationData
+		struct alignas(256) SkinnedAnimationData
 		{
 			static constexpr std::size_t MaxNumBones = 96;
 			std::array<Eigen::Affine3f, MaxNumBones> BoneTransforms;
 			Eigen::Affine3f ModelMatrix;
 		};
-		struct SkinnedMeshData
+
+		struct alignas(256) SkinnedMeshData
 		{
 			std::uint32_t MaterialIndex;
 			std::uint32_t Pad0;

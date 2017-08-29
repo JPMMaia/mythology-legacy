@@ -32,9 +32,9 @@ StandardScene::StandardScene(const std::shared_ptr<DeviceResources>& deviceResou
 	m_deviceResources(deviceResources),
 	m_commandListManager(commandListManager),
 	m_materialsGPUBuffer(GPUAllocator<ShaderBufferTypes::MaterialData>(deviceResources->GetD3DDevice(), false)),
-	m_passGPUBuffer(GPUAllocator<ShaderBufferTypes::PassData>(deviceResources->GetD3DDevice(), false)),
-	m_skinnedMeshAnimationGPUBuffer(GPUAllocator<ShaderBufferTypes::SkinnedAnimationData>(deviceResources->GetD3DDevice(), false)),
-	m_skinnedMeshInstancesGPUBuffer(GPUAllocator<ShaderBufferTypes::SkinnedMeshData>(deviceResources->GetD3DDevice(), false)),
+	m_passGPUBuffer(GPUAllocator<ShaderBufferTypes::PassData>(deviceResources->GetD3DDevice(), true)),
+	m_skinnedMeshAnimationGPUBuffer(GPUAllocator<ShaderBufferTypes::SkinnedAnimationData>(deviceResources->GetD3DDevice(), true)),
+	m_skinnedMeshInstancesGPUBuffer(GPUAllocator<ShaderBufferTypes::SkinnedMeshData>(deviceResources->GetD3DDevice(), true)),
 	m_game(game)
 {
 }
@@ -448,7 +448,7 @@ void StandardScene::UpdateInstancesBuffer<SkinnedMeshComponent>()
 
 		for (std::size_t i = 0; i < materials.size(); ++i)
 		{
-			ShaderBufferTypes::SkinnedMeshData shaderData;
+			ShaderBufferTypes::SkinnedMeshData shaderData = {};
 			
 			// Update material index:
 			shaderData.MaterialIndex = m_materialIndices.at(materials[i]->GetName());

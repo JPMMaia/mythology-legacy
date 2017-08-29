@@ -34,7 +34,7 @@ namespace DirectX12Engine
 	public:
 		T* allocate(std::size_t n)
 		{
-			if (n > std::size_t(-1) / sizeof(T))
+			if (n > std::size_t(-1) / GetElementSize())
 				throw std::bad_alloc();
 
 			return CreateUploadBuffer(n);
@@ -61,7 +61,7 @@ namespace DirectX12Engine
 
 		D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress(std::size_t index) const
 		{
-			return m_uploadBuffer->GetGPUVirtualAddress() + static_cast<D3D12_GPU_VIRTUAL_ADDRESS>(index * sizeof(T));
+			return m_uploadBuffer->GetGPUVirtualAddress() + index * GetElementSize();
 		}
 
 	private:
@@ -69,7 +69,7 @@ namespace DirectX12Engine
 		{
 			m_uploadBuffer.Reset();
 
-			auto bufferSize = m_isConstantBuffer ? DX::CalculateConstantBufferByteSize(sizeof(T)) : size * sizeof(T);
+			auto bufferSize = GetElementSize() * size;
 
 			auto uploadHeapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_UPLOAD);
 			auto bufferDescription = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
@@ -90,6 +90,12 @@ namespace DirectX12Engine
 			ZeroMemory(pointer, bufferSize);
 
 			return pointer;
+		}
+
+	public:
+		std::size_t GetElementSize() const
+		{
+			return m_isConstantBuffer ? static_cast<std::size_t>(DX::CalculateConstantBufferByteSize(sizeof(T))) : sizeof(T);
 		}
 
 	private:
@@ -344,7 +350,7 @@ namespace DirectX12Engine
 				clear();
 
 				// Allocate new memory:
-				m_data = m_allocator.allocate(sizeof(value_type) * capacity);
+				m_data = m_allocator.allocate(capacity);
 				m_capacity = capacity;
 
 				// Copy data back to new allocated memory:
