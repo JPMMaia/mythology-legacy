@@ -1,11 +1,11 @@
 #pragma once
 
 #include "GameEngine/Component/Base/BaseComponent.h"
-#include "GameEngine/Memory/StandardAllocator.h"
+#include "GameEngine/Memory/UseStorage.h"
 
 namespace GameEngine
 {
-	class PointLightComponent : public BaseComponent
+	class PointLightComponent : public BaseComponent, public UseStorage<PointLightComponent>
 	{
 	public:
 		PointLightComponent();
@@ -30,7 +30,5 @@ namespace GameEngine
 		Vector3Type m_strength;
 		float m_falloffStart;
 		float m_falloffEnd;
-
-		DEFINE_ALLOCATOR(PointLightComponent);
 	};
 }

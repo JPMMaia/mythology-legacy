@@ -20,7 +20,7 @@ void RootSignatureManager::CreateDeviceDependentResources()
 	auto d3dDevice = m_deviceResources->GetD3DDevice();
 
 	{
-		std::array<CD3DX12_ROOT_PARAMETER, 4> rootParameters;
+		std::array<CD3DX12_ROOT_PARAMETER, 6> rootParameters;
 		rootParameters[0].InitAsShaderResourceView(0, 1);
 		rootParameters[1].InitAsShaderResourceView(1, 1);
 		rootParameters[2].InitAsConstantBufferView(0);
@@ -34,8 +34,14 @@ void RootSignatureManager::CreateDeviceDependentResources()
 			};
 			rootParameters[3].InitAsDescriptorTable(static_cast<UINT>(descriptorRanges.size()), descriptorRanges.data());
 
+			// Skinned animation data constant buffer:
+			rootParameters[4].InitAsConstantBufferView(1);
+
+			// Skinned mesh data constant buffer:
+			rootParameters[5].InitAsConstantBufferView(2);
+
 			// Root signature for G-Buffer pass:
-			CreateRootSignature(d3dDevice, "GBufferPass", static_cast<UINT>(rootParameters.size()), rootParameters.data());
+			CreateRootSignature(d3dDevice, "GBufferPass", 6, rootParameters.data());
 		}
 
 		{
@@ -47,7 +53,7 @@ void RootSignatureManager::CreateDeviceDependentResources()
 			rootParameters[3].InitAsDescriptorTable(static_cast<UINT>(descriptorRanges.size()), descriptorRanges.data());
 
 			// Root signature for Lighting pass:
-			CreateRootSignature(d3dDevice, "LightingPass", static_cast<UINT>(rootParameters.size()), rootParameters.data());
+			CreateRootSignature(d3dDevice, "LightingPass", 4, rootParameters.data());
 		}
 	}
 }

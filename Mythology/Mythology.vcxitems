@@ -44,6 +44,13 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\SpotLightComponent.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Animations\SkinnedAnimationComponent.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\SkinnedMeshComponent.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\StandardMaterial.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -57,6 +64,18 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\AnimationClip.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\BoneAnimation.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\Armature.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\EigenGeometry.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Importer\SceneImporter.cpp">
@@ -76,6 +95,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\Event.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\InternalEventsComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Common\EigenHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Helpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\InternalEvent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\MemoryPool\MemoryPool.h" />
@@ -93,11 +113,17 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\SpotLightComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\InstancedMeshComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\MeshComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Animations\SkinnedAnimationComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\SkinnedMeshComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\StandardMaterial.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\PhysicsComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Transforms\TransformComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\AnimationClip.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\BoneAnimation.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\Keyframe.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\Armature.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\EigenGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Importer\SceneImporter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\MeshData.h" />

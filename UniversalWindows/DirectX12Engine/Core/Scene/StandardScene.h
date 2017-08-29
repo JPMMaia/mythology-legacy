@@ -9,6 +9,10 @@
 #include "Core/Textures/Texture.h"
 #include "Core/Resources/DescriptorHeap.h"
 #include "Mythology/MythologyGame.h"
+#include "GameEngine/Component/Meshes/SkinnedMeshComponent.h"
+#include "GameEngine/Geometry/EigenGeometry.h"
+#include "Core/Geometry/Buffers/VertexBuffer.h"
+#include "Core/Geometry/Buffers/IndexBuffer.h"
 
 #include <unordered_map>
 
@@ -34,17 +38,21 @@ namespace DirectX12Engine
 		bool Render(const Common::Timer& timer, RenderLayer renderLayer) override;
 
 	private:
-		template<class MeshType, class VertexType>
+		VertexBuffer CreateVertexBuffer(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::EigenMeshData& meshData, bool isSkinned);
+		IndexBuffer CreateIndexBuffer(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::EigenMeshData& meshData);
+
+		template<class MeshType>
 		void CreateRenderItems(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList);
 
 		void CreateMaterial(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::StandardMaterial& material);
 		void CreateTexture(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const std::wstring& path, bool isColorData);
 
 		void UpdatePassBuffer();
+		void UpdateSkinnedAnimationBuffers();
 		void UpdateInstancesBuffers();
 
 		template<class MeshType>
-		void UpdateInstancesBuffer(std::deque<StandardRenderItem>::iterator& renderItem);
+		void UpdateInstancesBuffer();
 
 	private:
 		std::shared_ptr<DeviceResources> m_deviceResources;
@@ -56,7 +64,10 @@ namespace DirectX12Engine
 		GPUUploadBuffer<ShaderBufferTypes::PassData> m_passGPUBuffer;
 
 		std::unique_ptr<StandardRenderItem> m_renderRectangle;
-		std::deque<StandardRenderItem> m_renderItems;
+		std::deque<std::unique_ptr<StandardRenderItem>> m_renderItems;
+		std::unordered_map<RenderLayer, std::deque<StandardRenderItem*>> m_renderItemsPerLayer;
+		std::unordered_map<std::string, StandardRenderItem*> m_renderItemsPerGeometry;
+
 		std::unordered_map<std::wstring, Texture> m_textures;
 		DescriptorHeap m_texturesDescriptorHeap;
 
@@ -64,5 +75,10 @@ namespace DirectX12Engine
 		std::unordered_map<std::wstring, std::uint32_t> m_textureIndices;
 
 		std::shared_ptr<Mythology::MythologyGame> m_game;
+		
+		GPUUploadBuffer<ShaderBufferTypes::SkinnedAnimationData> m_skinnedMeshAnimationGPUBuffer;
+		GPUUploadBuffer<ShaderBufferTypes::SkinnedMeshData> m_skinnedMeshInstancesGPUBuffer;
+		std::unordered_map<std::string, std::deque<StandardRenderItem*>> m_renderItemsPerSkinnedMesh;
+		std::unordered_map<StandardRenderItem*, std::uint32_t> m_skinnedRenderItemsMaterialIndices;
 	};
 }

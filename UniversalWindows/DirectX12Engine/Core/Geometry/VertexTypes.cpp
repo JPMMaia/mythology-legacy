@@ -46,3 +46,27 @@ std::vector<VertexTypes::PositionTextureCoordinatesVextex> VertexTypes::Position
 
 	return vertices;
 }
+
+std::vector<VertexTypes::PositionNormalTextureCoordinatesSkinnedVertex> VertexTypes::PositionNormalTextureCoordinatesSkinnedVertex::CreateFromMeshData(const GameEngine::EigenMeshData& meshData)
+{
+	using VertexType = PositionNormalTextureCoordinatesSkinnedVertex;
+	
+	std::vector<VertexType> vertices;
+	vertices.reserve(meshData.Vertices.size());
+
+	for (const auto& meshVertex : meshData.Vertices)
+	{
+		VertexType vertex;
+		vertex.PositionL = meshVertex.Position;
+		vertex.NormalL = meshVertex.Normal;
+		vertex.TextureCoordinates = meshVertex.TextureCoordinates;
+		
+		std::copy_n(meshVertex.BoneWeights.begin(), (std::min)(meshVertex.BoneWeights.size(), vertex.Weights.size()), vertex.Weights.begin());
+		std::copy_n(meshVertex.BoneIndices.begin(), (std::min)(meshVertex.BoneIndices.size(), vertex.BoneIndices.size()), vertex.BoneIndices.begin());
+
+		vertices.push_back(std::move(vertex));
+	}
+		
+
+	return vertices;
+}

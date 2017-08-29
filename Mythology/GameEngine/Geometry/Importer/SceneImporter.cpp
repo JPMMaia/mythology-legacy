@@ -1,243 +1,17 @@
 #include "SceneImporter.h"
+#include "Common/Helpers.h"
+#include "GameEngine/Geometry/Animation/AnimationClip.h"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
-#include "Common/Helpers.h"
 
 #include <iterator>
+#include <unordered_set>
+#include <queue>
 
 using namespace Assimp;
 using namespace Common;
 using namespace GameEngine;
-
-std::ostream& GameEngine::operator<<(std::ostream& outputStream, const SceneImporter::Geometry& geometry)
-{
-	outputStream << geometry.Name << " ";
-	outputStream << geometry.MaterialIndex << " ";
-
-	{
-		const auto& vertices = geometry.MeshData.Vertices;
-
-		outputStream << vertices.size() << " ";
-		std::for_each(vertices.begin(), vertices.end(), [&outputStream](const auto& vertex)
-		{
-			const auto& position = vertex.Position;
-			outputStream << position[0] << " " << position[1] << " " << position[2] << " ";
-
-			const auto& normal = vertex.Normal;
-			outputStream << normal[0] << " " << normal[1] << " " << normal[2] << " ";
-
-			const auto& tangent = vertex.Tangent;
-			outputStream << tangent[0] << " " << tangent[1] << " " << tangent[2] << " ";
-
-			const auto& textureCoordinates = vertex.TextureCoordinates;
-			outputStream << textureCoordinates[0] << " " << textureCoordinates[1] << " ";
-		});
-	}
-
-	{
-		const auto& indices = geometry.MeshData.Indices;
-
-		outputStream << indices.size() << " ";
-		std::copy(indices.begin(), indices.end(), std::ostream_iterator<EigenMeshData::IndexType>(outputStream, " "));
-	}
-
-	return outputStream;
-}
-std::istream& GameEngine::operator>>(std::istream& inputStream, SceneImporter::Geometry& geometry)
-{
-	inputStream >> geometry.Name;
-	inputStream >> geometry.MaterialIndex;
-
-	{
-		auto& vertices = geometry.MeshData.Vertices;
-
-		std::size_t vertexCount;
-		inputStream >> vertexCount;
-
-		vertices.resize(vertexCount);
-		std::for_each(vertices.begin(), vertices.end(), [&inputStream](auto& vertex)
-		{
-			auto& position = vertex.Position;
-			inputStream >> position[0] >> position[1] >> position[2];
-
-			auto& normal = vertex.Normal;
-			inputStream >> normal[0] >> normal[1] >> normal[2];
-
-			auto& tangent = vertex.Tangent;
-			inputStream >> tangent[0] >> tangent[1] >> tangent[2];
-
-			auto& textureCoordinates = vertex.TextureCoordinates;
-			inputStream >> textureCoordinates[0] >> textureCoordinates[1];
-		});
-	}
-
-	{
-		auto& indices = geometry.MeshData.Indices;
-
-		std::size_t indexCount;
-		inputStream >> indexCount;
-
-		indices.reserve(indexCount);
-		std::copy_n(std::istream_iterator<EigenMeshData::IndexType>(inputStream), indexCount, std::back_inserter(indices));
-	}
-
-	return inputStream;
-}
-
-std::ostream& GameEngine::operator<<(std::ostream& outputStream, const SceneImporter::Material& material)
-{
-	auto outputMap = [&outputStream](const auto& map)
-	{
-		auto outputContainer = [&outputStream](const auto& container)
-		{
-			outputStream << container.size() << " ";
-			std::for_each(container.begin(), container.end(), [&outputStream](const auto& element)
-			{
-				outputStream << element << " ";
-			});
-		};
-
-		outputStream << map.size() << " ";
-		std::for_each(map.begin(), map.end(), [&outputStream, &outputContainer](const auto& map)
-		{
-			outputStream << map.first << " ";
-			outputContainer(map.second);
-		});
-	};
-
-	outputMap(material.IntegerProperties);
-	outputMap(material.FloatProperties);
-	outputMap(material.DoubleProperties);
-	
-	{
-		const auto& map = material.StringProperties;
-		outputStream << map.size() << " ";
-		std::for_each(map.begin(), map.end(), [&outputStream](const auto& map)
-		{
-			outputStream << map.first << " " << map.second << " ";
-		});
-	}
-
-	outputStream << material.DiffuseTexturePath << " ";
-
-	return outputStream;
-}
-
-template <class KeyType, class ValueType, class MapType>
-void GameEngine::InputMap(std::istream& inputStream, MapType& map)
-{
-	auto inputContainer = [&inputStream](auto& container)
-	{
-		std::size_t elementCount;
-		inputStream >> elementCount;
-
-		container.resize(elementCount);
-		std::for_each(container.begin(), container.end(), [&inputStream](auto& element)
-		{
-			inputStream >> element;
-		});
-	};
-
-	std::size_t elementCount;
-	inputStream >> elementCount;
-
-	for (std::size_t i = 0; i < elementCount; ++i)
-	{
-		KeyType key;
-		inputStream >> key;
-
-		ValueType value;
-		inputContainer(value);
-
-		map.emplace(key, value);
-	}
-}
-std::istream& GameEngine::operator>>(std::istream& inputStream, SceneImporter::Material& material)
-{
-	InputMap<std::string, std::vector<std::int32_t>>(inputStream, material.IntegerProperties);
-	InputMap<std::string, std::vector<float>>(inputStream, material.FloatProperties);
-	InputMap<std::string, std::vector<double>>(inputStream, material.DoubleProperties);
-	
-	{
-		auto& map = material.StringProperties;
-
-		std::size_t elementCount;
-		inputStream >> elementCount;
-
-		for(std::size_t i = 0; i < elementCount; ++i)
-		{
-			std::string key, value;
-			inputStream >> key >> value;
-			map.emplace(key, value);
-		}
-	}
-
-	inputStream >> material.DiffuseTexturePath;
-
-	return inputStream;
-}
-
-std::ostream& GameEngine::operator<<(std::ostream& outputStream, const SceneImporter::ImportedScene& importedScene)
-{
-	{
-		const auto& geometries = importedScene.Geometries;
-
-		// Output number of geometries:
-		outputStream << geometries.size() << " ";
-
-		// Output each geometry:
-		std::for_each(geometries.begin(), geometries.end(), [&outputStream](const auto& geometry)
-		{
-			outputStream << geometry;
-		});
-	}
-
-	{
-		const auto& materials = importedScene.Materials;
-
-		// Output number of materials:
-		outputStream << materials.size() << " ";
-
-		// Output each material:
-		std::for_each(materials.begin(), materials.end(), [&outputStream](const auto& material)
-		{
-			outputStream << material;
-		});
-	}
-
-	return outputStream;
-}
-std::istream& GameEngine::operator>>(std::istream& inputStream, SceneImporter::ImportedScene& importedScene)
-{
-	{
-		auto& geometries = importedScene.Geometries;
-
-		// Read number of geometries:
-		std::size_t geometryCount;
-		inputStream >> geometryCount;
-
-		// Read geometries:
-		geometries.resize(geometryCount);
-		for (std::size_t i = 0; i < geometryCount; ++i)
-			inputStream >> geometries[i];
-	}
-
-	{
-		auto& materials = importedScene.Materials;
-
-		// Read number of materials:
-		std::size_t materialCount;
-		inputStream >> materialCount;
-
-		// Read materials:
-		materials.resize(materialCount);
-		for (std::size_t i = 0; i < materialCount; ++i)
-			inputStream >> materials[i];
-	}
-
-	return inputStream;
-}
 
 void SceneImporter::Import(const std::wstring& filePath, ImportedScene& importedScene)
 {
@@ -248,27 +22,106 @@ void SceneImporter::Import(const std::wstring& filePath, ImportedScene& imported
 		aiProcess_Triangulate |
 		aiProcess_GenNormals |
 		aiProcess_GenUVCoords |
+		aiProcess_FindInvalidData |
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_LimitBoneWeights |
+		aiProcess_ImproveCacheLocality |
+		aiProcess_ValidateDataStructure |
+		aiProcess_FlipUVs |
 		aiProcess_SortByPType;
 	auto scene = importer.ReadFile(Helpers::WStringToString(filePath), flags);
 
 	if (!scene)
 		throw std::invalid_argument("Can't import given model.");
 
-	for (std::size_t i = 0; i < scene->mNumMeshes; ++i)
+	// Create geometries of each object:
+	auto& objects = importedScene.Objects;
+	std::unordered_map<const aiNode*, Object*> objectNodes;
+	ForEachNode(*scene->mRootNode, [&scene, &objects, &objectNodes](const aiNode& node)
 	{
-		auto mesh = scene->mMeshes[i];
+		if (node.mNumMeshes == 0)
+			return;
 
-		Geometry geometry;
-		geometry.Name = mesh->mName.C_Str();
-		geometry.MeshData = CreateMeshData(*mesh);
-		geometry.MaterialIndex = mesh->mMaterialIndex;
-		importedScene.Geometries.emplace_back(std::move(geometry));
+		Object object;
+		for (std::size_t meshIndex = 0; meshIndex < node.mNumMeshes; ++meshIndex)
+		{
+			const auto& mesh = *scene->mMeshes[node.mMeshes[meshIndex]];
+
+			Geometry geometry;
+			geometry.Name = mesh.mName.C_Str();
+			geometry.MeshData = CreateMeshData(mesh);
+			geometry.MaterialIndex = mesh.mMaterialIndex;
+			object.Geometries.emplace_back(std::move(geometry));
+		}
+
+		objects.emplace_back(std::move(object));
+		objectNodes.emplace(&node, &objects.back());
+	});
+
+	// Create armature of each object:
+	for (const auto& objectNodePair : objectNodes)
+	{
+		const auto* node = objectNodePair.first;
+		auto* object = objectNodePair.second;
+
+		object->IsAnimated = false;
+		for (std::size_t meshIndex = 0; meshIndex < node->mNumMeshes; ++meshIndex)
+		{
+			auto mesh = scene->mMeshes[node->mMeshes[meshIndex]];
+			if (mesh->HasBones())
+			{
+				object->IsAnimated = true;
+				break;
+			}
+		}
+
+		if (object->IsAnimated)
+		{
+			// Create armature:
+			importedScene.Armatures.emplace_back(CreateArmature(*scene, *node, *object));
+			auto& armature = importedScene.Armatures.back();
+			object->ArmatureIndex = importedScene.Armatures.size() - 1;
+
+			// Add bone weights and indices to the mesh data:
+			for (std::size_t meshIndex = 0; meshIndex < node->mNumMeshes; ++meshIndex)
+			{
+				auto& mesh = *scene->mMeshes[node->mMeshes[meshIndex]];
+				auto& geometry = object->Geometries[meshIndex];
+				geometry.MeshData.ContainsSkinnedData = true;
+				AddBoneData(armature, mesh, geometry);
+			}
+
+			// Create animation clips:
+			auto& animations = armature.Animations;
+			for (std::size_t i = 0; i < scene->mNumAnimations; ++i)
+			{
+				const auto& animationData = *scene->mAnimations[i];
+				animations.emplace(animationData.mName.C_Str(), CreateSkinnedAnimation(animationData, armature));
+			}
+		}
 	}
 
 	for (std::size_t i = 0; i < scene->mNumMaterials; ++i)
 	{
 		importedScene.Materials.emplace_back(CreateMaterial(*scene->mMaterials[i]));
 	}
+}
+
+void SceneImporter::ForEachNode(const aiNode& rootNode, const std::function<void(const aiNode&)>& function)
+{
+	std::function<void(const aiNode&)> applyAndIterateThroughChildren = [&function, &applyAndIterateThroughChildren](const aiNode& node)
+	{
+		function(node);
+
+		for (std::size_t childIndex = 0; childIndex < node.mNumChildren; ++childIndex)
+			applyAndIterateThroughChildren(*node.mChildren[childIndex]);
+	};
+	applyAndIterateThroughChildren(rootNode);
+}
+void SceneImporter::ForEachMeshOfNode(const aiScene& scene, const aiNode& node, const std::function<void(const aiMesh&)>& function)
+{
+	for (std::size_t meshIndex = 0; meshIndex < node.mNumMeshes; ++meshIndex)
+		function(*scene.mMeshes[node.mMeshes[meshIndex]]);
 }
 
 SceneImporter::MeshDataType SceneImporter::CreateMeshData(const aiMesh& mesh)
@@ -321,7 +174,6 @@ SceneImporter::MeshDataType SceneImporter::CreateMeshData(const aiMesh& mesh)
 
 	return meshData;
 }
-
 SceneImporter::Material SceneImporter::CreateMaterial(const aiMaterial& material)
 {
 	Material data;
@@ -355,6 +207,222 @@ SceneImporter::Material SceneImporter::CreateMaterial(const aiMaterial& material
 	}
 
 	return data;
+}
+SceneImporter::Armature SceneImporter::CreateArmature(const aiScene& scene, const aiNode& meshesNode, Object& object)
+{
+	Armature armature;
+
+	// Find all bones:
+	std::unordered_set<aiNode*> neededBones;
+	{
+		for (std::size_t meshIndex = 0; meshIndex < meshesNode.mNumMeshes; meshIndex++)
+		{
+			auto mesh = scene.mMeshes[meshesNode.mMeshes[meshIndex]];
+			for (std::size_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+			{
+				auto bone = mesh->mBones[boneIndex];
+
+				// Mark bone and all its parents as needed, until the mesh node or the parent of the mesh node is found:
+				for (auto boneNode = scene.mRootNode->FindNode(bone->mName); boneNode != nullptr; boneNode = boneNode->mParent)
+				{
+					// Stop if mesh node or parent of the mesh node:
+					if (boneNode == &meshesNode || boneNode == meshesNode.mParent)
+						break;
+
+					// Mark bone as needed:
+					neededBones.emplace(boneNode);
+				}
+			}
+		}
+
+		// Ensure that all bone children are in the list:
+		for (auto boneNode : neededBones)
+			for (std::size_t childIndex = 0; childIndex < boneNode->mNumChildren; ++childIndex)
+				neededBones.emplace(boneNode->mChildren[childIndex]);
+	}
+
+	// Find the root node of the skeleton:
+	auto lowestDistance = (std::numeric_limits<std::size_t>::max)();
+	aiNode* rootNode = nullptr;
+	{
+		for (const auto& boneNode : neededBones)
+		{
+			std::size_t distance = 0;
+
+			for (auto currentNode = boneNode->mParent; currentNode != nullptr; currentNode = currentNode->mParent)
+				++distance;
+
+			if (distance < lowestDistance)
+			{
+				rootNode = boneNode;
+				lowestDistance = distance;
+			}
+		}
+	}
+
+	{
+		// Build hierachy such that a child node never appears before a parent node:
+		auto& boneHierarchy = armature.BoneHierarchy;
+		auto& bones = armature.Bones;
+		auto& transforms = armature.BoneTransforms;
+		std::function<void(aiNode*)> appendChildrenToHierarchy = [&bones, &boneHierarchy, &transforms, &scene, &appendChildrenToHierarchy](aiNode* node)
+		{
+			std::string nodeName(node->mName.C_Str());
+			bones.emplace_back(nodeName);
+
+			{
+				// Find the parent of the node:
+				auto parentLocation = std::find(bones.begin(), bones.end(), node->mParent->mName.C_Str());
+
+				// If root bone:
+				if (parentLocation == bones.end())
+				{
+					boneHierarchy.emplace_back(-1);
+				}
+
+				// If not root bone:
+				else
+				{
+					auto indexOfParent = std::distance(bones.begin(), parentLocation);
+					boneHierarchy.emplace_back(static_cast<EigenVertex::BoneIndexType>(indexOfParent));
+				}
+			}
+
+			{
+				Eigen::Matrix4f transform;
+				{
+					const auto& m = node->mTransformation;
+					transform <<
+						m.a1, m.a2, m.a3, m.a4,
+						m.b1, m.b2, m.b3, m.b4,
+						m.c1, m.c2, m.c3, m.c4,
+						m.d1, m.d2, m.d3, m.d4;
+				}
+				transforms.emplace_back(Eigen::Affine3f(transform));
+			}
+
+			for (std::size_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex)
+				appendChildrenToHierarchy(node->mChildren[childIndex]);
+		};
+		appendChildrenToHierarchy(rootNode);
+	}
+
+	// Calculate the mesh to the parent of bone root space matrix:
+	{
+		// MeshToSceneRoot = ROOT * M1 * M2 * ...
+		// ParentOfBoneRootToSceneRoot = ROOT * O1 * P
+		// SceneRootToParentOfBoneRoot = P^(-1) * O1^(-1) * ROOT^(-1)
+		// MeshToParentOfBoneRoot = P^(-1) * O1^(-1) * M1 * M2 * ...
+
+		auto meshToSceneRoot = Eigen::Affine3f::Identity();
+		for (auto currentNode = &meshesNode; currentNode != scene.mRootNode; currentNode = currentNode->mParent)
+		{
+			Eigen::Matrix4f transform;
+			{
+				const auto& m = currentNode->mTransformation;
+				transform <<
+					m.a1, m.a2, m.a3, m.a4,
+					m.b1, m.b2, m.b3, m.b4,
+					m.c1, m.c2, m.c3, m.c4,
+					m.d1, m.d2, m.d3, m.d4;
+			}
+
+			meshToSceneRoot = Eigen::Affine3f(transform) * meshToSceneRoot;
+		}
+
+		auto sceneRootToParentOfBoneRoot = Eigen::Affine3f::Identity();
+		for (auto currentNode = rootNode->mParent; currentNode != scene.mRootNode; currentNode = currentNode->mParent)
+		{
+			Eigen::Matrix4f transform;
+			{
+				const auto& m = currentNode->mTransformation;
+				transform <<
+					m.a1, m.a2, m.a3, m.a4,
+					m.b1, m.b2, m.b3, m.b4,
+					m.c1, m.c2, m.c3, m.c4,
+					m.d1, m.d2, m.d3, m.d4;
+			}
+
+			sceneRootToParentOfBoneRoot = sceneRootToParentOfBoneRoot * Eigen::Affine3f(transform).inverse();
+		}
+
+		object.MeshToParentOfBoneRoot = sceneRootToParentOfBoneRoot * meshToSceneRoot;
+	}
+
+	return armature;
+}
+void SceneImporter::AddBoneData(const Armature& armature, const aiMesh& mesh, Geometry& geometry)
+{
+	auto& vertices = geometry.MeshData.Vertices;
+
+	for (std::size_t boneIndex = 0; boneIndex < mesh.mNumBones; ++boneIndex)
+	{
+		auto bone = mesh.mBones[boneIndex];
+
+		auto boneLocation = std::find(armature.Bones.begin(), armature.Bones.end(), bone->mName.C_Str());
+		auto indexOf = std::distance(armature.Bones.begin(), boneLocation);
+
+		for (std::size_t vertexWeightIndex = 0; vertexWeightIndex < bone->mNumWeights; ++vertexWeightIndex)
+		{
+			const auto& vertexWeight = bone->mWeights[vertexWeightIndex];
+
+			auto& vertex = vertices[vertexWeight.mVertexId];
+			vertex.BoneWeights.push_back(vertexWeight.mWeight);
+			vertex.BoneIndices.push_back(static_cast<EigenVertex::BoneIndexType>(indexOf));
+		}
+	}
+}
+AnimationClip SceneImporter::CreateSkinnedAnimation(const aiAnimation& animationData, const Armature& skeleton)
+{
+	auto timeScalar = animationData.mTicksPerSecond == 0 ? 1.0f : animationData.mTicksPerSecond;
+
+	std::vector<BoneAnimation> boneAnimations;
+	boneAnimations.reserve(static_cast<std::size_t>(animationData.mNumChannels));
+	for (std::size_t channelIndex = 0; channelIndex < animationData.mNumChannels; ++channelIndex)
+	{
+		auto channel = animationData.mChannels[channelIndex];
+
+		// Do not add animations that do not refer to a bone:
+		if (std::find(skeleton.Bones.begin(), skeleton.Bones.end(), channel->mNodeName.C_Str()) == skeleton.Bones.end())
+			continue;
+
+		std::vector<Keyframe<Eigen::Vector3f>> positionKeyframes(channel->mNumPositionKeys);
+		{
+			auto& keyframes = positionKeyframes;
+			for (std::size_t keyIndex = 0; keyIndex < keyframes.size(); ++keyIndex)
+			{
+				const auto& key = channel->mPositionKeys[keyIndex];
+				keyframes[keyIndex].TimePosition = static_cast<float>(key.mTime * timeScalar);
+				keyframes[keyIndex].Value = { key.mValue.x, key.mValue.y, key.mValue.z };
+			}
+		}
+
+		std::vector<Keyframe<Eigen::Quaternionf>> rotationKeyframes(channel->mNumRotationKeys);
+		{
+			auto& keyframes = rotationKeyframes;
+			for (std::size_t keyIndex = 0; keyIndex < keyframes.size(); ++keyIndex)
+			{
+				const auto& key = channel->mRotationKeys[keyIndex];
+				keyframes[keyIndex].TimePosition = static_cast<float>(key.mTime * timeScalar);
+				keyframes[keyIndex].Value = Eigen::Quaternionf(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z);
+			}
+		}
+
+		std::vector<Keyframe<Eigen::Vector3f>> scaleKeyframes(channel->mNumScalingKeys);
+		{
+			auto& keyframes = scaleKeyframes;
+			for (std::size_t keyIndex = 0; keyIndex < keyframes.size(); ++keyIndex)
+			{
+				const auto& key = channel->mScalingKeys[keyIndex];
+				keyframes[keyIndex].TimePosition = static_cast<float>(key.mTime * timeScalar);
+				keyframes[keyIndex].Value = { key.mValue.x, key.mValue.y, key.mValue.z };
+			}
+		}
+
+		boneAnimations.emplace_back(positionKeyframes, rotationKeyframes, scaleKeyframes);
+	}
+
+	return AnimationClip(boneAnimations);
 }
 
 template <typename ContainerType, typename DataType>

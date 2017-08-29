@@ -19,14 +19,15 @@ namespace Common
 		template <typename FixedUpdateFunctionType, typename FrameUpdateFunctionType, typename RenderFunctionType, typename ProcessInputFunctionType, typename ProcessFrameStatisticsFunctionType>
 		bool UpdateAndRender(FixedUpdateFunctionType&& fixedUpdate, FrameUpdateFunctionType&& frameUpdate, RenderFunctionType&& render, ProcessInputFunctionType&& processInput, ProcessFrameStatisticsFunctionType&& processFrameStatistics);
 
-		void SetTotalTime(DurationType totalTime);
-
 		DurationType GetTimePerUpdate() const;
 		DurationType GetTotalTime() const;
 		DurationType GetDeltaTime() const;
 		double GetLeftover() const;
 		size_t GetFramesPerSecond() const;
 		DurationType GetTimePerFrame() const;
+
+		void SetTotalTime(DurationType totalTime);
+		void SetDeltaTime(DurationType deltaTime);
 
 	private:
 		template<typename ProcessFrameStatisticsFunctionType>

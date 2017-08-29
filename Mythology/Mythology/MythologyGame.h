@@ -3,6 +3,10 @@
 #include "GameEngine/GameManager.h"
 #include "GameEngine/GameObject/GameObject.h"
 #include "GameEngine/Component/Meshes/MeshComponent.h"
+#include "GameEngine/Component/Meshes/StandardMaterial.h"
+#include "GameEngine/Component/Cameras/CameraComponent.h"
+#include "GameEngine/Geometry/Animation/Armature.h"
+#include "GameEngine/Component/Meshes/SkinnedMeshComponent.h"
 
 namespace Common 
 {
@@ -38,7 +42,9 @@ namespace Mythology
 		std::shared_ptr<GameEngine::GameManager> m_gameManager;
 		
 		std::unordered_map<std::string, std::shared_ptr<GameEngine::BaseMeshComponent>> m_meshes;
+		std::unordered_map<std::string, std::shared_ptr<GameEngine::SkinnedMeshComponent>> m_skinnedMeshes;
 		std::unordered_map<std::string, std::shared_ptr<GameEngine::StandardMaterial>> m_materials;
+		std::unordered_map<std::string, std::shared_ptr<GameEngine::Armature>> m_armatures;
 		GameEngine::GameObject m_person;
 		GameEngine::GameObject m_floor;
 		GameEngine::GameObject m_axis;

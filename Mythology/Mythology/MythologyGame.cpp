@@ -6,11 +6,11 @@
 #include "GameEngine/Geometry/Primitives/RectangleGeometry.h"
 #include "GameEngine/Geometry/Importer/SceneImporter.h"
 #include "GameEngine/Geometry/Primitives/CustomGeometry.h"
+#include "GameEngine/Component/Meshes/SkinnedMeshComponent.h"
 #include "Common/Helpers.h"
 #include "Interfaces/IFileSystem.h"
 
 #include <cmath>
-#include <WinString.h>
 
 using namespace Common;
 using namespace Eigen;
@@ -30,13 +30,13 @@ void MythologyGame::Initialize()
 	// Meshes:
 	{
 		{
-			auto mesh = MeshComponent<BoxGeometry>::CreateSharedPointer(BoxGeometry(1.0f, 1.0f, 1.0f, 0));
-			m_meshes.emplace("Box", mesh);
+			auto mesh = MeshComponent<BoxGeometry>::CreateSharedPointer("Box", BoxGeometry(1.0f, 1.0f, 1.0f, 0));
+			m_meshes.emplace(mesh->GetName(), mesh);
 		}
 
 		{
-			auto floor = MeshComponent<RectangleGeometry>::CreateSharedPointer(RectangleGeometry(0.0f, 0.0f, 20.0f, 20.0f, 0.0f, 0));
-			m_meshes.emplace("Floor", floor);
+			auto mesh = MeshComponent<RectangleGeometry>::CreateSharedPointer("Floor", RectangleGeometry(0.0f, 0.0f, 20.0f, 20.0f, 0.0f, 0));
+			m_meshes.emplace(mesh->GetName(), mesh);
 		}
 	}
 
@@ -115,38 +115,38 @@ void MythologyGame::Initialize()
 	}
 
 	{
+		std::wstring basePath(L"Resources/");
+		std::string modelName = "test";
 		SceneImporter::ImportedScene scene;
-		//SceneImporter::Import(L"Resources/kasumi/DOA5_Kasumi_MMD.fbx", scene);
+		SceneImporter::Import(basePath + L"test4.fbx", scene);
+		
+		auto skinnedMeshComponent = SkinnedMeshComponent::CreateSharedPointer(modelName);
 
+		const auto& object = scene.Objects[0];
+		for (std::size_t i = 0; i < object.Geometries.size(); ++i)
 		{
-			auto workingDirectory = m_fileSystem->GetWorkingDirectory();
-
-			auto filePath = workingDirectory + L"kasumi.bin";
-			//std::ofstream file(filePath, std::ios::out | std::fstream::binary);
-			//file << scene;
-			std::ifstream file(filePath, std::ios::in | std::ios::binary);
-			file >> scene;
-		}
-
-		for(std::size_t i = 0; i < scene.Geometries.size(); ++i)
-		{
-			const auto& geometry = scene.Geometries[i];
+			const auto& geometry = object.Geometries[i];
 			const auto& material = scene.Materials[geometry.MaterialIndex];
 
-			auto mesh = MeshComponent<CustomGeometry<EigenMeshData>>::CreateSharedPointer(CustomGeometry<EigenMeshData>(std::move(geometry.MeshData)));
-			m_meshes.emplace("kasumi" + std::to_string(i), mesh);
-			
 			const auto& baseColor = material.FloatProperties.at("$clr.diffuse");
-			const auto& albedoMap = L"Resources/kasumi/" + Helpers::GetFilename(Helpers::StringToWString(material.DiffuseTexturePath)) + L".dds";
-			auto standardMaterial = StandardMaterial::CreateSharedPointer("kasumi" + std::to_string(i), Vector4f(baseColor[0], baseColor[1], baseColor[2], 1.0f), albedoMap);
+			//const auto& albedoMap = basePath + Helpers::GetFilename(Helpers::StringToWString(material.DiffuseTexturePath)) + L".dds";
+			const auto& albedoMap = basePath + L"white.dds";
+			auto standardMaterial = StandardMaterial::CreateSharedPointer(modelName + std::to_string(i), Vector4f(baseColor[0], baseColor[1], baseColor[2], 1.0f), albedoMap);
 			m_materials.emplace(standardMaterial->GetName(), standardMaterial);
 
-			auto instance = mesh->CreateInstance(standardMaterial);
-			instance->GetTransform().SetWorldRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
-			m_box.AddComponent("Instance" + std::to_string(i), instance);
+			skinnedMeshComponent->AddMesh(CustomGeometry<EigenMeshData>(std::move(geometry.MeshData)), standardMaterial);
 		}
+		
+		auto& importedArmature = scene.Armatures.at(object.ArmatureIndex);
+		auto armature = std::make_shared<Armature>(std::move(importedArmature.BoneHierarchy), std::move(importedArmature.BoneTransforms), std::move(importedArmature.Animations));
+		m_armatures.emplace(importedArmature.Bones.front(), armature);
 
-		//m_box.GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
+		auto instance = skinnedMeshComponent->CreateInstance(armature, object.MeshToParentOfBoneRoot);
+		instance->GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
+		//instance->GetTransform().SetLocalScaling(Vector3f(1.0f, 1.0f, 1.0f) * 0.01f);
+		m_box.AddComponent("AnimationInstance", instance);
+
+		m_skinnedMeshes.emplace(modelName, skinnedMeshComponent);
 	}
 }
 

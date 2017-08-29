@@ -3,7 +3,8 @@
 using namespace Common;
 
 Timer::Timer(DurationType timePerUpdate) :
-	m_timePerUpdate(timePerUpdate)
+	m_timePerUpdate(timePerUpdate),
+	m_deltaTime(ClockType::duration(0))
 {
 }
 
@@ -16,6 +17,11 @@ void Timer::Reset()
 void Timer::SetTotalTime(DurationType totalTime)
 {
 	m_totalTime = totalTime;
+}
+
+void Common::Timer::SetDeltaTime(DurationType deltaTime)
+{
+	m_deltaTime = deltaTime;
 }
 
 Timer::DurationType Timer::GetTimePerUpdate() const

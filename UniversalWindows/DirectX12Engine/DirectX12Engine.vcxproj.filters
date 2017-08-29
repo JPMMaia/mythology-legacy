@@ -87,5 +87,6 @@
     <None Include="Shaders\Common\MaterialData.hlsli" />
     <None Include="Shaders\Common\Samplers.hlsli" />
     <None Include="Shaders\Common\LightingUtils.hlsli" />
+    <None Include="Shaders\Common\SkinnedData.hlsli" />
   </ItemGroup>
 </Project>
