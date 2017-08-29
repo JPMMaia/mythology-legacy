@@ -14,7 +14,8 @@
 #include <sstream>
 #include <vector>
 
-#include "Libraries/Eigen/Geometry"
+#include "Eigen/Core"
+#include "Eigen/Geometry"
 
 #if defined(_DEBUG)
 #pragma comment(lib, "PhysX3DEBUG_x64.lib")

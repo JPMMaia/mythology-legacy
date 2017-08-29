@@ -5,7 +5,6 @@
 
 #include "IWindow.h"
 #include "Utilities/d3dx12.h"
-#include "Libraries/Eigen/Geometry"
 
 namespace DirectX12Engine
 {

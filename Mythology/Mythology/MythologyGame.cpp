@@ -3,7 +3,6 @@
 #include "GameEngine/Component/Cameras/CameraComponent.h"
 #include "GameEngine/Component/Lights/PointLightComponent.h"
 #include "GameEngine/Geometry/Primitives/BoxGeometry.h"
-#include "Libraries/Eigen/Geometry"
 #include "GameEngine/Geometry/Primitives/RectangleGeometry.h"
 #include "GameEngine/Geometry/Importer/SceneImporter.h"
 #include "GameEngine/Geometry/Primitives/CustomGeometry.h"

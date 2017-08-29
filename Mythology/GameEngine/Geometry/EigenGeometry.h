@@ -2,7 +2,6 @@
 
 #include "VertexData.h"
 #include "MeshData.h"
-#include "Libraries/Eigen/Core"
 #include "MeshGenerator.h"
 
 #include <cstddef>

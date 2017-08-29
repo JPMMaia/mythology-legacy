@@ -120,13 +120,13 @@ xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.d
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
       <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;assimp.lib;DirectXTK12.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Lib\vc14win64;$(SolutionDir)ThirdParty\PhysX\PxShared\lib\vc14win64;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Lib\$(Platform)\$(Configuration);$(SolutionDir)Mythology\Libraries\assimp\Lib\$(Platform)\$(Configuration);$(VCInstallDir)\lib\store\amd64;$(VCInstallDir)\lib\amd64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Lib\vc14win64;$(SolutionDir)ThirdParty\PhysX\PxShared\lib\vc14win64;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Lib\$(Platform)\$(Configuration);$(SolutionDir)ThirdParty\assimp\Lib\$(Platform)\$(Configuration);$(VCInstallDir)\lib\store\amd64;$(VCInstallDir)\lib\amd64</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ClCompile>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\Eigen\Include;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -137,13 +137,13 @@ xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.d
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
       <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;assimp.lib;DirectXTK12.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Lib\vc14win64;$(SolutionDir)ThirdParty\PhysX\PxShared\lib\vc14win64;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Lib\$(Platform)\$(Configuration);$(SolutionDir)Mythology\Libraries\assimp\Lib\$(Platform)\$(Configuration);$(VCInstallDir)\lib\store\amd64;$(VCInstallDir)\lib\amd64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Lib\vc14win64;$(SolutionDir)ThirdParty\PhysX\PxShared\lib\vc14win64;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Lib\$(Platform)\$(Configuration);$(SolutionDir)ThirdParty\assimp\Lib\$(Platform)\$(Configuration);$(VCInstallDir)\lib\store\amd64;$(VCInstallDir)\lib\amd64</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ClCompile>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\Eigen\Include;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>

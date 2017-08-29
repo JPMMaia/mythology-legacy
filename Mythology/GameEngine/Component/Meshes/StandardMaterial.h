@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Libraries/Eigen/Geometry"
 #include "GameEngine/Memory/UseStorage.h"
 
 namespace GameEngine

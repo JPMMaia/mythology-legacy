@@ -2,9 +2,6 @@
 
 #include "GameEngine/Component/IComponent.h"
 
-#include "Libraries/Eigen/Core"
-#include "Libraries/Eigen/Geometry"
-
 #include <memory>
 #include <unordered_map>
 
