@@ -12,6 +12,16 @@ namespace GameEngine
 	public:
 		void FixedUpdate(const Common::Timer& timer) const;
 
+	public:
+		const physx::PxScene* operator->() const
+		{
+			return m_scene.get();
+		}
+		physx::PxScene* operator->()
+		{
+			return m_scene.get();
+		}
+
 	private:
 		PhysXUniquePointer<physx::PxScene> m_scene;
 	};

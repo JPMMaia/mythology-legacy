@@ -19,6 +19,9 @@ namespace GameEngine
 	public:
 		PhysicsScene CreateScene();
 
+	public:
+		const SharedPointer<physx::PxPhysics>& GetPhysics() const;
+
 	private:
 		UniquePointer<physx::PxFoundation> m_foundation;
 #if defined(_DEBUG)

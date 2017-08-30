@@ -63,3 +63,8 @@ PhysicsScene PhysicsManager::CreateScene()
 
 	return PhysicsScene(std::move(scene));
 }
+
+const PhysicsManager::SharedPointer<physx::PxPhysics>& PhysicsManager::GetPhysics() const
+{
+	return m_physics;
+}
