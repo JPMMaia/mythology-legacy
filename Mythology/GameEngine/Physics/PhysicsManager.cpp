@@ -20,9 +20,9 @@ PhysicsManager::PhysicsManager()
 		throw std::runtime_error("PxCreateFoundation failed!");
 
 	// Create physics visual debugger:
-	/*m_physicsVisualDebugger = Pointer<PxPvd>(PxCreatePvd(*m_foundation));
+	m_physicsVisualDebugger = Pointer<PxPvd>(PxCreatePvd(*m_foundation));
 	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-	m_physicsVisualDebugger->connect(*transport, PxPvdInstrumentationFlag::eALL);*/
+	m_physicsVisualDebugger->connect(*transport, PxPvdInstrumentationFlag::eALL);
 
 	// Create physics object:
 	auto recordMemoryAllocations = true;

@@ -194,10 +194,22 @@ xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.d
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="nvToolsExt64_1.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PhysX3CharacterKinematicDEBUG_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="PhysX3CommonDEBUG_x64.dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="PhysX3DEBUG_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PhysX3GpuDEBUG_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PhysXDevice64.dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="PxFoundationDEBUG_x64.dll">

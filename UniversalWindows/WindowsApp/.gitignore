@@ -2,3 +2,8 @@ Working Directory
 /PxFoundationDEBUG_x64.dll
 /PhysX3CommonDEBUG_x64.dll
 /PhysX3DEBUG_x64.dll
+/PhysX3CharacterKinematicDEBUG_x64.dll
+/PhysX3GpuDEBUG_x64.dll
+/PhysXDevice64.dll
+/PxPvdSDKDEBUG_x64.dll
+/nvToolsExt64_1.dll

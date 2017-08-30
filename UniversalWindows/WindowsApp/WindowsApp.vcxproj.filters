@@ -55,9 +55,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="WindowsApp_TemporaryKey.pfx" />
+    <None Include="PhysX3CharacterKinematicDEBUG_x64.dll" />
     <None Include="PhysX3CommonDEBUG_x64.dll" />
     <None Include="PhysX3DEBUG_x64.dll" />
+    <None Include="PhysX3GpuDEBUG_x64.dll" />
+    <None Include="PhysXDevice64.dll" />
     <None Include="PxFoundationDEBUG_x64.dll" />
     <None Include="PxPvdSDKDEBUG_x64.dll" />
+    <None Include="nvToolsExt64_1.dll" />
   </ItemGroup>
 </Project>
