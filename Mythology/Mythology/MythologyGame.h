@@ -7,6 +7,7 @@
 #include "GameEngine/Component/Cameras/CameraComponent.h"
 #include "GameEngine/Geometry/Animation/Armature.h"
 #include "GameEngine/Component/Meshes/SkinnedMeshComponent.h"
+#include "GameEngine/Physics/PhysicsManager.h"
 
 namespace Common 
 {
@@ -40,6 +41,8 @@ namespace Mythology
 	private:
 		std::shared_ptr<GameEngine::IFileSystem> m_fileSystem;
 		std::shared_ptr<GameEngine::GameManager> m_gameManager;
+		std::shared_ptr<GameEngine::PhysicsManager> m_physicsManager;
+		GameEngine::PhysicsScene m_physicsScene;
 		
 		std::unordered_map<std::string, std::shared_ptr<GameEngine::BaseMeshComponent>> m_meshes;
 		std::unordered_map<std::string, std::shared_ptr<GameEngine::SkinnedMeshComponent>> m_skinnedMeshes;

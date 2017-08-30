@@ -18,7 +18,9 @@ using namespace Mythology;
 using namespace GameEngine;
 
 MythologyGame::MythologyGame(const std::shared_ptr<IFileSystem>& fileSystem) :
-	m_fileSystem(fileSystem)
+	m_fileSystem(fileSystem),
+	m_physicsManager(std::make_shared<PhysicsManager>()),
+	m_physicsScene(m_physicsManager->CreateScene())
 {
 	Initialize();
 }
@@ -156,6 +158,8 @@ void MythologyGame::ProcessInput()
 }
 void MythologyGame::FixedUpdate(const Common::Timer& timer)
 {
+	m_physicsScene.FixedUpdate(timer);
+
 	m_gameManager->FixedUpdate(timer);
 }
 void MythologyGame::FrameUpdate(const Common::Timer& timer)

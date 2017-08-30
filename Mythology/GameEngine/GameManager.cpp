@@ -8,8 +8,7 @@
 using namespace Common;
 using namespace GameEngine;
 
-GameManager::GameManager() :
-	m_physicsManager(std::make_shared<PhysicsManager>())
+GameManager::GameManager()
 {
 }
 
