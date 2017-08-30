@@ -3,6 +3,7 @@
 #include "Component/Transforms/TransformComponent.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
+#include "Physics/PhysicsManager.h"
 
 namespace Common
 {
@@ -26,6 +27,7 @@ namespace GameEngine
 		Mouse& GetMouse() { return m_mouse; }
 
 	private:
+		std::shared_ptr<PhysicsManager> m_physicsManager;
 		Keyboard m_keyboard;
 		Mouse m_mouse;
 	};

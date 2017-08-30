@@ -203,6 +203,9 @@ xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.d
     <None Include="PxFoundationDEBUG_x64.dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="PxPvdSDKDEBUG_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="WindowsApp_TemporaryKey.pfx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

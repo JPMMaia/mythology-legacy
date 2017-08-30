@@ -58,5 +58,6 @@
     <None Include="PhysX3CommonDEBUG_x64.dll" />
     <None Include="PhysX3DEBUG_x64.dll" />
     <None Include="PxFoundationDEBUG_x64.dll" />
+    <None Include="PxPvdSDKDEBUG_x64.dll" />
   </ItemGroup>
 </Project>
