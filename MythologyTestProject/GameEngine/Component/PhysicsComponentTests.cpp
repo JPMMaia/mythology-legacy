@@ -12,6 +12,24 @@ namespace MythologyTestProject
 {
 	TEST_CLASS(PhysicsComponentTests)
 	{
+	private:
+		bool AreEqual(const PxTransform& pxTransform, const Eigen::Affine3f& eigenTransform)
+		{
+			auto pxMatrix = PxMat44(pxTransform);
+			auto eigenMatrix = eigenTransform.matrix();
+
+			for (auto i = 0; i < 4; ++i)
+			{
+				for (auto j = 0; j < 4; ++j)
+				{
+					if (pxMatrix(i, j) != eigenMatrix(i, j))
+						return false;
+				}
+			}
+
+			return true;
+		}
+
 	public:
 		TEST_METHOD(PhysicsComponentTest1)
 		{
@@ -51,7 +69,8 @@ namespace MythologyTestProject
 			Assert::IsFalse(body->getGlobalPose() == PxTransform(PxVec3(0.0f, 0.0f, 0.0f)));
 			Assert::IsFalse(object.GetTransform().GetWorldTransform().isApprox(Eigen::Affine3f::Identity()));
 
-			// TODO Check that both game object and rigid transforms are equal:
+			// Check that both game object and rigid transforms are equal:
+			Assert::IsTrue(AreEqual(body->getGlobalPose(), object.GetTransform().GetWorldTransform()));
 		}
 	};
 }
