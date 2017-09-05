@@ -180,6 +180,10 @@ TransformComponent::TransformType TransformComponent::GetWorldTransform() const
 {
 	return CalculateParentsTransform() * CalculateLocalTransform();
 }
+void TransformComponent::SetWorldTransform(const TransformType& worldTransform)
+{
+	throw std::runtime_error("TODO test and implement");
+}
 
 TransformComponent::TransformType TransformComponent::CalculateLocalTransform() const
 {

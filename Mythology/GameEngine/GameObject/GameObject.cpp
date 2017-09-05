@@ -4,13 +4,17 @@
 using namespace GameEngine;
 
 GameObject::GameObject() :
-	m_transform(new TransformComponent)
+	m_physics(PhysicsComponent::CreateSharedPointer())
+{
+}
+GameObject::GameObject(const std::shared_ptr<PhysicsComponent>& physics) :
+	m_physics(physics)
 {
 }
 
 void GameObject::AddComponent(const std::string& name, IComponentPointerCR component, bool worldTransformStays)
 {
-	component->SetParent(m_transform, worldTransformStays);
+	component->SetParent(m_physics->GetTransform(), worldTransformStays);
 	m_components.emplace(name, component);
 }
 void GameObject::RemoveComponent(const std::string& name, bool worldTransformStays)
@@ -34,9 +38,9 @@ bool GameObject::HasComponent(const std::string& name) const
 
 const TransformComponent& GameObject::GetTransform() const
 {
-	return *m_transform;
+	return *m_physics->GetTransform();
 }
 TransformComponent& GameObject::GetTransform()
 {
-	return *m_transform;
+	return *m_physics->GetTransform();
 }

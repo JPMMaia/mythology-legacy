@@ -50,12 +50,8 @@ namespace MythologyTestProject
 			body->addForce(PxVec3(0.0f, 1.0f, 0.0f));
 			scene->addActor(*body);
 
-			// TODO associate physics component with rigid actor:
-			auto physicsComponent = PhysicsComponent::CreateSharedPointer();
-
-			// Create game object and add physics component:
+			// Create game object:
 			GameObject object;
-			object.AddComponent("Physics", physicsComponent);
 			
 			// Ensure that both game object and rigid body transforms are the identity:
 			Assert::IsTrue(body->getGlobalPose() == PxTransform(PxVec3(0.0f, 0.0f, 0.0f)));

@@ -60,6 +60,7 @@ namespace GameEngine
 		void UnsetParent(bool worldTransformStays = false) override;
 
 		TransformType GetWorldTransform() const;
+		void SetWorldTransform(const TransformType& worldTransform);
 
 	private:
 		TransformType CalculateLocalTransform() const;

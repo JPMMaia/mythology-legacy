@@ -7,4 +7,12 @@ namespace GameEngine
 
 	template<typename T>
 	using PhysXSharedPointer = std::unique_ptr<T, std::function<void(T*)>>;
+
+	namespace PhysicsUtilities
+	{
+		Eigen::Affine3f PhysXToEigenTransform(const physx::PxTransform& pxTransform)
+		{
+			throw std::runtime_error("TODO");
+		}
+	}
 }

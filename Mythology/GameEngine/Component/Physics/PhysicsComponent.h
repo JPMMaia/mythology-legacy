@@ -10,7 +10,13 @@ namespace GameEngine
 	{
 	public:
 		PhysicsComponent();
+		explicit PhysicsComponent(physx::PxRigidActor* rigidActor);
 
+	public:
+		const std::shared_ptr<TransformComponent>& GetTransform() const;
 
+	private:
+		std::shared_ptr<TransformComponent> m_transform;
+		physx::PxRigidActor* m_rigidActor;
 	};
 }
