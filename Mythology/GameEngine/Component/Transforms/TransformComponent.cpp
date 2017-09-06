@@ -176,16 +176,7 @@ void TransformComponent::UnsetParent(bool worldTransformStays)
 	SetParent({}, worldTransformStays);
 }
 
-TransformComponent::TransformType TransformComponent::GetWorldTransform() const
-{
-	return CalculateParentsTransform() * CalculateLocalTransform();
-}
-void TransformComponent::SetWorldTransform(const TransformType& worldTransform)
-{
-	throw std::runtime_error("TODO test and implement");
-}
-
-TransformComponent::TransformType TransformComponent::CalculateLocalTransform() const
+TransformComponent::TransformType TransformComponent::GetLocalTransform() const
 {
 	auto transform(TransformType::Identity());
 	transform.translate(m_localPosition);
@@ -193,6 +184,40 @@ TransformComponent::TransformType TransformComponent::CalculateLocalTransform() 
 	transform.scale(m_localScaling);
 	return transform;
 }
+void TransformComponent::SetLocalTransform(const TransformType& localTransform)
+{
+	// Apply rotation and scaling:
+	Matrix3f rotationMatrix, scalingMatrix;
+	localTransform.computeRotationScaling(&rotationMatrix, &scalingMatrix);
+	m_localScaling = scalingMatrix.diagonal();
+	m_localRotation = Eigen::AngleAxis<float>(rotationMatrix);
+
+	// Apply translation:
+	m_localPosition = localTransform.translation();
+
+	assert(GetLocalTransform().isApprox(localTransform));
+}
+
+TransformComponent::TransformType TransformComponent::GetWorldTransform() const
+{
+	return CalculateParentsTransform() * GetLocalTransform();
+}
+void TransformComponent::SetWorldTransform(const TransformType& worldTransform)
+{
+	auto localTransform = worldTransform;
+	if (!m_parent.expired())
+	{
+		// Get the parent's world transform:
+		auto parentWorldTransform = m_parent.lock()->GetWorldTransform();
+
+		// Apply parent's transform to calculate the local transform:
+		localTransform = parentWorldTransform.inverse() * localTransform;
+	}
+
+	// Set local transform:
+	SetLocalTransform(localTransform);
+}
+
 TransformComponent::TransformType TransformComponent::CalculateParentsTransform() const
 {
 	auto transform(TransformType::Identity());
@@ -203,7 +228,7 @@ TransformComponent::TransformType TransformComponent::CalculateParentsTransform(
 
 		TransformType parentTransform;
 		if (parent->GetParent().expired())
-			parentTransform = parent->CalculateLocalTransform();
+			parentTransform = parent->GetLocalTransform();
 		else
 			parentTransform = parent->CalculateParentsTransform();
 
@@ -221,17 +246,9 @@ void TransformComponent::UpdateTransformValuesToHoldWorldTransform(const std::sh
 	if (isNewParent)
 		parentWorldTransform = parentWorldTransform.inverse();
 
-	// Apply parent's transform:
-	auto localTransform = parentWorldTransform * CalculateLocalTransform();
+	// Apply parent's transform to calculate the local transform:
+	auto localTransform = parentWorldTransform * GetLocalTransform();
 
-	// Apply rotation and scaling:
-	Matrix3f rotationMatrix, scalingMatrix;
-	localTransform.computeRotationScaling(&rotationMatrix, &scalingMatrix);
-	m_localScaling = scalingMatrix.diagonal();
-	m_localRotation = Eigen::AngleAxis<float>(rotationMatrix);
-
-	// Apply translation:
-	m_localPosition = localTransform.translation();
-
-	assert(CalculateLocalTransform().isApprox(localTransform));
+	// Set local transform:
+	SetLocalTransform(localTransform);
 }

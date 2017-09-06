@@ -51,7 +51,7 @@ namespace MythologyTestProject
 			scene->addActor(*body);
 
 			// Create game object:
-			GameObject object;
+			GameObject object(PhysicsComponent::CreateSharedPointer(body));
 			
 			// Ensure that both game object and rigid body transforms are the identity:
 			Assert::IsTrue(body->getGlobalPose() == PxTransform(PxVec3(0.0f, 0.0f, 0.0f)));

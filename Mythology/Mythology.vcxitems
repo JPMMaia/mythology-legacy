@@ -136,6 +136,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsUtilities.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\MythologyGame.cpp">
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>

@@ -10,9 +10,6 @@ namespace GameEngine
 
 	namespace PhysicsUtilities
 	{
-		Eigen::Affine3f PhysXToEigenTransform(const physx::PxTransform& pxTransform)
-		{
-			throw std::runtime_error("TODO");
-		}
+		Eigen::Affine3f PhysXToEigenTransform(const physx::PxTransform& pxTransform);
 	}
 }

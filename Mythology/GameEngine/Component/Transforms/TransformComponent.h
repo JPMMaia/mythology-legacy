@@ -59,11 +59,13 @@ namespace GameEngine
 		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldTransformStays = false) override;
 		void UnsetParent(bool worldTransformStays = false) override;
 
+		TransformType GetLocalTransform() const;
+		void SetLocalTransform(const TransformType& localTransform);
+
 		TransformType GetWorldTransform() const;
 		void SetWorldTransform(const TransformType& worldTransform);
 
 	private:
-		TransformType CalculateLocalTransform() const;
 		TransformType CalculateParentsTransform() const;
 		void UpdateTransformValuesToHoldWorldTransform(const std::shared_ptr<TransformComponent>& parent, bool isNewParent);
 
