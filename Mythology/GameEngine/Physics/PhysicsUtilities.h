@@ -10,6 +10,24 @@ namespace GameEngine
 
 	namespace PhysicsUtilities
 	{
+		template<typename T>
+		PhysXUniquePointer<T> MakeUniquePointer(T* rawPointer)
+		{
+			return PhysXUniquePointer<T>(rawPointer, [](T* pointer)
+			{
+				pointer->release();
+			});
+		}
+
+		template<typename T>
+		PhysXSharedPointer<T> MakeSharedPointer(T* rawPointer)
+		{
+			return PhysXSharedPointer<T>(rawPointer, [](T* pointer)
+			{
+				pointer->release();
+			});
+		}
+
 		Eigen::Affine3f PhysXToEigenTransform(const physx::PxTransform& pxTransform);
 	}
 }
