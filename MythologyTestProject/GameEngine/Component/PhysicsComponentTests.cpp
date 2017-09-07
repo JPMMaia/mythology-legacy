@@ -40,13 +40,10 @@ namespace MythologyTestProject
 			// Create shape and material:
 			auto material = physics->createMaterial(0.5f, 0.5f, 0.6f);
 			auto halfExtent = 1.0f;
-			auto shape = PhysicsUtilities::MakeUniquePointer<physx::PxShape>(physics->createShape(PxBoxGeometry(halfExtent, halfExtent, halfExtent), *material));
-
+			auto shape = physics->createShape(PxBoxGeometry(halfExtent, halfExtent, halfExtent), *material);
+			
 			// Create rigid dynamic:
-			PxTransform transform(PxVec3(0.0f, 0.0f, 0.0f));
-			auto body = physics->createRigidDynamic(transform);
-			body->attachShape(*shape);
-			PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
+			auto body = PhysicsUtilities::CreateRigidDynamic(*physics, PxTransform(PxVec3(0.0f, 0.0f, 0.0f)), *shape, 10.0f);
 			body->addForce(PxVec3(0.0f, 1.0f, 0.0f));
 			scene->addActor(*body);
 

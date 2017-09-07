@@ -17,3 +17,11 @@ Affine3f PhysicsUtilities::PhysXToEigenTransform(const PxTransform & pxTransform
 
 	return Affine3f(eigenMatrix);
 }
+
+PhysXSharedPointer<physx::PxRigidDynamic> PhysicsUtilities::CreateRigidDynamic(PxPhysics& physics, const PxTransform& transform, PxShape& shape, float mass)
+{
+	auto body = MakeSharedPointer<physx::PxRigidDynamic>(physics.createRigidDynamic(transform));
+	body->attachShape(shape);
+	PxRigidBodyExt::updateMassAndInertia(*body, mass);
+	return body;
+}

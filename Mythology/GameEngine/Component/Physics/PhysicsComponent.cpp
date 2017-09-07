@@ -10,7 +10,7 @@ PhysicsComponent::PhysicsComponent() :
 	m_rigidActor(nullptr)
 {
 }
-PhysicsComponent::PhysicsComponent(physx::PxRigidActor* rigidActor) :
+PhysicsComponent::PhysicsComponent(const PhysXSharedPointer<physx::PxRigidActor>& rigidActor) :
 	m_transform(std::make_shared<TransformComponent>()),
 	m_rigidActor(rigidActor)
 {

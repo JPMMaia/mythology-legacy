@@ -6,7 +6,7 @@ namespace GameEngine
 	using PhysXUniquePointer = std::unique_ptr<T, std::function<void(T*)>>;
 
 	template<typename T>
-	using PhysXSharedPointer = std::unique_ptr<T, std::function<void(T*)>>;
+	using PhysXSharedPointer = std::shared_ptr<T>;
 
 	namespace PhysicsUtilities
 	{
@@ -29,5 +29,7 @@ namespace GameEngine
 		}
 
 		Eigen::Affine3f PhysXToEigenTransform(const physx::PxTransform& pxTransform);
+
+		PhysXSharedPointer<physx::PxRigidDynamic> CreateRigidDynamic(physx::PxPhysics& physics, const physx::PxTransform& transform, physx::PxShape& shape, float mass);
 	}
 }
