@@ -70,3 +70,8 @@ const PhysicsManager::SharedPointer<physx::PxPhysics>& PhysicsManager::GetPhysic
 {
 	return m_physics;
 }
+
+physx::PxPhysics * GameEngine::PhysicsManager::operator->()
+{
+	return m_physics.get();
+}

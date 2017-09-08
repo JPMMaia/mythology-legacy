@@ -14,13 +14,13 @@
 
 using namespace Common;
 using namespace Eigen;
-using namespace Mythology;
 using namespace GameEngine;
+using namespace Mythology;
+using namespace physx;
 
 MythologyGame::MythologyGame(const std::shared_ptr<IFileSystem>& fileSystem) :
 	m_fileSystem(fileSystem),
-	m_physicsManager(std::make_shared<PhysicsManager>()),
-	m_physicsScene(m_physicsManager->CreateScene())
+	m_physicsScene(m_physicsManager.CreateScene())
 {
 	Initialize();
 }
@@ -28,6 +28,8 @@ MythologyGame::MythologyGame(const std::shared_ptr<IFileSystem>& fileSystem) :
 void MythologyGame::Initialize()
 {
 	m_gameManager = std::make_shared<GameEngine::GameManager>();
+
+	auto physicsMaterial = m_physicsManager->createMaterial(0.5f, 0.5f, 0.6f);
 
 	// Meshes:
 	{
@@ -111,8 +113,12 @@ void MythologyGame::Initialize()
 
 	// Floor:
 	{
+		auto physicsPlane = PhysicsUtilities::MakeSharedPointer<PxRigidStatic>(PxCreatePlane(*m_physicsManager.GetPhysics(), PxPlane(0, 1, 0, 0), *physicsMaterial));
+		physicsPlane->setGlobalPose(PxTransform(PxQuat(static_cast<float>(-M_PI_2), PxVec3(1.0f, 0.0f, 0.0f))));
+		m_physicsScene->addActor(*physicsPlane);
+		m_floor = GameObject(PhysicsComponent::CreateSharedPointer(physicsPlane));
+
 		auto instance = m_meshes.at("Floor")->CreateInstance(m_materials.at("Wood"));
-		instance->GetTransform().SetWorldRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
 		m_floor.AddComponent("Mesh", instance);
 	}
 
@@ -150,6 +156,13 @@ void MythologyGame::Initialize()
 
 		m_skinnedMeshes.emplace(modelName, skinnedMeshComponent);
 	}
+
+	// Stacks:
+	{
+		auto stackZ = 10.0f;
+		for (std::size_t i = 0; i < 5; ++i)
+			CreateStack(PxTransform(PxVec3(0, 0, stackZ -= 10.0f)), 10, *physicsMaterial);
+	}
 }
 
 void MythologyGame::ProcessInput()
@@ -158,7 +171,7 @@ void MythologyGame::ProcessInput()
 }
 void MythologyGame::FixedUpdate(const Common::Timer& timer)
 {
-	m_physicsScene.FixedUpdate(timer);
+	//m_physicsScene.FixedUpdate(timer);
 
 	m_gameManager->FixedUpdate(timer);
 }
@@ -200,4 +213,34 @@ std::shared_ptr<GameManager> MythologyGame::GameManager() const
 GameObject::PointerType<CameraComponent> MythologyGame::GetMainCamera() const
 {
 	return m_person.GetComponent<CameraComponent>("Camera");
+}
+
+void MythologyGame::CreateStack(const physx::PxTransform& transform, std::size_t size, const physx::PxMaterial& material)
+{
+	// Create shape and material:
+	auto halfExtent = 0.5f;
+	auto shape = PhysicsUtilities::MakeSharedPointer<PxShape>(
+		m_physicsManager->createShape(PxBoxGeometry(halfExtent, halfExtent, halfExtent), material)
+		);
+
+	for (std::size_t i = 0; i < size; ++i)
+	{
+		for (std::size_t j = 0; j < size; ++j)
+		{
+			// Calculate the local transform:
+			PxTransform localTransform(PxVec3(PxReal(j * 2) - PxReal(size - i), PxReal(i * 2 + 1), 0) * halfExtent);
+
+			// Create rigid dynamic:
+			auto body = PhysicsUtilities::CreateRigidDynamic(*m_physicsManager.GetPhysics(), transform.transform(localTransform), *shape, 10.0f);
+			m_physicsScene->addActor(*body);
+
+			// Create box with physics component:
+			GameObject boxObject(PhysicsComponent::CreateSharedPointer(body));
+
+			// Add mesh to the object:
+			boxObject.AddComponent("Mesh", m_meshes.at("Box")->CreateInstance(m_materials.at("Wood")));
+
+			m_boxes.emplace_back(boxObject);
+		}
+	}
 }

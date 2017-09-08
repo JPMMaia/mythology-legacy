@@ -39,9 +39,13 @@ namespace Mythology
 		GameEngine::GameObject::PointerType<GameEngine::CameraComponent> GetMainCamera() const;
 
 	private:
+		void CreateStack(const physx::PxTransform & transform, std::size_t size, const physx::PxMaterial& material);
+
+
+	private:
 		std::shared_ptr<GameEngine::IFileSystem> m_fileSystem;
 		std::shared_ptr<GameEngine::GameManager> m_gameManager;
-		std::shared_ptr<GameEngine::PhysicsManager> m_physicsManager;
+		GameEngine::PhysicsManager m_physicsManager;
 		GameEngine::PhysicsScene m_physicsScene;
 		
 		std::unordered_map<std::string, std::shared_ptr<GameEngine::BaseMeshComponent>> m_meshes;
@@ -52,5 +56,6 @@ namespace Mythology
 		GameEngine::GameObject m_floor;
 		GameEngine::GameObject m_axis;
 		GameEngine::GameObject m_box;
+		std::deque<GameEngine::GameObject> m_boxes;
 	};
 }

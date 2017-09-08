@@ -22,6 +22,9 @@ namespace GameEngine
 	public:
 		const SharedPointer<physx::PxPhysics>& GetPhysics() const;
 
+	public:
+		physx::PxPhysics* operator->();
+
 	private:
 		UniquePointer<physx::PxFoundation> m_foundation;
 #if defined(_DEBUG)
