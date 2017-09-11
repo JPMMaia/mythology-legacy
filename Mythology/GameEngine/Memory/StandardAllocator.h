@@ -115,7 +115,7 @@ namespace GameEngine
 
 		StandardAllocatorIterator(const typename std::deque<StandardAllocatorNode<T>>::iterator& begin, const typename std::deque<StandardAllocatorNode<T>>::iterator& end)
 			: m_location(begin),
-			  m_end(end)
+			m_end(end)
 		{
 		}
 
@@ -143,8 +143,7 @@ namespace GameEngine
 			do
 			{
 				++m_location;
-			}
-			while (m_location != m_end && !m_location->IsInitialized());
+			} while (m_location != m_end && !m_location->IsInitialized());
 
 			return *this;
 		}
@@ -211,7 +210,8 @@ namespace GameEngine
 			{
 				return o.GetElement() == p;
 			});
-			assert(node != m_storage.end());
+			if (node == m_storage.end())
+				return;
 
 			// Signal that the node will be used to store a reference to the next node:
 			node->Shutdown();

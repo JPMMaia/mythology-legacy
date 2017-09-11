@@ -1,7 +1,6 @@
 #pragma once
 
 #include "AnimationClip.h"
-#include "Libraries/Eigen/Geometry"
 
 #include <unordered_map>
 

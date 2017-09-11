@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Armature.h"
 
 using namespace GameEngine;

@@ -1,18 +1,23 @@
 #pragma once
 
-#include "GameEngine/Component/IComponent.h"
+#include "GameEngine/Component/Base/BaseComponent.h"
 #include "GameEngine/Component/Transforms/TransformComponent.h"
+#include "GameEngine/Memory/UseStorage.h"
+#include "GameEngine/Physics/PhysicsUtilities.h"
 
 namespace GameEngine
 {
-	class PhysicsComponent : public IComponent
+	class PhysicsComponent : public BaseComponent, public UseStorage<PhysicsComponent>
 	{
 	public:
-		void FixedUpdate(const Common::Timer& timer) override;
+		PhysicsComponent();
+		explicit PhysicsComponent(const PhysXSharedPointer<physx::PxRigidActor>& rigidActor);
 
-		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldPositionStays) override;
+	public:
+		const std::shared_ptr<TransformComponent>& GetTransform() const;
 
 	private:
-		TransformComponent m_transform;
+		std::shared_ptr<TransformComponent> m_transform;
+		std::shared_ptr<physx::PxRigidActor> m_rigidActor;
 	};
 }

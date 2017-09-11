@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Libraries/Eigen/Geometry"
-
 namespace GameEngine
 {
 	template<typename ValueTypeT>

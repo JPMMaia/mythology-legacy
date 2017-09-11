@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "TasksComponent.h"
 
 using namespace Common;

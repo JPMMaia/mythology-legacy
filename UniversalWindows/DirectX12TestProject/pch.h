@@ -9,3 +9,5 @@
 #include <ppltasks.h>
 
 #include "UnitTestApp.xaml.h"
+
+#include "MythologyAPI.h"

@@ -4,6 +4,7 @@
 //
 
 #include "pch.h"
+#include "UnitTestApp.xaml.h"
 
 using namespace DirectX12TestProject;
 

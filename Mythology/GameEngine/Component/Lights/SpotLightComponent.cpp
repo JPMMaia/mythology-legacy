@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "SpotLightComponent.h"
 
 using namespace GameEngine;

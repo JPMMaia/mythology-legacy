@@ -1,4 +1,6 @@
+#include "pch.h"
 #include "StandardMaterial.h"
+
 #include <set>
 
 using namespace GameEngine;

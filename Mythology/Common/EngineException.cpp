@@ -1,4 +1,5 @@
-﻿#include "Common/EngineException.h"
+﻿#include "pch.h"
+#include "Common/EngineException.h"
 
 #ifdef _DEBUG
 #include <Windows.h>

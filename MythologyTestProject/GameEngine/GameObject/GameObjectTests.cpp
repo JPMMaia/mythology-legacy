@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "CppUnitTest.h"
 #include "GameEngine/GameObject/GameObject.h"
 #include "GameEngine/Component/Lights/PointLightComponent.h"

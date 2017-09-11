@@ -2,8 +2,6 @@
 
 #include <array>
 
-#include "Libraries/Eigen/Geometry"
-
 namespace DirectX12Engine
 {
 	namespace ShaderBufferTypes

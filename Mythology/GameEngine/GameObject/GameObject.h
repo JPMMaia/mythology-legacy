@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "GameEngine/Component/IComponent.h"
-#include "GameEngine/Component/Transforms/TransformComponent.h"
+#include "GameEngine/Component/Physics/PhysicsComponent.h"
 
 #include <unordered_map>
 
@@ -17,6 +17,7 @@ namespace GameEngine
 
 	public:
 		GameObject();
+		explicit GameObject(const std::shared_ptr<PhysicsComponent>& physics);
 
 	public:
 		void AddComponent(const std::string& name, IComponentPointerCR component, bool worldTransformStays = false);
@@ -37,7 +38,7 @@ namespace GameEngine
 		TransformComponent& GetTransform();
 
 	private:
-		std::shared_ptr<TransformComponent> m_transform;
+		std::shared_ptr<PhysicsComponent> m_physics;
 		std::unordered_map<std::string, std::shared_ptr<IComponent>> m_components;
 	};
 }

@@ -2,9 +2,6 @@
 
 #include "GameEngine/Component/IComponent.h"
 
-#include "Libraries/Eigen/Core"
-#include "Libraries/Eigen/Geometry"
-
 #include <memory>
 #include <unordered_map>
 
@@ -62,10 +59,13 @@ namespace GameEngine
 		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldTransformStays = false) override;
 		void UnsetParent(bool worldTransformStays = false) override;
 
+		TransformType GetLocalTransform() const;
+		void SetLocalTransform(const TransformType& localTransform);
+
 		TransformType GetWorldTransform() const;
+		void SetWorldTransform(const TransformType& worldTransform);
 
 	private:
-		TransformType CalculateLocalTransform() const;
 		TransformType CalculateParentsTransform() const;
 		void UpdateTransformValuesToHoldWorldTransform(const std::shared_ptr<TransformComponent>& parent, bool isNewParent);
 
@@ -76,6 +76,8 @@ namespace GameEngine
 		Vector3Type m_localPosition;
 		QuaternionType m_localRotation;
 		Vector3Type m_localScaling;
+		mutable bool m_isDirty;
+		mutable TransformType m_worldTransform;
 
 		std::weak_ptr<TransformComponent> m_parent;
 		std::unordered_map<IDType, std::weak_ptr<TransformComponent>> m_children;

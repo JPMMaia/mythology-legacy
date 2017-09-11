@@ -1,4 +1,5 @@
-﻿#include "Mouse.h"
+﻿#include "pch.h"
+#include "Mouse.h"
 
 using namespace GameEngine;
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "CppUnitTest.h"
 #include "GameEngine/Component/Transforms/TransformComponent.h"
 
@@ -198,6 +198,21 @@ namespace MythologyTestProject
 				Assert::IsTrue(t1->GetLocalRotation().isApprox(Quaternionf(AngleAxisf(pi, Vector3f::UnitZ()))));
 				Assert::IsTrue(t1->GetWorldPosition().isApprox(Vector3f(1.0f, -1.0f, 0.0f)));
 				Assert::IsTrue(t1->GetLocalPosition().isApprox(Vector3f(1.0f, 1.0f, 0.0f)));
+			}
+
+			// Test set world transform:
+			{
+				auto parent = std::make_shared<TransformComponent>();
+				parent->SetLocalPosition(Vector3f(1.0f, 2.0f, 3.0f));
+				parent->SetLocalRotation(Quaternionf(AngleAxisf(-pi / 2.0f, Vector3f::UnitZ())));
+
+				auto t1 = std::make_shared<TransformComponent>();
+				t1->SetLocalPosition({ 1.0f, 1.0f, 1.0f });
+				t1->SetLocalRotation(Quaternionf(AngleAxisf(-pi / 2.0f, Vector3f::UnitZ())));
+				t1->SetParent(parent, false);
+				
+				t1->SetWorldTransform(Affine3f::Identity());
+				Assert::IsTrue(t1->GetWorldTransform().isApprox(Affine3f::Identity()));
 			}
 		}
 

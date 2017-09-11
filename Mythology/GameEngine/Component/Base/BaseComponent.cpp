@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "BaseComponent.h"
 
 using namespace GameEngine;
