@@ -405,28 +405,28 @@ void StandardScene::UpdateInstancesBuffers()
 template<class MeshType>
 void StandardScene::UpdateInstancesBuffer()
 {
-	std::for_each(MeshType::begin(), MeshType::end(), [this](auto& mesh)
+	for (auto meshIt = MeshType::begin(); meshIt != MeshType::end(); ++meshIt)
 	{
-		auto renderItem = m_renderItemsPerGeometry.at(mesh.GetName());
-		renderItem->SetInstanceCount(mesh.GetInstanceCount());
+		auto renderItem = m_renderItemsPerGeometry.at(meshIt->GetName());
+		renderItem->SetInstanceCount(meshIt->GetInstanceCount());
 
 		std::size_t index = 0;
-		std::for_each(mesh.InstancesBegin(), mesh.InstancesEnd(), [this, &index, &renderItem](auto& instance)
+		for (auto instanceIt = meshIt->InstancesBegin(); instanceIt != meshIt->InstancesEnd(); ++instanceIt)
 		{
 			ShaderBufferTypes::InstanceData shaderData;
 
 			// Update material index:
-			shaderData.MaterialIndex = m_materialIndices.at(instance.GetMaterial()->GetName());
+			shaderData.MaterialIndex = m_materialIndices.at(instanceIt->GetMaterial()->GetName());
 
 			// Update model matrix:
-			shaderData.ModelMatrix = instance.GetTransform().GetWorldTransform();
+			shaderData.ModelMatrix = instanceIt->GetTransform().GetWorldTransform();
 
 			// Update render item instance:
 			renderItem->UpdateInstance(index++, shaderData);
-		});
+		}
 
 		++renderItem;
-	});
+	}
 }
 template<>
 void StandardScene::UpdateInstancesBuffer<SkinnedMeshComponent>()

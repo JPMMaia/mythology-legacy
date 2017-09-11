@@ -76,6 +76,8 @@ namespace GameEngine
 		Vector3Type m_localPosition;
 		QuaternionType m_localRotation;
 		Vector3Type m_localScaling;
+		mutable bool m_isDirty;
+		mutable TransformType m_worldTransform;
 
 		std::weak_ptr<TransformComponent> m_parent;
 		std::unordered_map<IDType, std::weak_ptr<TransformComponent>> m_children;

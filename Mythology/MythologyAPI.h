@@ -27,4 +27,10 @@
 #pragma comment(lib, "PxFoundationDEBUG_x64.lib")
 #pragma comment(lib, "PhysX3ExtensionsDEBUG.lib")
 #pragma comment(lib, "PxPvdSDKDEBUG_x64.lib")
+#else
+#pragma comment(lib, "PhysX3PROFILE_x64.lib")
+#pragma comment(lib, "PhysX3CommonPROFILE_x64.lib")
+#pragma comment(lib, "PxFoundationPROFILE_x64.lib")
+#pragma comment(lib, "PhysX3ExtensionsPROFILE.lib")
+#pragma comment(lib, "PxPvdSDKPROFILE_x64.lib")
 #endif

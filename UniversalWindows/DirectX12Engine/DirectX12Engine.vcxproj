@@ -113,7 +113,7 @@
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)Libraries\DirectXTK12\Include;$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Include;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USING_DIRECTX;USING_WINDOWS;NOMINMAX;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USING_DIRECTX;USING_WINDOWS;NOMINMAX;_USE_MATH_DEFINES;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -157,7 +157,7 @@
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)Libraries\DirectXTK12\Include;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\Eigen\Include;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USING_DIRECTX;USING_WINDOWS;NOMINMAX;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USING_DIRECTX;USING_WINDOWS;NOMINMAX;_USE_MATH_DEFINES;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

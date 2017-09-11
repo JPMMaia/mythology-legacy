@@ -133,6 +133,9 @@ xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.d
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)UniversalWindows\DirectX12Engine\Shaders" "$(LayoutDir)\Shaders\" /E /Y</Command>
     </PostBuildEvent>
+    <PreLinkEvent>
+      <Command>xcopy /Y /S "$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"</Command>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
@@ -148,9 +151,11 @@ xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.d
       <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)UniversalWindows\DirectX12Engine\Shaders" "$(LayoutDir)\Shaders\" /E /Y
-xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"</Command>
+      <Command>xcopy "$(SolutionDir)UniversalWindows\DirectX12Engine\Shaders" "$(LayoutDir)\Shaders\" /E /Y</Command>
     </PostBuildEvent>
+    <PreLinkEvent>
+      <Command>xcopy /Y /S "$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"</Command>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Image Include="Assets\LockScreenLogo.scale-200.png" />
@@ -200,7 +205,16 @@ xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.d
     <None Include="PhysX3CharacterKinematicDEBUG_x64.dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="PhysX3CharacterKinematicPROFILE_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="PhysX3CommonDEBUG_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PhysX3CommonPROFILE_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PhysX3CookingPROFILE_x64.dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="PhysX3DEBUG_x64.dll">
@@ -209,13 +223,25 @@ xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.d
     <None Include="PhysX3GpuDEBUG_x64.dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="PhysX3GpuPROFILE_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PhysX3PROFILE_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="PhysXDevice64.dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="PxFoundationDEBUG_x64.dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="PxFoundationPROFILE_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="PxPvdSDKDEBUG_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PxPvdSDKPROFILE_x64.dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="WindowsApp_TemporaryKey.pfx" />

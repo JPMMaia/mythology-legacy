@@ -10,14 +10,16 @@ TransformComponent::TransformComponent() :
 	m_id(s_count++),
 	m_localPosition(Vector3Type::Zero()),
 	m_localRotation(QuaternionType::Identity()),
-	m_localScaling(Vector3Type(1.0f, 1.0f, 1.0f))
+	m_localScaling(Vector3Type(1.0f, 1.0f, 1.0f)),
+	m_isDirty(true)
 {
 }
 TransformComponent::TransformComponent(Vector3CRType localPosition, QuaternionCRType localRotation, Vector3CRType localScaling) :
 	m_id(s_count++),
 	m_localPosition(localPosition),
 	m_localRotation(localRotation),
-	m_localScaling(localScaling)
+	m_localScaling(localScaling),
+	m_isDirty(true)
 {
 }
 
@@ -28,6 +30,7 @@ void TransformComponent::FixedUpdate(const Common::Timer& timer)
 void TransformComponent::Move(Vector3CRType axis, float scalar)
 {
 	m_localPosition += scalar * axis;
+	m_isDirty = true;
 }
 void TransformComponent::MoveLocalX(float scalar)
 {
@@ -45,6 +48,7 @@ void TransformComponent::MoveLocalZ(float scalar)
 void TransformComponent::Rotate(Vector3CRType axis, float radians)
 {
 	m_localRotation *= QuaternionType(AngleAxisf(radians, axis));
+	m_isDirty = true;
 }
 void TransformComponent::RotateLocalX(float radians)
 {
@@ -82,6 +86,7 @@ const TransformComponent::Vector3Type& TransformComponent::GetLocalPosition() co
 void TransformComponent::SetLocalPosition(Vector3CRType localPosition)
 {
 	m_localPosition = localPosition;
+	m_isDirty = true;
 }
 
 const TransformComponent::QuaternionType& TransformComponent::GetLocalRotation() const
@@ -92,6 +97,7 @@ void TransformComponent::SetLocalRotation(QuaternionCRType localRotation)
 {
 	m_localRotation = localRotation;
 	m_localRotation.normalize();
+	m_isDirty = true;
 }
 
 const TransformComponent::Vector3Type& TransformComponent::GetLocalScaling() const
@@ -101,6 +107,7 @@ const TransformComponent::Vector3Type& TransformComponent::GetLocalScaling() con
 void TransformComponent::SetLocalScaling(Vector3CRType localScaling)
 {
 	m_localScaling = localScaling;
+	m_isDirty = true;
 }
 
 TransformComponent::Vector3Type TransformComponent::GetWorldPosition() const
@@ -170,6 +177,8 @@ void TransformComponent::SetParent(const std::weak_ptr<TransformComponent>& pare
 		if (worldTransformStays)
 			UpdateTransformValuesToHoldWorldTransform(newParent, true);
 	}
+
+	m_isDirty = true;
 }
 void TransformComponent::UnsetParent(bool worldTransformStays)
 {
@@ -196,14 +205,25 @@ void TransformComponent::SetLocalTransform(const TransformType& localTransform)
 	m_localPosition = localTransform.translation();
 
 	assert(GetLocalTransform().isApprox(localTransform));
+
+	m_isDirty = true;
 }
 
 TransformComponent::TransformType TransformComponent::GetWorldTransform() const
 {
-	return CalculateParentsTransform() * GetLocalTransform();
+	if (m_isDirty)
+	{
+		m_worldTransform = CalculateParentsTransform() * GetLocalTransform();
+		m_isDirty = false;
+	}
+
+	return m_worldTransform;
 }
 void TransformComponent::SetWorldTransform(const TransformType& worldTransform)
 {
+	if (m_worldTransform.isApprox(worldTransform))
+		return;
+
 	auto localTransform = worldTransform;
 	if (!m_parent.expired())
 	{
@@ -216,6 +236,9 @@ void TransformComponent::SetWorldTransform(const TransformType& worldTransform)
 
 	// Set local transform:
 	SetLocalTransform(localTransform);
+
+	m_worldTransform = worldTransform;
+	m_isDirty = false;
 }
 
 TransformComponent::TransformType TransformComponent::CalculateParentsTransform() const
