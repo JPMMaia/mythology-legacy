@@ -39,6 +39,10 @@ namespace GameEngine
 		Vector3Type GetLocalY() const;
 		Vector3Type GetLocalZ() const;
 
+		Vector3Type GetWorldX() const;
+		Vector3Type GetWorldY() const;
+		Vector3Type GetWorldZ() const;
+
 	public:
 		Vector3CRType GetLocalPosition() const;
 		void SetLocalPosition(Vector3CRType localPosition);

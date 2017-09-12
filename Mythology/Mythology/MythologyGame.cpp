@@ -161,8 +161,8 @@ void MythologyGame::Initialize()
 	// Stacks:
 	{
 		auto stackZ = 10.0f;
-		for (std::size_t i = 0; i < 1; ++i)
-			CreateStack(PxTransform(PxVec3(0, 0.0f, stackZ -= 10.0f)), 3, *m_physicsMaterial);
+		for (std::size_t i = 0; i < 5; ++i)
+			CreateStack(PxTransform(PxVec3(0, 0.0f, stackZ -= 10.0f)), 5, *m_physicsMaterial);
 	}
 
 	auto& keyboard = m_gameManager->GetKeyboard();
@@ -254,17 +254,12 @@ void MythologyGame::CreateProjectile(std::uint8_t key)
 	if (key != ' ')
 		return;
 
-	auto shape = PhysicsUtilities::MakeSharedPointer<PxShape>(
-		m_physicsManager->createShape(PxSphereGeometry(3.0f), *m_physicsMaterial)
-		);
-
 	const auto& cameraTransform = GetMainCamera()->GetTransform();
-	//PxTransform transform(PhysicsUtilities::ToPhysX(cameraTransform.GetWorldTransform()));
-	PxTransform transform(PxVec3(0.0f, 1.0f, 0.0f));
-	//PxVec3 velocity(PhysicsUtilities::ToPhysX(cameraTransform.GetLocalZ() * -200.0f));
-	PxVec3 velocity(0.0f, 0.0f, 0.0f);
+	PxTransform transform(PhysicsUtilities::ToPhysX(cameraTransform.GetWorldTransform()));
+	PxSphereGeometry geometry(3.0f);
+	PxVec3 velocity(PhysicsUtilities::ToPhysX(cameraTransform.GetWorldZ() * 20.0f));
 
-	auto body = PhysicsUtilities::CreateRigidDynamic(*m_physicsManager.GetPhysics(), transform.transform(transform), *shape, 10.0f);
+	auto body = PhysicsUtilities::MakeSharedPointer<PxRigidDynamic>(PxCreateDynamic(*m_physicsManager.GetPhysics(), transform, geometry, *m_physicsMaterial, 10.0f));
 	body->setAngularDamping(0.5f);
 	body->setLinearVelocity(velocity);
 	m_physicsScene->addActor(*body);

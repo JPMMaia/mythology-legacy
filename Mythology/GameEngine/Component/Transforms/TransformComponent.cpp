@@ -77,6 +77,22 @@ TransformComponent::Vector3Type TransformComponent::GetLocalZ() const
 	return Vector3Type(rotationMatrix(0, 2), rotationMatrix(1, 2), rotationMatrix(2, 2));
 }
 
+TransformComponent::Vector3Type TransformComponent::GetWorldX() const
+{
+	auto rotationMatrix = GetWorldRotation().toRotationMatrix();
+	return Vector3Type(rotationMatrix(0, 0), rotationMatrix(1, 0), rotationMatrix(2, 0));
+}
+TransformComponent::Vector3Type TransformComponent::GetWorldY() const
+{
+	auto rotationMatrix = GetWorldRotation().toRotationMatrix();
+	return Vector3Type(rotationMatrix(0, 1), rotationMatrix(1, 1), rotationMatrix(2, 1));
+}
+TransformComponent::Vector3Type TransformComponent::GetWorldZ() const
+{
+	auto rotationMatrix = GetWorldRotation().toRotationMatrix();
+	return Vector3Type(rotationMatrix(0, 2), rotationMatrix(1, 2), rotationMatrix(2, 2));
+}
+
 const TransformComponent::Vector3Type& TransformComponent::GetLocalPosition() const
 {
 	return m_localPosition;
