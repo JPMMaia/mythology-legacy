@@ -20,7 +20,7 @@ const std::shared_ptr<TransformComponent>& PhysicsComponent::GetTransform() cons
 {
 	if (m_rigidActor)
 	{
-		auto transform = PhysicsUtilities::PhysXToEigenTransform(m_rigidActor->getGlobalPose());
+		auto transform = PhysicsUtilities::ToEigen(m_rigidActor->getGlobalPose());
 		m_transform->SetWorldTransform(transform);
 	}
 

@@ -66,8 +66,10 @@ namespace GameEngine
 		void SetWorldTransform(const TransformType& worldTransform);
 
 	private:
-		TransformType CalculateParentsTransform() const;
+		TransformType GetParentsTransform() const;
 		void UpdateTransformValuesToHoldWorldTransform(const std::shared_ptr<TransformComponent>& parent, bool isNewParent);
+		void InvalidateWorldTransform();
+		void SetLocalTransform(const TransformType& localTransform, bool invalidateWorldTransform);
 
 	private:
 		static IDType s_count;
@@ -76,10 +78,11 @@ namespace GameEngine
 		Vector3Type m_localPosition;
 		QuaternionType m_localRotation;
 		Vector3Type m_localScaling;
-		mutable bool m_isDirty;
-		mutable TransformType m_worldTransform;
 
 		std::weak_ptr<TransformComponent> m_parent;
 		std::unordered_map<IDType, std::weak_ptr<TransformComponent>> m_children;
+
+		mutable bool m_isWorldTransformDirty;
+		mutable TransformType m_worldTransform;
 	};
 }

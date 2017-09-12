@@ -40,13 +40,14 @@ namespace Mythology
 
 	private:
 		void CreateStack(const physx::PxTransform & transform, std::size_t size, const physx::PxMaterial& material);
-
+		void CreateProjectile(std::uint8_t key);
 
 	private:
 		std::shared_ptr<GameEngine::IFileSystem> m_fileSystem;
 		std::shared_ptr<GameEngine::GameManager> m_gameManager;
 		GameEngine::PhysicsManager m_physicsManager;
 		GameEngine::PhysicsScene m_physicsScene;
+		physx::PxMaterial* m_physicsMaterial;
 		
 		std::unordered_map<std::string, std::shared_ptr<GameEngine::BaseMeshComponent>> m_meshes;
 		std::unordered_map<std::string, std::shared_ptr<GameEngine::SkinnedMeshComponent>> m_skinnedMeshes;

@@ -214,6 +214,28 @@ namespace MythologyTestProject
 				t1->SetWorldTransform(Affine3f::Identity());
 				Assert::IsTrue(t1->GetWorldTransform().isApprox(Affine3f::Identity()));
 			}
+
+			// Test that world transform is updated when parent transform changes:
+			{
+				auto parent = std::make_shared<TransformComponent>();
+				parent->SetLocalPosition({ 1.0f, 2.0f, 3.0f });
+
+				auto t1 = std::make_shared<TransformComponent>();
+				t1->SetWorldPosition({ 4.0f, 5.0f, 6.0f });
+
+				t1->SetParent(parent, false);
+				Assert::IsTrue(t1->GetWorldPosition() == Vector3f(5.0f, 7.0f, 9.0f));
+
+				Affine3f expectedWorldTransform;
+				expectedWorldTransform.fromPositionOrientationScale(Vector3f(5.0f, 7.0f, 9.0f), Quaternionf::Identity(), Vector3f(1.0f, 1.0f, 1.0f));
+				Assert::IsTrue(expectedWorldTransform.isApprox(t1->GetWorldTransform()));
+
+				parent->SetLocalPosition({ 2.0f, 3.0f, 4.0f });
+				Assert::IsTrue(t1->GetWorldPosition() == Vector3f(6.0f, 8.0f, 10.0f));
+
+				expectedWorldTransform.fromPositionOrientationScale(Vector3f(6.0f, 8.0f, 10.0f), Quaternionf::Identity(), Vector3f(1.0f, 1.0f, 1.0f));
+				Assert::IsTrue(expectedWorldTransform.isApprox(t1->GetWorldTransform()));
+			}
 		}
 
 		TEST_METHOD(TransformComponentTest4)
