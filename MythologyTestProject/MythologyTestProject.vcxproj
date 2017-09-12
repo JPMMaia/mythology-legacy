@@ -72,9 +72,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\assimp\Lib\$(Platform)\$(Configuration);$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Lib\vc14win64;$(SolutionDir)ThirdParty\PhysX\PxShared\lib\vc14win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y /S "$(ProjectDir)Resources\*" "$(TargetDir)"
-xcopy /Y /S "$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"
-xcopy /Y /S "$(SolutionDir)ThirdParty\PhysX\PxShared\bin\vc14win64\*.dll" "$(TargetDir)"
+      <Command>xcopy /d /Y /S "$(ProjectDir)Resources\*" "$(TargetDir)"
+xcopy /d /Y /S "$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"
+xcopy /d /Y /S "$(SolutionDir)ThirdParty\PhysX\PxShared\bin\vc14win64\*.dll" "$(TargetDir)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -98,9 +98,9 @@ xcopy /Y /S "$(SolutionDir)ThirdParty\PhysX\PxShared\bin\vc14win64\*.dll" "$(Tar
       <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\assimp\Lib\$(Platform)\$(Configuration);$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Lib\vc14win64;$(SolutionDir)ThirdParty\PhysX\PxShared\lib\vc14win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y /S "$(ProjectDir)Resources\*" "$(TargetDir)"
-xcopy /Y /S "$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"
-xcopy /Y /S "$(SolutionDir)ThirdParty\PhysX\PxShared\bin\vc14win64\*.dll" "$(TargetDir)"
+      <Command>xcopy /d /Y /S "$(ProjectDir)Resources\*" "$(TargetDir)"
+xcopy /d /Y /S "$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"
+xcopy /d /Y /S "$(SolutionDir)ThirdParty\PhysX\PxShared\bin\vc14win64\*.dll" "$(TargetDir)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

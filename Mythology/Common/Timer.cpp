@@ -3,6 +3,11 @@
 
 using namespace Common;
 
+Timer::Timer() :
+	m_timePerUpdate(std::chrono::microseconds(12)),
+	m_deltaTime(ClockType::duration(0))
+{
+}
 Timer::Timer(DurationType timePerUpdate) :
 	m_timePerUpdate(timePerUpdate),
 	m_deltaTime(ClockType::duration(0))

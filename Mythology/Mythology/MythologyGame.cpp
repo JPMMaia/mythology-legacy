@@ -113,12 +113,13 @@ void MythologyGame::Initialize()
 
 	// Floor:
 	{
-		auto physicsPlane = PhysicsUtilities::MakeSharedPointer<PxRigidStatic>(PxCreatePlane(*m_physicsManager.GetPhysics(), PxPlane(0, 1, 0, 0), *m_physicsMaterial));
-		physicsPlane->setGlobalPose(PxTransform(PxQuat(static_cast<float>(-M_PI_2), PxVec3(1.0f, 0.0f, 0.0f))));
+		auto physicsPlane = PhysicsUtilities::MakeSharedPointer<PxRigidStatic>(PxCreatePlane(*m_physicsManager.GetPhysics(), PxPlane(0.0f, 1.0f, 0.0f, 0.0f), *m_physicsMaterial));
 		m_physicsScene->addActor(*physicsPlane);
 		m_floor = GameObject(PhysicsComponent::CreateSharedPointer(physicsPlane));
 
 		auto instance = m_meshes.at("Floor")->CreateInstance(m_materials.at("Wood"));
+		auto rotation90 = std::sqrt(2.0f) / 2.0f;
+		instance->GetTransform().SetLocalRotation(Quaternionf(rotation90, 0.0f, rotation90, 0.0f));
 		m_floor.AddComponent("Mesh", instance);
 	}
 
@@ -160,8 +161,8 @@ void MythologyGame::Initialize()
 	// Stacks:
 	{
 		auto stackZ = 10.0f;
-		for (std::size_t i = 0; i < 0; ++i)
-			CreateStack(PxTransform(PxVec3(0, 0, stackZ -= 10.0f)), 3, *m_physicsMaterial);
+		for (std::size_t i = 0; i < 1; ++i)
+			CreateStack(PxTransform(PxVec3(0, 0.0f, stackZ -= 10.0f)), 3, *m_physicsMaterial);
 	}
 
 	auto& keyboard = m_gameManager->GetKeyboard();
@@ -231,11 +232,10 @@ void MythologyGame::CreateStack(const physx::PxTransform& transform, std::size_t
 		for (std::size_t j = 0; j < size - i; ++j)
 		{
 			// Calculate the local transform:
-			PxTransform localTransform(PxVec3(PxReal(j * 2) - PxReal(size - i), 20.0f + PxReal(i * 2 + 1), 0) * halfExtent);
+			PxTransform localTransform(PxVec3(PxReal(j * 2) - PxReal(size - i), PxReal(i * 2 + 1), 0) * halfExtent);
 
 			// Create rigid dynamic:
 			auto body = PhysicsUtilities::CreateRigidDynamic(*m_physicsManager.GetPhysics(), transform.transform(localTransform), *shape, 10.0f);
-			body->addForce(PxVec3(0.0f, 0.0f, 20.0f));
 			m_physicsScene->addActor(*body);
 
 			// Create box with physics component:

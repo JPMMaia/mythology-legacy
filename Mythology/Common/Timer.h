@@ -12,6 +12,7 @@ namespace Common
 		using DurationType = ClockType::duration;
 
 	public:
+		Timer();
 		explicit Timer(DurationType timePerUpdate);
 
 		void Reset();

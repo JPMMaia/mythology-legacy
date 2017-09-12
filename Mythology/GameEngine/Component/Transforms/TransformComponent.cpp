@@ -225,8 +225,15 @@ void TransformComponent::SetWorldTransform(const TransformType& worldTransform)
 	// Set local transform:
 	SetLocalTransform(localTransform, false);
 
+	// Set world transform:
 	m_worldTransform = worldTransform;
 	m_isWorldTransformDirty = false;
+
+	// Invalidate all children's world transforms:
+	for (auto& child : m_children)
+	{
+		child.second.lock()->InvalidateWorldTransform();
+	}
 }
 
 TransformComponent::TransformType TransformComponent::GetParentsTransform() const
