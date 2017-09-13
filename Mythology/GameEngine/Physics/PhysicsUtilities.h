@@ -28,7 +28,9 @@ namespace GameEngine
 			});
 		}
 
-		Eigen::Affine3f PhysXToEigenTransform(const physx::PxTransform& pxTransform);
+		Eigen::Affine3f ToEigen(const physx::PxTransform& pxTransform);
+		physx::PxTransform ToPhysX(const Eigen::Affine3f& eigenTransform);
+		physx::PxVec3 ToPhysX(const Eigen::Vector3f& vector);
 
 		PhysXSharedPointer<physx::PxRigidDynamic> CreateRigidDynamic(physx::PxPhysics& physics, const physx::PxTransform& transform, physx::PxShape& shape, float mass);
 	}

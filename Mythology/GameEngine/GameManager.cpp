@@ -40,6 +40,8 @@ void FrameUpdate(const Timer& timer)
 }
 void GameManager::FrameUpdate(const Common::Timer& timer) const
 {
+	::FrameUpdate<PhysicsComponent>(timer);
+
 	std::for_each(SkinnedMeshComponent::begin(), SkinnedMeshComponent::end(), [&timer](SkinnedMeshComponent& mesh)
 	{
 		std::for_each(mesh.GetInstancesBegin(), mesh.GetInstancesEnd(), [&timer](SkinnedMeshInstance& instance)

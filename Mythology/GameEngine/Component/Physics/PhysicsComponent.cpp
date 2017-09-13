@@ -16,13 +16,16 @@ PhysicsComponent::PhysicsComponent(const PhysXSharedPointer<physx::PxRigidActor>
 {
 }
 
-const std::shared_ptr<TransformComponent>& PhysicsComponent::GetTransform() const
+void PhysicsComponent::FrameUpdate(const Common::Timer& timer)
 {
 	if (m_rigidActor)
 	{
-		auto transform = PhysicsUtilities::PhysXToEigenTransform(m_rigidActor->getGlobalPose());
+		auto transform = PhysicsUtilities::ToEigen(m_rigidActor->getGlobalPose());
 		m_transform->SetWorldTransform(transform);
 	}
+}
 
+const std::shared_ptr<TransformComponent>& PhysicsComponent::GetTransform() const
+{
 	return m_transform;
 }

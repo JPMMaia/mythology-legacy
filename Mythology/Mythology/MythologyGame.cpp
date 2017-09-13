@@ -29,7 +29,7 @@ void MythologyGame::Initialize()
 {
 	m_gameManager = std::make_shared<GameEngine::GameManager>();
 
-	auto physicsMaterial = m_physicsManager->createMaterial(0.5f, 0.5f, 0.6f);
+	m_physicsMaterial = m_physicsManager->createMaterial(0.5f, 0.5f, 0.6f);
 
 	// Meshes:
 	{
@@ -113,12 +113,13 @@ void MythologyGame::Initialize()
 
 	// Floor:
 	{
-		auto physicsPlane = PhysicsUtilities::MakeSharedPointer<PxRigidStatic>(PxCreatePlane(*m_physicsManager.GetPhysics(), PxPlane(0, 1, 0, 0), *physicsMaterial));
-		physicsPlane->setGlobalPose(PxTransform(PxQuat(static_cast<float>(-M_PI_2), PxVec3(1.0f, 0.0f, 0.0f))));
+		auto physicsPlane = PhysicsUtilities::MakeSharedPointer<PxRigidStatic>(PxCreatePlane(*m_physicsManager.GetPhysics(), PxPlane(0.0f, 1.0f, 0.0f, 0.0f), *m_physicsMaterial));
 		m_physicsScene->addActor(*physicsPlane);
 		m_floor = GameObject(PhysicsComponent::CreateSharedPointer(physicsPlane));
 
 		auto instance = m_meshes.at("Floor")->CreateInstance(m_materials.at("Wood"));
+		auto rotation90 = std::sqrt(2.0f) / 2.0f;
+		instance->GetTransform().SetLocalRotation(Quaternionf(rotation90, 0.0f, rotation90, 0.0f));
 		m_floor.AddComponent("Mesh", instance);
 	}
 
@@ -161,8 +162,11 @@ void MythologyGame::Initialize()
 	{
 		auto stackZ = 10.0f;
 		for (std::size_t i = 0; i < 5; ++i)
-			CreateStack(PxTransform(PxVec3(0, 0, stackZ -= 10.0f)), 10, *physicsMaterial);
+			CreateStack(PxTransform(PxVec3(0, 0.0f, stackZ -= 10.0f)), 5, *m_physicsMaterial);
 	}
+
+	auto& keyboard = m_gameManager->GetKeyboard();
+	keyboard.OnKeyPress += {"CreateProjectile", this, &MythologyGame::CreateProjectile};
 }
 
 void MythologyGame::ProcessInput()
@@ -171,7 +175,7 @@ void MythologyGame::ProcessInput()
 }
 void MythologyGame::FixedUpdate(const Common::Timer& timer)
 {
-	//m_physicsScene.FixedUpdate(timer);
+	m_physicsScene.FixedUpdate(timer);
 
 	m_gameManager->FixedUpdate(timer);
 }
@@ -225,7 +229,7 @@ void MythologyGame::CreateStack(const physx::PxTransform& transform, std::size_t
 
 	for (std::size_t i = 0; i < size; ++i)
 	{
-		for (std::size_t j = 0; j < size; ++j)
+		for (std::size_t j = 0; j < size - i; ++j)
 		{
 			// Calculate the local transform:
 			PxTransform localTransform(PxVec3(PxReal(j * 2) - PxReal(size - i), PxReal(i * 2 + 1), 0) * halfExtent);
@@ -243,4 +247,24 @@ void MythologyGame::CreateStack(const physx::PxTransform& transform, std::size_t
 			m_boxes.emplace_back(boxObject);
 		}
 	}
+}
+
+void MythologyGame::CreateProjectile(std::uint8_t key)
+{
+	if (key != ' ')
+		return;
+
+	const auto& cameraTransform = GetMainCamera()->GetTransform();
+	PxTransform transform(PhysicsUtilities::ToPhysX(cameraTransform.GetWorldTransform()));
+	PxSphereGeometry geometry(3.0f);
+	PxVec3 velocity(PhysicsUtilities::ToPhysX(cameraTransform.GetWorldZ() * 20.0f));
+
+	auto body = PhysicsUtilities::MakeSharedPointer<PxRigidDynamic>(PxCreateDynamic(*m_physicsManager.GetPhysics(), transform, geometry, *m_physicsMaterial, 10.0f));
+	body->setAngularDamping(0.5f);
+	body->setLinearVelocity(velocity);
+	m_physicsScene->addActor(*body);
+
+	GameObject boxObject(PhysicsComponent::CreateSharedPointer(body));
+	boxObject.AddComponent("Mesh", m_meshes.at("Box")->CreateInstance(m_materials.at("Wood")));
+	m_boxes.emplace_back(boxObject);
 }

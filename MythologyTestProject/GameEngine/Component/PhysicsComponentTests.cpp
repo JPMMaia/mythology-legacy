@@ -3,6 +3,7 @@
 #include "GameEngine/GameObject/GameObject.h"
 #include "GameEngine/Physics/PhysicsManager.h"
 #include "GameEngine/Component/Physics/PhysicsComponent.h"
+#include "GameEngine/Component/Lights/PointLightComponent.h"
 
 using namespace physx;
 using namespace GameEngine;
@@ -48,22 +49,33 @@ namespace MythologyTestProject
 			scene->addActor(*body);
 
 			// Create game object:
-			GameObject object(PhysicsComponent::CreateSharedPointer(body));
+			auto physicsComponent = PhysicsComponent::CreateSharedPointer(body);
+			GameObject object(physicsComponent);
+
+			// Add child component:
+			auto light = PointLightComponent::CreateSharedPointer(Eigen::Vector3f(0.8f, 0.8f, 0.8f), 10.0f, 50.0f);
+			object.AddComponent("Light", light);
 			
 			// Ensure that both game object and rigid body transforms are the identity:
 			Assert::IsTrue(body->getGlobalPose() == PxTransform(PxVec3(0.0f, 0.0f, 0.0f)));
 			Assert::IsTrue(object.GetTransform().GetWorldTransform().isApprox(Eigen::Affine3f::Identity()));
+			Assert::IsTrue(light->GetTransform().GetWorldTransform().isApprox(Eigen::Affine3f::Identity()));
 
 			// Simulate physics:
 			scene->simulate(1.0f / 60.0f);
 			scene->fetchResults(true);
 
+			Common::Timer timer;
+			physicsComponent->FrameUpdate(timer);
+
 			// Check if both game object and rigid body transforms changed:
 			Assert::IsFalse(body->getGlobalPose() == PxTransform(PxVec3(0.0f, 0.0f, 0.0f)));
 			Assert::IsFalse(object.GetTransform().GetWorldTransform().isApprox(Eigen::Affine3f::Identity()));
+			Assert::IsFalse(light->GetTransform().GetWorldTransform().isApprox(Eigen::Affine3f::Identity()));
 
 			// Check that both game object and rigid transforms are equal:
 			Assert::IsTrue(AreEqual(body->getGlobalPose(), object.GetTransform().GetWorldTransform()));
+			Assert::IsTrue(AreEqual(body->getGlobalPose(), light->GetTransform().GetWorldTransform()));
 		}
 	};
 }

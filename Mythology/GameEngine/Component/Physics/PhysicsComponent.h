@@ -14,6 +14,9 @@ namespace GameEngine
 		explicit PhysicsComponent(const PhysXSharedPointer<physx::PxRigidActor>& rigidActor);
 
 	public:
+		void FrameUpdate(const Common::Timer& timer);
+
+	public:
 		const std::shared_ptr<TransformComponent>& GetTransform() const;
 
 	private:
