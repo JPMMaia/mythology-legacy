@@ -46,16 +46,16 @@ namespace GameEngine
 			meshData.Vertices =
 			{
 				// Front face:
-				{ { +halfWidth, -halfHeight, +halfDepth },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
-				{ { +halfWidth, +halfHeight, +halfDepth },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } },
-				{ { -halfWidth, +halfHeight, +halfDepth },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
-				{ { -halfWidth, -halfHeight, +halfDepth },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
+				{ { +halfWidth, -halfHeight, +halfDepth },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
+				{ { +halfWidth, +halfHeight, +halfDepth },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } },
+				{ { -halfWidth, +halfHeight, +halfDepth },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
+				{ { -halfWidth, -halfHeight, +halfDepth },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
 
 				// Back face:
-				{ { -halfWidth, +halfHeight, -halfDepth },{ 0.0f, 0.0f, 1.0f },{ -1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
-				{ { +halfWidth, +halfHeight, -halfDepth },{ 0.0f, 0.0f, 1.0f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
-				{ { +halfWidth, -halfHeight, -halfDepth },{ 0.0f, 0.0f, 1.0f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
-				{ { -halfWidth, -halfHeight, -halfDepth },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
+				{ { -halfWidth, +halfHeight, -halfDepth },{ 0.0f, 0.0f, -1.0f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },
+				{ { +halfWidth, +halfHeight, -halfDepth },{ 0.0f, 0.0f, -1.0f },{ -1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
+				{ { +halfWidth, -halfHeight, -halfDepth },{ 0.0f, 0.0f, -1.0f },{ -1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } },
+				{ { -halfWidth, -halfHeight, -halfDepth },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
 
 				// Top face:
 				{ { +halfWidth, +halfHeight, +halfDepth },{ 0.0f, 1.0f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },
