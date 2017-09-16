@@ -10,20 +10,19 @@ std::size_t StandardMaterial::GetTextureCount()
 	std::set<std::wstring> texturePaths;
 	std::for_each(StandardMaterial::begin(), StandardMaterial::end(), [&texturePaths](auto& material)
 	{
-		texturePaths.emplace(material.GetAlbedoMapName());
+		texturePaths.emplace(material.GetBaseColorTextureName());
 	});
 
 	return texturePaths.size();
 }
 
-StandardMaterial::StandardMaterial() :
-	m_baseColor({ 0.0f, 0.0f, 0.0f, 1.0f })
-{
-}
-StandardMaterial::StandardMaterial(const std::string& name, const Eigen::Vector4f& baseColor, const std::wstring& albedoMapName) :
+StandardMaterial::StandardMaterial(const std::string & name, const Eigen::Vector4f & baseColorFactor, const std::wstring & baseColorTextureName, float metallicFactor, float roughnessFactor, const std::wstring & metallicRoughnessTextureName) :
 	m_name(name),
-	m_baseColor(baseColor),
-	m_albedoMapName(albedoMapName)
+	m_baseColorFactor(baseColorFactor),
+	m_baseColorTextureName(baseColorTextureName),
+	m_metallicFactor(metallicFactor),
+	m_roughnessFactor(roughnessFactor),
+	m_metallicRoughnessTextureName(metallicRoughnessTextureName)
 {
 }
 
@@ -36,20 +35,47 @@ void StandardMaterial::SetName(const std::string& name)
 	m_name = name;
 }
 
-const Eigen::Vector4f& StandardMaterial::GetBaseColor() const
+const Eigen::Vector4f& StandardMaterial::GetBaseColorFactor() const
 {
-	return m_baseColor;
+	return m_baseColorFactor;
 }
-void StandardMaterial::SetBaseColor(const Eigen::Vector4f& baseColor)
+void StandardMaterial::SetBaseColorFactor(const Eigen::Vector4f& baseColorFactor)
 {
-	m_baseColor = baseColor;
+	m_baseColorFactor = baseColorFactor;
 }
 
-const std::wstring& StandardMaterial::GetAlbedoMapName() const
+const std::wstring& StandardMaterial::GetBaseColorTextureName() const
 {
-	return m_albedoMapName;
+	return m_baseColorTextureName;
 }
-void StandardMaterial::SetAlbedoMapName(const std::wstring& albedoMapName)
+void StandardMaterial::SetBaseColorTextureName(const std::wstring& baseColorTextureName)
 {
-	m_albedoMapName = albedoMapName;
+	m_baseColorTextureName = baseColorTextureName;
+}
+
+float StandardMaterial::GetMetallicFactor() const
+{
+	return m_metallicFactor;
+}
+void StandardMaterial::SetMetallicFactor(float metallicFactor)
+{
+	m_metallicFactor = metallicFactor;
+}
+
+float StandardMaterial::GetRoughnessFactor() const
+{
+	return m_roughnessFactor;
+}
+void StandardMaterial::SetRoughnessFactor(float roughnessFactor)
+{
+	m_roughnessFactor = roughnessFactor;
+}
+
+const std::wstring& StandardMaterial::GetMetallicRoughnessTextureName() const
+{
+	return m_metallicRoughnessTextureName;
+}
+void StandardMaterial::SetMetallicRoughnessTextureName(const std::wstring& metallicRoughnessTextureName)
+{
+	m_metallicRoughnessTextureName = metallicRoughnessTextureName;
 }

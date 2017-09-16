@@ -278,11 +278,15 @@ void StandardScene::CreateRenderItems<SkinnedMeshComponent>(ID3D12Device* d3dDev
 
 void StandardScene::CreateMaterial(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::StandardMaterial& material)
 {
-	CreateTexture(d3dDevice, commandList, material.GetAlbedoMapName(), true);
+	CreateTexture(d3dDevice, commandList, material.GetBaseColorTextureName(), true);
+	CreateTexture(d3dDevice, commandList, material.GetMetallicRoughnessTextureName(), false);
 
 	ShaderBufferTypes::MaterialData materialData = {};
-	materialData.BaseColorFactor = material.GetBaseColor();
-	materialData.BaseColorTextureIndex = m_textureIndices.at(material.GetAlbedoMapName());
+	materialData.BaseColorFactor = material.GetBaseColorFactor();
+	materialData.BaseColorTextureIndex = m_textureIndices.at(material.GetBaseColorTextureName());
+	materialData.MetallicFactor = material.GetMetallicFactor();
+	materialData.RoughnessFactor = material.GetRoughnessFactor();
+	materialData.MetallicRoughnessTextureIndex = m_textureIndices.at(material.GetMetallicRoughnessTextureName());
 
 	m_materialIndices.emplace(material.GetName(), static_cast<std::uint32_t>(m_materialsGPUBuffer.size()));
 	m_materialsGPUBuffer.emplace_back(std::move(materialData));

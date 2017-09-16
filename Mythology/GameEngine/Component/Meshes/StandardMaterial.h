@@ -10,21 +10,33 @@ namespace GameEngine
 		static std::size_t GetTextureCount();
 
 	public:
-		StandardMaterial();
-		StandardMaterial(const std::string& name, const Eigen::Vector4f& baseColor, const std::wstring& albedoMapName);
+		StandardMaterial() = default;
+		StandardMaterial(const std::string& name, const Eigen::Vector4f& baseColorFactor, const std::wstring& baseColorTextureName, float metallicFactor, float roughnessFactor, const std::wstring& metallicRoughnessTextureName);
 
 		const std::string& GetName() const;
 		void SetName(const std::string& name);
 
-		const Eigen::Vector4f& GetBaseColor() const;
-		void SetBaseColor(const Eigen::Vector4f& baseColor);
+		const Eigen::Vector4f& GetBaseColorFactor() const;
+		void SetBaseColorFactor(const Eigen::Vector4f& baseColorFactor);
 
-		const std::wstring& GetAlbedoMapName() const;
-		void SetAlbedoMapName(const std::wstring& albedoMapName);
+		const std::wstring& GetBaseColorTextureName() const;
+		void SetBaseColorTextureName(const std::wstring& baseColorTextureName);
+
+		float GetMetallicFactor() const;
+		void SetMetallicFactor(float metallicFactor);
+
+		float GetRoughnessFactor() const;
+		void SetRoughnessFactor(float roughnessFactor);
+
+		const std::wstring& GetMetallicRoughnessTextureName() const;
+		void SetMetallicRoughnessTextureName(const std::wstring& metallicRoughnessTextureName);
 
 	private:
 		std::string m_name;
-		Eigen::Vector4f m_baseColor;
-		std::wstring m_albedoMapName;
+		Eigen::Vector4f m_baseColorFactor;
+		std::wstring m_baseColorTextureName;
+		float m_metallicFactor;
+		float m_roughnessFactor;
+		std::wstring m_metallicRoughnessTextureName;
 	};
 }
