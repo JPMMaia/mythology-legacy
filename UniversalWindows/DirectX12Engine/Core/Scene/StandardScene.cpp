@@ -281,8 +281,8 @@ void StandardScene::CreateMaterial(ID3D12Device* d3dDevice, ID3D12GraphicsComman
 	CreateTexture(d3dDevice, commandList, material.GetAlbedoMapName(), true);
 
 	ShaderBufferTypes::MaterialData materialData = {};
-	materialData.BaseColor = material.GetBaseColor();
-	materialData.AlbedoMapIndex = m_textureIndices.at(material.GetAlbedoMapName());
+	materialData.BaseColorFactor = material.GetBaseColor();
+	materialData.BaseColorTextureIndex = m_textureIndices.at(material.GetAlbedoMapName());
 
 	m_materialIndices.emplace(material.GetName(), static_cast<std::uint32_t>(m_materialsGPUBuffer.size()));
 	m_materialsGPUBuffer.emplace_back(std::move(materialData));

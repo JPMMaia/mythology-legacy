@@ -32,7 +32,7 @@ PixelOutput main(PixelInput input)
 
 	// Output values:
 	output.PositionW = float4(input.PositionW, 1.0f);
-	output.Albedo = materialData.BaseColor * g_albedoMaps[materialData.AlbedoMapIndex].Sample(g_samplerLinearWrap, input.TextureCoordinates);
+	output.Albedo = materialData.BaseColorFactor * g_albedoMaps[materialData.BaseColorTextureIndex].Sample(g_samplerLinearWrap, input.TextureCoordinates);
 	output.NormalAndRoughness = float4(normalize(input.NormalW), 1.0f);
 
 	return output;

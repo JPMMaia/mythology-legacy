@@ -131,9 +131,9 @@ xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.d
       <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <PostBuildEvent>
-      <Command>xcopy /d /Y /S "$(ProjectDir)Resources\*" "$(TargetDir)"
-xcopy /d /Y /S "$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"
-xcopy /d /Y /S "$(SolutionDir)ThirdParty\PhysX\PxShared\bin\vc14win64\*.dll" "$(TargetDir)"
+      <Command>xcopy /D /Y /S /I "$(SolutionDir)UniversalWindows\DirectX12Engine\Shaders\*" "$(ProjectDir)Working Directory\Shaders"
+xcopy /D /Y /S "$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"
+xcopy /D /Y /S "$(SolutionDir)ThirdParty\PhysX\PxShared\bin\vc14win64\*.dll" "$(TargetDir)"
 </Command>
     </PostBuildEvent>
     <PreLinkEvent>
@@ -155,9 +155,9 @@ xcopy /d /Y /S "$(SolutionDir)ThirdParty\PhysX\PxShared\bin\vc14win64\*.dll" "$(
       <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <PostBuildEvent>
-      <Command>xcopy /d /Y /S "$(ProjectDir)Resources\*" "$(TargetDir)"
-xcopy /d /Y /S "$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"
-xcopy /d /Y /S "$(SolutionDir)ThirdParty\PhysX\PxShared\bin\vc14win64\*.dll" "$(TargetDir)"
+      <Command>xcopy /D /Y /S /I "$(SolutionDir)UniversalWindows\DirectX12Engine\Shaders\*" "$(ProjectDir)Working Directory\Shaders"
+xcopy /D /Y /S "$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"
+xcopy /D /Y /S "$(SolutionDir)ThirdParty\PhysX\PxShared\bin\vc14win64\*.dll" "$(TargetDir)"
 </Command>
     </PostBuildEvent>
     <PreLinkEvent>

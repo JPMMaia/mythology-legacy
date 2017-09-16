@@ -1,8 +1,8 @@
 struct MaterialData
 {
-	float4 BaseColor;
-	uint AlbedoMapIndex;
-	uint Padding0;
-	uint Padding1;
-	uint Padding2;
+	float4 BaseColorFactor;
+	float MetallicFactor;
+	float RoughnessFactor;
+	uint BaseColorTextureIndex;
+	uint MetallicRoughnessTextureIndex;
 };

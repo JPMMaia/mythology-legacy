@@ -76,13 +76,13 @@ CameraComponent::Matrix CameraComponent::BuildViewMatrix(const TransformComponen
 	auto matrix = Eigen::Translation3f(transform.GetWorldPosition()) * transform.GetWorldRotation().toRotationMatrix();
 
 #if defined(USING_DIRECTX)
-	Eigen::Matrix4f rotateZ180;
-	rotateZ180 <<
+	Eigen::Matrix4f rotateY180;
+	rotateY180 <<
 		-1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, -1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f;
-	matrix = matrix * rotateZ180;
+	matrix = matrix * rotateY180;
 #endif
 
 	return matrix.inverse();

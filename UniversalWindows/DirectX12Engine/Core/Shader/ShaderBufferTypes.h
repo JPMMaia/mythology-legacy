@@ -17,11 +17,11 @@ namespace DirectX12Engine
 
 		struct MaterialData
 		{
-			Eigen::Vector4f BaseColor;
-			std::uint32_t AlbedoMapIndex;
-			std::uint32_t Pad0;
-			std::uint32_t Pad1;
-			std::uint32_t Pad2;
+			Eigen::Vector4f BaseColorFactor;
+			float MetallicFactor;
+			float RoughnessFactor;
+			std::uint32_t BaseColorTextureIndex;
+			std::uint32_t MetallicRoughnessTextureIndex;
 		};
 
 		struct LightData
