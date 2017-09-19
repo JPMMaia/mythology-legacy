@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CameraComponent.h"
 
+using namespace Eigen;
 using namespace GameEngine;
 
 CameraComponent::CameraComponent() :
@@ -73,19 +74,27 @@ void CameraComponent::SetOrientationMatrix(AlignedMatrixCR orientationMatrix)
 
 CameraComponent::Matrix CameraComponent::BuildViewMatrix(const TransformComponent& transform)
 {
-	auto matrix = Eigen::Translation3f(transform.GetWorldPosition()) * transform.GetWorldRotation().toRotationMatrix();
+	auto eyePosition = transform.GetWorldPosition();
+	auto eyeDirection = transform.GetWorldZ();
+	auto upDirection = transform.GetWorldY();
 
 #if defined(USING_DIRECTX)
-	Eigen::Matrix4f rotateY180;
-	rotateY180 <<
-		-1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, -1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f;
-	matrix = matrix * rotateY180;
+	eyeDirection = -eyeDirection;
 #endif
 
-	return matrix.inverse();
+	auto zAxis = eyeDirection.normalized();
+	auto xAxis = upDirection.cross(zAxis).normalized();
+	auto yAxis = zAxis.cross(xAxis);
+
+	Matrix4f matrix;
+	matrix <<
+		xAxis.x(), xAxis.y(), xAxis.z(), -xAxis.dot(eyePosition),
+		yAxis.x(), yAxis.y(), yAxis.z(), -yAxis.dot(eyePosition),
+		zAxis.x(), zAxis.y(), zAxis.z(), -zAxis.dot(eyePosition),
+		0.0f, 0.0f, 0.0f, 1.0f;
+
+	return Affine3f(matrix);
+
 }
 CameraComponent::Matrix CameraComponent::BuildProjectionMatrix(float aspectRatio, float fovAngleY, float nearZ, float farZ, AlignedMatrixCR orientationMatrix)
 {
