@@ -9,7 +9,7 @@ CubeMappingCamera::CubeMappingCamera(const Eigen::Vector3f& eyePosition)
 	BuildMatrices(eyePosition);
 }
 
-const Eigen::Affine3f& CubeMappingCamera::GetViewMatrix(size_t index) const
+const Eigen::Affine3f& CubeMappingCamera::GetViewMatrix(std::size_t index) const
 {
 	return m_viewMatrices[index];
 }
@@ -39,12 +39,16 @@ void CubeMappingCamera::BuildMatrices(const Eigen::Vector3f& eyePosition)
 		Vector3f(0.0f, 1.0f, 0.0f),
 	};
 
-	for (size_t i = 0; i < 6; ++i)
+	for (std::size_t i = 0; i < 6; ++i)
 	{
 		m_viewMatrices[i] = BuildViewMatrix(eyePosition, eyesDirections[i], upDirections[i]);
 	}
 
-	m_projectionMatrix = BuildProjectionMatrix();
+	auto fovAngleY = std::acos(-1.0f) / 2.0f;
+	auto aspectRatio = 1.0f;
+	auto nearZ = 0.1f;
+	auto farZ = 15.0f;
+	m_projectionMatrix = BuildProjectionMatrix(fovAngleY, aspectRatio, nearZ, farZ);
 }
 
 Affine3f CubeMappingCamera::BuildViewMatrix(const Vector3f& eyePosition, const Vector3f& eyeDirection, const Vector3f& upDirection)
@@ -68,8 +72,25 @@ Affine3f CubeMappingCamera::BuildViewMatrix(const Vector3f& eyePosition, const V
 	return Affine3f(matrix);
 }
 
-Affine3f CubeMappingCamera::BuildProjectionMatrix()
-{
-	// XMStoreFloat4x4(&m_projectionMatrix, XMMatrixPerspectiveFovLH(XM_PI / 2.0f, 1.0f, 0.1f, 1000.0f));
-	return Affine3f();
+Affine3f CubeMappingCamera::BuildProjectionMatrix(float fovAngleY, float aspectRatio, float nearZ, float farZ)
+{	
+	auto yScale = 1.0f / std::tan(fovAngleY / 2.0f);
+	auto xScale = yScale / aspectRatio;
+
+#if defined(USING_DIRECTX)
+	auto nearDepth = 0.0f;
+#else
+	auto nearDepth = -1.0f;
+#endif
+	auto farDepth = 1.0f;
+
+	auto perspectiveMatrix(Affine3f::Identity());
+	perspectiveMatrix(0, 0) = xScale;
+	perspectiveMatrix(1, 1) = yScale;
+	perspectiveMatrix(2, 2) = (farDepth * farZ - nearDepth * nearZ) / (nearZ - farZ);
+	perspectiveMatrix(3, 2) = -1.0f;
+	perspectiveMatrix(2, 3) = (farDepth - nearDepth) * (nearZ * farZ) / (nearZ - farZ);
+	perspectiveMatrix(3, 3) = 0.0f;
+
+	return perspectiveMatrix;
 }
