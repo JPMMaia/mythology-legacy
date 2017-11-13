@@ -263,3 +263,4 @@ __pycache__/
 /.vs/Mythology/v15/*.db
 /.vs/Mythology/v15/*.db-shm
 /.vs/Mythology/v15/*.db-wal
+*.ifc
