@@ -49,8 +49,8 @@ namespace DirectX12Engine
 
 		std::shared_ptr<IScene> m_scene;
 		Texture m_positions;
-		Texture m_albedo;
-		Texture m_normals;
+		Texture m_baseColorAndMetallicness;
+		Texture m_normalsAndRoughness;
 		Texture m_depthStencil;
 
 		Texture m_albedoTexture;

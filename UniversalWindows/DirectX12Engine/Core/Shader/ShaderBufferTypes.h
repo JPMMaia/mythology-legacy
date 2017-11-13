@@ -17,18 +17,18 @@ namespace DirectX12Engine
 
 		struct MaterialData
 		{
-			Eigen::Vector4f BaseColor;
-			std::uint32_t AlbedoMapIndex;
-			std::uint32_t Pad0;
-			std::uint32_t Pad1;
-			std::uint32_t Pad2;
+			Eigen::Vector4f BaseColorFactor;
+			std::uint32_t BaseColorTextureIndex;
+			float MetallicFactor;
+			float RoughnessFactor;
+			std::uint32_t MetallicRoughnessTextureIndex;
 		};
 
 		struct LightData
 		{
 			Eigen::Vector3f Strength = { 0.5f, 0.5f, 0.5f };		// Light color
 			float FalloffStart = 1.0f;								// Point/Spot light only
-			Eigen::Vector3f Direction = { 0.0f, -1.0f, 0.0f };	// Directional/Spot light only
+			Eigen::Vector3f Direction = { 0.0f, -1.0f, 0.0f };		// Directional/Spot light only
 			float FalloffEnd = 10.0f;								// Point/Spot light only
 			Eigen::Vector3f Position = { 0.0f, 0.0f, 0.0f };		// Point/Spot light only
 			float SpotPower = 64.0f;								// Spot light only

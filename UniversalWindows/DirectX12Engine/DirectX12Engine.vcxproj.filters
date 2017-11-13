@@ -22,10 +22,7 @@
     <ClCompile Include="Core\Utilities\DirectXHelper.cpp" />
     <ClCompile Include="Core\Utilities\UploadBuffer.cpp" />
     <ClCompile Include="Core\Renderer.cpp" />
-    <ClCompile Include="Core\Sample3DSceneRenderer.cpp" />
     <ClCompile Include="Core\DeviceResources.cpp" />
-    <ClCompile Include="Core\Camera\Camera.cpp" />
-    <ClCompile Include="Core\Camera\Ray.cpp" />
     <ClCompile Include="Core\D3DBase.cpp" />
     <ClCompile Include="Core\Resources\DescriptorHeap.cpp" />
     <ClCompile Include="Core\Textures\Samplers.cpp" />
@@ -52,12 +49,9 @@
     <ClInclude Include="Core\Utilities\DirectXHelper.h" />
     <ClInclude Include="Core\Utilities\UploadBuffer.h" />
     <ClInclude Include="Core\Renderer.h" />
-    <ClInclude Include="Core\Sample3DSceneRenderer.h" />
     <ClInclude Include="Core\ShaderStructures.h" />
     <ClInclude Include="Core\DeviceResources.h" />
     <ClInclude Include="Core\Resources\GPUAllocator.h" />
-    <ClInclude Include="Core\Camera\Camera.h" />
-    <ClInclude Include="Core\Camera\Ray.h" />
     <ClInclude Include="Core\D3DBase.h" />
     <ClInclude Include="Core\Resources\DescriptorHeap.h" />
     <ClInclude Include="Core\Textures\Samplers.h" />
@@ -73,8 +67,6 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\SamplePixelShader.hlsl" />
-    <FxCompile Include="Shaders\SampleVertexShader.hlsl" />
     <FxCompile Include="Shaders\Standard\GBufferPassVertexShader.hlsl" />
     <FxCompile Include="Shaders\Standard\GBufferPassPixelShader.hlsl" />
     <FxCompile Include="Shaders\Standard\LightingPassVertexShader.hlsl" />

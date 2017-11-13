@@ -16,12 +16,12 @@ struct PixelInput
 struct PixelOutput
 {
 	float4 PositionW : SV_TARGET0;
-	float4 Albedo : SV_TARGET1;
-	float4 NormalAndRoughness : SV_TARGET2;
+	float4 BaseColorAndMetallicness : SV_TARGET1;
+	float4 NormalsAndRoughness : SV_TARGET2;
 };
 
 StructuredBuffer<MaterialData> g_materialData : register(t1, space1);
-Texture2D g_albedoMaps[TEXTURE_COUNT] : register(t0, space2);
+Texture2D g_baseColorTextures[TEXTURE_COUNT] : register(t0, space2);
 
 PixelOutput main(PixelInput input)
 {
@@ -30,10 +30,18 @@ PixelOutput main(PixelInput input)
 	// Get the data of the instance's material:
 	MaterialData materialData = g_materialData[input.MaterialIndex];
 
-	// Output values:
+	// Output world position:
 	output.PositionW = float4(input.PositionW, 1.0f);
-	output.Albedo = materialData.BaseColor * g_albedoMaps[materialData.AlbedoMapIndex].Sample(g_samplerLinearWrap, input.TextureCoordinates);
-	output.NormalAndRoughness = float4(normalize(input.NormalW), 1.0f);
+
+	// Output base color and metallicness:
+	float3 baseColor = materialData.BaseColorFactor.rgb * g_baseColorTextures[materialData.BaseColorTextureIndex].Sample(g_samplerLinearWrap, input.TextureCoordinates).rgb;
+	float metallicness = materialData.MetallicFactor;
+	output.BaseColorAndMetallicness = float4(baseColor, metallicness);
+
+	// Output normal and roughness:
+	float3 normal = input.NormalW;
+	float roughness = materialData.RoughnessFactor;
+	output.NormalsAndRoughness = float4(normal, roughness);
 
 	return output;
 }

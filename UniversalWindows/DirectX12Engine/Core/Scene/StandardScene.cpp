@@ -49,19 +49,24 @@ void StandardScene::CreateDeviceDependentResources()
 	m_commandListIndex = 0;
 	auto commandList = m_commandListManager.GetGraphicsCommandList(m_commandListIndex);
 
+	// Create textures descriptor heap:
+	{
+		// Count number of textures:
+		auto textureCount = StandardMaterial::GetTextureCount();
+
+		// Create descriptor heap:
+		m_texturesDescriptorHeap.CreateDeviceDependentResources(m_deviceResources, textureCount, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
+	}
+
+	// Create environment textures:
+	{
+		CreateEmptyTexture(d3dDevice, commandList, L"Environmetal0", true);
+	}
+
 	// Create materials:
 	{
 		// Reserve space for material instances:
 		m_materialsGPUBuffer.reserve(StandardMaterial::GetStorage().size());
-
-		// Create textures descriptor heap:
-		{
-			// Count number of textures:
-			auto textureCount = StandardMaterial::GetTextureCount();
-
-			// Create descriptor heap:
-			m_texturesDescriptorHeap.CreateDeviceDependentResources(m_deviceResources, textureCount, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
-		}
 
 		std::for_each(StandardMaterial::begin(), StandardMaterial::end(), [this, d3dDevice, commandList](auto& material)
 		{
@@ -278,16 +283,20 @@ void StandardScene::CreateRenderItems<SkinnedMeshComponent>(ID3D12Device* d3dDev
 
 void StandardScene::CreateMaterial(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::StandardMaterial& material)
 {
-	CreateTexture(d3dDevice, commandList, material.GetAlbedoMapName(), true);
+	CreateTextureFromFile(d3dDevice, commandList, material.GetBaseColorTextureName(), true);
+	CreateTextureFromFile(d3dDevice, commandList, material.GetMetallicRoughnessTextureName(), false);
 
 	ShaderBufferTypes::MaterialData materialData = {};
-	materialData.BaseColor = material.GetBaseColor();
-	materialData.AlbedoMapIndex = m_textureIndices.at(material.GetAlbedoMapName());
+	materialData.BaseColorFactor = material.GetBaseColorFactor();
+	materialData.BaseColorTextureIndex = m_textureIndices.at(material.GetBaseColorTextureName());
+	materialData.MetallicFactor = material.GetMetallicFactor();
+	materialData.RoughnessFactor = material.GetRoughnessFactor();
+	materialData.MetallicRoughnessTextureIndex = m_textureIndices.at(material.GetMetallicRoughnessTextureName());
 
 	m_materialIndices.emplace(material.GetName(), static_cast<std::uint32_t>(m_materialsGPUBuffer.size()));
 	m_materialsGPUBuffer.emplace_back(std::move(materialData));
 }
-void StandardScene::CreateTexture(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const std::wstring& path, bool isColorData)
+void StandardScene::CreateTextureFromFile(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const std::wstring& path, bool isColorData)
 {
 	// Check if texture was already created:
 	if (m_textures.find(path) != m_textures.end())
@@ -322,6 +331,10 @@ void StandardScene::CreateTexture(ID3D12Device* d3dDevice, ID3D12GraphicsCommand
 
 	// Add texture:
 	m_textures.emplace(path, std::move(texture));
+}
+void StandardScene::CreateEmptyTexture(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList * commandList, const std::wstring & name, bool isColorData)
+{
+	// TODO
 }
 
 void StandardScene::UpdatePassBuffer()

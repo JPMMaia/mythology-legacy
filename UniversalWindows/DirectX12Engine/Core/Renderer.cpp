@@ -66,12 +66,12 @@ void Renderer::CreateWindowSizeDependentResources()
 			DX::SetName(texture.GetResource(), L"GBuffer Position");
 		}
 
-		// Albedo:
+		// Base Color and Metallicness:
 		{
 			auto format = DXGI_FORMAT_B8G8R8A8_UNORM;
 			CD3DX12_CLEAR_VALUE clearValue(format, m_clearColor.data());
 
-			auto& texture = m_albedo;
+			auto& texture = m_baseColorAndMetallicness;
 			texture = Texture();
 			texture.CreateResource(
 				*m_deviceResources.get(),
@@ -84,15 +84,15 @@ void Renderer::CreateWindowSizeDependentResources()
 			);
 			texture.CreateRenderTargetView(m_deviceResources, m_rtvDescriptorHeap, "RTV");
 			texture.CreateShaderResourceView(m_deviceResources, m_srvDescriptorHeap, "SRV");
-			DX::SetName(texture.GetResource(), L"GBuffer Albedo");
+			DX::SetName(texture.GetResource(), L"GBuffer Base Color and Metallicness");
 		}
 
-		// Normals:
+		// Normals and Roughness:
 		{
 			auto format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 			CD3DX12_CLEAR_VALUE clearValue(format, m_clearColor.data());
 
-			auto& texture = m_normals;
+			auto& texture = m_normalsAndRoughness;
 			texture = Texture();
 			texture.CreateResource(
 				*m_deviceResources.get(),
@@ -105,7 +105,7 @@ void Renderer::CreateWindowSizeDependentResources()
 			);
 			texture.CreateRenderTargetView(m_deviceResources, m_rtvDescriptorHeap, "RTV");
 			texture.CreateShaderResourceView(m_deviceResources, m_srvDescriptorHeap, "SRV");
-			DX::SetName(texture.GetResource(), L"GBuffer Normal");
+			DX::SetName(texture.GetResource(), L"GBuffer Normals and Roughness");
 		}
 	}
 
@@ -157,8 +157,8 @@ bool Renderer::Render(const Common::Timer& timer)
 			std::array<CD3DX12_RESOURCE_BARRIER, 3> barriers =
 			{
 				CD3DX12_RESOURCE_BARRIER::Transition(m_positions.GetResource(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET),
-				CD3DX12_RESOURCE_BARRIER::Transition(m_albedo.GetResource(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET),
-				CD3DX12_RESOURCE_BARRIER::Transition(m_normals.GetResource(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET),
+				CD3DX12_RESOURCE_BARRIER::Transition(m_baseColorAndMetallicness.GetResource(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET),
+				CD3DX12_RESOURCE_BARRIER::Transition(m_normalsAndRoughness.GetResource(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET),
 			};
 			commandList->ResourceBarrier(static_cast<UINT>(barriers.size()), barriers.data());
 		}
@@ -166,8 +166,8 @@ bool Renderer::Render(const Common::Timer& timer)
 		std::array<D3D12_CPU_DESCRIPTOR_HANDLE, 3> renderTargetViews =
 		{
 			m_positions.CPUDescriptorHandle("RTV"),
-			m_albedo.CPUDescriptorHandle("RTV"),
-			m_normals.CPUDescriptorHandle("RTV")
+			m_baseColorAndMetallicness.CPUDescriptorHandle("RTV"),
+			m_normalsAndRoughness.CPUDescriptorHandle("RTV")
 		};
 		auto depthStencilView = m_depthStencil.CPUDescriptorHandle("DSV");
 
@@ -208,8 +208,8 @@ bool Renderer::Render(const Common::Timer& timer)
 			std::array<CD3DX12_RESOURCE_BARRIER, 3> barriers =
 			{
 				CD3DX12_RESOURCE_BARRIER::Transition(m_positions.GetResource(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE),
-				CD3DX12_RESOURCE_BARRIER::Transition(m_albedo.GetResource(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE),
-				CD3DX12_RESOURCE_BARRIER::Transition(m_normals.GetResource(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE),
+				CD3DX12_RESOURCE_BARRIER::Transition(m_baseColorAndMetallicness.GetResource(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE),
+				CD3DX12_RESOURCE_BARRIER::Transition(m_normalsAndRoughness.GetResource(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE),
 			};
 			commandList->ResourceBarrier(static_cast<UINT>(barriers.size()), barriers.data());
 		}
