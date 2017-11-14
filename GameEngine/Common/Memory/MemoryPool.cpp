@@ -1,7 +1,8 @@
-#pragma once
-#include <deque>
+module Common.MemoryPools;
 
-namespace Common
+import std.core;
+
+export namespace Common
 {
 	template<typename Type>
 	class MemoryPoolNode
@@ -89,7 +90,7 @@ namespace Common
 		bool m_initialized = false;
 	};
 
-	template<typename T>
+	export template<typename T>
 	class MemoryPoolIterator
 	{
 	public:
@@ -156,7 +157,7 @@ namespace Common
 		typename std::deque<node_type>::iterator m_end;
 	};
 
-	template <class T>
+	export template <class T>
 	class MemoryPool
 	{
 	public:

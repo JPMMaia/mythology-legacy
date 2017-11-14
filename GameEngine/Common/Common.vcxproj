@@ -132,6 +132,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="EngineException.cpp" />
+    <ClCompile Include="Events\Event.cpp" />
+    <ClCompile Include="Events\InternalEvent.cpp" />
+    <ClCompile Include="Memory\MemoryPool.cpp" />
     <ClCompile Include="PerformanceTimer.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>

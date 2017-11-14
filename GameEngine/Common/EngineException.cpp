@@ -1,24 +1,24 @@
-﻿#include "pch.h"
-#include "Common/EngineException.h"
+﻿module Common.Exceptions;
 
-#ifdef _DEBUG
-#include <Windows.h>
-#endif
+import std.core;
 
-#include <sstream>
-
-using namespace Common;
-using namespace std;
-
-EngineException::EngineException(const std::string& message) :
-	m_message(message)
+export namespace Common
 {
-#ifdef _DEBUG
-	OutputDebugStringA(message.c_str());
-#endif
-}
+	export class EngineException : public std::exception
+	{
+	public:
+		EngineException() = default;
+		explicit EngineException(const std::string& message) :
+			m_message(message)
+		{
+		}
 
-const char* EngineException::what() const noexcept
-{
-	return m_message.c_str();
+		const char* what() const noexcept override
+		{
+			return m_message.c_str();
+		}
+
+	private:
+		std::string m_message;
+	};
 }

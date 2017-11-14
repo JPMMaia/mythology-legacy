@@ -6,28 +6,6 @@ import Common.Timers;
 using namespace Common;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-long fibonacci(unsigned n)
-{
-	if (n < 2) return n;
-	return fibonacci(n - 1) + fibonacci(n - 2);
-}
-
-void hello()
-{
-
-	auto start = std::chrono::system_clock::now();
-	std::cout << "f(42) = " << fibonacci(42) << '\n';
-	auto end = std::chrono::system_clock::now();
-
-	std::chrono::duration<double> elapsed_seconds = end - start;
-	std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-
-	auto t1 = std::chrono::system_clock::time_point::max();
-	auto t2 = std::chrono::system_clock::now();
-
-	auto delay = t2 - t1;
-}
-
 namespace GameEngineTests
 {
 	TEST_CLASS(TimerTests)

@@ -1,11 +1,10 @@
-#pragma once
+module Common.Events;
 
-#include <functional>
-#include <unordered_map>
+import std.core;
 
-namespace Common
+export namespace Common
 {
-	template <typename OwnerType, typename KeyType, typename... ParametersTypes>
+	export template <typename OwnerType, typename KeyType, typename... ParametersTypes>
 	class Event
 	{
 		friend OwnerType;

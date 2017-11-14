@@ -1,11 +1,9 @@
-#pragma once
+import std.core;
+import std.threading;
 
-#include <thread>
-#include <future>
-
-namespace Common
+export namespace Common
 {
-	class Task
+	export class Task
 	{
 	public:
 		template<typename FunctionType>

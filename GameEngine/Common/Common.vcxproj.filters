@@ -24,5 +24,17 @@
     <ClCompile Include="PerformanceTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EngineException.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory\MemoryPool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\Event.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\InternalEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

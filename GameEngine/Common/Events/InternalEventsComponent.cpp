@@ -1,13 +1,12 @@
-#pragma once
+module Common.Events;
 
-#include <deque>
-#include <mutex>
+import std.core;
+import std.memory;
+import std.threading;
 
-#include "InternalEvent.h"
-
-namespace Common
+export namespace Common
 {
-	template<typename SenderType>
+	export template<typename SenderType>
 	class InternalEventsComponent
 	{
 	public:
