@@ -13,21 +13,23 @@ export namespace Common
 
 	public:
 		Timer() :
-			m_timePerUpdate(std::chrono::microseconds(12)),
-			m_deltaTime(ClockType::duration(0))
+			m_timePerUpdate(std::chrono::milliseconds(12))
 		{
+			Reset();
 		}
 		explicit Timer(DurationType timePerUpdate) :
-			m_timePerUpdate(timePerUpdate),
-			m_deltaTime(ClockType::duration(0))
+			m_timePerUpdate(timePerUpdate)
 		{
+			Reset();
 		}
 
 		void Reset()
 		{
+			m_deltaTime = ClockType::duration(0);
+			m_fixedUpdateCount = 0;
 			m_previousTimePoint = ClockType::now();
 			m_lag = DurationType::zero();
-			//m_totalTime = DurationType::zero();
+			m_totalTime = DurationType::zero();
 		}
 
 		template <typename FixedUpdateFunctionType, typename FrameUpdateFunctionType, typename RenderFunctionType, typename ProcessInputFunctionType, typename ProcessFrameStatisticsFunctionType>
@@ -49,6 +51,7 @@ export namespace Common
 			while (m_lag >= m_timePerUpdate)
 			{
 				fixedUpdate(*this);
+				++m_fixedUpdateCount;
 				m_lag -= m_timePerUpdate;
 			}
 
@@ -62,9 +65,13 @@ export namespace Common
 			return true;
 		}
 
-		DurationType GetTimePerUpdate() const
+		DurationType GetFixedUpdateDeltaTime() const
 		{
 			return m_timePerUpdate;
+		}
+		DurationType GetFixedUpdateTotalTime() const
+		{
+			return m_timePerUpdate * m_fixedUpdateCount;
 		}
 		DurationType GetTotalTime() const
 		{
@@ -123,6 +130,7 @@ export namespace Common
 
 	private:
 		const DurationType m_timePerUpdate;
+		std::size_t m_fixedUpdateCount = 0;
 
 		DurationType m_totalTime;
 		DurationType m_deltaTime;
@@ -131,7 +139,7 @@ export namespace Common
 		TimePointType m_currentTimePoint;
 		TimePointType m_previousTimePoint;
 
-		size_t m_framesPerSecond = 0;
+		std::size_t m_framesPerSecond = 0;
 		DurationType m_timePerFrame;
 	};
 }
