@@ -24,7 +24,7 @@ namespace MythologyTestProject
 				auto& transform = gameObject.GetTransform();
 				Assert::IsTrue(transform.GetLocalPosition() == Vector3::Zero());
 				Assert::IsTrue(transform.GetLocalRotation().isApprox(Quaternion::Identity()));
-				Assert::IsTrue(transform.GetLocalScaling() == Vector3(1.0f, 1.0f, 1.0f));
+				Assert::IsTrue(transform.GetLocalScale() == Vector3(1.0f, 1.0f, 1.0f));
 			}
 
 			// Test components:
