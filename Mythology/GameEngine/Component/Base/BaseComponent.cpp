@@ -30,3 +30,8 @@ TransformComponent& BaseComponent::GetTransform()
 {
 	return *m_transform;
 }
+
+const std::shared_ptr<TransformComponent>& BaseComponent::GetSharedTransform() const
+{
+	return m_transform;
+}

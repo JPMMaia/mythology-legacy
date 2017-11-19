@@ -1,16 +1,21 @@
 #include "pch.h"
 #include "CppUnitTest.h"
 
+#include "GameEngine/Memory/UseStorage.h"
+
 #include <vector>
-#include "GameEngine/Component/Cameras/CameraComponent.h"
-#include "GameEngine/Memory/StandardAllocator.h"
-#include <windows.h>
 
 using namespace GameEngine;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace MythologyTestProject
 {
+	class StandardAllocatorTestComponent : public UseStorage<StandardAllocatorTestComponent>
+	{
+	public:
+		int Value;
+	};
+
 	TEST_CLASS(StandardAllocatorTests)
 	{
 	private:
@@ -18,44 +23,65 @@ namespace MythologyTestProject
 		using Allocator = StandardAllocator<T>;
 
 	public:
-		TEST_METHOD(StandardAllocatorTest1)
+		TEST_METHOD_CLEANUP(CleanUp)
 		{
-			// Test destruction:
-			{
-				auto test = CameraComponent::CreateSharedPointer();
-				Assert::AreEqual(std::size_t(1), CameraComponent::GetStorage().size());
-			}
-			Assert::AreEqual(std::size_t(0), CameraComponent::GetStorage().size());
+			StandardAllocatorTestComponent::Clear();
+		}
 
+		TEST_METHOD(Destructor)
+		{
+			{
+				auto component = StandardAllocatorTestComponent::CreateSharedPointer();
+				Assert::AreEqual(std::size_t(1), StandardAllocatorTestComponent::GetStorage().size());
+			}
+			Assert::AreEqual(std::size_t(0), StandardAllocatorTestComponent::GetStorage().size());
+		}
+
+		TEST_METHOD(Erase)
+		{
 			static constexpr std::size_t componentCount = 10;
-			std::vector<std::shared_ptr<CameraComponent>> components;
+			std::vector<std::shared_ptr<StandardAllocatorTestComponent>> components;
 			components.reserve(componentCount);
 			for (std::size_t i = 0; i < componentCount; ++i)
-				components.emplace_back(CameraComponent::CreateSharedPointer());	
-			Assert::AreEqual(componentCount, CameraComponent::GetStorage().size());
+				components.emplace_back(StandardAllocatorTestComponent::CreateSharedPointer());
+			Assert::AreEqual(componentCount, StandardAllocatorTestComponent::GetStorage().size());
 			
-			// Set fov angle for a component:
-			components[8]->SetFovAngleY(90.0f);
+			// Set a value for a component
+			components[8]->Value = 90;
 
 			// Erase at middle:
 			components.erase(components.begin() + 7);
 
-			// Check if pointer is still valid:
-			Assert::IsTrue(90.0f == components[7]->GetFovAngleY());
+			// Size of storage does not decrease:
+			Assert::AreEqual(std::size_t(10), StandardAllocatorTestComponent::GetStorage().size());
 
-			// Check if removed node is initialized again:
-			Assert::AreEqual(std::size_t(10), CameraComponent::GetStorage().size());
-			auto anotherComponentPointer = new CameraComponent;
-			auto anotherComponent = std::shared_ptr<CameraComponent>(anotherComponentPointer);
-			Assert::AreEqual(std::size_t(10), CameraComponent::GetStorage().size());
-			anotherComponent->SetFarZ(70.0f);
-			Assert::IsTrue(anotherComponent->GetFarZ() == 70.0f);
+			// Check if pointer is still valid:
+			Assert::AreEqual(90, components[7]->Value);
 
 			// Erase at end:
 			components.erase(components.begin() + 7, components.end());
 
 			// Check if size decreased:
-			Assert::AreEqual(std::size_t(7), CameraComponent::GetStorage().size());
+			Assert::AreEqual(std::size_t(7), StandardAllocatorTestComponent::GetStorage().size());
+		}
+
+		TEST_METHOD(Reuse)
+		{
+			static constexpr std::size_t componentCount = 10;
+			std::vector<std::shared_ptr<StandardAllocatorTestComponent>> components;
+			components.reserve(componentCount);
+			for (std::size_t i = 0; i < componentCount; ++i)
+				components.emplace_back(StandardAllocatorTestComponent::CreateSharedPointer());
+			Assert::AreEqual(componentCount, StandardAllocatorTestComponent::GetStorage().size());
+
+			// Erase at middle:
+			components.erase(components.begin() + 7);
+
+			// Check if removed node is initialized again:
+			auto anotherComponent = StandardAllocatorTestComponent::CreateSharedPointer();
+			Assert::AreEqual(std::size_t(10), StandardAllocatorTestComponent::GetStorage().size());
+			anotherComponent->Value = 70;
+			Assert::AreEqual(70, anotherComponent->Value);
 		}
 	};
 }

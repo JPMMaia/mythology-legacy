@@ -69,7 +69,7 @@ void MythologyGame::Initialize()
 
 	// Person:
 	{
-		m_person.AddComponent("Box", m_meshes.at("Box")->CreateInstance(m_materials.at("Wood")));
+		m_person.AddRootComponent("Box", m_meshes.at("Box")->CreateInstance(m_materials.at("Wood")));
 
 		{
 			auto component = PointLightComponent::CreateSharedPointer(Eigen::Vector3f(0.8f, 0.8f, 0.8f), 10.0f, 50.0f);
@@ -88,6 +88,7 @@ void MythologyGame::Initialize()
 	// Axis:
 	{
 		auto& box = m_meshes.at("Box");
+		m_axis.AddRootComponent("Root", std::make_shared<TransformComponent>());
 
 		{
 			auto instance = box->CreateInstance(m_materials.at("Red"));
@@ -113,14 +114,16 @@ void MythologyGame::Initialize()
 
 	// Floor:
 	{
-		auto physicsPlane = PhysicsUtilities::MakeSharedPointer<PxRigidStatic>(PxCreatePlane(*m_physicsManager.GetPhysics(), PxPlane(0.0f, 1.0f, 0.0f, 0.0f), *m_physicsMaterial));
-		m_physicsScene->addActor(*physicsPlane);
-		m_floor = GameObject(PhysicsComponent::CreateSharedPointer(physicsPlane));
+		m_floor.AddRootComponent("Root", std::make_shared<TransformComponent>());
 
 		auto instance = m_meshes.at("Floor")->CreateInstance(m_materials.at("Wood"));
 		auto rotation90 = std::sqrt(2.0f) / 2.0f;
 		instance->GetTransform().SetLocalRotation(Quaternionf(rotation90, 0.0f, rotation90, 0.0f));
 		m_floor.AddComponent("Mesh", instance);
+		
+		auto physicsPlane = PhysicsUtilities::MakeSharedPointer<PxRigidStatic>(PxCreatePlane(*m_physicsManager.GetPhysics(), PxPlane(0.0f, 1.0f, 0.0f, 0.0f), *m_physicsMaterial));
+		m_physicsScene->addActor(*physicsPlane);
+		m_floor.AddComponent("RigidStatic", PhysicsComponent::CreateSharedPointer(m_floor.GetSharedTransform(), physicsPlane));
 	}
 
 	{
@@ -128,7 +131,7 @@ void MythologyGame::Initialize()
 		std::string modelName = "test";
 		SceneImporter::ImportedScene scene;
 		SceneImporter::Import(basePath + L"test4.fbx", scene);
-		
+
 		auto skinnedMeshComponent = SkinnedMeshComponent::CreateSharedPointer(modelName);
 
 		const auto& object = scene.Objects[0];
@@ -145,7 +148,7 @@ void MythologyGame::Initialize()
 
 			skinnedMeshComponent->AddMesh(CustomGeometry<EigenMeshData>(std::move(geometry.MeshData)), standardMaterial);
 		}
-		
+
 		auto& importedArmature = scene.Armatures.at(object.ArmatureIndex);
 		auto armature = std::make_shared<Armature>(std::move(importedArmature.BoneHierarchy), std::move(importedArmature.BoneTransforms), std::move(importedArmature.Animations));
 		m_armatures.emplace(importedArmature.Bones.front(), armature);
@@ -153,7 +156,7 @@ void MythologyGame::Initialize()
 		auto instance = skinnedMeshComponent->CreateInstance(armature, object.MeshToParentOfBoneRoot);
 		instance->GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
 		//instance->GetTransform().SetLocalScaling(Vector3f(1.0f, 1.0f, 1.0f) * 0.01f);
-		m_box.AddComponent("AnimationInstance", instance);
+		m_box.AddRootComponent("AnimationInstance", instance);
 
 		m_skinnedMeshes.emplace(modelName, skinnedMeshComponent);
 	}
@@ -231,18 +234,20 @@ void MythologyGame::CreateStack(const physx::PxTransform& transform, std::size_t
 	{
 		for (std::size_t j = 0; j < size - i; ++j)
 		{
-			// Calculate the local transform:
-			PxTransform localTransform(PxVec3(PxReal(j * 2) - PxReal(size - i), PxReal(i * 2 + 1), 0) * halfExtent);
+			// Create box:
+			GameObject boxObject;
+			boxObject.AddRootComponent("Mesh", m_meshes.at("Box")->CreateInstance(m_materials.at("Wood")));
 
-			// Create rigid dynamic:
-			auto body = PhysicsUtilities::CreateRigidDynamic(*m_physicsManager.GetPhysics(), transform.transform(localTransform), *shape, 10.0f);
-			m_physicsScene->addActor(*body);
+			{
+				// Calculate the local transform:
+				PxTransform localTransform(PxVec3(PxReal(j * 2) - PxReal(size - i), PxReal(i * 2 + 1), 0) * halfExtent);
 
-			// Create box with physics component:
-			GameObject boxObject(PhysicsComponent::CreateSharedPointer(body));
+				// Create rigid dynamic:
+				auto body = PhysicsUtilities::CreateRigidDynamic(*m_physicsManager.GetPhysics(), transform.transform(localTransform), *shape, 10.0f);
+				m_physicsScene->addActor(*body);
 
-			// Add mesh to the object:
-			boxObject.AddComponent("Mesh", m_meshes.at("Box")->CreateInstance(m_materials.at("Wood")));
+				boxObject.AddComponent("RigidDynamic", PhysicsComponent::CreateSharedPointer(boxObject.GetSharedTransform(), body));
+			}
 
 			m_boxes.emplace_back(boxObject);
 		}
@@ -254,17 +259,22 @@ void MythologyGame::CreateProjectile(std::uint8_t key)
 	if (key != ' ')
 		return;
 
-	const auto& cameraTransform = GetMainCamera()->GetTransform();
-	PxTransform transform(PhysicsUtilities::ToPhysX(cameraTransform.GetWorldTransform()));
-	PxSphereGeometry geometry(3.0f);
-	PxVec3 velocity(PhysicsUtilities::ToPhysX(cameraTransform.GetWorldZ() * 20.0f));
+	GameObject boxObject;
+	boxObject.AddRootComponent("Mesh", m_meshes.at("Box")->CreateInstance(m_materials.at("Wood")));
 
-	auto body = PhysicsUtilities::MakeSharedPointer<PxRigidDynamic>(PxCreateDynamic(*m_physicsManager.GetPhysics(), transform, geometry, *m_physicsMaterial, 10.0f));
-	body->setAngularDamping(0.5f);
-	body->setLinearVelocity(velocity);
-	m_physicsScene->addActor(*body);
+	{
+		const auto& cameraTransform = GetMainCamera()->GetTransform();
+		PxTransform transform(PhysicsUtilities::ToPhysX(cameraTransform.GetWorldTransform()));
+		PxSphereGeometry geometry(3.0f);
+		PxVec3 velocity(PhysicsUtilities::ToPhysX(cameraTransform.GetWorldZ() * 20.0f));
 
-	GameObject boxObject(PhysicsComponent::CreateSharedPointer(body));
-	boxObject.AddComponent("Mesh", m_meshes.at("Box")->CreateInstance(m_materials.at("Wood")));
+		auto body = PhysicsUtilities::MakeSharedPointer<PxRigidDynamic>(PxCreateDynamic(*m_physicsManager.GetPhysics(), transform, geometry, *m_physicsMaterial, 10.0f));
+		body->setAngularDamping(0.5f);
+		body->setLinearVelocity(velocity);
+		m_physicsScene->addActor(*body);
+
+		boxObject.AddComponent("RigidDynamic", PhysicsComponent::CreateSharedPointer(boxObject.GetSharedTransform(), body));
+	}
+
 	m_boxes.emplace_back(boxObject);
 }

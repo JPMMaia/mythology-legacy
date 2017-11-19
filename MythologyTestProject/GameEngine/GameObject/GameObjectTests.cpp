@@ -9,6 +9,10 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace MythologyTestProject
 {
+	class TestComponent : public BaseComponent
+	{
+	};
+
 	TEST_CLASS(GameObjectTests)
 	{
 	public:
@@ -56,6 +60,31 @@ namespace MythologyTestProject
 				Assert::IsTrue(pointLightComponent->GetTransform().GetParent().expired());
 				Assert::IsTrue(pointLightComponent->GetWorldPosition() == worldPosition);
 			}
+		}
+
+		TEST_METHOD(AddRootComponent)
+		{
+			GameObject gameObject;
+
+			auto root = std::make_shared<TransformComponent>();
+			gameObject.AddRootComponent("Root", root);
+			Assert::IsTrue(root == gameObject.GetSharedTransform());
+		}
+
+		TEST_METHOD(AddComponent)
+		{
+			GameObject gameObject;
+
+			auto root = std::make_shared<TestComponent>();
+			gameObject.AddRootComponent("Root", root);
+
+			auto component0 = std::make_shared<TestComponent>();
+			gameObject.AddComponent("0", component0);
+			Assert::IsTrue(root->GetSharedTransform() == component0->GetSharedTransform()->GetParent().lock());
+
+			auto component1 = std::make_shared<TestComponent>();
+			gameObject.AddComponent("1", component1);
+			Assert::IsTrue(root->GetSharedTransform() == component1->GetSharedTransform()->GetParent().lock());
 		}
 	};
 }

@@ -3,18 +3,20 @@
 
 using namespace GameEngine;
 
-GameObject::GameObject() :
-	m_physics(PhysicsComponent::CreateSharedPointer())
+void GameObject::AddRootComponent(const std::string& name, const std::shared_ptr<BaseComponent>& component)
 {
+	m_transform = component->GetSharedTransform();
+	m_components.emplace(name, component);
 }
-GameObject::GameObject(const std::shared_ptr<PhysicsComponent>& physics) :
-	m_physics(physics)
+void GameObject::AddRootComponent(const std::string& name, const std::shared_ptr<TransformComponent>& component)
 {
+	m_transform = component;
+	m_components.emplace(name, component);
 }
-
 void GameObject::AddComponent(const std::string& name, IComponentPointerCR component, bool worldTransformStays)
 {
-	component->SetParent(m_physics->GetTransform(), worldTransformStays);
+	assert(m_transform != nullptr);
+	component->SetParent(m_transform, worldTransformStays);
 	m_components.emplace(name, component);
 }
 void GameObject::RemoveComponent(const std::string& name, bool worldTransformStays)
@@ -38,9 +40,13 @@ bool GameObject::HasComponent(const std::string& name) const
 
 const TransformComponent& GameObject::GetTransform() const
 {
-	return *m_physics->GetTransform();
+	return *m_transform;
 }
 TransformComponent& GameObject::GetTransform()
 {
-	return *m_physics->GetTransform();
+	return *m_transform;
+}
+const std::shared_ptr<TransformComponent>& GameObject::GetSharedTransform() const
+{
+	return m_transform;
 }

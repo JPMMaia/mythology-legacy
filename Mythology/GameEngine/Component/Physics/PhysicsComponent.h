@@ -10,14 +10,14 @@ namespace GameEngine
 	class PhysicsComponent : public BaseComponent, public UseStorage<PhysicsComponent>
 	{
 	public:
-		PhysicsComponent();
-		explicit PhysicsComponent(const PhysXSharedPointer<physx::PxRigidActor>& rigidActor);
+		explicit PhysicsComponent(const std::shared_ptr<TransformComponent>& transform);
+		PhysicsComponent(const std::shared_ptr<TransformComponent>& transform, const PhysXSharedPointer<physx::PxRigidActor>& rigidActor);
 
 	public:
 		void FrameUpdate(const Common::Timer& timer);
 
 	public:
-		const std::shared_ptr<TransformComponent>& GetTransform() const;
+		const TransformComponent& GetTransform() const;
 
 	private:
 		std::shared_ptr<TransformComponent> m_transform;

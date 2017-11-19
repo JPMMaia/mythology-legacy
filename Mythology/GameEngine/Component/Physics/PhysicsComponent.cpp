@@ -5,13 +5,13 @@
 using namespace GameEngine;
 using namespace physx;
 
-PhysicsComponent::PhysicsComponent() :
-	m_transform(std::make_shared<TransformComponent>()),
+PhysicsComponent::PhysicsComponent(const std::shared_ptr<TransformComponent>& transform) :
+	m_transform(transform),
 	m_rigidActor(nullptr)
 {
 }
-PhysicsComponent::PhysicsComponent(const PhysXSharedPointer<physx::PxRigidActor>& rigidActor) :
-	m_transform(std::make_shared<TransformComponent>()),
+PhysicsComponent::PhysicsComponent(const std::shared_ptr<TransformComponent>& transform, const PhysXSharedPointer<physx::PxRigidActor>& rigidActor) :
+	m_transform(transform),
 	m_rigidActor(rigidActor)
 {
 }
@@ -20,12 +20,17 @@ void PhysicsComponent::FrameUpdate(const Common::Timer& timer)
 {
 	if (m_rigidActor)
 	{
-		auto transform = PhysicsUtilities::ToEigen(m_rigidActor->getGlobalPose());
-		m_transform->SetWorldTransform(transform);
+		auto transform = m_rigidActor->getGlobalPose();
+		
+		const auto& position = transform.p;
+		m_transform->SetLocalPosition(Eigen::Vector3f(position.x, position.y, position.z));
+		
+		const auto& rotation = transform.q;
+		m_transform->SetLocalRotation(Eigen::Quaternionf(rotation.w, rotation.x, rotation.y, rotation.z));
 	}
 }
 
-const std::shared_ptr<TransformComponent>& PhysicsComponent::GetTransform() const
+const TransformComponent& PhysicsComponent::GetTransform() const
 {
-	return m_transform;
+	return *m_transform;
 }

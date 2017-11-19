@@ -23,6 +23,8 @@ namespace GameEngine
 		const TransformComponent& GetTransform() const;
 		TransformComponent& GetTransform();
 
+		const std::shared_ptr<TransformComponent>& GetSharedTransform() const;
+
 	private:
 		std::shared_ptr<TransformComponent> m_transform;
 	};
