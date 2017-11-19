@@ -40,6 +40,7 @@ namespace GameEngine
 		const std::shared_ptr<TransformComponent>& GetSharedTransform() const;
 
 	private:
+		std::string m_rootName;
 		std::shared_ptr<TransformComponent> m_transform;
 		std::unordered_map<std::string, std::shared_ptr<IComponent>> m_components;
 	};
