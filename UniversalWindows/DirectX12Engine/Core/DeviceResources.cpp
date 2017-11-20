@@ -128,9 +128,12 @@ void DeviceResources::CreateDeviceResources()
 #if defined(_DEBUG)
 	// If the project is in a debug build, enable debugging via SDK Layers:
 	{
-		ComPtr<ID3D12Debug> debugController;
-		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
-			debugController->EnableDebugLayer();
+		ComPtr<ID3D12Debug> debugController0;
+		DX::ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController0)));
+		
+		ComPtr<ID3D12Debug> debugController1;
+		debugController0->QueryInterface(IID_PPV_ARGS(&debugController1));
+		debugController1->EnableDebugLayer();
 	}
 #endif
 
