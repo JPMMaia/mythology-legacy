@@ -8,7 +8,7 @@
 
 namespace DirectX12Engine
 {
-	static const UINT c_frameCount = 3;		// Use triple buffering.
+	constexpr UINT c_frameCount = 3;		// Use triple buffering.
 
 											// Controls all the DirectX device resources.
 	class DeviceResources

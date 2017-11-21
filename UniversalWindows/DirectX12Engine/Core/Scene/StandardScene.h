@@ -13,6 +13,7 @@
 #include "GameEngine/Geometry/EigenGeometry.h"
 #include "Core/Geometry/Buffers/VertexBuffer.h"
 #include "Core/Geometry/Buffers/IndexBuffer.h"
+#include "Core/Scene/Standard/FrameResources.h"
 
 #include <unordered_map>
 
@@ -56,13 +57,15 @@ namespace DirectX12Engine
 		void UpdateInstancesBuffer();
 
 	private:
+		FrameResources& GetCurrentFrameResources();
+
+	private:
 		std::shared_ptr<DeviceResources> m_deviceResources;
 		CommandListManager& m_commandListManager;
 		std::size_t m_commandListIndex = 0;
 
 		std::deque<Microsoft::WRL::ComPtr<ID3D12Resource>> m_temporaryUploadBuffers;
-		GPUUploadBuffer<ShaderBufferTypes::MaterialData> m_materialsGPUBuffer;
-		GPUUploadBuffer<ShaderBufferTypes::PassData> m_passGPUBuffer;
+		std::vector<FrameResources> m_framesResources;
 
 		std::unique_ptr<StandardRenderItem> m_renderRectangle;
 		std::deque<std::unique_ptr<StandardRenderItem>> m_renderItems;
@@ -77,8 +80,6 @@ namespace DirectX12Engine
 
 		std::shared_ptr<Mythology::MythologyGame> m_game;
 		
-		GPUUploadBuffer<ShaderBufferTypes::SkinnedAnimationData> m_skinnedMeshAnimationGPUBuffer;
-		GPUUploadBuffer<ShaderBufferTypes::SkinnedMeshData> m_skinnedMeshInstancesGPUBuffer;
 		std::unordered_map<std::string, std::deque<StandardRenderItem*>> m_renderItemsPerSkinnedMesh;
 		std::unordered_map<StandardRenderItem*, std::uint32_t> m_skinnedRenderItemsMaterialIndices;
 	};

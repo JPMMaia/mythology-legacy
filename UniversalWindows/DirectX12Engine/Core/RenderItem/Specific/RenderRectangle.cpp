@@ -25,5 +25,5 @@ StandardRenderItem RenderRectangle::Create(ID3D12Device* d3dDevice, ID3D12Graphi
 	auto mesh = std::make_shared<ImmutableMesh>("RenderRectangle", std::move(vertexBuffer), std::move(indexBuffer));
 	mesh->AddSubmesh("Submesh", Submesh(meshData));
 
-	return StandardRenderItem(d3dDevice, mesh, "Submesh");
+	return StandardRenderItem(*d3dDevice, mesh, "Submesh");
 }
