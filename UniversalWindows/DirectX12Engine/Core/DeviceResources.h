@@ -8,11 +8,12 @@
 
 namespace DirectX12Engine
 {
-	constexpr UINT c_frameCount = 3;		// Use triple buffering.
-
 											// Controls all the DirectX device resources.
 	class DeviceResources
 	{
+	public:
+		static constexpr UINT c_frameCount = 3;
+
 	public:
 		explicit DeviceResources(DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D32_FLOAT);
 		void SetWindow(const std::shared_ptr<IWindow>& window);

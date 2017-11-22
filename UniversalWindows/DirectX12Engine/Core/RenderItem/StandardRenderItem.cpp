@@ -11,21 +11,21 @@ StandardRenderItem::StandardRenderItem(ID3D12Device& d3dDevice, const std::share
 {
 }
 
-void StandardRenderItem::RenderInstanced(ID3D12GraphicsCommandList& commandList, const FrameResources& frameResources) const
+void StandardRenderItem::RenderInstanced(ID3D12GraphicsCommandList& commandList, FramesResources& frameResources, std::size_t frameIndex) const
 {
 	// Do not render if instances buffer is empty:
-	const auto& instancesBuffer = frameResources.InstancesBuffers.at(m_name);
-	if (instancesBuffer.empty())
+	const auto& instancesBuffer = frameResources.GetInstancesBuffer(m_name);
+	if (instancesBuffer.IsEmpty())
 		return;
 
 	// Bind instances' buffer:
-	commandList.SetGraphicsRootShaderResourceView(0, instancesBuffer.get_allocator().GetGPUVirtualAddress(0));
+	commandList.SetGraphicsRootShaderResourceView(0, instancesBuffer.GetGPUVirtualAddress(frameIndex, 0));
 
 	// Set primitive topology:
 	commandList.IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Render mesh:
-	m_mesh->Render(&commandList, m_submeshName, static_cast<UINT>(instancesBuffer.size()));
+	m_mesh->Render(&commandList, m_submeshName, static_cast<UINT>(instancesBuffer.GetSize()));
 }
 void StandardRenderItem::RenderNonInstanced(ID3D12GraphicsCommandList& commandList) const
 {
@@ -36,30 +36,30 @@ void StandardRenderItem::RenderNonInstanced(ID3D12GraphicsCommandList& commandLi
 	m_mesh->Render(&commandList, m_submeshName, 1);
 }
 
-void StandardRenderItem::ReserveSpaceForInstances(FrameResources& frameResources, std::size_t newCapacity)
+void StandardRenderItem::ReserveSpaceForInstances(FramesResources& frameResources, std::size_t newCapacity)
 {
 	auto& instancesBuffer = frameResources.GetInstancesBuffer(m_name);
-	instancesBuffer.reserve(newCapacity);
+	instancesBuffer.Reserve(newCapacity);
 }
-void StandardRenderItem::AddInstance(FrameResources& frameResources, const ShaderBufferTypes::InstanceData& instanceData)
+void StandardRenderItem::AddInstance(FramesResources& frameResources, const ShaderBufferTypes::InstanceData& instanceData)
 {
 	auto& instancesBuffer = frameResources.GetInstancesBuffer(m_name);
-	instancesBuffer.push_back(instanceData);
+	instancesBuffer.Push(instanceData);
 }
-void StandardRenderItem::UpdateInstance(FrameResources& frameResources, std::size_t index, const ShaderBufferTypes::InstanceData& instanceData)
+void StandardRenderItem::UpdateInstance(FramesResources& frameResources, std::size_t index, const ShaderBufferTypes::InstanceData& instanceData)
 {
 	auto& instancesBuffer = frameResources.GetInstancesBuffer(m_name);
-	instancesBuffer[index] = instanceData;
+	instancesBuffer.Set(index, instanceData);
 }
 
-std::size_t StandardRenderItem::GetInstanceCount(FrameResources& frameResources) const
+std::size_t StandardRenderItem::GetInstanceCount(FramesResources& frameResources) const
 {
 	auto& instancesBuffer = frameResources.GetInstancesBuffer(m_name);
-	return instancesBuffer.size();
+	return instancesBuffer.GetSize();
 }
-void StandardRenderItem::SetInstanceCount(FrameResources& frameResources, std::size_t count)
+void StandardRenderItem::SetInstanceCount(FramesResources& frameResources, std::size_t count)
 {
 	auto& instancesBuffer = frameResources.GetInstancesBuffer(m_name);
-	if(count != instancesBuffer.size())
-		instancesBuffer.resize(count);
+	if(count != instancesBuffer.GetSize())
+		instancesBuffer.Resize(count);
 }

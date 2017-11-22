@@ -29,7 +29,7 @@
     <ClCompile Include="Core\Textures\Texture.cpp" />
     <ClCompile Include="Core\RenderItem\Specific\RenderRectangle.cpp" />
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="Core\Scene\Standard\FrameResources.cpp" />
+    <ClCompile Include="Core\Scene\Standard\FramesResources.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Command\CommandListManager.h" />
@@ -66,9 +66,9 @@
     <ClInclude Include="Core\IRenderer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="Core\Scene\Standard\FrameResources.h" />
     <ClInclude Include="Core\Resources\GPUResource.h" />
     <ClInclude Include="Core\Utilities\UnmappedUploadBuffer.h" />
+    <ClInclude Include="Core\Scene\Standard\FramesResources.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\Standard\GBufferPassVertexShader.hlsl" />

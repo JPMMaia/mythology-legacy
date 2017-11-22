@@ -206,7 +206,7 @@
     <ClInclude Include="Core\Scene\IScene.h" />
     <ClInclude Include="Core\Scene\RenderLayers.h" />
     <ClInclude Include="Core\Scene\StandardScene.h" />
-    <ClInclude Include="Core\Scene\Standard\FrameResources.h" />
+    <ClInclude Include="Core\Scene\Standard\FramesResources.h" />
     <ClInclude Include="Core\ShaderStructures.h" />
     <ClInclude Include="Core\Shader\Shader.h" />
     <ClInclude Include="Core\Shader\ShaderBufferTypes.h" />
@@ -239,7 +239,7 @@
     <ClCompile Include="Core\RenderItem\StandardRenderItem.cpp" />
     <ClCompile Include="Core\Resources\DescriptorHeap.cpp" />
     <ClCompile Include="Core\Scene\StandardScene.cpp" />
-    <ClCompile Include="Core\Scene\Standard\FrameResources.cpp" />
+    <ClCompile Include="Core\Scene\Standard\FramesResources.cpp" />
     <ClCompile Include="Core\Shader\Shader.cpp" />
     <ClCompile Include="Core\Textures\Texture.cpp" />
     <ClCompile Include="Core\Textures\Samplers.cpp" />

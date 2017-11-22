@@ -31,10 +31,9 @@ void StandardScene::UpdateInstancesBuffer<SkinnedMeshComponent>();
 StandardScene::StandardScene(const std::shared_ptr<DeviceResources>& deviceResources, CommandListManager& commandListManager, const std::shared_ptr<Mythology::MythologyGame>& game) :
 	m_deviceResources(deviceResources),
 	m_commandListManager(commandListManager),
-	m_framesResources(),
+	m_framesResources(deviceResources),
 	m_game(game)
 {
-	m_framesResources.emplace_back(deviceResources);
 }
 StandardScene::~StandardScene()
 {
@@ -64,9 +63,8 @@ void StandardScene::CreateDeviceDependentResources()
 	// Create materials:
 	{
 		// Reserve space for material instances:
-		// TODO update materials for other frames
-		auto& materialsBuffer = GetCurrentFrameResources().MaterialsBuffer;
-		materialsBuffer.reserve(StandardMaterial::GetStorage().size());
+		auto& materialsBuffer = m_framesResources.MaterialsBuffer;
+		materialsBuffer.Reserve(StandardMaterial::GetStorage().size());
 
 		std::for_each(StandardMaterial::begin(), StandardMaterial::end(), [this, d3dDevice, commandList](auto& material)
 		{
@@ -102,10 +100,9 @@ void StandardScene::CreateDeviceDependentResources()
 	}
 
 	{
-		// TODO update pass data to other frames:
-		auto& passBuffer = GetCurrentFrameResources().PassBuffer;
-		passBuffer.reserve(1);
-		passBuffer.emplace_back();
+		auto& passBuffer = m_framesResources.PassBuffer;
+		passBuffer.Reserve(1);
+		passBuffer.Emplace();
 	}
 }
 void StandardScene::CreateWindowSizeDependentResources()
@@ -137,17 +134,19 @@ void StandardScene::FrameUpdate(const Common::Timer& timer)
 	UpdatePassBuffer();
 	UpdateSkinnedAnimationBuffers();
 	UpdateInstancesBuffers();
+
+	m_framesResources.Update(0); // TODO
 }
 
 bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 {
 	auto commandList = m_commandListManager.GetGraphicsCommandList(0);
-	auto& frameResources = GetCurrentFrameResources();
+	std::size_t frameIndex = 0; // TODO
 
 	// Bind pass buffer:
 	{
-		auto& passBuffer = frameResources.PassBuffer;
-		commandList->SetGraphicsRootConstantBufferView(2, passBuffer.get_allocator().GetGPUVirtualAddress(0));
+		auto& passBuffer = m_framesResources.PassBuffer;
+		commandList->SetGraphicsRootConstantBufferView(2, passBuffer.GetGPUVirtualAddress(frameIndex, 0));
 	}
 
 	if (renderLayer == RenderLayer::LightingPass)
@@ -163,8 +162,8 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 
 	// Bind materials buffer:
 	{
-		auto& materialsBuffer = frameResources.MaterialsBuffer;
-		commandList->SetGraphicsRootShaderResourceView(1, materialsBuffer.get_allocator().GetGPUVirtualAddress(0));
+		auto& materialsBuffer = m_framesResources.MaterialsBuffer;
+		commandList->SetGraphicsRootShaderResourceView(1, materialsBuffer.GetGPUVirtualAddress(frameIndex, 0));
 	}
 
 	if (renderLayer == RenderLayer::Opaque)
@@ -172,13 +171,13 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 		const auto& renderItems = m_renderItemsPerLayer.at(RenderLayer::Opaque);
 		for (auto renderItemIt = renderItems.begin(); renderItemIt != renderItems.end(); ++renderItemIt)
 		{
-			(*renderItemIt)->RenderInstanced(*commandList, frameResources);
+			(*renderItemIt)->RenderInstanced(*commandList, m_framesResources, frameIndex);
 		}
 	}
 	else if (renderLayer == RenderLayer::SkinnedOpaque)
 	{
-		auto& skinnedMeshAnimationBuffer = frameResources.SkinnedMeshAnimationBuffer;
-		auto& skinnedMeshInstancesBuffer = frameResources.SkinnedMeshInstancesBuffer;
+		auto& skinnedMeshAnimationBuffer = m_framesResources.SkinnedMeshAnimationBuffer;
+		auto& skinnedMeshInstancesBuffer = m_framesResources.SkinnedMeshInstancesBuffer;
 
 		std::size_t bufferIndex = 0;
 		std::size_t skinnedMeshInstanceStartIndex = 0;
@@ -190,14 +189,14 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 			for (std::size_t i = 0; i < mesh.GetInstancesCount(); ++i)
 			{
 				// Bind skinned constant buffer:
-				commandList->SetGraphicsRootConstantBufferView(4, skinnedMeshAnimationBuffer.get_allocator().GetGPUVirtualAddress(bufferIndex++));
+				commandList->SetGraphicsRootConstantBufferView(4, skinnedMeshAnimationBuffer.GetGPUVirtualAddress(frameIndex, bufferIndex++));
 
 				// Render:
 				auto materialBufferIndex = skinnedMeshInstanceStartIndex;
 				for (auto renderItemIt = renderItems.begin(); renderItemIt != renderItems.end(); ++renderItemIt)
 				{
 					// Bind materials' buffer:
-					commandList->SetGraphicsRootConstantBufferView(5, skinnedMeshInstancesBuffer.get_allocator().GetGPUVirtualAddress(materialBufferIndex++));
+					commandList->SetGraphicsRootConstantBufferView(5, skinnedMeshInstancesBuffer.GetGPUVirtualAddress(frameIndex, materialBufferIndex++));
 
 					(*renderItemIt)->RenderNonInstanced(*commandList);
 				}
@@ -261,7 +260,7 @@ void StandardScene::CreateRenderItems(ID3D12Device* d3dDevice, ID3D12GraphicsCom
 		m_renderItemsPerLayer[layer].emplace_back(renderItem.get());
 		m_renderItemsPerGeometry.emplace(meshType.GetName(), renderItem.get());
 		m_renderItems.emplace_back(std::move(renderItem));
-	};
+	}
 }
 template<>
 void StandardScene::CreateRenderItems<SkinnedMeshComponent>(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList)
@@ -313,10 +312,9 @@ void StandardScene::CreateMaterial(ID3D12Device* d3dDevice, ID3D12GraphicsComman
 	materialData.RoughnessFactor = material.GetRoughnessFactor();
 	materialData.MetallicRoughnessTextureIndex = m_textureIndices.at(material.GetMetallicRoughnessTextureName());
 
-	// TODO check for several frames:
-	auto& materialsBuffer = GetCurrentFrameResources().MaterialsBuffer;
-	m_materialIndices.emplace(material.GetName(), static_cast<std::uint32_t>(materialsBuffer.size()));
-	materialsBuffer.emplace_back(std::move(materialData));
+	auto& materialsBuffer = m_framesResources.MaterialsBuffer;
+	auto index = materialsBuffer.Emplace(std::move(materialData));
+	m_materialIndices.emplace(material.GetName(), static_cast<std::uint32_t>(index));
 }
 void StandardScene::CreateTextureFromFile(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const std::wstring& path, bool isColorData)
 {
@@ -397,8 +395,8 @@ void StandardScene::UpdatePassBuffer()
 	}
 
 	{
-		auto& passBuffer = GetCurrentFrameResources().PassBuffer;
-		passBuffer[0] = passData;
+		auto& passBuffer = m_framesResources.PassBuffer;
+		passBuffer.Set(0, passData);
 	}
 }
 void StandardScene::UpdateSkinnedAnimationBuffers()
@@ -409,14 +407,17 @@ void StandardScene::UpdateSkinnedAnimationBuffers()
 		animationCount += mesh.GetInstancesCount();
 	});
 
-	auto& skinnedMeshAnimationBuffer = GetCurrentFrameResources().SkinnedMeshAnimationBuffer;
-	skinnedMeshAnimationBuffer.resize(animationCount);
+	auto& skinnedMeshAnimationBuffer = m_framesResources.SkinnedMeshAnimationBuffer;
+	skinnedMeshAnimationBuffer.Resize(animationCount);
 
 	std::size_t bufferIndex = 0;
-	std::for_each(SkinnedMeshComponent::begin(), SkinnedMeshComponent::end(), [&](SkinnedMeshComponent& mesh)
+	for (auto meshIt = SkinnedMeshComponent::begin(); meshIt != SkinnedMeshComponent::end(); ++meshIt)
 	{
-		std::for_each(mesh.GetInstancesBegin(), mesh.GetInstancesEnd(), [&](const auto& instance)
+		auto& mesh = *meshIt;
+		for (auto instanceIt = mesh.GetInstancesBegin(); instanceIt != mesh.GetInstancesEnd(); ++instanceIt)
 		{
+			auto& instance = *instanceIt;
+
 			ShaderBufferTypes::SkinnedAnimationData skinnedData;
 
 			// Update bone transforms:
@@ -429,9 +430,9 @@ void StandardScene::UpdateSkinnedAnimationBuffers()
 			// Update model matrix:
 			skinnedData.ModelMatrix = instance.GetTransform().GetWorldTransform();
 
-			skinnedMeshAnimationBuffer[bufferIndex++] = skinnedData;
-		});
-	});
+			skinnedMeshAnimationBuffer.Set(bufferIndex++, std::move(skinnedData));
+		}
+	}
 }
 void StandardScene::UpdateInstancesBuffers()
 {
@@ -444,11 +445,10 @@ void StandardScene::UpdateInstancesBuffers()
 template<class MeshType>
 void StandardScene::UpdateInstancesBuffer()
 {
-	auto& frameResources = GetCurrentFrameResources();
 	for (auto meshIt = MeshType::begin(); meshIt != MeshType::end(); ++meshIt)
 	{
 		auto renderItem = m_renderItemsPerGeometry.at(meshIt->GetName());
-		renderItem->SetInstanceCount(frameResources, meshIt->GetInstanceCount());
+		renderItem->SetInstanceCount(m_framesResources, meshIt->GetInstanceCount());
 
 		std::size_t index = 0;
 		for (auto instanceIt = meshIt->InstancesBegin(); instanceIt != meshIt->InstancesEnd(); ++instanceIt)
@@ -462,7 +462,7 @@ void StandardScene::UpdateInstancesBuffer()
 			shaderData.ModelMatrix = instanceIt->GetTransform().GetWorldTransform();
 
 			// Update render item instance:
-			renderItem->UpdateInstance(frameResources, index++, shaderData);
+			renderItem->UpdateInstance(m_framesResources, index++, shaderData);
 		}
 
 		++renderItem;
@@ -479,8 +479,8 @@ void StandardScene::UpdateInstancesBuffer<SkinnedMeshComponent>()
 		instancesCount += renderItems.size();
 	});
 
-	auto& skinnedMeshInstancesBuffer = GetCurrentFrameResources().SkinnedMeshInstancesBuffer;
-	skinnedMeshInstancesBuffer.resize(instancesCount);
+	auto& skinnedMeshInstancesBuffer = m_framesResources.SkinnedMeshInstancesBuffer;
+	skinnedMeshInstancesBuffer.Resize(instancesCount);
 
 	auto materialBufferIndex = 0;
 	for (auto skinnedMeshComponentIt = SkinnedMeshComponent::begin(); skinnedMeshComponentIt != SkinnedMeshComponent::end(); ++skinnedMeshComponentIt)
@@ -496,12 +496,7 @@ void StandardScene::UpdateInstancesBuffer<SkinnedMeshComponent>()
 			shaderData.MaterialIndex = m_materialIndices.at(materials[i]->GetName());
 
 			// Update skinned mesh buffer:
-			skinnedMeshInstancesBuffer[materialBufferIndex++] = shaderData;
+			skinnedMeshInstancesBuffer.Set(materialBufferIndex++, shaderData);
 		}
-	};
-}
-
-FrameResources& StandardScene::GetCurrentFrameResources()
-{
-	return m_framesResources[0];
+	}
 }

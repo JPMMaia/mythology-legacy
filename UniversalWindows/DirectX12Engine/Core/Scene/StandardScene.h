@@ -13,7 +13,7 @@
 #include "GameEngine/Geometry/EigenGeometry.h"
 #include "Core/Geometry/Buffers/VertexBuffer.h"
 #include "Core/Geometry/Buffers/IndexBuffer.h"
-#include "Core/Scene/Standard/FrameResources.h"
+#include "Core/Scene/Standard/FramesResources.h"
 
 #include <unordered_map>
 
@@ -57,15 +57,12 @@ namespace DirectX12Engine
 		void UpdateInstancesBuffer();
 
 	private:
-		FrameResources& GetCurrentFrameResources();
-
-	private:
 		std::shared_ptr<DeviceResources> m_deviceResources;
 		CommandListManager& m_commandListManager;
 		std::size_t m_commandListIndex = 0;
 
 		std::deque<Microsoft::WRL::ComPtr<ID3D12Resource>> m_temporaryUploadBuffers;
-		std::vector<FrameResources> m_framesResources;
+		FramesResources m_framesResources;
 
 		std::unique_ptr<StandardRenderItem> m_renderRectangle;
 		std::deque<std::unique_ptr<StandardRenderItem>> m_renderItems;

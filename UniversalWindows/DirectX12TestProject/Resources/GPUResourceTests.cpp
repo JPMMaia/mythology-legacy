@@ -86,17 +86,20 @@ namespace DirectX12TestProject
 			Assert::IsTrue(TestResource(3, 4.0f) == resources.Get(index1));
 		}
 
-		// Erase an element at an arbitrary position. It doesn't invalidate other iterators.
-		TEST_METHOD(Erase)
+		// Erase an element at an arbitrary position.
+		// The element is swapped with the back and erased. 
+		// The function returns the index of the previous back element.
+		TEST_METHOD(SwapWithBackAndErase)
 		{
 			GPUResource<TestResource> resources(s_deviceResources, false, c_frameCount);
 
 			auto index0 = resources.Emplace(0, 0.0f);
-			auto index1 = resources.Emplace(1, 1.0f);
-			resources.Erase(index0);
+			resources.Emplace(1, 1.0f);
+			resources.Emplace(2, 2.0f);
+			resources.SwapWithBackAndErase(index0);
 
-			Assert::AreEqual(std::size_t(1), resources.GetSize());
-			Assert::IsTrue(TestResource(1, 1.0f) == resources.Get(index1));
+			Assert::AreEqual(std::size_t(2), resources.GetSize());
+			Assert::IsTrue(TestResource(2, 2.0f) == resources.Get(index0));
 		}
 
 		// Update the value of an element at an arbitrary position that is initialized.
@@ -118,21 +121,6 @@ namespace DirectX12TestProject
 			Assert::IsTrue(TestResource(3, 3.0f) == resources.Get(index2));
 		}
 
-		// New elements are stored in available spots that were empty due to erase operations at the middle.
-		TEST_METHOD(ReuseMemory)
-		{
-			GPUResource<TestResource> resources(s_deviceResources, false, c_frameCount);
-
-			resources.Emplace(0, 0.0f);
-			resources.Emplace(1, 1.0f);
-			Assert::AreEqual(std::size_t(2), resources.GetCapacity());
-
-			resources.Erase(0);
-			auto index = resources.Emplace(2, 2.0f);
-			Assert::AreEqual(std::size_t(0), index);
-			Assert::AreEqual(std::size_t(2), resources.GetCapacity());
-		}
-
 		// Reduce memory usage by freeing unused memory.
 		TEST_METHOD(ShrinkToFit)
 		{
@@ -144,16 +132,15 @@ namespace DirectX12TestProject
 			resources.ShrinkToFit();
 			Assert::AreEqual(std::size_t(6), resources.GetCapacity());
 
-			// Memory is not required to shrink as erase operations must not invalidate other iterators:
-			resources.Erase(0);
+			resources.SwapWithBackAndErase(0);
 			resources.ShrinkToFit();
-			Assert::AreEqual(std::size_t(6), resources.GetCapacity());
+			Assert::AreEqual(std::size_t(5), resources.GetCapacity());
 
 			// Erase at the end:
-			resources.Erase(4);
-			resources.Erase(5);
+			resources.SwapWithBackAndErase(3);
+			resources.SwapWithBackAndErase(3);
 			resources.ShrinkToFit();
-			Assert::AreEqual(std::size_t(4), resources.GetCapacity());
+			Assert::AreEqual(std::size_t(3), resources.GetCapacity());
 		}
 
 		// By calling update, the GPU upload buffer is updated with the local changes.
@@ -186,7 +173,7 @@ namespace DirectX12TestProject
 					Assert::IsTrue(expectedValue == element);
 			}
 
-			resources.Erase(4);
+			resources.SwapWithBackAndErase(4);
 			resources.Set(6, TestResource(4, 5.0f));
 			resources.Update(1);
 			{

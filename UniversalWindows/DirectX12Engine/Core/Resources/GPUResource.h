@@ -59,27 +59,15 @@ namespace DirectX12Engine
 		{
 			SetDirtyFlags();
 
-			if (!m_availableIndices.empty())
-			{
-				auto lowestIndex = m_availableIndices.begin();
-				auto index = *lowestIndex;
-				m_availableIndices.erase(lowestIndex);
-
-				m_localData[index] = Type(std::forward<Arguments>(arguments)...);
-				return index;
-			}
-
 			m_localData.emplace_back(std::forward<Arguments>(arguments)...);
-			++m_size;
-
 			return m_localData.size() - 1;
 		}
 
 	public:
-		void Erase(std::size_t index)
+		void SwapWithBackAndErase(std::size_t index)
 		{
-			m_availableIndices.emplace(index);
-			--m_size;
+			std::swap(m_localData[index], m_localData.back());
+			m_localData.pop_back();
 		}
 
 	public:
@@ -95,6 +83,7 @@ namespace DirectX12Engine
 		void Set(std::size_t index, Type&& data)
 		{
 			SetDirtyFlags();
+
 			m_localData[index] = std::move(data);
 		}
 
@@ -102,34 +91,18 @@ namespace DirectX12Engine
 		void Reserve(std::size_t capacity)
 		{
 			SetDirtyFlags();
+
 			m_localData.reserve(capacity);
 		}
-		void Resize(std::size_t size, const Type& data)
+		void Resize(std::size_t size, const Type& data = Type())
 		{
 			SetDirtyFlags();
+
 			m_localData.resize(size, data);
 		}
 		void ShrinkToFit()
 		{
 			SetDirtyFlags();
-
-			auto availableIndices = m_availableIndices;
-
-			std::size_t eraseSize = 0;
-			while (!m_availableIndices.empty())
-			{
-				auto highestIndex = --m_availableIndices.end();
-				if (*highestIndex != m_localData.size() - 1 - eraseSize)
-					break;
-
-				m_availableIndices.erase(highestIndex);
-				++eraseSize;
-			}
-
-			if (eraseSize > 0)
-			{
-				m_localData.erase(m_localData.end() - eraseSize, m_localData.end());
-			}
 
 			m_localData.shrink_to_fit();
 		}
@@ -141,13 +114,21 @@ namespace DirectX12Engine
 		}
 		std::size_t GetSize() const
 		{
-			return m_size;
+			return m_localData.size();
+		}
+		bool IsEmpty() const
+		{
+			return m_localData.size() == 0;
 		}
 
 	public:
 		ID3D12Resource* GetGPUBuffer(std::size_t frameIndex) const
 		{
 			return m_uploadBuffers.at(frameIndex).GetResource();
+		}
+		D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress(std::size_t frameIndex, std::uint32_t index) const
+		{
+			return m_uploadBuffers.at(frameIndex).GetGPUVirtualAddress(index);
 		}
 
 	private:
@@ -159,9 +140,6 @@ namespace DirectX12Engine
 	private:
 		std::vector<UnmappedUploadBuffer<Type>> m_uploadBuffers;
 		mutable std::vector<bool> m_dirtyFlags;
-
 		std::vector<Type> m_localData;
-		std::set<std::size_t> m_availableIndices;
-		std::size_t m_size = 0;
 	};
 }
