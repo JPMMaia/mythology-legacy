@@ -202,6 +202,7 @@
     <ClInclude Include="Core\RenderItem\StandardRenderItem.h" />
     <ClInclude Include="Core\Resources\DescriptorHeap.h" />
     <ClInclude Include="Core\Resources\GPUAllocator.h" />
+    <ClInclude Include="Core\Resources\GPUResource.h" />
     <ClInclude Include="Core\Scene\IScene.h" />
     <ClInclude Include="Core\Scene\RenderLayers.h" />
     <ClInclude Include="Core\Scene\StandardScene.h" />
@@ -213,6 +214,7 @@
     <ClInclude Include="Core\Textures\Samplers.h" />
     <ClInclude Include="Core\Utilities\d3dx12.h" />
     <ClInclude Include="Core\Utilities\DirectXHelper.h" />
+    <ClInclude Include="Core\Utilities\UnmappedUploadBuffer.h" />
     <ClInclude Include="Core\Utilities\UploadBuffer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />

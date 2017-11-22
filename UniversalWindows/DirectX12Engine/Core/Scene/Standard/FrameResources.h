@@ -4,6 +4,7 @@
 #include "Core/Shader/ShaderBufferTypes.h"
 #include "Core/DeviceResources.h"
 
+#include <queue>
 #include <unordered_map>
 
 namespace DirectX12Engine

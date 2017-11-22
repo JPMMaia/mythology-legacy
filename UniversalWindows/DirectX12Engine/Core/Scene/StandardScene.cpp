@@ -105,7 +105,7 @@ void StandardScene::CreateDeviceDependentResources()
 		// TODO update pass data to other frames:
 		auto& passBuffer = GetCurrentFrameResources().PassBuffer;
 		passBuffer.reserve(1);
-		passBuffer.push_back(ShaderBufferTypes::PassData());
+		passBuffer.emplace_back();
 	}
 }
 void StandardScene::CreateWindowSizeDependentResources()

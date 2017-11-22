@@ -20,6 +20,7 @@
     <ClCompile Include="Resources\GPUAllocatorTests.cpp" />
     <ClCompile Include="Textures\TextureTests.cpp" />
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="Resources\GPUResourceTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UnitTestApp.xaml.h" />
