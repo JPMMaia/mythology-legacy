@@ -21,7 +21,6 @@ using namespace DirectX;
 using namespace DirectX12Engine;
 using namespace GameEngine;
 
-
 template<>
 void StandardScene::CreateRenderItems<SkinnedMeshComponent>(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList);
 
@@ -34,6 +33,7 @@ StandardScene::StandardScene(const std::shared_ptr<DeviceResources>& deviceResou
 	m_framesResources(deviceResources),
 	m_game(game)
 {
+	MaterialsEventQueue::OnCreate += { "StandardScene", this, &StandardScene::OnMaterialCreated };
 }
 StandardScene::~StandardScene()
 {
@@ -60,17 +60,7 @@ void StandardScene::CreateDeviceDependentResources()
 		CreateEmptyTexture(d3dDevice, commandList, L"Environmetal0", true);
 	}
 
-	// Create materials:
-	{
-		// Reserve space for material instances:
-		auto& materialsBuffer = m_framesResources.MaterialsBuffer;
-		materialsBuffer.Reserve(StandardMaterial::GetStorage().size());
-
-		std::for_each(StandardMaterial::begin(), StandardMaterial::end(), [this, d3dDevice, commandList](auto& material)
-		{
-			CreateMaterial(d3dDevice, commandList, material);
-		});
-	}
+	MaterialsEventQueue::Flush();
 
 	// Create render rectangle:
 	{
@@ -131,6 +121,8 @@ void StandardScene::ProcessInput()
 }
 void StandardScene::FrameUpdate(const Common::Timer& timer)
 {
+	MaterialsEventQueue::Flush();
+
 	UpdatePassBuffer();
 	UpdateSkinnedAnimationBuffers();
 	UpdateInstancesBuffers();
@@ -499,4 +491,10 @@ void StandardScene::UpdateInstancesBuffer<SkinnedMeshComponent>()
 			skinnedMeshInstancesBuffer.Set(materialBufferIndex++, shaderData);
 		}
 	}
+}
+
+void DirectX12Engine::StandardScene::OnMaterialCreated(const StandardMaterial& material)
+{
+	auto commandList = m_commandListManager.GetGraphicsCommandList(0);
+	CreateMaterial(m_deviceResources->GetD3DDevice(), commandList, material);
 }

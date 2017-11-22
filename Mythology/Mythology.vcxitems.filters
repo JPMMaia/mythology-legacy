@@ -30,6 +30,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsScene.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsUtilities.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CubeMappingCamera.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Events\MaterialsEventQueue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
@@ -87,5 +88,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CubeMappingCamera.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Events\MaterialsEventQueue.h" />
   </ItemGroup>
 </Project>

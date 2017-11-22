@@ -14,6 +14,7 @@
 #include "Core/Geometry/Buffers/VertexBuffer.h"
 #include "Core/Geometry/Buffers/IndexBuffer.h"
 #include "Core/Scene/Standard/FramesResources.h"
+#include "GameEngine/Events/MaterialsEventQueue.h"
 
 #include <unordered_map>
 
@@ -55,6 +56,9 @@ namespace DirectX12Engine
 
 		template<class MeshType>
 		void UpdateInstancesBuffer();
+
+	private:
+		void OnMaterialCreated(const GameEngine::StandardMaterial& material);
 
 	private:
 		std::shared_ptr<DeviceResources> m_deviceResources;
