@@ -138,9 +138,14 @@ void Renderer::LoadState()
 void Renderer::ProcessInput() const
 {
 }
-void Renderer::FrameUpdate(const Common::Timer& timer)
+bool Renderer::FrameUpdate(const Common::Timer& timer)
 {
+	if (!m_deviceResources->MoveToNextFrame())
+		return false;
+
 	m_scene->FrameUpdate(timer);
+
+	return true;
 }
 
 bool Renderer::Render(const Common::Timer& timer)

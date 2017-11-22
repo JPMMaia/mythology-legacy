@@ -135,13 +135,13 @@ void StandardScene::FrameUpdate(const Common::Timer& timer)
 	UpdateSkinnedAnimationBuffers();
 	UpdateInstancesBuffers();
 
-	m_framesResources.Update(0); // TODO
+	m_framesResources.Update(m_deviceResources->GetCurrentFrameIndex());
 }
 
 bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 {
 	auto commandList = m_commandListManager.GetGraphicsCommandList(0);
-	std::size_t frameIndex = 0; // TODO
+	std::size_t frameIndex = m_deviceResources->GetCurrentFrameIndex();
 
 	// Bind pass buffer:
 	{

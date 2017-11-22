@@ -22,6 +22,7 @@ namespace DirectX12Engine
 		void SetDpi(float dpi);
 		void ValidateDevice();
 		void Present();
+		bool MoveToNextFrame();
 		void WaitForGpu();
 
 		// The size of the render target, in pixels.
@@ -70,7 +71,6 @@ namespace DirectX12Engine
 		void CreateDeviceResources();
 		void CreateWindowSizeDependentResources();
 		void UpdateRenderTargetSize();
-		void MoveToNextFrame();
 		DXGI_MODE_ROTATION ComputeDisplayRotation() const;
 		void GetHardwareAdapter(IDXGIAdapter1** ppAdapter) const;
 		void EnableShaderBasedValidation() const;

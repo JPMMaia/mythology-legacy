@@ -79,5 +79,7 @@ namespace DirectX12Engine
 		
 		std::unordered_map<std::string, std::deque<StandardRenderItem*>> m_renderItemsPerSkinnedMesh;
 		std::unordered_map<StandardRenderItem*, std::uint32_t> m_skinnedRenderItemsMaterialIndices;
+
+		std::size_t m_currentFrameIndex = 0;
 	};
 }

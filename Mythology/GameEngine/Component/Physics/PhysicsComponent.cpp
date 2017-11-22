@@ -19,7 +19,7 @@ PhysicsComponent::PhysicsComponent(const std::shared_ptr<TransformComponent>& tr
 void PhysicsComponent::FrameUpdate(const Common::Timer& timer)
 {
 	if (m_rigidActor)
-	{
+	{		
 		auto transform = m_rigidActor->getGlobalPose();
 		
 		const auto& position = transform.p;

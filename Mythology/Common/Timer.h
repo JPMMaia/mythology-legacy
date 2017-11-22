@@ -60,8 +60,7 @@ namespace Common
 		m_lag += m_deltaTime;
 
 		// Process input:
-		if (!processInput())
-			return false;
+		processInput();
 
 		// Update the times needed to catchup:
 		while (m_lag >= m_timePerUpdate)
@@ -71,7 +70,8 @@ namespace Common
 		}
 
 		// Render:
-		frameUpdate(*this);
+		if (!frameUpdate(*this))
+			return false;
 		render(*this);
 
 		// Calculate frames statistics (frames per second, milliseconds per frame):

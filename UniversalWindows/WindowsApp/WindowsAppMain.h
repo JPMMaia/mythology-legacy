@@ -26,7 +26,7 @@ namespace WindowsApp
 	private:
 		bool ProcessInput();
 		void FixedUpdate(const Common::Timer& timer);
-		void FrameUpdate(const Common::Timer& timer);
+		bool FrameUpdate(const Common::Timer& timer);
 		void Render(const Common::Timer& timer);
 		void ProcessFrameStatistics(const Common::Timer& timer);
 
