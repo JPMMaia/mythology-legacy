@@ -10,6 +10,7 @@
 #include "Common/Helpers.h"
 #include "Interfaces/IFileSystem.h"
 #include "GameEngine/Events/MaterialsEventQueue.h"
+#include "GameEngine/Events/MeshEventsQueue.h"
 
 #include <cmath>
 
@@ -37,11 +38,13 @@ void MythologyGame::Initialize()
 		{
 			auto mesh = MeshComponent<BoxGeometry>::CreateSharedPointer("Box", BoxGeometry(1.0f, 1.0f, 1.0f, 0));
 			m_meshes.emplace(mesh->GetName(), mesh);
+			MeshEventsQueue::Create(mesh);
 		}
 
 		{
 			auto mesh = MeshComponent<RectangleGeometry>::CreateSharedPointer("Floor", RectangleGeometry(0.0f, 0.0f, 20.0f, 20.0f, 0.0f, 0));
 			m_meshes.emplace(mesh->GetName(), mesh);
+			MeshEventsQueue::Create(mesh);
 		}
 	}
 

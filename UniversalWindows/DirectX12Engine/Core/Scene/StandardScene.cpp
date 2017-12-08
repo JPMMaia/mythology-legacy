@@ -14,6 +14,7 @@
 #include "Core/RenderItem/Specific/RenderRectangle.h"
 #include "GameEngine/Geometry/Primitives/CustomGeometry.h"
 #include "GameEngine/Component/Meshes/SkinnedMeshComponent.h"
+#include "GameEngine/Events/MeshEventsQueue.h"
 #include "Common/Timer.h"
 
 using namespace Common;
@@ -34,6 +35,10 @@ StandardScene::StandardScene(const std::shared_ptr<DeviceResources>& deviceResou
 	m_game(game)
 {
 	MaterialsEventQueue::OnCreate += { "StandardScene", this, &StandardScene::OnMaterialCreated };
+	MaterialsEventQueue::OnDelete += { "StandardScene", this, &StandardScene::OnMaterialDeleted };
+
+	MeshEventsQueue::OnCreate += { "StandardScene", this, &StandardScene::OnMeshCreated };
+	MeshEventsQueue::OnDelete += { "StandardScene", this, &StandardScene::OnMeshDeleted };
 }
 StandardScene::~StandardScene()
 {
@@ -71,9 +76,7 @@ void StandardScene::CreateDeviceDependentResources()
 
 	// Create render items:
 	{
-		CreateRenderItems<MeshComponent<BoxGeometry>>(d3dDevice, commandList);
-		CreateRenderItems<MeshComponent<RectangleGeometry>>(d3dDevice, commandList);
-		CreateRenderItems<MeshComponent<CustomGeometry<EigenMeshData>>>(d3dDevice, commandList);
+		MeshEventsQueue::Flush();
 		CreateRenderItems<SkinnedMeshComponent>(d3dDevice, commandList);
 	}
 
@@ -122,6 +125,7 @@ void StandardScene::ProcessInput()
 void StandardScene::FrameUpdate(const Common::Timer& timer)
 {
 	MaterialsEventQueue::Flush();
+	MeshEventsQueue::Flush();
 
 	UpdatePassBuffer();
 	UpdateSkinnedAnimationBuffers();
@@ -238,20 +242,8 @@ void StandardScene::CreateRenderItems(ID3D12Device* d3dDevice, ID3D12GraphicsCom
 		// Create mesh data:
 		auto meshData = meshType.GetGeometry().GenerateMeshData<EigenMeshData>();
 
-		// Create buffers:
-		auto vertexBuffer = CreateVertexBuffer(d3dDevice, commandList, meshData, false);
-		auto indexBuffer = CreateIndexBuffer(d3dDevice, commandList, meshData);
-
-		// Create mesh:
-		auto mesh = std::make_shared<ImmutableMesh>(std::to_string(m_renderItems.size()), std::move(vertexBuffer), std::move(indexBuffer));
-		mesh->AddSubmesh("Submesh", Submesh(meshData));
-
 		// Create render item:
-		auto renderItem = std::make_unique<StandardRenderItem>(*d3dDevice, mesh, "Submesh");
-		auto layer = RenderLayer::Opaque;
-		m_renderItemsPerLayer[layer].emplace_back(renderItem.get());
-		m_renderItemsPerGeometry.emplace(meshType.GetName(), renderItem.get());
-		m_renderItems.emplace_back(std::move(renderItem));
+		CreateRenderItem(d3dDevice, commandList, meshType.GetName(), meshData);
 	}
 }
 template<>
@@ -292,6 +284,23 @@ void StandardScene::CreateRenderItems<SkinnedMeshComponent>(ID3D12Device* d3dDev
 	}
 }
 
+void StandardScene::CreateRenderItem(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const std::string& meshName, const EigenMeshData& meshData)
+{
+	// Create buffers:
+	auto vertexBuffer = CreateVertexBuffer(d3dDevice, commandList, meshData, false);
+	auto indexBuffer = CreateIndexBuffer(d3dDevice, commandList, meshData);
+
+	// Create mesh:
+	auto mesh = std::make_shared<ImmutableMesh>(std::to_string(m_renderItems.size()), std::move(vertexBuffer), std::move(indexBuffer));
+	mesh->AddSubmesh("Submesh", Submesh(meshData));
+
+	// Create render item:
+	auto renderItem = std::make_unique<StandardRenderItem>(*d3dDevice, mesh, "Submesh");
+	auto layer = RenderLayer::Opaque;
+	m_renderItemsPerLayer[layer].emplace_back(renderItem.get());
+	m_renderItemsPerGeometry.emplace(meshName, renderItem.get());
+	m_renderItems.emplace_back(std::move(renderItem));
+}
 void StandardScene::CreateMaterial(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::StandardMaterial& material)
 {
 	CreateTextureFromFile(d3dDevice, commandList, material.GetBaseColorTextureName(), true);
@@ -493,8 +502,22 @@ void StandardScene::UpdateInstancesBuffer<SkinnedMeshComponent>()
 	}
 }
 
-void DirectX12Engine::StandardScene::OnMaterialCreated(const StandardMaterial& material)
+void StandardScene::OnMaterialCreated(const StandardMaterial& material)
 {
 	auto commandList = m_commandListManager.GetGraphicsCommandList(0);
 	CreateMaterial(m_deviceResources->GetD3DDevice(), commandList, material);
+}
+void StandardScene::OnMaterialDeleted(const StandardMaterial & material)
+{
+	// TODO
+}
+
+void StandardScene::OnMeshCreated(const BaseMeshComponent& mesh)
+{
+	auto commandList = m_commandListManager.GetGraphicsCommandList(0);
+	CreateRenderItem(m_deviceResources->GetD3DDevice(), commandList, mesh.GetName(), mesh.GenerateMeshData());
+}
+void StandardScene::OnMeshDeleted(const BaseMeshComponent & mesh)
+{
+	// TODO
 }

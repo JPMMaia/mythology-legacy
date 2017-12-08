@@ -3,6 +3,7 @@
 #include "GameEngine/Component/Base/BaseComponent.h"
 #include "GameEngine/Component/Meshes/InstancedMeshComponent.h"
 #include "GameEngine/Memory/StandardAllocator.h"
+#include "GameEngine/Geometry/EigenGeometry.h"
 
 namespace GameEngine
 {
@@ -14,6 +15,10 @@ namespace GameEngine
 		{
 		}
 
+	public:
+		virtual EigenMeshData GenerateMeshData() const = 0;
+
+	public:
 		template<typename... ArgumentsTypes>
 		std::shared_ptr<InstancedMeshComponent> CreateInstance(ArgumentsTypes&& ...arguments)
 		{
@@ -71,6 +76,12 @@ namespace GameEngine
 		GeometryType& GetGeometry()
 		{
 			return m_geometry;
+		}
+
+	public:
+		EigenMeshData GenerateMeshData() const override
+		{
+			return m_geometry.GenerateMeshData<EigenMeshData>();
 		}
 
 	private:

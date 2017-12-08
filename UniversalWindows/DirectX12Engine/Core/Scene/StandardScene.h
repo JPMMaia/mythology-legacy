@@ -46,6 +46,7 @@ namespace DirectX12Engine
 		template<class MeshType>
 		void CreateRenderItems(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList);
 
+		void CreateRenderItem(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const std::string& meshName, const GameEngine::EigenMeshData& meshData);
 		void CreateMaterial(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::StandardMaterial& material);
 		void CreateTextureFromFile(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const std::wstring& path, bool isColorData);
 		void CreateEmptyTexture(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const std::wstring& name, bool isColorData);
@@ -59,6 +60,10 @@ namespace DirectX12Engine
 
 	private:
 		void OnMaterialCreated(const GameEngine::StandardMaterial& material);
+		void OnMaterialDeleted(const GameEngine::StandardMaterial& material);
+		
+		void OnMeshCreated(const GameEngine::BaseMeshComponent& mesh);
+		void OnMeshDeleted(const GameEngine::BaseMeshComponent& mesh);
 
 	private:
 		std::shared_ptr<DeviceResources> m_deviceResources;
