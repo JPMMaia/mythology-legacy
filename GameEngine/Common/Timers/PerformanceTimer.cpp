@@ -1,4 +1,4 @@
-module Common.Timers;
+export module Common.Timers;
 
 import std.core;
 

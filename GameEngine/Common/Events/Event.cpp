@@ -1,4 +1,4 @@
-module Common.Events;
+export module Common.Events;
 
 import std.core;
 

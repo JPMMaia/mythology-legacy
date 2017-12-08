@@ -1,4 +1,4 @@
-﻿module Common.Exceptions;
+﻿export module Common.Exceptions;
 
 import std.core;
 

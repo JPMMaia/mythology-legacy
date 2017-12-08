@@ -1,4 +1,4 @@
-module Common.MemoryPools;
+export module Common.MemoryPools;
 
 import std.core;
 

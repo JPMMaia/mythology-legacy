@@ -1,5 +1,6 @@
-module Common.Events;
+export module Common.Events.Components;
 
+import Common.Events.Internal;
 import std.core;
 import std.memory;
 import std.threading;

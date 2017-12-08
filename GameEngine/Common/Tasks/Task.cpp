@@ -1,3 +1,5 @@
+export module Common.Tasks.Task;
+
 import std.core;
 import std.threading;
 

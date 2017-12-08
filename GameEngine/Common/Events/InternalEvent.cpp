@@ -1,4 +1,4 @@
-module Common.Events;
+export module Common.Events.Internal;
 
 export namespace Common
 {
