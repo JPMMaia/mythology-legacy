@@ -3,32 +3,26 @@
 
 using namespace GameEngine;
 
-Common::Event<MeshEventsQueue, std::string, MeshEventsQueue::ConstRef> MeshEventsQueue::OnCreate;
-Common::Event<MeshEventsQueue, std::string, MeshEventsQueue::ConstRef> MeshEventsQueue::OnDelete;
+Common::Event<MeshEventsQueue, std::string, MeshEventsQueue::EventArg> MeshEventsQueue::OnCreate;
+Common::Event<MeshEventsQueue, std::string, MeshEventsQueue::EventArg> MeshEventsQueue::OnDelete;
 
-std::queue<MeshEventsQueue::Pointer> MeshEventsQueue::s_createQueue;
-std::queue<MeshEventsQueue::Pointer> MeshEventsQueue::s_deleteQueue;
+MeshEventsQueue::Container MeshEventsQueue::s_createQueue;
+MeshEventsQueue::Container MeshEventsQueue::s_deleteQueue;
 
 void MeshEventsQueue::Flush()
 {
-	while (!s_createQueue.empty())
-	{
-		OnCreate(*s_createQueue.front());
-		s_createQueue.pop();
-	}
+	OnCreate(s_createQueue);
+	s_createQueue.clear();
 
-	while (!s_deleteQueue.empty())
-	{
-		OnDelete(*s_deleteQueue.front());
-		s_deleteQueue.pop();
-	}
+	OnDelete(s_deleteQueue);
+	s_deleteQueue.clear();
 }
 
 void MeshEventsQueue::Create(const Pointer& value)
 {
-	s_createQueue.push(value);
+	s_createQueue.push_back(value);
 }
 void MeshEventsQueue::Delete(const Pointer& value)
 {
-	s_deleteQueue.push(value);
+	s_deleteQueue.push_back(value);
 }

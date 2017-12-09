@@ -4,8 +4,8 @@
 #include "GameEngine/Geometry/EigenGeometry.h"
 #include "Common/Events/Event.h"
 
+#include <deque>
 #include <memory>
-#include <queue>
 
 namespace GameEngine
 {
@@ -14,11 +14,12 @@ namespace GameEngine
 	public:
 		using Type = BaseMeshComponent;
 		using Pointer = std::shared_ptr<Type>;
-		using ConstRef = const Type&;
+		using Container = std::deque<Pointer>;
+		using EventArg = const Container&;
 
 	public:
-		static Common::Event<MeshEventsQueue, std::string, ConstRef> OnCreate;
-		static Common::Event<MeshEventsQueue, std::string, ConstRef> OnDelete;
+		static Common::Event<MeshEventsQueue, std::string, EventArg> OnCreate;
+		static Common::Event<MeshEventsQueue, std::string, EventArg> OnDelete;
 
 	public:
 		static void Flush();
@@ -28,7 +29,7 @@ namespace GameEngine
 		static void Delete(const Pointer& value);
 
 	private:
-		static std::queue<Pointer> s_createQueue;
-		static std::queue<Pointer> s_deleteQueue;
+		static Container s_createQueue;
+		static Container s_deleteQueue;
 	};
 }

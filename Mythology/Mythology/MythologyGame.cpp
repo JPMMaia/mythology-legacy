@@ -9,7 +9,7 @@
 #include "GameEngine/Component/Meshes/SkinnedMeshComponent.h"
 #include "Common/Helpers.h"
 #include "Interfaces/IFileSystem.h"
-#include "GameEngine/Events/MaterialsEventQueue.h"
+#include "GameEngine/Events/MaterialEventsQueue.h"
 #include "GameEngine/Events/MeshEventsQueue.h"
 
 #include <cmath>
@@ -53,25 +53,25 @@ void MythologyGame::Initialize()
 		{
 			auto material = StandardMaterial::CreateSharedPointer("Wood", Vector4f(1.0f, 1.0f, 1.0f, 1.0f), L"Resources/bamboo-wood/bamboo-wood-semigloss-albedo.dds", 0.0f, 0.8f, L"Resources/white.dds");
 			m_materials.emplace(material->GetName(), material);
-			MaterialsEventQueue::Create(material);
+			MaterialEventsQueue::Create(material);
 		}
 
 		{
 			auto material = StandardMaterial::CreateSharedPointer("Red", Vector4f(1.0f, 0.0f, 0.0f, 1.0f), L"Resources/white.dds", 0.0f, 0.5f, L"Resources/white.dds");
 			m_materials.emplace(material->GetName(), material);
-			MaterialsEventQueue::Create(material);
+			MaterialEventsQueue::Create(material);
 		}
 
 		{
 			auto material = StandardMaterial::CreateSharedPointer("Green", Vector4f(0.0f, 1.0f, 0.0f, 1.0f), L"Resources/white.dds", 0.0f, 0.5f, L"Resources/white.dds");
 			m_materials.emplace(material->GetName(), material);
-			MaterialsEventQueue::Create(material);
+			MaterialEventsQueue::Create(material);
 		}
 
 		{
 			auto material = StandardMaterial::CreateSharedPointer("Blue", Vector4f(0.0f, 0.0f, 1.0f, 1.0f), L"Resources/white.dds", 0.0f, 0.5f, L"Resources/white.dds");
 			m_materials.emplace(material->GetName(), material);
-			MaterialsEventQueue::Create(material);
+			MaterialEventsQueue::Create(material);
 		}
 	}
 
@@ -153,7 +153,7 @@ void MythologyGame::Initialize()
 			const auto& baseColorTextureName = basePath + L"white.dds";
 			auto standardMaterial = StandardMaterial::CreateSharedPointer(modelName + std::to_string(i), Vector4f(baseColor[0], baseColor[1], baseColor[2], 1.0f), baseColorTextureName, 0.0f, 0.5f, L"Resources/white.dds");
 			m_materials.emplace(standardMaterial->GetName(), standardMaterial);
-			MaterialsEventQueue::Create(standardMaterial);
+			MaterialEventsQueue::Create(standardMaterial);
 
 			skinnedMeshComponent->AddMesh(CustomGeometry<EigenMeshData>(std::move(geometry.MeshData)), standardMaterial);
 		}

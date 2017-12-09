@@ -14,7 +14,6 @@
 #include "Core/RenderItem/Specific/RenderRectangle.h"
 #include "GameEngine/Geometry/Primitives/CustomGeometry.h"
 #include "GameEngine/Component/Meshes/SkinnedMeshComponent.h"
-#include "GameEngine/Events/MeshEventsQueue.h"
 #include "Common/Timer.h"
 
 using namespace Common;
@@ -34,11 +33,11 @@ StandardScene::StandardScene(const std::shared_ptr<DeviceResources>& deviceResou
 	m_framesResources(deviceResources),
 	m_game(game)
 {
-	MaterialsEventQueue::OnCreate += { "StandardScene", this, &StandardScene::OnMaterialCreated };
-	MaterialsEventQueue::OnDelete += { "StandardScene", this, &StandardScene::OnMaterialDeleted };
+	MaterialEventsQueue::OnCreate += { "StandardScene", this, &StandardScene::OnMaterialCreated };
+	MaterialEventsQueue::OnDelete += { "StandardScene", this, &StandardScene::OnMaterialDeleted };
 
-	MeshEventsQueue::OnCreate += { "StandardScene", this, &StandardScene::OnMeshCreated };
-	MeshEventsQueue::OnDelete += { "StandardScene", this, &StandardScene::OnMeshDeleted };
+	MeshEventsQueue::OnCreate += { "StandardScene", this, &StandardScene::OnMeshesCreated };
+	MeshEventsQueue::OnDelete += { "StandardScene", this, &StandardScene::OnMeshesDeleted };
 }
 StandardScene::~StandardScene()
 {
@@ -65,7 +64,7 @@ void StandardScene::CreateDeviceDependentResources()
 		CreateEmptyTexture(d3dDevice, commandList, L"Environmetal0", true);
 	}
 
-	MaterialsEventQueue::Flush();
+	MaterialEventsQueue::Flush();
 
 	// Create render rectangle:
 	{
@@ -124,7 +123,7 @@ void StandardScene::ProcessInput()
 }
 void StandardScene::FrameUpdate(const Common::Timer& timer)
 {
-	MaterialsEventQueue::Flush();
+	MaterialEventsQueue::Flush();
 	MeshEventsQueue::Flush();
 
 	UpdatePassBuffer();
@@ -502,22 +501,29 @@ void StandardScene::UpdateInstancesBuffer<SkinnedMeshComponent>()
 	}
 }
 
-void StandardScene::OnMaterialCreated(const StandardMaterial& material)
+void StandardScene::OnMaterialCreated(MaterialEventsQueue::EventArg materials)
 {
 	auto commandList = m_commandListManager.GetGraphicsCommandList(0);
-	CreateMaterial(m_deviceResources->GetD3DDevice(), commandList, material);
+
+	auto& materialsBuffer = m_framesResources.MaterialsBuffer;
+	materialsBuffer.Reserve(materialsBuffer.GetSize() + materials.size());
+
+	for(const auto& material : materials)
+		CreateMaterial(m_deviceResources->GetD3DDevice(), commandList, *material);
 }
-void StandardScene::OnMaterialDeleted(const StandardMaterial & material)
+void StandardScene::OnMaterialDeleted(MaterialEventsQueue::EventArg materials)
 {
 	// TODO
 }
 
-void StandardScene::OnMeshCreated(const BaseMeshComponent& mesh)
+void StandardScene::OnMeshesCreated(MeshEventsQueue::EventArg meshes)
 {
 	auto commandList = m_commandListManager.GetGraphicsCommandList(0);
-	CreateRenderItem(m_deviceResources->GetD3DDevice(), commandList, mesh.GetName(), mesh.GenerateMeshData());
+
+	for(const auto& mesh : meshes)
+		CreateRenderItem(m_deviceResources->GetD3DDevice(), commandList, mesh->GetName(), mesh->GenerateMeshData());
 }
-void StandardScene::OnMeshDeleted(const BaseMeshComponent & mesh)
+void StandardScene::OnMeshesDeleted(MeshEventsQueue::EventArg meshes)
 {
 	// TODO
 }
