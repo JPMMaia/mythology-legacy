@@ -8,6 +8,8 @@
 #include "GameEngine/Geometry/Animation/Armature.h"
 #include "GameEngine/Component/Meshes/SkinnedMeshComponent.h"
 #include "GameEngine/Physics/PhysicsManager.h"
+#include "GameEngine/Repositories/MeshRepository.h"
+#include "Mythology/GameObjects/Axis.h"
 
 namespace Common 
 {
@@ -49,13 +51,11 @@ namespace Mythology
 		GameEngine::PhysicsScene m_physicsScene;
 		physx::PxMaterial* m_physicsMaterial;
 		
-		std::unordered_map<std::string, std::shared_ptr<GameEngine::BaseMeshComponent>> m_meshes;
 		std::unordered_map<std::string, std::shared_ptr<GameEngine::SkinnedMeshComponent>> m_skinnedMeshes;
-		std::unordered_map<std::string, std::shared_ptr<GameEngine::StandardMaterial>> m_materials;
 		std::unordered_map<std::string, std::shared_ptr<GameEngine::Armature>> m_armatures;
+		Axis m_axis;
 		GameEngine::GameObject m_person;
 		GameEngine::GameObject m_floor;
-		GameEngine::GameObject m_axis;
 		GameEngine::GameObject m_box;
 		std::deque<GameEngine::GameObject> m_boxes;
 	};

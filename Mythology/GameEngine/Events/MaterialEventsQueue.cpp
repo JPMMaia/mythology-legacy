@@ -13,27 +13,29 @@ MaterialEventsQueue::Container MaterialEventsQueue::s_deleteQueue;
 
 void MaterialEventsQueue::Flush()
 {
-	OnCreate(s_createQueue);
-	s_createQueue.clear();
+	auto flushQueue = [](Container& queue, const auto& onEvent)
+	{
+		if (!queue.empty())
+		{
+			onEvent(queue);
+			queue.clear();
+		}
+	};
 
-	OnUpdate(s_updateQueue);
-	s_updateQueue.clear();
-
-	OnDelete(s_deleteQueue);
-	s_deleteQueue.clear();
+	flushQueue(s_createQueue, OnCreate);
+	flushQueue(s_updateQueue, OnUpdate);
+	flushQueue(s_deleteQueue, OnDelete);
 }
 
 void GameEngine::MaterialEventsQueue::Create(const Pointer& material)
 {
 	s_createQueue.push_back(material);
 }
-
-inline void GameEngine::MaterialEventsQueue::Update(const Pointer& material)
+void GameEngine::MaterialEventsQueue::Update(const Pointer& material)
 {
 	s_updateQueue.push_back(material);
 }
-
-inline void GameEngine::MaterialEventsQueue::Delete(const Pointer& material)
+void GameEngine::MaterialEventsQueue::Delete(const Pointer& material)
 {
 	s_deleteQueue.push_back(material);
 }

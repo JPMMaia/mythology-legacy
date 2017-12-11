@@ -10,7 +10,7 @@
 #include "Common/Helpers.h"
 #include "Interfaces/IFileSystem.h"
 #include "GameEngine/Events/MaterialEventsQueue.h"
-#include "GameEngine/Events/MeshEventsQueue.h"
+#include "GameEngine/Events/InstanceEventsQueue.h"
 
 #include <cmath>
 
@@ -31,20 +31,21 @@ void MythologyGame::Initialize()
 {
 	m_gameManager = std::make_shared<GameEngine::GameManager>();
 
+	auto& meshRepository = m_gameManager->GetMeshRepository();
+	auto& materialRepository = m_gameManager->GetMaterialRepository();
+
 	m_physicsMaterial = m_physicsManager->createMaterial(0.5f, 0.5f, 0.6f);
 
 	// Meshes:
 	{
 		{
 			auto mesh = MeshComponent<BoxGeometry>::CreateSharedPointer("Box", BoxGeometry(1.0f, 1.0f, 1.0f, 0));
-			m_meshes.emplace(mesh->GetName(), mesh);
-			MeshEventsQueue::Create(mesh);
+			meshRepository.Add(mesh->GetName(), mesh);
 		}
 
 		{
 			auto mesh = MeshComponent<RectangleGeometry>::CreateSharedPointer("Floor", RectangleGeometry(0.0f, 0.0f, 20.0f, 20.0f, 0.0f, 0));
-			m_meshes.emplace(mesh->GetName(), mesh);
-			MeshEventsQueue::Create(mesh);
+			meshRepository.Add(mesh->GetName(), mesh);
 		}
 	}
 
@@ -52,32 +53,31 @@ void MythologyGame::Initialize()
 	{
 		{
 			auto material = StandardMaterial::CreateSharedPointer("Wood", Vector4f(1.0f, 1.0f, 1.0f, 1.0f), L"Resources/bamboo-wood/bamboo-wood-semigloss-albedo.dds", 0.0f, 0.8f, L"Resources/white.dds");
-			m_materials.emplace(material->GetName(), material);
-			MaterialEventsQueue::Create(material);
+			materialRepository.Add(material->GetName(), material);
 		}
 
 		{
 			auto material = StandardMaterial::CreateSharedPointer("Red", Vector4f(1.0f, 0.0f, 0.0f, 1.0f), L"Resources/white.dds", 0.0f, 0.5f, L"Resources/white.dds");
-			m_materials.emplace(material->GetName(), material);
-			MaterialEventsQueue::Create(material);
+			materialRepository.Add(material->GetName(), material);
 		}
 
 		{
 			auto material = StandardMaterial::CreateSharedPointer("Green", Vector4f(0.0f, 1.0f, 0.0f, 1.0f), L"Resources/white.dds", 0.0f, 0.5f, L"Resources/white.dds");
-			m_materials.emplace(material->GetName(), material);
-			MaterialEventsQueue::Create(material);
+			materialRepository.Add(material->GetName(), material);
 		}
 
 		{
 			auto material = StandardMaterial::CreateSharedPointer("Blue", Vector4f(0.0f, 0.0f, 1.0f, 1.0f), L"Resources/white.dds", 0.0f, 0.5f, L"Resources/white.dds");
-			m_materials.emplace(material->GetName(), material);
-			MaterialEventsQueue::Create(material);
+			materialRepository.Add(material->GetName(), material);
 		}
 	}
 
 	// Person:
 	{
-		m_person.AddRootComponent("Box", m_meshes.at("Box")->CreateInstance(m_materials.at("Wood")));
+		std::string meshName("Box");
+		auto instance = meshRepository.Get(meshName)->CreateInstance(materialRepository.Get("Wood"));
+		InstanceEventsQueue::AlwaysUpdate(meshName, instance);
+		m_person.AddRootComponent(meshName, instance);
 
 		{
 			auto component = PointLightComponent::CreateSharedPointer(Eigen::Vector3f(0.8f, 0.8f, 0.8f), 10.0f, 50.0f);
@@ -94,41 +94,18 @@ void MythologyGame::Initialize()
 	}
 
 	// Axis:
-	{
-		auto& box = m_meshes.at("Box");
-		m_axis.AddRootComponent("Root", std::make_shared<TransformComponent>());
-
-		{
-			auto instance = box->CreateInstance(m_materials.at("Red"));
-			instance->GetTransform().SetLocalScaling({ 2.0f, 0.1f, 0.1f });
-			instance->GetTransform().SetLocalPosition({ 1.0f, 0.0f, 0.0f });
-			m_axis.AddComponent("X-axis", instance);
-		}
-
-		{
-			auto instance = box->CreateInstance(m_materials.at("Green"));
-			instance->GetTransform().SetLocalScaling({ 0.1f, 2.0f, 0.1f });
-			instance->GetTransform().SetLocalPosition({ 0.0f, 1.0f, 0.0f });
-			m_axis.AddComponent("Y-axis", instance);
-		}
-
-		{
-			auto instance = box->CreateInstance(m_materials.at("Blue"));
-			instance->GetTransform().SetLocalScaling({ 0.1f, 0.1f, 2.0f });
-			instance->GetTransform().SetLocalPosition({ 0.0f, 0.0f, 1.0f });
-			m_axis.AddComponent("Z-axis", instance);
-		}
-	}
+	m_axis = Axis(*m_gameManager.get());
 
 	// Floor:
 	{
 		m_floor.AddRootComponent("Root", std::make_shared<TransformComponent>());
 
-		auto instance = m_meshes.at("Floor")->CreateInstance(m_materials.at("Wood"));
+		std::string meshName("Floor");
+		auto instance = meshRepository.Get(meshName)->CreateInstance(materialRepository.Get("Wood"));
 		auto rotation90 = std::sqrt(2.0f) / 2.0f;
 		instance->GetTransform().SetLocalRotation(Quaternionf(rotation90, 0.0f, rotation90, 0.0f));
 		m_floor.AddComponent("Mesh", instance);
-		
+
 		auto physicsPlane = PhysicsUtilities::MakeSharedPointer<PxRigidStatic>(PxCreatePlane(*m_physicsManager.GetPhysics(), PxPlane(0.0f, 1.0f, 0.0f, 0.0f), *m_physicsMaterial));
 		m_physicsScene->addActor(*physicsPlane);
 		m_floor.AddComponent("RigidStatic", PhysicsComponent::CreateSharedPointer(m_floor.GetSharedTransform(), physicsPlane));
@@ -152,8 +129,7 @@ void MythologyGame::Initialize()
 			//const auto& albedoMap = basePath + Helpers::GetFilename(Helpers::StringToWString(material.DiffuseTexturePath)) + L".dds";
 			const auto& baseColorTextureName = basePath + L"white.dds";
 			auto standardMaterial = StandardMaterial::CreateSharedPointer(modelName + std::to_string(i), Vector4f(baseColor[0], baseColor[1], baseColor[2], 1.0f), baseColorTextureName, 0.0f, 0.5f, L"Resources/white.dds");
-			m_materials.emplace(standardMaterial->GetName(), standardMaterial);
-			MaterialEventsQueue::Create(standardMaterial);
+			materialRepository.Add(standardMaterial->GetName(), standardMaterial);
 
 			skinnedMeshComponent->AddMesh(CustomGeometry<EigenMeshData>(std::move(geometry.MeshData)), standardMaterial);
 		}
@@ -233,6 +209,9 @@ GameObject::PointerType<CameraComponent> MythologyGame::GetMainCamera() const
 
 void MythologyGame::CreateStack(const physx::PxTransform& transform, std::size_t size, const physx::PxMaterial& material)
 {
+	auto& meshRepository = m_gameManager->GetMeshRepository();
+	auto& materialRepository = m_gameManager->GetMaterialRepository();
+
 	// Create shape and material:
 	auto halfExtent = 0.5f;
 	auto shape = PhysicsUtilities::MakeSharedPointer<PxShape>(
@@ -245,7 +224,10 @@ void MythologyGame::CreateStack(const physx::PxTransform& transform, std::size_t
 		{
 			// Create box:
 			GameObject boxObject;
-			boxObject.AddRootComponent("Mesh", m_meshes.at("Box")->CreateInstance(m_materials.at("Wood")));
+			std::string meshName("Box");
+			auto instance = meshRepository.Get(meshName)->CreateInstance(materialRepository.Get("Wood"));
+			boxObject.AddRootComponent("Mesh", instance);
+			InstanceEventsQueue::AlwaysUpdate(meshName, instance);
 
 			{
 				// Calculate the local transform:
@@ -268,8 +250,14 @@ void MythologyGame::CreateProjectile(std::uint8_t key)
 	if (key != ' ')
 		return;
 
+	auto& meshRepository = m_gameManager->GetMeshRepository();
+	auto& materialRepository = m_gameManager->GetMaterialRepository();
+
 	GameObject boxObject;
-	boxObject.AddRootComponent("Mesh", m_meshes.at("Box")->CreateInstance(m_materials.at("Wood")));
+	std::string meshName("Box");
+	auto instance = meshRepository.Get(meshName)->CreateInstance(materialRepository.Get("Wood"));
+	boxObject.AddRootComponent("Mesh", instance);
+	InstanceEventsQueue::AlwaysUpdate(meshName, instance);
 
 	{
 		const auto& cameraTransform = GetMainCamera()->GetTransform();

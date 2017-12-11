@@ -32,6 +32,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CubeMappingCamera.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Events\MeshEventsQueue.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Events\MaterialEventsQueue.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Events\InstanceEventsQueue.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Axis.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MeshRepository.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MaterialRepository.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
@@ -91,5 +95,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CubeMappingCamera.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Events\MeshEventsQueue.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Events\MaterialEventsQueue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Events\InstanceEventsQueue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\RenderInfo.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Axis.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MeshRepository.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MaterialRepository.h" />
   </ItemGroup>
 </Project>

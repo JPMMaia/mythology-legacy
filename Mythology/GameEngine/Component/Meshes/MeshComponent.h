@@ -4,6 +4,7 @@
 #include "GameEngine/Component/Meshes/InstancedMeshComponent.h"
 #include "GameEngine/Memory/StandardAllocator.h"
 #include "GameEngine/Geometry/EigenGeometry.h"
+#include "GameEngine/Events/InstanceEventsQueue.h"
 
 namespace GameEngine
 {
@@ -30,7 +31,14 @@ namespace GameEngine
 			};
 			new (reinterpret_cast<void*>(pointer)) InstancedMeshComponent(std::forward<ArgumentsTypes>(arguments)...);
 
-			return std::shared_ptr<InstancedMeshComponent>(pointer, deleter);
+			std::shared_ptr<InstancedMeshComponent> instance(pointer, deleter);
+			InstanceEventsQueue::Create(m_name, instance);
+
+			return instance;
+		}
+		void DeleteInstance(const std::shared_ptr<InstancedMeshComponent>& instance)
+		{
+			InstanceEventsQueue::Delete(m_name, instance);
 		}
 
 		StandardAllocatorIterator<InstancedMeshComponent> InstancesBegin()

@@ -3,6 +3,8 @@
 #include "Component/Transforms/TransformComponent.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
+#include "GameEngine/Repositories/MaterialRepository.h"
+#include "GameEngine/Repositories/MeshRepository.h"
 
 namespace Common
 {
@@ -24,8 +26,12 @@ namespace GameEngine
 	public:
 		Keyboard& GetKeyboard() { return m_keyboard; }
 		Mouse& GetMouse() { return m_mouse; }
+		MeshRepository& GetMeshRepository() { return m_meshes; }
+		MaterialRepository& GetMaterialRepository() { return m_materials; }
 
 	private:
+		MeshRepository m_meshes;
+		MaterialRepository m_materials;
 		Keyboard m_keyboard;
 		Mouse m_mouse;
 	};

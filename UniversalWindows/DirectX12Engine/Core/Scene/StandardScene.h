@@ -16,6 +16,7 @@
 #include "Core/Scene/Standard/FramesResources.h"
 #include "GameEngine/Events/MaterialEventsQueue.h"
 #include "GameEngine/Events/MeshEventsQueue.h"
+#include "GameEngine/Events/InstanceEventsQueue.h"
 
 #include <unordered_map>
 
@@ -60,11 +61,15 @@ namespace DirectX12Engine
 		void UpdateInstancesBuffer();
 
 	private:
-		void OnMaterialCreated(GameEngine::MaterialEventsQueue::EventArg materials);
-		void OnMaterialDeleted(GameEngine::MaterialEventsQueue::EventArg materials);
+		void OnMaterialCreated(GameEngine::MaterialEventsQueue::EventArg eventArgs);
+		void OnMaterialDeleted(GameEngine::MaterialEventsQueue::EventArg eventArgs);
 		
-		void OnMeshesCreated(GameEngine::MeshEventsQueue::EventArg meshes);
-		void OnMeshesDeleted(GameEngine::MeshEventsQueue::EventArg meshes);
+		void OnMeshesCreated(GameEngine::MeshEventsQueue::EventArg eventArgs);
+		void OnMeshesDeleted(GameEngine::MeshEventsQueue::EventArg eventArgs);
+
+		void OnInstancesCreated(GameEngine::InstanceEventsQueue::EventArg eventArgs);
+		void OnInstancesUpdated(GameEngine::InstanceEventsQueue::EventArg eventArgs);
+		void OnInstancesDeleted(GameEngine::InstanceEventsQueue::EventArg eventArgs);
 
 	private:
 		std::shared_ptr<DeviceResources> m_deviceResources;

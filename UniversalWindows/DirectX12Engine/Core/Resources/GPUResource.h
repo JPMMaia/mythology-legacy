@@ -64,10 +64,17 @@ namespace DirectX12Engine
 		}
 
 	public:
-		void SwapWithBackAndErase(std::size_t index)
+		bool SwapWithBackAndErase(std::size_t index)
 		{
+			if (index == m_localData.size() - 1)
+			{
+				m_localData.pop_back();
+				return false;
+			}
+
 			std::swap(m_localData[index], m_localData.back());
 			m_localData.pop_back();
+			return true;
 		}
 
 	public:

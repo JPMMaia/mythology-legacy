@@ -140,6 +140,10 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsUtilities.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Events\InstanceEventsQueue.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MaterialRepository.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MeshRepository.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Axis.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\MythologyGame.cpp">
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -149,10 +153,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CubeMappingCamera.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\RenderInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Events\MaterialEventsQueue.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Events\MeshEventsQueue.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsUtilities.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Events\InstanceEventsQueue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MaterialRepository.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MeshRepository.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MythologyAPI.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\Event.h" />
@@ -203,6 +211,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IFileSystem.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IRenderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IScene.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Axis.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\MythologyGame.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsScene.h" />
   </ItemGroup>

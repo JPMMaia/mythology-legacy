@@ -41,15 +41,45 @@ void StandardRenderItem::ReserveSpaceForInstances(FramesResources& frameResource
 	auto& instancesBuffer = frameResources.GetInstancesBuffer(m_name);
 	instancesBuffer.Reserve(newCapacity);
 }
-void StandardRenderItem::AddInstance(FramesResources& frameResources, const ShaderBufferTypes::InstanceData& instanceData)
+void StandardRenderItem::AddInstance(FramesResources& frameResources, const std::shared_ptr<GameEngine::RenderInfo>& renderInfo, const ShaderBufferTypes::InstanceData& instanceData)
 {
+	// Add instance data to buffer:
 	auto& instancesBuffer = frameResources.GetInstancesBuffer(m_name);
 	instancesBuffer.Push(instanceData);
+
+	// Associate the buffer index with the render info:
+	auto bufferIndex = instancesBuffer.GetSize() - 1;
+	m_instancesIndices.emplace(bufferIndex, renderInfo);
+	renderInfo->Index = bufferIndex;
 }
-void StandardRenderItem::UpdateInstance(FramesResources& frameResources, std::size_t index, const ShaderBufferTypes::InstanceData& instanceData)
+void StandardRenderItem::UpdateInstance(FramesResources& frameResources, const GameEngine::RenderInfo& renderInfo, const ShaderBufferTypes::InstanceData& instanceData)
 {
+	// Update the data associated with the render info:
 	auto& instancesBuffer = frameResources.GetInstancesBuffer(m_name);
-	instancesBuffer.Set(index, instanceData);
+	auto bufferIndex = renderInfo.Index;
+	instancesBuffer.Set(bufferIndex, instanceData);
+}
+void StandardRenderItem::DeleteInstance(FramesResources & frameResources, const GameEngine::RenderInfo& renderInfo)
+{
+	// Delete the data associated with the render info:
+	auto bufferIndexToDelete = renderInfo.Index;
+	auto& instancesBuffer = frameResources.GetInstancesBuffer(m_name);
+	auto swapped = instancesBuffer.SwapWithBackAndErase(bufferIndexToDelete);
+
+	// If a swap did not occur:
+	if (!swapped)
+	{
+		// Delete index:
+		m_instancesIndices.erase(bufferIndexToDelete);
+		return;
+	}
+
+	// Update the render info index that was on the back:
+	auto bufferBackIndex = instancesBuffer.GetSize();
+	auto renderInfoSwappedLocation = m_instancesIndices.find(bufferBackIndex);
+	renderInfoSwappedLocation->second->Index = bufferIndexToDelete;
+	m_instancesIndices[bufferIndexToDelete] = renderInfoSwappedLocation->second;
+	m_instancesIndices.erase(renderInfoSwappedLocation);
 }
 
 std::size_t StandardRenderItem::GetInstanceCount(FramesResources& frameResources) const

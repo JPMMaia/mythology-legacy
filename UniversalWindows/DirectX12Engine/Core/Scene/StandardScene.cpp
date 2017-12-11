@@ -38,6 +38,10 @@ StandardScene::StandardScene(const std::shared_ptr<DeviceResources>& deviceResou
 
 	MeshEventsQueue::OnCreate += { "StandardScene", this, &StandardScene::OnMeshesCreated };
 	MeshEventsQueue::OnDelete += { "StandardScene", this, &StandardScene::OnMeshesDeleted };
+
+	InstanceEventsQueue::OnCreate += { "StandardScene", this, &StandardScene::OnInstancesCreated };
+	InstanceEventsQueue::OnUpdate += { "StandardScene", this, &StandardScene::OnInstancesUpdated };
+	InstanceEventsQueue::OnDelete += { "StandardScene", this, &StandardScene::OnInstancesDeleted };
 }
 StandardScene::~StandardScene()
 {
@@ -436,9 +440,10 @@ void StandardScene::UpdateSkinnedAnimationBuffers()
 }
 void StandardScene::UpdateInstancesBuffers()
 {
-	UpdateInstancesBuffer<MeshComponent<BoxGeometry>>();
-	UpdateInstancesBuffer<MeshComponent<RectangleGeometry>>();
-	UpdateInstancesBuffer<MeshComponent<CustomGeometry<EigenMeshData>>>();
+	InstanceEventsQueue::Flush();
+	//UpdateInstancesBuffer<MeshComponent<BoxGeometry>>();
+	//UpdateInstancesBuffer<MeshComponent<RectangleGeometry>>();
+	//UpdateInstancesBuffer<MeshComponent<CustomGeometry<EigenMeshData>>>();
 	UpdateInstancesBuffer<SkinnedMeshComponent>();
 }
 
@@ -526,4 +531,54 @@ void StandardScene::OnMeshesCreated(MeshEventsQueue::EventArg meshes)
 void StandardScene::OnMeshesDeleted(MeshEventsQueue::EventArg meshes)
 {
 	// TODO
+}
+
+void StandardScene::OnInstancesCreated(InstanceEventsQueue::EventArg meshInstances)
+{
+	for (const auto& instances : meshInstances) 
+	{
+		auto renderItem = m_renderItemsPerGeometry.at(instances.first);
+		
+		auto newInstanceCount = instances.second.size();
+		auto oldCount = renderItem->GetInstanceCount(m_framesResources);
+		auto newCount = oldCount + newInstanceCount;
+		renderItem->ReserveSpaceForInstances(m_framesResources, newCount);
+		
+		for (const auto& instance : instances.second)
+		{
+			ShaderBufferTypes::InstanceData shaderData;
+			shaderData.MaterialIndex = m_materialIndices.at(instance->GetMaterial()->GetName());
+			shaderData.ModelMatrix = instance->GetTransform().GetWorldTransform();
+
+			renderItem->AddInstance(m_framesResources, instance->GetRenderInfo(), shaderData);
+		}
+	}
+}
+void StandardScene::OnInstancesUpdated(InstanceEventsQueue::EventArg meshInstances)
+{
+	for (const auto& instances : meshInstances)
+	{
+		auto renderItem = m_renderItemsPerGeometry.at(instances.first);
+
+		for (const auto& instance : instances.second)
+		{
+			ShaderBufferTypes::InstanceData shaderData;
+			shaderData.MaterialIndex = m_materialIndices.at(instance->GetMaterial()->GetName());
+			shaderData.ModelMatrix = instance->GetTransform().GetWorldTransform();
+
+			renderItem->UpdateInstance(m_framesResources, *instance->GetRenderInfo(), shaderData);
+		}
+	}
+}
+void StandardScene::OnInstancesDeleted(InstanceEventsQueue::EventArg meshInstances)
+{
+	for (const auto& instances : meshInstances)
+	{
+		auto renderItem = m_renderItemsPerGeometry.at(instances.first);
+
+		for (const auto& instance : instances.second)
+		{
+			renderItem->DeleteInstance(m_framesResources, *instance->GetRenderInfo());
+		}
+	}
 }

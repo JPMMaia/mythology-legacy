@@ -11,11 +11,17 @@ MeshEventsQueue::Container MeshEventsQueue::s_deleteQueue;
 
 void MeshEventsQueue::Flush()
 {
-	OnCreate(s_createQueue);
-	s_createQueue.clear();
+	auto flushQueue = [](Container& queue, const auto& onEvent)
+	{
+		if (!queue.empty())
+		{
+			onEvent(queue);
+			queue.clear();
+		}
+	};
 
-	OnDelete(s_deleteQueue);
-	s_deleteQueue.clear();
+	flushQueue(s_createQueue, OnCreate);
+	flushQueue(s_deleteQueue, OnDelete);
 }
 
 void MeshEventsQueue::Create(const Pointer& value)
