@@ -5,11 +5,11 @@ using namespace GameEngine;
 
 Common::Event<InstanceEventsQueue, std::string, InstanceEventsQueue::EventArg> InstanceEventsQueue::OnCreate;
 Common::Event<InstanceEventsQueue, std::string, InstanceEventsQueue::EventArg> InstanceEventsQueue::OnUpdate;
-Common::Event<InstanceEventsQueue, std::string, InstanceEventsQueue::EventArg> InstanceEventsQueue::OnDelete;
+Common::Event<InstanceEventsQueue, std::string, InstanceEventsQueue::RenderInfoEventArg> InstanceEventsQueue::OnDelete;
 
 InstanceEventsQueue::Container InstanceEventsQueue::s_createQueue;
 InstanceEventsQueue::Container InstanceEventsQueue::s_updateQueue;
-InstanceEventsQueue::Container InstanceEventsQueue::s_deleteQueue;
+InstanceEventsQueue::RenderInfoContainer InstanceEventsQueue::s_deleteQueue;
 
 void InstanceEventsQueue::Flush()
 {
@@ -63,16 +63,14 @@ void InstanceEventsQueue::NeverUpdate(const std::string& meshName, const Pointer
 	if (instances->second.empty())
 		s_updateQueue.erase(instances);
 }
-void InstanceEventsQueue::Delete(const std::string& meshName, const Pointer& instance)
+void InstanceEventsQueue::Delete(const std::string& meshName, const RenderInfoPointer& renderInfo)
 {
-	NeverUpdate(meshName, instance);
-
 	auto instances = s_deleteQueue.find(meshName);
 	if (instances == s_deleteQueue.end())
 	{
-		s_deleteQueue.emplace(meshName, std::unordered_set<Pointer> { instance });
+		s_deleteQueue.emplace(meshName, std::unordered_set<RenderInfoPointer> { renderInfo });
 		return;
 	}
 
-	instances->second.emplace(instance);
+	instances->second.emplace(renderInfo);
 }

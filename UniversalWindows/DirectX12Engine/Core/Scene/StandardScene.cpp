@@ -546,6 +546,11 @@ void StandardScene::OnInstancesCreated(InstanceEventsQueue::EventArg meshInstanc
 		
 		for (const auto& instance : instances.second)
 		{
+			if (&instance->GetTransform() == nullptr)
+			{
+				continue;
+			}
+
 			ShaderBufferTypes::InstanceData shaderData;
 			shaderData.MaterialIndex = m_materialIndices.at(instance->GetMaterial()->GetName());
 			shaderData.ModelMatrix = instance->GetTransform().GetWorldTransform();
@@ -570,7 +575,7 @@ void StandardScene::OnInstancesUpdated(InstanceEventsQueue::EventArg meshInstanc
 		}
 	}
 }
-void StandardScene::OnInstancesDeleted(InstanceEventsQueue::EventArg meshInstances)
+void StandardScene::OnInstancesDeleted(InstanceEventsQueue::RenderInfoEventArg meshInstances)
 {
 	for (const auto& instances : meshInstances)
 	{
@@ -578,7 +583,7 @@ void StandardScene::OnInstancesDeleted(InstanceEventsQueue::EventArg meshInstanc
 
 		for (const auto& instance : instances.second)
 		{
-			renderItem->DeleteInstance(m_framesResources, *instance->GetRenderInfo());
+			renderItem->DeleteInstance(m_framesResources, *instance);
 		}
 	}
 }

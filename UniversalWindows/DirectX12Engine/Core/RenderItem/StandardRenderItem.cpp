@@ -45,10 +45,9 @@ void StandardRenderItem::AddInstance(FramesResources& frameResources, const std:
 {
 	// Add instance data to buffer:
 	auto& instancesBuffer = frameResources.GetInstancesBuffer(m_name);
-	instancesBuffer.Push(instanceData);
+	auto bufferIndex = instancesBuffer.Push(instanceData);
 
 	// Associate the buffer index with the render info:
-	auto bufferIndex = instancesBuffer.GetSize() - 1;
 	m_instancesIndices.emplace(bufferIndex, renderInfo);
 	renderInfo->Index = bufferIndex;
 }

@@ -155,6 +155,8 @@ void MythologyGame::Initialize()
 
 	auto& keyboard = m_gameManager->GetKeyboard();
 	keyboard.OnKeyPress += {"CreateProjectile", this, &MythologyGame::CreateProjectile};
+	keyboard.OnKeyPress += {"CreateAxis", this, &MythologyGame::CreateAxis};
+	keyboard.OnKeyPress += {"DestroyAxis", this, &MythologyGame::DestroyAxis};
 }
 
 void MythologyGame::ProcessInput()
@@ -274,4 +276,18 @@ void MythologyGame::CreateProjectile(std::uint8_t key)
 	}
 
 	m_boxes.emplace_back(boxObject);
+}
+void MythologyGame::CreateAxis(std::uint8_t key)
+{
+	if (key != 'K')
+		return;
+
+	m_axis = Axis(*m_gameManager.get());
+}
+void MythologyGame::DestroyAxis(std::uint8_t key)
+{
+	if (key != 'L')
+		return;
+
+	m_axis = Axis();
 }

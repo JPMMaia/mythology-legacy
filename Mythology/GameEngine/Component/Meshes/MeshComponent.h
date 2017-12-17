@@ -16,6 +16,11 @@ namespace GameEngine
 		{
 		}
 
+	protected:
+		virtual ~BaseMeshComponent()
+		{
+		}
+
 	public:
 		virtual EigenMeshData GenerateMeshData() const = 0;
 
@@ -27,7 +32,9 @@ namespace GameEngine
 
 			auto deleter = [this](void* pointer)
 			{
-				m_instances.deallocate(reinterpret_cast<InstancedMeshComponent*>(pointer), sizeof(InstancedMeshComponent));
+				auto instance = reinterpret_cast<InstancedMeshComponent*>(pointer);
+				InstanceEventsQueue::Delete(m_name, instance->GetRenderInfo());
+				m_instances.deallocate(instance, sizeof(InstancedMeshComponent));
 			};
 			new (reinterpret_cast<void*>(pointer)) InstancedMeshComponent(std::forward<ArgumentsTypes>(arguments)...);
 
@@ -35,10 +42,6 @@ namespace GameEngine
 			InstanceEventsQueue::Create(m_name, instance);
 
 			return instance;
-		}
-		void DeleteInstance(const std::shared_ptr<InstancedMeshComponent>& instance)
-		{
-			InstanceEventsQueue::Delete(m_name, instance);
 		}
 
 		StandardAllocatorIterator<InstancedMeshComponent> InstancesBegin()

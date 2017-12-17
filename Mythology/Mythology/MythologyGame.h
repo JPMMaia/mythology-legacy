@@ -43,6 +43,8 @@ namespace Mythology
 	private:
 		void CreateStack(const physx::PxTransform & transform, std::size_t size, const physx::PxMaterial& material);
 		void CreateProjectile(std::uint8_t key);
+		void CreateAxis(std::uint8_t key);
+		void DestroyAxis(std::uint8_t key);
 
 	private:
 		std::shared_ptr<GameEngine::IFileSystem> m_fileSystem;

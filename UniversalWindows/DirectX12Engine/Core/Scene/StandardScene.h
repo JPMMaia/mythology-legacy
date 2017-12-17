@@ -69,7 +69,7 @@ namespace DirectX12Engine
 
 		void OnInstancesCreated(GameEngine::InstanceEventsQueue::EventArg eventArgs);
 		void OnInstancesUpdated(GameEngine::InstanceEventsQueue::EventArg eventArgs);
-		void OnInstancesDeleted(GameEngine::InstanceEventsQueue::EventArg eventArgs);
+		void OnInstancesDeleted(GameEngine::InstanceEventsQueue::RenderInfoEventArg eventArgs);
 
 	private:
 		std::shared_ptr<DeviceResources> m_deviceResources;
