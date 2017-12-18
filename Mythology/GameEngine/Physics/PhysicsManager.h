@@ -15,6 +15,10 @@ namespace GameEngine
 
 	public:
 		PhysicsManager();
+		PhysicsManager(const PhysicsManager&) = delete;
+		PhysicsManager& operator=(const PhysicsManager&) = delete;
+		PhysicsManager(PhysicsManager&&) = default;
+		PhysicsManager& operator=(PhysicsManager&&) = default;
 
 	public:
 		PhysicsScene CreateScene();

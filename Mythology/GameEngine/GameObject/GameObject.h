@@ -1,8 +1,9 @@
 ﻿#pragma once
 
 #include "GameEngine/Component/IComponent.h"
-#include "GameEngine/Component/Physics/PhysicsComponent.h"
+#include "GameEngine/Component/Base/BaseComponent.h"
 
+#include <memory>
 #include <unordered_map>
 
 namespace GameEngine

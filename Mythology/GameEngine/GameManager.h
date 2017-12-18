@@ -5,6 +5,7 @@
 #include "Input/Mouse.h"
 #include "GameEngine/Repositories/MaterialRepository.h"
 #include "GameEngine/Repositories/MeshRepository.h"
+#include "GameEngine/Physics/PhysicsManager.h"
 
 namespace Common
 {
@@ -28,11 +29,15 @@ namespace GameEngine
 		Mouse& GetMouse() { return m_mouse; }
 		MeshRepository& GetMeshRepository() { return m_meshes; }
 		MaterialRepository& GetMaterialRepository() { return m_materials; }
+		GameEngine::PhysicsManager& GetPhysicsManager() { return m_physicsManager; }
+		GameEngine::PhysicsScene& GetPhysicsScene() { return m_physicsScene; }
 
 	private:
 		MeshRepository m_meshes;
 		MaterialRepository m_materials;
 		Keyboard m_keyboard;
 		Mouse m_mouse;
+		GameEngine::PhysicsManager m_physicsManager;
+		GameEngine::PhysicsScene m_physicsScene;
 	};
 }

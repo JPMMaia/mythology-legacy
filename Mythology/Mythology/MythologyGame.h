@@ -10,6 +10,7 @@
 #include "GameEngine/Physics/PhysicsManager.h"
 #include "GameEngine/Repositories/MeshRepository.h"
 #include "Mythology/GameObjects/Axis.h"
+#include "Mythology/GameObjects/Box.h"
 
 namespace Common 
 {
@@ -49,9 +50,6 @@ namespace Mythology
 	private:
 		std::shared_ptr<GameEngine::IFileSystem> m_fileSystem;
 		std::shared_ptr<GameEngine::GameManager> m_gameManager;
-		GameEngine::PhysicsManager m_physicsManager;
-		GameEngine::PhysicsScene m_physicsScene;
-		physx::PxMaterial* m_physicsMaterial;
 		
 		std::unordered_map<std::string, std::shared_ptr<GameEngine::SkinnedMeshComponent>> m_skinnedMeshes;
 		std::unordered_map<std::string, std::shared_ptr<GameEngine::Armature>> m_armatures;
@@ -59,6 +57,7 @@ namespace Mythology
 		GameEngine::GameObject m_person;
 		GameEngine::GameObject m_floor;
 		GameEngine::GameObject m_box;
-		std::deque<GameEngine::GameObject> m_boxes;
+		std::deque<Box> m_boxes;
+		std::deque<GameEngine::GameObject> m_projectiles;
 	};
 }

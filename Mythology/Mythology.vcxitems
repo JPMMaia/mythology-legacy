@@ -82,11 +82,12 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\PhysicsComponent.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidDynamicComponent.cpp">
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidStaticComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Transforms\TransformComponent.cpp">
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -145,6 +146,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MaterialRepository.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MeshRepository.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Axis.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Box.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\MythologyGame.cpp">
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -155,6 +157,7 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CubeMappingCamera.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\RenderInfo.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidStaticComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Events\MaterialEventsQueue.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Events\MeshEventsQueue.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsManager.h" />
@@ -187,7 +190,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Animations\SkinnedAnimationComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\SkinnedMeshComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\StandardMaterial.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\PhysicsComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidDynamicComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Transforms\TransformComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.h" />
@@ -213,6 +216,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IRenderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Axis.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Box.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\MythologyGame.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsScene.h" />
   </ItemGroup>

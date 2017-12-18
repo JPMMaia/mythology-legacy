@@ -11,6 +11,8 @@
 #include "Interfaces/IFileSystem.h"
 #include "GameEngine/Events/MaterialEventsQueue.h"
 #include "GameEngine/Events/InstanceEventsQueue.h"
+#include "GameEngine/Component/Physics/RigidStaticComponent.h"
+#include "GameEngine/Component/Physics/RigidDynamicComponent.h"
 
 #include <cmath>
 
@@ -21,8 +23,7 @@ using namespace Mythology;
 using namespace physx;
 
 MythologyGame::MythologyGame(const std::shared_ptr<IFileSystem>& fileSystem) :
-	m_fileSystem(fileSystem),
-	m_physicsScene(m_physicsManager.CreateScene())
+	m_fileSystem(fileSystem)
 {
 	Initialize();
 }
@@ -34,7 +35,10 @@ void MythologyGame::Initialize()
 	auto& meshRepository = m_gameManager->GetMeshRepository();
 	auto& materialRepository = m_gameManager->GetMaterialRepository();
 
-	m_physicsMaterial = m_physicsManager->createMaterial(0.5f, 0.5f, 0.6f);
+	auto& physicsManager = m_gameManager->GetPhysicsManager();
+	auto& physicsScene = m_gameManager->GetPhysicsScene();
+	
+	physicsScene.AddMaterial("Default", PhysicsUtilities::MakeSharedPointer(physicsManager->createMaterial(0.5f, 0.5f, 0.6f)));
 
 	// Meshes:
 	{
@@ -106,9 +110,9 @@ void MythologyGame::Initialize()
 		instance->GetTransform().SetLocalRotation(Quaternionf(rotation90, 0.0f, rotation90, 0.0f));
 		m_floor.AddComponent("Mesh", instance);
 
-		auto physicsPlane = PhysicsUtilities::MakeSharedPointer<PxRigidStatic>(PxCreatePlane(*m_physicsManager.GetPhysics(), PxPlane(0.0f, 1.0f, 0.0f, 0.0f), *m_physicsMaterial));
-		m_physicsScene->addActor(*physicsPlane);
-		m_floor.AddComponent("RigidStatic", PhysicsComponent::CreateSharedPointer(m_floor.GetSharedTransform(), physicsPlane));
+		auto physicsPlane = PhysicsUtilities::MakeSharedPointer<PxRigidStatic>(PxCreatePlane(*physicsManager.GetPhysics(), PxPlane(0.0f, 1.0f, 0.0f, 0.0f), *physicsScene.GetMaterial("Default")));
+		physicsScene->addActor(*physicsPlane);
+		m_floor.AddComponent("RigidStatic", RigidStaticComponent::CreateSharedPointer(m_floor.GetSharedTransform(), physicsPlane));
 	}
 
 	{
@@ -150,7 +154,7 @@ void MythologyGame::Initialize()
 	{
 		auto stackZ = 10.0f;
 		for (std::size_t i = 0; i < 5; ++i)
-			CreateStack(PxTransform(PxVec3(0, 0.0f, stackZ -= 10.0f)), 5, *m_physicsMaterial);
+			CreateStack(PxTransform(PxVec3(0, 0.0f, stackZ -= 10.0f)), 5, *physicsScene.GetMaterial("Default"));
 	}
 
 	auto& keyboard = m_gameManager->GetKeyboard();
@@ -165,8 +169,6 @@ void MythologyGame::ProcessInput()
 }
 void MythologyGame::FixedUpdate(const Common::Timer& timer)
 {
-	m_physicsScene.FixedUpdate(timer);
-
 	m_gameManager->FixedUpdate(timer);
 }
 void MythologyGame::FrameUpdate(const Common::Timer& timer)
@@ -211,38 +213,15 @@ GameObject::PointerType<CameraComponent> MythologyGame::GetMainCamera() const
 
 void MythologyGame::CreateStack(const physx::PxTransform& transform, std::size_t size, const physx::PxMaterial& material)
 {
-	auto& meshRepository = m_gameManager->GetMeshRepository();
-	auto& materialRepository = m_gameManager->GetMaterialRepository();
-
-	// Create shape and material:
-	auto halfExtent = 0.5f;
-	auto shape = PhysicsUtilities::MakeSharedPointer<PxShape>(
-		m_physicsManager->createShape(PxBoxGeometry(halfExtent, halfExtent, halfExtent), material)
-		);
-
 	for (std::size_t i = 0; i < size; ++i)
 	{
 		for (std::size_t j = 0; j < size - i; ++j)
 		{
+			// Calculate the local transform:
+			PxTransform localTransform(PxVec3(PxReal(j * 2) - PxReal(size - i), PxReal(i * 2 + 1), 0) * 0.5f);
+			
 			// Create box:
-			GameObject boxObject;
-			std::string meshName("Box");
-			auto instance = meshRepository.Get(meshName)->CreateInstance(materialRepository.Get("Wood"));
-			boxObject.AddRootComponent("Mesh", instance);
-			InstanceEventsQueue::AlwaysUpdate(meshName, instance);
-
-			{
-				// Calculate the local transform:
-				PxTransform localTransform(PxVec3(PxReal(j * 2) - PxReal(size - i), PxReal(i * 2 + 1), 0) * halfExtent);
-
-				// Create rigid dynamic:
-				auto body = PhysicsUtilities::CreateRigidDynamic(*m_physicsManager.GetPhysics(), transform.transform(localTransform), *shape, 10.0f);
-				m_physicsScene->addActor(*body);
-
-				boxObject.AddComponent("RigidDynamic", PhysicsComponent::CreateSharedPointer(boxObject.GetSharedTransform(), body));
-			}
-
-			m_boxes.emplace_back(boxObject);
+			m_boxes.emplace_back(*m_gameManager, transform.transform(localTransform));
 		}
 	}
 }
@@ -254,6 +233,8 @@ void MythologyGame::CreateProjectile(std::uint8_t key)
 
 	auto& meshRepository = m_gameManager->GetMeshRepository();
 	auto& materialRepository = m_gameManager->GetMaterialRepository();
+	auto& physicsManager = m_gameManager->GetPhysicsManager();
+	auto& physicsScene = m_gameManager->GetPhysicsScene();
 
 	GameObject boxObject;
 	std::string meshName("Box");
@@ -267,15 +248,15 @@ void MythologyGame::CreateProjectile(std::uint8_t key)
 		PxSphereGeometry geometry(3.0f);
 		PxVec3 velocity(PhysicsUtilities::ToPhysX(cameraTransform.GetWorldZ() * 20.0f));
 
-		auto body = PhysicsUtilities::MakeSharedPointer<PxRigidDynamic>(PxCreateDynamic(*m_physicsManager.GetPhysics(), transform, geometry, *m_physicsMaterial, 10.0f));
+		auto body = PhysicsUtilities::MakeSharedPointer<PxRigidDynamic>(PxCreateDynamic(*physicsManager.GetPhysics(), transform, geometry, *physicsScene.GetMaterial("Default"), 10.0f));
 		body->setAngularDamping(0.5f);
 		body->setLinearVelocity(velocity);
-		m_physicsScene->addActor(*body);
+		physicsScene->addActor(*body);
 
-		boxObject.AddComponent("RigidDynamic", PhysicsComponent::CreateSharedPointer(boxObject.GetSharedTransform(), body));
+		boxObject.AddComponent("RigidDynamic", RigidDynamicComponent::CreateSharedPointer(boxObject.GetSharedTransform(), body));
 	}
 
-	m_boxes.emplace_back(boxObject);
+	m_projectiles.emplace_back(std::move(boxObject));
 }
 void MythologyGame::CreateAxis(std::uint8_t key)
 {

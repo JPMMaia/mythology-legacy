@@ -188,14 +188,14 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 			for (std::size_t i = 0; i < mesh.GetInstancesCount(); ++i)
 			{
 				// Bind skinned constant buffer:
-				commandList->SetGraphicsRootConstantBufferView(4, skinnedMeshAnimationBuffer.GetGPUVirtualAddress(frameIndex, bufferIndex++));
+				commandList->SetGraphicsRootConstantBufferView(4, skinnedMeshAnimationBuffer.GetGPUVirtualAddress(frameIndex, static_cast<uint32_t>(bufferIndex++)));
 
 				// Render:
 				auto materialBufferIndex = skinnedMeshInstanceStartIndex;
 				for (auto renderItemIt = renderItems.begin(); renderItemIt != renderItems.end(); ++renderItemIt)
 				{
 					// Bind materials' buffer:
-					commandList->SetGraphicsRootConstantBufferView(5, skinnedMeshInstancesBuffer.GetGPUVirtualAddress(frameIndex, materialBufferIndex++));
+					commandList->SetGraphicsRootConstantBufferView(5, skinnedMeshInstancesBuffer.GetGPUVirtualAddress(frameIndex, static_cast<uint32_t>(materialBufferIndex++)));
 
 					(*renderItemIt)->RenderNonInstanced(*commandList);
 				}

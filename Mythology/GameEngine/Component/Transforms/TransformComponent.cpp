@@ -168,6 +168,9 @@ const std::weak_ptr<TransformComponent>& TransformComponent::GetParent() const
 }
 void TransformComponent::SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldTransformStays)
 {
+	if (!parent.expired() && this == parent.lock().get())
+		return;
+
 	// If has parent, remove child:
 	if (!m_parent.expired())
 	{

@@ -17,7 +17,6 @@ void GameObject::AddRootComponent(const std::string& name, const std::shared_ptr
 }
 void GameObject::AddComponent(const std::string& name, IComponentPointerCR component, bool worldTransformStays)
 {
-	assert(m_transform != nullptr);
 	component->SetParent(m_transform, worldTransformStays);
 	m_components.emplace(name, component);
 }

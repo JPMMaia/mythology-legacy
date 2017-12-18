@@ -14,7 +14,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Base\BaseComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\SpotLightComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\PointLightComponent.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\PhysicsComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CameraComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Input\Keyboard.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Input\Mouse.cpp" />
@@ -37,6 +36,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MeshRepository.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MaterialRepository.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\InstancedMeshComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Box.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidStaticComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidDynamicComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
@@ -64,7 +66,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\PointLightComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\SpotLightComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\MeshComponent.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\PhysicsComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\EigenGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CameraComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Memory\StandardAllocator.h" />
@@ -101,5 +102,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Axis.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MeshRepository.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MaterialRepository.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Box.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidStaticComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidDynamicComponent.h" />
   </ItemGroup>
 </Project>

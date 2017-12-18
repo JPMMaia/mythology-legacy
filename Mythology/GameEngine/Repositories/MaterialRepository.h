@@ -11,6 +11,13 @@ namespace GameEngine
 	class MaterialRepository
 	{
 	public:
+		MaterialRepository() = default;
+		MaterialRepository(const MaterialRepository&) = delete;
+		MaterialRepository& operator=(const MaterialRepository&) = delete;
+		MaterialRepository(MaterialRepository&&) = default;
+		MaterialRepository& operator=(MaterialRepository&&) = default;
+
+	public:
 		void Add(const std::string& name, const std::shared_ptr<GameEngine::StandardMaterial>& material);
 		const std::shared_ptr<GameEngine::StandardMaterial>& Get(const std::string& name);
 		void Delete(const std::string& name);

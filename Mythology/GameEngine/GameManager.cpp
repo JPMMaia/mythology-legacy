@@ -3,12 +3,14 @@
 #include "GameObject/GameObject.h"
 
 #include "GameEngine/Component/Cameras/CameraComponent.h"
+#include "GameEngine/Component/Physics/RigidDynamicComponent.h"
 #include "GameEngine/Component/Meshes/SkinnedMeshComponent.h"
 
 using namespace Common;
 using namespace GameEngine;
 
-GameManager::GameManager()
+GameManager::GameManager() :
+	m_physicsScene(m_physicsManager.CreateScene())
 {
 }
 
@@ -27,6 +29,8 @@ void FixedUpdate(const Timer& timer)
 }
 void GameManager::FixedUpdate(const Common::Timer& timer) const
 {
+	m_physicsScene.FixedUpdate(timer);
+
 	::FixedUpdate<CameraComponent>(timer);
 }
 
@@ -40,7 +44,7 @@ void FrameUpdate(const Timer& timer)
 }
 void GameManager::FrameUpdate(const Common::Timer& timer) const
 {
-	::FrameUpdate<PhysicsComponent>(timer);
+	::FrameUpdate<RigidDynamicComponent>(timer);
 
 	std::for_each(SkinnedMeshComponent::begin(), SkinnedMeshComponent::end(), [&timer](SkinnedMeshComponent& mesh)
 	{
