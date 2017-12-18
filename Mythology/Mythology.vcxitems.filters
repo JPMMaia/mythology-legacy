@@ -39,6 +39,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Box.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidStaticComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidDynamicComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Person.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
@@ -105,5 +106,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Box.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidStaticComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidDynamicComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Person.h" />
   </ItemGroup>
 </Project>

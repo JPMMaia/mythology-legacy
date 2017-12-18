@@ -37,7 +37,7 @@ void MythologyGame::Initialize()
 
 	auto& physicsManager = m_gameManager->GetPhysicsManager();
 	auto& physicsScene = m_gameManager->GetPhysicsScene();
-	
+
 	physicsScene.AddMaterial("Default", PhysicsUtilities::MakeSharedPointer(physicsManager->createMaterial(0.5f, 0.5f, 0.6f)));
 
 	// Meshes:
@@ -77,28 +77,10 @@ void MythologyGame::Initialize()
 	}
 
 	// Person:
-	{
-		std::string meshName("Box");
-		auto instance = meshRepository.Get(meshName)->CreateInstance(materialRepository.Get("Wood"));
-		InstanceEventsQueue::AlwaysUpdate(meshName, instance);
-		m_person.AddRootComponent(meshName, instance);
-
-		{
-			auto component = PointLightComponent::CreateSharedPointer(Eigen::Vector3f(0.8f, 0.8f, 0.8f), 10.0f, 50.0f);
-			component->GetTransform().SetLocalPosition(3.0f * Vector3f(0.0f, 1.0f, -2.0f));
-			m_person.AddComponent("Light", component);
-		}
-
-		{
-			auto component = CameraComponent::CreateSharedPointer();
-			component->GetTransform().SetLocalRotation(Quaternionf::FromTwoVectors(Vector3f::UnitZ(), Vector3f(0.0f, -1.0f, 2.0f)));
-			component->GetTransform().SetLocalPosition(3.0f * Vector3f(0.0f, 1.0f, -2.0f));
-			m_person.AddComponent("Camera", component);
-		}
-	}
+	m_person = Person(*m_gameManager);
 
 	// Axis:
-	m_axis = Axis(*m_gameManager.get());
+	m_axis = Axis(*m_gameManager);
 
 	// Floor:
 	{
@@ -171,30 +153,7 @@ void MythologyGame::FixedUpdate(const Common::Timer& timer)
 {
 	m_gameManager->FixedUpdate(timer);
 
-	auto& cameraTransform = m_person.GetTransform();
-
-	static constexpr auto movementSensibility = 0.125f;
-	auto& keyboard = m_gameManager->GetKeyboard();
-	if (keyboard.IsKeyDown('W'))
-		cameraTransform.MoveLocalZ(movementSensibility);
-	if (keyboard.IsKeyDown('A'))
-		cameraTransform.MoveLocalX(movementSensibility);
-	if (keyboard.IsKeyDown('S'))
-		cameraTransform.MoveLocalZ(-movementSensibility);
-	if (keyboard.IsKeyDown('D'))
-		cameraTransform.MoveLocalX(-movementSensibility);
-
-	static constexpr auto tiltSensibility = 0.0625f;
-	if (keyboard.IsKeyDown('Q'))
-		cameraTransform.Rotate(Vector3f::UnitZ(), -tiltSensibility);
-	if (keyboard.IsKeyDown('E'))
-		cameraTransform.Rotate(Vector3f::UnitZ(), tiltSensibility);
-
-	static constexpr auto mouseSensibility = 1.0f / 512.0f;
-	auto& mouse = m_gameManager->GetMouse();
-	auto deltaMovement = mouse.DeltaMovement();
-	cameraTransform.Rotate(Vector3f::UnitX(), mouseSensibility * deltaMovement[1]);
-	cameraTransform.Rotate(Vector3f::UnitY(), -mouseSensibility * deltaMovement[0]);
+	m_person.FixedUpdate(timer, *m_gameManager);
 }
 void MythologyGame::FrameUpdate(const Common::Timer& timer)
 {
@@ -208,7 +167,7 @@ std::shared_ptr<GameManager> MythologyGame::GameManager() const
 
 GameObject::PointerType<CameraComponent> MythologyGame::GetMainCamera() const
 {
-	return m_person.GetComponent<CameraComponent>("Camera");
+	return m_person.GetCamera();
 }
 
 void MythologyGame::CreateStack(const physx::PxTransform& transform, std::size_t size, const physx::PxMaterial& material)
@@ -219,7 +178,7 @@ void MythologyGame::CreateStack(const physx::PxTransform& transform, std::size_t
 		{
 			// Calculate the local transform:
 			PxTransform localTransform(PxVec3(PxReal(j * 2) - PxReal(size - i), PxReal(i * 2 + 1), 0) * 0.5f);
-			
+
 			// Create box:
 			m_boxes.emplace_back(*m_gameManager, transform.transform(localTransform));
 		}

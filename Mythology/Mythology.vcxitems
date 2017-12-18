@@ -147,6 +147,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MeshRepository.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Axis.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Box.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Person.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\MythologyGame.cpp">
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -217,6 +218,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Axis.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Box.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Person.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\MythologyGame.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsScene.h" />
   </ItemGroup>

@@ -15,6 +15,10 @@ namespace GameEngine
 	public:
 		void FrameUpdate(const Common::Timer& timer);
 
+	public:
+		physx::PxRigidDynamic* operator->();
+		const physx::PxRigidDynamic* operator->() const;
+
 	private:
 		std::shared_ptr<physx::PxRigidDynamic> m_rigidDynamic;
 		physx::PxTransform m_lastGlobalPose;

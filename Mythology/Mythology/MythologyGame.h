@@ -11,6 +11,7 @@
 #include "GameEngine/Repositories/MeshRepository.h"
 #include "Mythology/GameObjects/Axis.h"
 #include "Mythology/GameObjects/Box.h"
+#include "Mythology/GameObjects/Person.h"
 
 namespace Common 
 {
@@ -54,7 +55,7 @@ namespace Mythology
 		std::unordered_map<std::string, std::shared_ptr<GameEngine::SkinnedMeshComponent>> m_skinnedMeshes;
 		std::unordered_map<std::string, std::shared_ptr<GameEngine::Armature>> m_armatures;
 		Axis m_axis;
-		GameEngine::GameObject m_person;
+		Person m_person;
 		GameEngine::GameObject m_floor;
 		GameEngine::GameObject m_box;
 		std::deque<Box> m_boxes;
