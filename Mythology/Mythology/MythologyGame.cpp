@@ -170,10 +170,6 @@ void MythologyGame::ProcessInput()
 void MythologyGame::FixedUpdate(const Common::Timer& timer)
 {
 	m_gameManager->FixedUpdate(timer);
-}
-void MythologyGame::FrameUpdate(const Common::Timer& timer)
-{
-	m_gameManager->FrameUpdate(timer);
 
 	auto& cameraTransform = m_person.GetTransform();
 
@@ -199,6 +195,10 @@ void MythologyGame::FrameUpdate(const Common::Timer& timer)
 	auto deltaMovement = mouse.DeltaMovement();
 	cameraTransform.Rotate(Vector3f::UnitX(), mouseSensibility * deltaMovement[1]);
 	cameraTransform.Rotate(Vector3f::UnitY(), -mouseSensibility * deltaMovement[0]);
+}
+void MythologyGame::FrameUpdate(const Common::Timer& timer)
+{
+	m_gameManager->FrameUpdate(timer);
 }
 
 std::shared_ptr<GameManager> MythologyGame::GameManager() const

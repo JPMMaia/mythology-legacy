@@ -16,9 +16,9 @@ namespace GameEngine
 		void FrameUpdate(const Common::Timer& timer);
 
 	private:
-		void UpdateTransform();
-
-	private:
 		std::shared_ptr<physx::PxRigidDynamic> m_rigidDynamic;
+		physx::PxTransform m_lastGlobalPose;
+		physx::PxVec3 m_lastAngularVelocity;
+		physx::PxVec3 m_lastLinearVelocity;
 	};
 }

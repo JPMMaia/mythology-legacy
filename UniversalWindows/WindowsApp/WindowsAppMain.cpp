@@ -23,7 +23,7 @@ namespace WindowsApp
 	
 
 WindowsAppMain::WindowsAppMain() :
-	m_timer(std::chrono::milliseconds(12)),
+	m_timer(std::chrono::microseconds(31250)),
 	m_game(std::make_shared<Mythology::MythologyGame>(std::make_shared<FileSystem>()))
 {
 }
