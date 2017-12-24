@@ -1,10 +1,13 @@
 ﻿#pragma once
 
-#include "Common/Timer.h"
+#include "Common/Timers/Timer.h"
 #include "Core/DeviceResources.h"
 #include "Core/Renderer.h"
 #include "Core/Scene/StandardScene.h"
 #include "Mythology/MythologyGame.h"
+
+#include <shared_mutex>
+#include <thread>
 
 // Renders Direct3D content on the screen.
 namespace WindowsApp
@@ -21,6 +24,9 @@ namespace WindowsApp
 		void OnResuming();
 		void OnDeviceRemoved();
 
+		void RunUpdate();
+		void StopUpdate();
+
 		const std::shared_ptr<Mythology::MythologyGame>& GetGame() const { return m_game; }
 
 	private:
@@ -36,5 +42,9 @@ namespace WindowsApp
 		std::shared_ptr<Mythology::MythologyGame> m_game;
 		std::unique_ptr<DirectX12Engine::Renderer> m_renderer;
 		std::shared_ptr<DirectX12Engine::StandardScene> m_scene;
+
+		std::thread m_updateThread;
+		std::shared_mutex m_updateMutex;
+		bool m_update;
 	};
 }

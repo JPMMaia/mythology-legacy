@@ -3,9 +3,7 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Common\EngineException.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Common\Helpers.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Common\PerformanceTimer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Common\TasksComponent.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Common\Timer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\MythologyGame.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\GameManager.cpp" />
@@ -40,14 +38,14 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidStaticComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidDynamicComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Person.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Common\Timers\Timer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Common\Timers\PerformanceTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Helpers.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Common\PerformanceTimer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Task.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\TasksComponent.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Common\Timer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\IComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\MeshGenerator.h" />
@@ -107,5 +105,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidStaticComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidDynamicComponent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Person.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Common\Timers\Timer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Common\Timers\PerformanceTimer.h" />
   </ItemGroup>
 </Project>

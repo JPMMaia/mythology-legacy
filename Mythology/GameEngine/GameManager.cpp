@@ -27,7 +27,7 @@ void FixedUpdate(const Timer& timer)
 		element.FixedUpdate(timer);
 	});
 }
-void GameManager::FixedUpdate(const Common::Timer& timer) const
+void GameManager::FixedUpdate(const Common::Timer& timer)
 {
 	m_physicsScene.FixedUpdate(timer);
 
@@ -42,7 +42,7 @@ void FrameUpdate(const Timer& timer)
 		element.FrameUpdate(timer);
 	});
 }
-void GameManager::FrameUpdate(const Common::Timer& timer) const
+void GameManager::FrameUpdate(const Common::Timer& timer)
 {
 	::FrameUpdate<RigidDynamicComponent>(timer);
 

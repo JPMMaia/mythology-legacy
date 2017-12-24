@@ -21,8 +21,8 @@ namespace GameEngine
 
 	public:
 		void ProcessInput();
-		void FixedUpdate(const Common::Timer& timer) const;
-		void FrameUpdate(const Common::Timer& timer) const;
+		void FixedUpdate(const Common::Timer& timer);
+		void FrameUpdate(const Common::Timer& timer);
 
 	public:
 		Keyboard& GetKeyboard() { return m_keyboard; }

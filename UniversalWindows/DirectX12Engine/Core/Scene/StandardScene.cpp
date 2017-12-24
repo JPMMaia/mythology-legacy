@@ -14,7 +14,7 @@
 #include "Core/RenderItem/Specific/RenderRectangle.h"
 #include "GameEngine/Geometry/Primitives/CustomGeometry.h"
 #include "GameEngine/Component/Meshes/SkinnedMeshComponent.h"
-#include "Common/Timer.h"
+#include "Common/Timers/Timer.h"
 
 using namespace Common;
 using namespace DirectX;

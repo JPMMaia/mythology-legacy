@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "GameEngine/Geometry/Animation/Armature.h"
-#include "Common/Timer.h"
+#include "Common/Timers/Timer.h"
 #include "GameEngine/Geometry/EigenGeometry.h"
 #include "GameEngine/Memory/UseStorage.h"
 #include "GameEngine/Component/Base/BaseComponent.h"

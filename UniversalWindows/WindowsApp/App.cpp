@@ -112,6 +112,7 @@ void App::Run()
 	// Ensure that the device resources are initialized:
 	GetDeviceResources();
 
+	m_main->RunUpdate();
 	while (!m_windowClosed)
 	{
 		if (m_windowVisible)
@@ -128,6 +129,7 @@ void App::Run()
 			CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessOneAndAllPending);
 		}
 	}
+	m_main->StopUpdate();
 }
 
 // Required for IFrameworkView.

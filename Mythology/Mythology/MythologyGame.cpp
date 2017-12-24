@@ -38,6 +38,7 @@ void MythologyGame::Initialize()
 	auto& physicsManager = m_gameManager->GetPhysicsManager();
 	auto& physicsScene = m_gameManager->GetPhysicsScene();
 
+	physicsScene->lockWrite();
 	physicsScene.AddMaterial("Default", PhysicsUtilities::MakeSharedPointer(physicsManager->createMaterial(0.5f, 0.5f, 0.6f)));
 
 	// Meshes:
@@ -143,21 +144,37 @@ void MythologyGame::Initialize()
 	keyboard.OnKeyPress += {"CreateProjectile", this, &MythologyGame::CreateProjectile};
 	keyboard.OnKeyPress += {"CreateAxis", this, &MythologyGame::CreateAxis};
 	keyboard.OnKeyPress += {"DestroyAxis", this, &MythologyGame::DestroyAxis};
+
+	physicsScene->unlockWrite();
 }
 
 void MythologyGame::ProcessInput()
 {
+	auto& physicsScene = m_gameManager->GetPhysicsScene();
+	physicsScene->lockWrite();
+	
 	m_gameManager->ProcessInput();
+	
+	physicsScene->unlockWrite();
 }
 void MythologyGame::FixedUpdate(const Common::Timer& timer)
 {
+	auto& physicsScene = m_gameManager->GetPhysicsScene();
+	physicsScene->lockWrite();
+	
 	m_gameManager->FixedUpdate(timer);
-
 	m_person.FixedUpdate(timer, *m_gameManager);
+	
+	physicsScene->unlockWrite();
 }
 void MythologyGame::FrameUpdate(const Common::Timer& timer)
 {
+	auto& physicsScene = m_gameManager->GetPhysicsScene();
+	physicsScene->lockRead();
+
 	m_gameManager->FrameUpdate(timer);
+
+	physicsScene->unlockRead();
 }
 
 std::shared_ptr<GameManager> MythologyGame::GameManager() const
@@ -211,7 +228,6 @@ void MythologyGame::CreateProjectile(std::uint8_t key)
 		body->setAngularDamping(0.5f);
 		body->setLinearVelocity(velocity);
 		physicsScene->addActor(*body);
-
 		boxObject.AddComponent("RigidDynamic", RigidDynamicComponent::CreateSharedPointer(boxObject.GetSharedTransform(), body));
 	}
 

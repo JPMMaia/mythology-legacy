@@ -1,6 +1,8 @@
 #pragma once
 
 #include <chrono>
+#include <functional>
+#include <shared_mutex>
 
 namespace Common
 {
@@ -17,8 +19,35 @@ namespace Common
 
 		void Reset();
 
+		void Update();
+
+		void RunFixedUpdate(const std::function<void(const Timer&)>& fixedUpdate);
+
 		template <typename FixedUpdateFunctionType, typename FrameUpdateFunctionType, typename RenderFunctionType, typename ProcessInputFunctionType, typename ProcessFrameStatisticsFunctionType>
-		bool UpdateAndRender(FixedUpdateFunctionType&& fixedUpdate, FrameUpdateFunctionType&& frameUpdate, RenderFunctionType&& render, ProcessInputFunctionType&& processInput, ProcessFrameStatisticsFunctionType&& processFrameStatistics);
+		bool UpdateAndRender(FixedUpdateFunctionType&& fixedUpdate, FrameUpdateFunctionType&& frameUpdate, RenderFunctionType&& render, ProcessInputFunctionType&& processInput, ProcessFrameStatisticsFunctionType&& processFrameStatistics)
+		{
+			Update();
+
+			// Process input:
+			processInput();
+
+			// Update the times needed to catchup:
+			while (m_lag >= m_timePerUpdate)
+			{
+				fixedUpdate(*this);
+				m_lag -= m_timePerUpdate;
+			}
+
+			// Render:
+			if (!frameUpdate(*this))
+				return false;
+			render(*this);
+
+			// Calculate frames statistics (frames per second, milliseconds per frame):
+			CalculateFrameStatistics(processFrameStatistics);
+
+			return true;
+		}
 
 		DurationType GetTimePerUpdate() const;
 		DurationType GetTotalTime() const;
@@ -46,39 +75,9 @@ namespace Common
 
 		size_t m_framesPerSecond = 0;
 		DurationType m_timePerFrame;
+
+		mutable std::shared_mutex m_mutex;
 	};
-
-	template <typename FixedUpdateFunctionType, typename FrameUpdateFunctionType, typename RenderFunctionType, typename ProcessInputFunctionType, typename ProcessFrameStatisticsFunctionType>
-	bool Timer::UpdateAndRender(FixedUpdateFunctionType&& fixedUpdate, FrameUpdateFunctionType&& frameUpdate, RenderFunctionType&& render, ProcessInputFunctionType&& processInput, ProcessFrameStatisticsFunctionType&& processFrameStatistics)
-	{
-		m_currentTimePoint = ClockType::now();
-		
-		m_deltaTime = m_currentTimePoint - m_previousTimePoint;
-		m_previousTimePoint = m_currentTimePoint;
-		m_totalTime += m_deltaTime;
-
-		m_lag += m_deltaTime;
-
-		// Process input:
-		processInput();
-
-		// Update the times needed to catchup:
-		while (m_lag >= m_timePerUpdate)
-		{
-			fixedUpdate(*this);
-			m_lag -= m_timePerUpdate;
-		}
-
-		// Render:
-		if (!frameUpdate(*this))
-			return false;
-		render(*this);
-
-		// Calculate frames statistics (frames per second, milliseconds per frame):
-		CalculateFrameStatistics(processFrameStatistics);
-
-		return true;
-	}
 
 	template <typename ProcessFrameStatisticsFunctionType>
 	void Timer::CalculateFrameStatistics(ProcessFrameStatisticsFunctionType&& processFrameStatistics)
