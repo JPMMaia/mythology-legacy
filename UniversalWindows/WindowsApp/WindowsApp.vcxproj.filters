@@ -11,9 +11,6 @@
     <Filter Include="Content">
       <UniqueIdentifier>8d113b7e-dbda-431b-a23b-9a279cbb74d0</UniqueIdentifier>
     </Filter>
-    <ClInclude Include="Common\d3dx12.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="Common\StepTimer.h">
       <Filter>Common</Filter>
     </ClInclude>

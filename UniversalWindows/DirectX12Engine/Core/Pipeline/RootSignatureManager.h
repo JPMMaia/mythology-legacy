@@ -18,7 +18,7 @@ namespace DirectX12Engine
 		ID3D12RootSignature* GetRootSignature(const std::string& name) const;
 			
 	private:
-		void CreateRootSignature(ID3D12Device* d3dDevice, const std::string name, UINT numParameters, const D3D12_ROOT_PARAMETER* rootParameters);
+		void CreateRootSignature(ID3D12Device* d3dDevice, const std::string name, UINT numParameters, const D3D12_ROOT_PARAMETER1* rootParameters);
 
 	private:
 		std::shared_ptr<DeviceResources> m_deviceResources;

@@ -9,10 +9,11 @@
 #include "GameEngine/Component/Meshes/SkinnedMeshComponent.h"
 #include "Common/Helpers.h"
 #include "Interfaces/IFileSystem.h"
-#include "GameEngine/Events/MaterialEventsQueue.h"
-#include "GameEngine/Events/InstanceEventsQueue.h"
+#include "GameEngine/Commands/MaterialEventsQueue.h"
+#include "GameEngine/Commands/InstanceEventsQueue.h"
 #include "GameEngine/Component/Physics/RigidStaticComponent.h"
 #include "GameEngine/Component/Physics/RigidDynamicComponent.h"
+#include "GameEngine/Commands/Render/RenderCommandList.h"
 
 #include <cmath>
 
@@ -25,18 +26,19 @@ using namespace physx;
 MythologyGame::MythologyGame(const std::shared_ptr<IFileSystem>& fileSystem) :
 	m_fileSystem(fileSystem)
 {
-	Initialize();
 }
 
-void MythologyGame::Initialize()
+void MythologyGame::Initialize(const std::shared_ptr<IRenderScene>& renderScene)
 {
-	m_gameManager = std::make_shared<GameEngine::GameManager>();
+	m_gameManager = std::make_shared<GameEngine::GameManager>(renderScene);
 
 	auto& meshRepository = m_gameManager->GetMeshRepository();
 	auto& materialRepository = m_gameManager->GetMaterialRepository();
 
 	auto& physicsManager = m_gameManager->GetPhysicsManager();
 	auto& physicsScene = m_gameManager->GetPhysicsScene();
+
+	RenderCommandList renderCommandList(m_gameManager->GetRenderScene());
 
 	physicsScene->lockWrite();
 	physicsScene.AddMaterial("Default", PhysicsUtilities::MakeSharedPointer(physicsManager->createMaterial(0.5f, 0.5f, 0.6f)));
@@ -45,12 +47,12 @@ void MythologyGame::Initialize()
 	{
 		{
 			auto mesh = MeshComponent<BoxGeometry>::CreateSharedPointer("Box", BoxGeometry(1.0f, 1.0f, 1.0f, 0));
-			meshRepository.Add(mesh->GetName(), mesh);
+			meshRepository.Add(renderCommandList, mesh->GetName(), mesh);
 		}
 
 		{
 			auto mesh = MeshComponent<RectangleGeometry>::CreateSharedPointer("Floor", RectangleGeometry(0.0f, 0.0f, 20.0f, 20.0f, 0.0f, 0));
-			meshRepository.Add(mesh->GetName(), mesh);
+			meshRepository.Add(renderCommandList, mesh->GetName(), mesh);
 		}
 	}
 
@@ -144,6 +146,8 @@ void MythologyGame::Initialize()
 	keyboard.OnKeyPress += {"CreateProjectile", this, &MythologyGame::CreateProjectile};
 	keyboard.OnKeyPress += {"CreateAxis", this, &MythologyGame::CreateAxis};
 	keyboard.OnKeyPress += {"DestroyAxis", this, &MythologyGame::DestroyAxis};
+
+	m_gameManager->GetRenderCommandQueue().Submit(renderCommandList);
 
 	physicsScene->unlockWrite();
 }

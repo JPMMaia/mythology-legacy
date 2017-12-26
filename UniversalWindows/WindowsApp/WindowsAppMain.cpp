@@ -35,8 +35,13 @@ void WindowsAppMain::CreateRenderers(const std::shared_ptr<DirectX12Engine::Devi
 	m_deviceResources = deviceResources;
 	m_renderer = std::make_unique<DirectX12Engine::Renderer>(deviceResources);
 	m_scene = std::make_shared<DirectX12Engine::StandardScene>(deviceResources, m_renderer->GetCommandListManager(), m_game);
-	m_scene->CreateDeviceDependentResources();
+	
+	m_game->Initialize(m_scene);
+
+	m_renderer->CreateDeviceDependentResources();
 	m_renderer->SetScene(m_scene);
+
+	m_scene->CreateDeviceDependentResources();
 
 	OnWindowSizeChanged();
 

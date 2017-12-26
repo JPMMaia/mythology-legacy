@@ -4,11 +4,11 @@
 #include <ppltasks.h>	// For create_task
 
 #include "Common/Helpers.h"
-#include "Core/Utilities/d3dx12.h"
-
+#include "d3dx12.h"
 
 namespace DX
 {
+	bool Failed(HRESULT hr);
 	void ThrowIfFailed(HRESULT hr);
 
 	inline void UploadDataToBuffer(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, Microsoft::WRL::ComPtr<ID3D12Resource>& resource, std::vector<D3D12_SUBRESOURCE_DATA>& subresources, Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer, D3D12_RESOURCE_STATES finalState)

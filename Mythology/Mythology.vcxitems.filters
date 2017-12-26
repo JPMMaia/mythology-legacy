@@ -27,9 +27,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsScene.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsUtilities.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CubeMappingCamera.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Events\MeshEventsQueue.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Events\MaterialEventsQueue.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Events\InstanceEventsQueue.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Axis.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MeshRepository.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MaterialRepository.cpp" />
@@ -40,6 +37,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Person.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Common\Timers\Timer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Common\Timers\PerformanceTimer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Commands\InstanceEventsQueue.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Commands\MaterialEventsQueue.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Commands\MeshEventsQueue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
@@ -94,9 +94,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CubeMappingCamera.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Events\MeshEventsQueue.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Events\MaterialEventsQueue.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Events\InstanceEventsQueue.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\RenderInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Axis.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MeshRepository.h" />
@@ -107,5 +104,17 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Person.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Timers\Timer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Timers\PerformanceTimer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IScene.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IRenderScene.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\CreateMeshCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\DeleteMeshCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\RenderCommandList.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\RenderCommandQueue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\CommandList.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\CommandQueue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\ICommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\InstanceEventsQueue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\MaterialEventsQueue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\MeshEventsQueue.h" />
   </ItemGroup>
 </Project>

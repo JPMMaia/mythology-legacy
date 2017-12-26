@@ -93,8 +93,8 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Events\MaterialEventsQueue.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Events\MeshEventsQueue.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Commands\MaterialEventsQueue.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Commands\MeshEventsQueue.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\GameManager.cpp">
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -142,7 +142,7 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsUtilities.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Events\InstanceEventsQueue.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Commands\InstanceEventsQueue.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MaterialRepository.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MeshRepository.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Mythology\GameObjects\Axis.cpp" />
@@ -159,13 +159,21 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CubeMappingCamera.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\RenderInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidStaticComponent.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Events\MaterialEventsQueue.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Events\MeshEventsQueue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\CommandList.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\CommandQueue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\ICommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\MaterialEventsQueue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\MeshEventsQueue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\CreateMeshCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\DeleteMeshCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\RenderCommandList.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\RenderCommandQueue.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsUtilities.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Events\InstanceEventsQueue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\InstanceEventsQueue.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MaterialRepository.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MeshRepository.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Interfaces\IRenderScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MythologyAPI.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\Events\Event.h" />

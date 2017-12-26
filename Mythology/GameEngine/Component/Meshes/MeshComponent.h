@@ -4,7 +4,7 @@
 #include "GameEngine/Component/Meshes/InstancedMeshComponent.h"
 #include "GameEngine/Memory/StandardAllocator.h"
 #include "GameEngine/Geometry/EigenGeometry.h"
-#include "GameEngine/Events/InstanceEventsQueue.h"
+#include "GameEngine/Commands/InstanceEventsQueue.h"
 
 namespace GameEngine
 {

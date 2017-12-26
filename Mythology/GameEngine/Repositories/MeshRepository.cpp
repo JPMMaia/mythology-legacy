@@ -1,13 +1,13 @@
 #include "pch.h"
 #include "MeshRepository.h"
-#include "GameEngine/Events/MeshEventsQueue.h"
+#include "GameEngine/Commands/MeshEventsQueue.h"
 
 using namespace GameEngine;
 
-void MeshRepository::Add(const std::string & name, const std::shared_ptr<BaseMeshComponent>& mesh)
+void MeshRepository::Add(RenderCommandList& renderCommandList, const std::string & name, const std::shared_ptr<BaseMeshComponent>& mesh)
 {
 	m_meshes.emplace(mesh->GetName(), mesh);
-	MeshEventsQueue::Create(mesh);
+	renderCommandList.CreateMesh(mesh);
 }
 
 const std::shared_ptr<GameEngine::BaseMeshComponent>& GameEngine::MeshRepository::Get(const std::string & name)
@@ -15,9 +15,9 @@ const std::shared_ptr<GameEngine::BaseMeshComponent>& GameEngine::MeshRepository
 	return m_meshes.at(name);
 }
 
-void GameEngine::MeshRepository::Delete(const std::string& name)
+void GameEngine::MeshRepository::Delete(RenderCommandList& renderCommandList, const std::string& name)
 {
 	auto meshIt = m_meshes.find(name);
-	MeshEventsQueue::Delete(meshIt->second);
+	renderCommandList.DeleteMesh(meshIt->second);
 	m_meshes.erase(meshIt);
 }

@@ -4,7 +4,7 @@
 #include <dxgi1_4.h>
 
 #include "IWindow.h"
-#include "Utilities/d3dx12.h"
+#include "d3dx12.h"
 
 namespace DirectX12Engine
 {

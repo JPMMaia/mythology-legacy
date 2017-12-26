@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "InstancedMeshComponent.h"
 #include "GameEngine/Component/Meshes/MeshComponent.h"
-#include "GameEngine/Events/InstanceEventsQueue.h"
+#include "GameEngine/Commands/InstanceEventsQueue.h"
 
 using namespace GameEngine;
 

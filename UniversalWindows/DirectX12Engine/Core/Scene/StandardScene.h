@@ -14,9 +14,11 @@
 #include "Core/Geometry/Buffers/VertexBuffer.h"
 #include "Core/Geometry/Buffers/IndexBuffer.h"
 #include "Core/Scene/Standard/FramesResources.h"
-#include "GameEngine/Events/MaterialEventsQueue.h"
-#include "GameEngine/Events/MeshEventsQueue.h"
-#include "GameEngine/Events/InstanceEventsQueue.h"
+#include "GameEngine/Commands/MaterialEventsQueue.h"
+#include "GameEngine/Commands/MeshEventsQueue.h"
+#include "GameEngine/Commands/InstanceEventsQueue.h"
+#include "GameEngine/Commands/Render/RenderCommandQueue.h"
+#include "Interfaces/IRenderScene.h"
 
 #include <unordered_map>
 
@@ -24,7 +26,7 @@ namespace DirectX12Engine
 {
 	enum class RenderLayer;
 
-	class StandardScene : public IScene
+	class StandardScene : public DirectX12Engine::IScene, public GameEngine::IRenderScene
 	{
 	public:
 		StandardScene(const std::shared_ptr<DeviceResources>& deviceResources, CommandListManager& commandListManager, const std::shared_ptr<Mythology::MythologyGame>& game);
@@ -40,6 +42,10 @@ namespace DirectX12Engine
 		void FrameUpdate(const Common::Timer& timer) override;
 
 		bool Render(const Common::Timer& timer, RenderLayer renderLayer) override;
+
+	public:
+		void CreateMesh(const std::shared_ptr<GameEngine::BaseMeshComponent>& mesh) override;
+		void DeleteMesh(const std::shared_ptr<GameEngine::BaseMeshComponent>& mesh) override;
 
 	private:
 		VertexBuffer CreateVertexBuffer(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::EigenMeshData& meshData, bool isSkinned);

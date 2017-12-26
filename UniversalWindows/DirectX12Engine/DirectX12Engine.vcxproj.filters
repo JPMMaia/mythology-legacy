@@ -46,7 +46,6 @@
     <ClInclude Include="Core\Scene\StandardScene.h" />
     <ClInclude Include="Core\Shader\Shader.h" />
     <ClInclude Include="Core\Shader\ShaderBufferTypes.h" />
-    <ClInclude Include="Core\Utilities\d3dx12.h" />
     <ClInclude Include="Core\Utilities\DirectXHelper.h" />
     <ClInclude Include="Core\Utilities\UploadBuffer.h" />
     <ClInclude Include="Core\Renderer.h" />

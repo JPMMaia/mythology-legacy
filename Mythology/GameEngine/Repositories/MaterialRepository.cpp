@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "MaterialRepository.h"
 
-#include "GameEngine/Events/MaterialEventsQueue.h"
+#include "GameEngine/Commands/MaterialEventsQueue.h"
 
 using namespace GameEngine;
 

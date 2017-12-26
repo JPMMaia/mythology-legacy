@@ -30,7 +30,7 @@ namespace Mythology
 	public:
 		MythologyGame(const std::shared_ptr<GameEngine::IFileSystem>& directory);
 
-		void Initialize();
+		void Initialize(const std::shared_ptr<GameEngine::IRenderScene>& renderScene);
 
 		void ProcessInput();
 		void FixedUpdate(const Common::Timer& timer);

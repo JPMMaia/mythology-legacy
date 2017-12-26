@@ -5,11 +5,13 @@
 #include "GameEngine/Component/Cameras/CameraComponent.h"
 #include "GameEngine/Component/Physics/RigidDynamicComponent.h"
 #include "GameEngine/Component/Meshes/SkinnedMeshComponent.h"
+#include "GameEngine/Commands/Render/RenderCommandList.h"
 
 using namespace Common;
 using namespace GameEngine;
 
-GameManager::GameManager() :
+GameManager::GameManager(const std::shared_ptr<IRenderScene>& renderScene) :
+	m_renderScene(renderScene),
 	m_physicsScene(m_physicsManager.CreateScene())
 {
 }

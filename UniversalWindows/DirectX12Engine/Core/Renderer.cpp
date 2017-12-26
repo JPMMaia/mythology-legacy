@@ -16,7 +16,6 @@ Renderer::Renderer(const std::shared_ptr<DeviceResources>& deviceResources) :
 	m_commandListManager(deviceResources),
 	m_clearColor{ 0.0f, 0.0f, 0.0f, 1.0f }
 {
-	Renderer::CreateDeviceDependentResources();
 }
 
 void Renderer::CreateDeviceDependentResources()

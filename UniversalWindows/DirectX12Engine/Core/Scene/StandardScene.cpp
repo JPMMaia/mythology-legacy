@@ -79,7 +79,9 @@ void StandardScene::CreateDeviceDependentResources()
 
 	// Create render items:
 	{
-		MeshEventsQueue::Flush();
+		auto& renderCommandQueue = m_game->GameManager()->GetRenderCommandQueue();
+		renderCommandQueue.Execute();
+
 		CreateRenderItems<SkinnedMeshComponent>(d3dDevice, commandList);
 	}
 
@@ -128,6 +130,10 @@ void StandardScene::ProcessInput()
 void StandardScene::FrameUpdate(const Common::Timer& timer)
 {
 	MaterialEventsQueue::Flush();
+
+	auto& renderCommandQueue = m_game->GameManager()->GetRenderCommandQueue();
+	renderCommandQueue.Execute();
+
 	MeshEventsQueue::Flush();
 
 	UpdatePassBuffer();
@@ -205,6 +211,15 @@ bool StandardScene::Render(const Common::Timer& timer, RenderLayer renderLayer)
 	}
 
 	return true;
+}
+
+void StandardScene::CreateMesh(const std::shared_ptr<BaseMeshComponent>& mesh)
+{
+	auto commandList = m_commandListManager.GetGraphicsCommandList(0);
+	CreateRenderItem(m_deviceResources->GetD3DDevice(), commandList, mesh->GetName(), mesh->GenerateMeshData());
+}
+void StandardScene::DeleteMesh(const std::shared_ptr<BaseMeshComponent>& mesh)
+{
 }
 
 VertexBuffer StandardScene::CreateVertexBuffer(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const EigenMeshData& meshData, bool isSkinned)
