@@ -72,6 +72,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\InstancedMeshComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\MeshComponent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\SkinnedMeshComponent.cpp">
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -156,6 +157,11 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\CreateInstanceCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\CreateMaterialCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\DeleteInstanceCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\DeleteMaterialCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\UpdateInstanceCommand.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CubeMappingCamera.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\RenderInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidStaticComponent.h" />

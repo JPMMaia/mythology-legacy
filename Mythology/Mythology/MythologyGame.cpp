@@ -60,22 +60,22 @@ void MythologyGame::Initialize(const std::shared_ptr<IRenderScene>& renderScene)
 	{
 		{
 			auto material = StandardMaterial::CreateSharedPointer("Wood", Vector4f(1.0f, 1.0f, 1.0f, 1.0f), L"Resources/bamboo-wood/bamboo-wood-semigloss-albedo.dds", 0.0f, 0.8f, L"Resources/white.dds");
-			materialRepository.Add(material->GetName(), material);
+			materialRepository.Add(renderCommandList, material->GetName(), material);
 		}
 
 		{
 			auto material = StandardMaterial::CreateSharedPointer("Red", Vector4f(1.0f, 0.0f, 0.0f, 1.0f), L"Resources/white.dds", 0.0f, 0.5f, L"Resources/white.dds");
-			materialRepository.Add(material->GetName(), material);
+			materialRepository.Add(renderCommandList, material->GetName(), material);
 		}
 
 		{
 			auto material = StandardMaterial::CreateSharedPointer("Green", Vector4f(0.0f, 1.0f, 0.0f, 1.0f), L"Resources/white.dds", 0.0f, 0.5f, L"Resources/white.dds");
-			materialRepository.Add(material->GetName(), material);
+			materialRepository.Add(renderCommandList, material->GetName(), material);
 		}
 
 		{
 			auto material = StandardMaterial::CreateSharedPointer("Blue", Vector4f(0.0f, 0.0f, 1.0f, 1.0f), L"Resources/white.dds", 0.0f, 0.5f, L"Resources/white.dds");
-			materialRepository.Add(material->GetName(), material);
+			materialRepository.Add(renderCommandList, material->GetName(), material);
 		}
 	}
 
@@ -90,7 +90,7 @@ void MythologyGame::Initialize(const std::shared_ptr<IRenderScene>& renderScene)
 		m_floor.AddRootComponent("Root", std::make_shared<TransformComponent>());
 
 		std::string meshName("Floor");
-		auto instance = meshRepository.Get(meshName)->CreateInstance(materialRepository.Get("Wood"));
+		auto instance = meshRepository.Get(meshName)->CreateInstance(renderCommandList, materialRepository.Get("Wood"));
 		auto rotation90 = std::sqrt(2.0f) / 2.0f;
 		instance->GetTransform().SetLocalRotation(Quaternionf(rotation90, 0.0f, rotation90, 0.0f));
 		m_floor.AddComponent("Mesh", instance);
@@ -118,7 +118,7 @@ void MythologyGame::Initialize(const std::shared_ptr<IRenderScene>& renderScene)
 			//const auto& albedoMap = basePath + Helpers::GetFilename(Helpers::StringToWString(material.DiffuseTexturePath)) + L".dds";
 			const auto& baseColorTextureName = basePath + L"white.dds";
 			auto standardMaterial = StandardMaterial::CreateSharedPointer(modelName + std::to_string(i), Vector4f(baseColor[0], baseColor[1], baseColor[2], 1.0f), baseColorTextureName, 0.0f, 0.5f, L"Resources/white.dds");
-			materialRepository.Add(standardMaterial->GetName(), standardMaterial);
+			materialRepository.Add(renderCommandList, standardMaterial->GetName(), standardMaterial);
 
 			skinnedMeshComponent->AddMesh(CustomGeometry<EigenMeshData>(std::move(geometry.MeshData)), standardMaterial);
 		}
@@ -216,11 +216,12 @@ void MythologyGame::CreateProjectile(std::uint8_t key)
 	auto& physicsManager = m_gameManager->GetPhysicsManager();
 	auto& physicsScene = m_gameManager->GetPhysicsScene();
 
+	RenderCommandList renderCommandList(m_gameManager->GetRenderScene());
+
 	GameObject boxObject;
 	std::string meshName("Box");
-	auto instance = meshRepository.Get(meshName)->CreateInstance(materialRepository.Get("Wood"));
+	auto instance = meshRepository.Get(meshName)->CreateInstance(renderCommandList, materialRepository.Get("Wood"));
 	boxObject.AddRootComponent("Mesh", instance);
-	InstanceEventsQueue::AlwaysUpdate(meshName, instance);
 
 	{
 		const auto& cameraTransform = GetMainCamera()->GetTransform();
@@ -236,6 +237,8 @@ void MythologyGame::CreateProjectile(std::uint8_t key)
 	}
 
 	m_projectiles.emplace_back(std::move(boxObject));
+
+	m_gameManager->GetRenderCommandQueue().Submit(renderCommandList);
 }
 void MythologyGame::CreateAxis(std::uint8_t key)
 {

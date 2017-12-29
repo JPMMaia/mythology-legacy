@@ -2,9 +2,11 @@
 
 #include "../CommandList.h"
 
-#include "GameEngine/Component/Meshes/MeshComponent.h"
 #include "CreateMeshCommand.h"
 #include "DeleteMeshCommand.h"
+#include "CreateMaterialCommand.h"
+#include "DeleteMaterialCommand.h"
+#include "CreateInstanceCommand.h"
 
 #include <memory>
 
@@ -33,12 +35,28 @@ namespace GameEngine
 		}
 
 	public:
-		void CreateMaterial();
-		void DeleteMaterial();
+		void CreateMaterial(const Pointer<StandardMaterial>& material)
+		{
+			m_commands.emplace_back(std::make_unique<CreateMaterialCommand>(m_scene, material));
+		}
+		void DeleteMaterial(const Pointer<StandardMaterial>& material)
+		{
+			m_commands.emplace_back(std::make_unique<DeleteMaterialCommand>(m_scene, material));
+		}
 
 	public:
-		void CreateInstance();
-		void DeleteInstance();
+		void CreateInstance(const std::string& name, const Pointer<InstancedMeshComponent>& instance)
+		{
+
+		}
+		void UpdateInstance(const std::string& name, const Pointer<InstancedMeshComponent>& instance)
+		{
+
+		}
+		void DeleteInstance(const std::string& name, const Pointer<RenderInfo>& renderInfo)
+		{
+
+		}
 
 	private:
 		IRenderScene& m_scene;

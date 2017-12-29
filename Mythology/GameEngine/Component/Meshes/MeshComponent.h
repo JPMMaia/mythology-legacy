@@ -8,42 +8,33 @@
 
 namespace GameEngine
 {
+	class RenderCommandList;
+
 	class BaseMeshComponent
 	{
 	public:
-		explicit BaseMeshComponent(const std::string& name) :
-			m_name(name)
-		{
-		}
+		explicit BaseMeshComponent(const std::string& name);
 
 	protected:
-		virtual ~BaseMeshComponent()
-		{
-		}
+		virtual ~BaseMeshComponent();
 
 	public:
 		virtual EigenMeshData GenerateMeshData() const = 0;
 
 	public:
 		template<typename... ArgumentsTypes>
-		std::shared_ptr<InstancedMeshComponent> CreateInstance(ArgumentsTypes&& ...arguments)
+		std::shared_ptr<InstancedMeshComponent> CreateInstance(RenderCommandList& renderCommandList, ArgumentsTypes&& ...arguments)
 		{
 			auto pointer = m_instances.allocate(sizeof(InstancedMeshComponent));
-
-			auto deleter = [this](void* pointer)
-			{
-				auto instance = reinterpret_cast<InstancedMeshComponent*>(pointer);
-				InstanceEventsQueue::Delete(m_name, instance->GetRenderInfo());
-				m_instances.deallocate(instance, sizeof(InstancedMeshComponent));
-			};
 			new (reinterpret_cast<void*>(pointer)) InstancedMeshComponent(std::forward<ArgumentsTypes>(arguments)...);
 
-			std::shared_ptr<InstancedMeshComponent> instance(pointer, deleter);
-			InstanceEventsQueue::Create(m_name, instance);
-
-			return instance;
+			return CreateInstance(renderCommandList, pointer);
 		}
 
+	private:
+		std::shared_ptr<InstancedMeshComponent> CreateInstance(RenderCommandList& renderCommandList, InstancedMeshComponent* instancePointer);
+
+	public:
 		StandardAllocatorIterator<InstancedMeshComponent> InstancesBegin()
 		{
 			return m_instances.begin();

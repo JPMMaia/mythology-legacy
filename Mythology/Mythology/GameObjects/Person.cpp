@@ -15,8 +15,10 @@ Person::Person(GameEngine::GameManager& gameManager)
 	auto& physicsManager = gameManager.GetPhysicsManager();
 	auto& physicsScene = gameManager.GetPhysicsScene();
 
+	RenderCommandList renderCommandList(gameManager.GetRenderScene());
+
 	std::string meshName("Box");
-	auto instance = meshRepository.Get(meshName)->CreateInstance(materialRepository.Get("Wood"));
+	auto instance = meshRepository.Get(meshName)->CreateInstance(renderCommandList, materialRepository.Get("Wood"));
 	InstanceEventsQueue::AlwaysUpdate(meshName, instance);
 	m_gameObject.AddRootComponent(meshName, instance);
 
@@ -43,6 +45,8 @@ Person::Person(GameEngine::GameManager& gameManager)
 	rigidDynamic->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 	m_rigidDynamicComponent = RigidDynamicComponent::CreateSharedPointer(m_gameObject.GetSharedTransform(), rigidDynamic);
 	m_gameObject.AddComponent("RigidDynamic", m_rigidDynamicComponent);
+
+	gameManager.GetRenderCommandQueue().Submit(renderCommandList);
 }
 
 void Person::FixedUpdate(const Common::Timer& timer, GameManager& gameManager)

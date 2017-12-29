@@ -129,12 +129,8 @@ void StandardScene::ProcessInput()
 }
 void StandardScene::FrameUpdate(const Common::Timer& timer)
 {
-	MaterialEventsQueue::Flush();
-
 	auto& renderCommandQueue = m_game->GameManager()->GetRenderCommandQueue();
 	renderCommandQueue.Execute();
-
-	MeshEventsQueue::Flush();
 
 	UpdatePassBuffer();
 	UpdateSkinnedAnimationBuffers();
@@ -220,6 +216,41 @@ void StandardScene::CreateMesh(const std::shared_ptr<BaseMeshComponent>& mesh)
 }
 void StandardScene::DeleteMesh(const std::shared_ptr<BaseMeshComponent>& mesh)
 {
+	// TODO
+}
+
+void StandardScene::CreateMaterial(const std::shared_ptr<StandardMaterial>& material)
+{
+	auto commandList = m_commandListManager.GetGraphicsCommandList(0);
+	CreateMaterial(m_deviceResources->GetD3DDevice(), commandList, *material);
+}
+void StandardScene::DeleteMaterial(const std::shared_ptr<StandardMaterial>& material)
+{
+	// TODO
+}
+
+void StandardScene::CreateInstance(const std::string& meshName, const std::shared_ptr<InstancedMeshComponent>& instance)
+{
+	ShaderBufferTypes::InstanceData shaderData;
+	shaderData.MaterialIndex = m_materialIndices.at(instance->GetMaterial()->GetName());
+	shaderData.ModelMatrix = instance->GetTransform().GetWorldTransform();
+
+	auto renderItem = m_renderItemsPerGeometry.at(meshName);
+	renderItem->AddInstance(m_framesResources, instance->GetRenderInfo(), shaderData);
+}
+void StandardScene::UpdateInstance(const std::string& meshName, const std::shared_ptr<InstancedMeshComponent>& instance)
+{
+	ShaderBufferTypes::InstanceData shaderData;
+	shaderData.MaterialIndex = m_materialIndices.at(instance->GetMaterial()->GetName());
+	shaderData.ModelMatrix = instance->GetTransform().GetWorldTransform();
+
+	auto renderItem = m_renderItemsPerGeometry.at(meshName);
+	renderItem->UpdateInstance(m_framesResources, *instance->GetRenderInfo(), shaderData);
+}
+void StandardScene::DeleteInstance(const std::string& meshName, const std::shared_ptr<RenderInfo>& renderInfo)
+{
+	auto renderItem = m_renderItemsPerGeometry.at(meshName);
+	renderItem->DeleteInstance(m_framesResources, *renderInfo);
 }
 
 VertexBuffer StandardScene::CreateVertexBuffer(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const EigenMeshData& meshData, bool isSkinned)
@@ -455,7 +486,6 @@ void StandardScene::UpdateSkinnedAnimationBuffers()
 }
 void StandardScene::UpdateInstancesBuffers()
 {
-	InstanceEventsQueue::Flush();
 	//UpdateInstancesBuffer<MeshComponent<BoxGeometry>>();
 	//UpdateInstancesBuffer<MeshComponent<RectangleGeometry>>();
 	//UpdateInstancesBuffer<MeshComponent<CustomGeometry<EigenMeshData>>>();
@@ -528,7 +558,7 @@ void StandardScene::OnMaterialCreated(MaterialEventsQueue::EventArg materials)
 	auto& materialsBuffer = m_framesResources.MaterialsBuffer;
 	materialsBuffer.Reserve(materialsBuffer.GetSize() + materials.size());
 
-	for(const auto& material : materials)
+	for (const auto& material : materials)
 		CreateMaterial(m_deviceResources->GetD3DDevice(), commandList, *material);
 }
 void StandardScene::OnMaterialDeleted(MaterialEventsQueue::EventArg materials)
@@ -540,7 +570,7 @@ void StandardScene::OnMeshesCreated(MeshEventsQueue::EventArg meshes)
 {
 	auto commandList = m_commandListManager.GetGraphicsCommandList(0);
 
-	for(const auto& mesh : meshes)
+	for (const auto& mesh : meshes)
 		CreateRenderItem(m_deviceResources->GetD3DDevice(), commandList, mesh->GetName(), mesh->GenerateMeshData());
 }
 void StandardScene::OnMeshesDeleted(MeshEventsQueue::EventArg meshes)
@@ -550,15 +580,15 @@ void StandardScene::OnMeshesDeleted(MeshEventsQueue::EventArg meshes)
 
 void StandardScene::OnInstancesCreated(InstanceEventsQueue::EventArg meshInstances)
 {
-	for (const auto& instances : meshInstances) 
+	for (const auto& instances : meshInstances)
 	{
 		auto renderItem = m_renderItemsPerGeometry.at(instances.first);
-		
+
 		auto newInstanceCount = instances.second.size();
 		auto oldCount = renderItem->GetInstanceCount(m_framesResources);
 		auto newCount = oldCount + newInstanceCount;
 		renderItem->ReserveSpaceForInstances(m_framesResources, newCount);
-		
+
 		for (const auto& instance : instances.second)
 		{
 			if (&instance->GetTransform() == nullptr)

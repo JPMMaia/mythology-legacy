@@ -47,6 +47,13 @@ namespace DirectX12Engine
 		void CreateMesh(const std::shared_ptr<GameEngine::BaseMeshComponent>& mesh) override;
 		void DeleteMesh(const std::shared_ptr<GameEngine::BaseMeshComponent>& mesh) override;
 
+		void CreateMaterial(const std::shared_ptr<GameEngine::StandardMaterial>& material) override;
+		void DeleteMaterial(const std::shared_ptr<GameEngine::StandardMaterial>& material) override;
+
+		void CreateInstance(const std::string& meshName, const std::shared_ptr<GameEngine::InstancedMeshComponent>& instance) override;
+		void UpdateInstance(const std::string& meshName, const std::shared_ptr<GameEngine::InstancedMeshComponent>& instance) override;
+		void DeleteInstance(const std::string& meshName, const std::shared_ptr<GameEngine::RenderInfo>& renderInfo) override;
+
 	private:
 		VertexBuffer CreateVertexBuffer(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::EigenMeshData& meshData, bool isSkinned);
 		IndexBuffer CreateIndexBuffer(ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* commandList, const GameEngine::EigenMeshData& meshData);

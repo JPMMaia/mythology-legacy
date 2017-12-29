@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameEngine/Component/Meshes/StandardMaterial.h"
+#include "GameEngine/Commands/Render/RenderCommandList.h"
 
 #include <memory>
 #include <string>
@@ -18,9 +19,9 @@ namespace GameEngine
 		MaterialRepository& operator=(MaterialRepository&&) = default;
 
 	public:
-		void Add(const std::string& name, const std::shared_ptr<GameEngine::StandardMaterial>& material);
+		void Add(RenderCommandList& renderCommandList, const std::string& name, const std::shared_ptr<GameEngine::StandardMaterial>& material);
 		const std::shared_ptr<GameEngine::StandardMaterial>& Get(const std::string& name);
-		void Delete(const std::string& name);
+		void Delete(RenderCommandList& renderCommandList, const std::string& name);
 
 	private:
 		std::unordered_map<std::string, std::shared_ptr<GameEngine::StandardMaterial>> m_materials;

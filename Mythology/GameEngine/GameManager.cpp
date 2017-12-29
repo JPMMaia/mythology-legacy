@@ -33,6 +33,11 @@ void GameManager::FixedUpdate(const Common::Timer& timer)
 {
 	m_physicsScene.FixedUpdate(timer);
 
+	{
+		physx::PxU32 activeActorsCount;
+		m_physicsScene->getActiveActors(activeActorsCount);
+	}
+
 	::FixedUpdate<CameraComponent>(timer);
 }
 

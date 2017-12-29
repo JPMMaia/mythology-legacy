@@ -40,6 +40,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Commands\InstanceEventsQueue.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Commands\MaterialEventsQueue.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Commands\MeshEventsQueue.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\MeshComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Common\EngineException.h" />
@@ -116,5 +117,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\InstanceEventsQueue.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\MaterialEventsQueue.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\MeshEventsQueue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\DeleteMaterialCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\CreateMaterialCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\CreateInstanceCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\DeleteInstanceCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\UpdateInstanceCommand.h" />
   </ItemGroup>
 </Project>
