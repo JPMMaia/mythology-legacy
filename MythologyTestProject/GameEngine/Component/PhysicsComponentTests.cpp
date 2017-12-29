@@ -49,8 +49,12 @@ namespace MythologyTestProject
 			scene->addActor(*body);
 
 			// Create game object:
-			auto physicsComponent = PhysicsComponent::CreateSharedPointer(body);
-			GameObject object(physicsComponent);
+			GameObject object;
+			object.AddRootComponent("Root", std::make_shared<TransformComponent>());
+
+			// Add physics:
+			auto physicsComponent = PhysicsComponent::CreateSharedPointer(object.GetSharedTransform(), body);
+			object.AddComponent("RigidDynamic", physicsComponent);
 
 			// Add child component:
 			auto light = PointLightComponent::CreateSharedPointer(Eigen::Vector3f(0.8f, 0.8f, 0.8f), 10.0f, 50.0f);

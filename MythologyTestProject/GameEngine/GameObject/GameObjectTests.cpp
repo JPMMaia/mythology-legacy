@@ -9,53 +9,61 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace MythologyTestProject
 {
+	class TestComponent : public BaseComponent
+	{		
+	};
+
 	TEST_CLASS(GameObjectTests)
 	{
 	public:
-		TEST_METHOD(GameObjectTest1)
+		TEST_METHOD(RootComponent)
 		{
-			using Vector3 = Eigen::Vector3f;
-			using Quaternion = Eigen::Quaternion<float>;
+			{
+				auto root = std::make_shared<TransformComponent>();
 
+				GameObject gameObject;
+				gameObject.AddRootComponent("Root", root);
+				Assert::IsTrue(root == gameObject.GetSharedTransform());
+
+				auto removeRoot = [&gameObject]()
+				{
+					gameObject.RemoveComponent("Root");
+				};
+				Assert::ExpectException<std::invalid_argument>(removeRoot);
+			}
+
+			{
+				auto root = std::make_shared<TestComponent>();
+
+				GameObject gameObject;
+				gameObject.AddRootComponent("Root", root);
+				Assert::IsTrue(root->GetSharedTransform() == gameObject.GetSharedTransform());
+
+				auto removeRoot = [&gameObject]()
+				{
+					gameObject.RemoveComponent("Root");
+				};
+				Assert::ExpectException<std::invalid_argument>(removeRoot);
+			}
+		}
+
+		TEST_METHOD(Component)
+		{
 			GameObject gameObject;
 
-			// Test default construction:
-			{
-				auto& transform = gameObject.GetTransform();
-				Assert::IsTrue(transform.GetLocalPosition() == Vector3::Zero());
-				Assert::IsTrue(transform.GetLocalRotation().isApprox(Quaternion::Identity()));
-				Assert::IsTrue(transform.GetLocalScaling() == Vector3(1.0f, 1.0f, 1.0f));
-			}
+			auto root = std::make_shared<TestComponent>();
+			gameObject.AddRootComponent("Root", root);
 
-			// Test components:
-			auto pointLightComponent = PointLightComponent::CreateSharedPointer();
-			{
-				gameObject.AddComponent("PointLight", pointLightComponent);
-				const auto& component = gameObject.GetComponent("PointLight");
-				Assert::IsTrue(component.get() == pointLightComponent.get());
+			auto component0 = std::make_shared<TestComponent>();
+			gameObject.AddComponent("0", component0);
+			Assert::IsTrue(root->GetSharedTransform() == component0->GetSharedTransform()->GetParent().lock());
 
-				gameObject.RemoveComponent("PointLight");
-				Assert::IsFalse(gameObject.HasComponent("PointLight"));
+			auto component1 = std::make_shared<TestComponent>();
+			gameObject.AddComponent("1", component1);
+			Assert::IsTrue(root->GetSharedTransform() == component1->GetSharedTransform()->GetParent().lock());
 
-				// Remove non-existent component:
-				gameObject.RemoveComponent("OtherComponent");
-			}
-
-			// Test transform logic:
-			{
-				gameObject.AddComponent("PointLight", pointLightComponent);
-				pointLightComponent->SetLocalPosition({ 1.0f, 1.0f, 1.0f });
-
-				auto& transform = gameObject.GetTransform();
-				transform.SetLocalPosition({1.0f, -2.0f, 5.0f});
-				
-				Vector3f worldPosition(2.0f, -1.0f, 6.0f);
-				Assert::IsTrue(pointLightComponent->GetWorldPosition() == worldPosition);
-
-				gameObject.RemoveComponent("PointLight", true);
-				Assert::IsTrue(pointLightComponent->GetTransform().GetParent().expired());
-				Assert::IsTrue(pointLightComponent->GetWorldPosition() == worldPosition);
-			}
+			gameObject.RemoveComponent("0");
+			Assert::IsTrue(component0->GetSharedTransform()->GetParent().lock() == nullptr);
 		}
 	};
 }

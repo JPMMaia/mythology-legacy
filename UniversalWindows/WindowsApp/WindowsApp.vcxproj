@@ -90,7 +90,7 @@
     <ClCompile>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Include;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Include;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -108,7 +108,7 @@ xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.d
     <ClCompile>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Include;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Include;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -126,7 +126,7 @@ xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.d
     <ClCompile>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\Eigen\Include;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\Eigen\Include;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -150,7 +150,7 @@ xcopy /D /Y /S "$(SolutionDir)ThirdParty\PhysX\PxShared\bin\vc14win64\*.dll" "$(
     <ClCompile>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\Eigen\Include;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)UniversalWindows\DirectX12Engine;$(SolutionDir)Mythology;$(SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Include;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\Eigen\Include;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -176,7 +176,6 @@ xcopy /D /Y /S "$(SolutionDir)ThirdParty\PhysX\PxShared\bin\vc14win64\*.dll" "$(
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
-    <ClInclude Include="Common\d3dx12.h" />
     <ClInclude Include="Converters.h" />
     <ClInclude Include="WindowsAppMain.h" />
     <ClInclude Include="Common\StepTimer.h" />

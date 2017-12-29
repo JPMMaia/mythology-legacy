@@ -35,7 +35,7 @@ namespace DirectX12Engine
 		/// </summary>
 		virtual void LoadState() = 0;
 
-		virtual void FrameUpdate(const Common::Timer& timer) = 0;
+		virtual bool FrameUpdate(const Common::Timer& timer) = 0;
 
 		virtual bool Render(const Common::Timer& timer) = 0;
 	};

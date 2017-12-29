@@ -8,6 +8,10 @@
 #include "GameEngine/Geometry/Animation/Armature.h"
 #include "GameEngine/Component/Meshes/SkinnedMeshComponent.h"
 #include "GameEngine/Physics/PhysicsManager.h"
+#include "GameEngine/Repositories/MeshRepository.h"
+#include "Mythology/GameObjects/Axis.h"
+#include "Mythology/GameObjects/Box.h"
+#include "Mythology/GameObjects/Person.h"
 
 namespace Common 
 {
@@ -26,7 +30,7 @@ namespace Mythology
 	public:
 		MythologyGame(const std::shared_ptr<GameEngine::IFileSystem>& directory);
 
-		void Initialize();
+		void Initialize(const std::shared_ptr<GameEngine::IRenderScene>& renderScene);
 
 		void ProcessInput();
 		void FixedUpdate(const Common::Timer& timer);
@@ -41,22 +45,20 @@ namespace Mythology
 	private:
 		void CreateStack(const physx::PxTransform & transform, std::size_t size, const physx::PxMaterial& material);
 		void CreateProjectile(std::uint8_t key);
+		void CreateAxis(std::uint8_t key);
+		void DestroyAxis(std::uint8_t key);
 
 	private:
 		std::shared_ptr<GameEngine::IFileSystem> m_fileSystem;
 		std::shared_ptr<GameEngine::GameManager> m_gameManager;
-		GameEngine::PhysicsManager m_physicsManager;
-		GameEngine::PhysicsScene m_physicsScene;
-		physx::PxMaterial* m_physicsMaterial;
 		
-		std::unordered_map<std::string, std::shared_ptr<GameEngine::BaseMeshComponent>> m_meshes;
 		std::unordered_map<std::string, std::shared_ptr<GameEngine::SkinnedMeshComponent>> m_skinnedMeshes;
-		std::unordered_map<std::string, std::shared_ptr<GameEngine::StandardMaterial>> m_materials;
 		std::unordered_map<std::string, std::shared_ptr<GameEngine::Armature>> m_armatures;
-		GameEngine::GameObject m_person;
+		Axis m_axis;
+		Person m_person;
 		GameEngine::GameObject m_floor;
-		GameEngine::GameObject m_axis;
 		GameEngine::GameObject m_box;
-		std::deque<GameEngine::GameObject> m_boxes;
+		std::deque<Box> m_boxes;
+		std::deque<GameEngine::GameObject> m_projectiles;
 	};
 }

@@ -1,3 +1,6 @@
 [submodule "Mythology/Libraries/PhysX"]
 	path = ThirdParty/PhysX
 	url = https://github.com/NVIDIAGameWorks/PhysX-3.4.git
+[submodule "ThirdParty/DirectX-Graphics-Samples"]
+	path = ThirdParty/DirectX-Graphics-Samples
+	url = https://github.com/Microsoft/DirectX-Graphics-Samples.git

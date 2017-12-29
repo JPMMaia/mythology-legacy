@@ -4,15 +4,16 @@
 #include <dxgi1_4.h>
 
 #include "IWindow.h"
-#include "Utilities/d3dx12.h"
+#include "d3dx12.h"
 
 namespace DirectX12Engine
 {
-	static const UINT c_frameCount = 3;		// Use triple buffering.
-
 											// Controls all the DirectX device resources.
 	class DeviceResources
 	{
+	public:
+		static constexpr UINT c_frameCount = 3;
+
 	public:
 		explicit DeviceResources(DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D32_FLOAT);
 		void SetWindow(const std::shared_ptr<IWindow>& window);
@@ -21,6 +22,7 @@ namespace DirectX12Engine
 		void SetDpi(float dpi);
 		void ValidateDevice();
 		void Present();
+		bool MoveToNextFrame();
 		void WaitForGpu();
 
 		// The size of the render target, in pixels.
@@ -69,7 +71,6 @@ namespace DirectX12Engine
 		void CreateDeviceResources();
 		void CreateWindowSizeDependentResources();
 		void UpdateRenderTargetSize();
-		void MoveToNextFrame();
 		DXGI_MODE_ROTATION ComputeDisplayRotation() const;
 		void GetHardwareAdapter(IDXGIAdapter1** ppAdapter) const;
 		void EnableShaderBasedValidation() const;

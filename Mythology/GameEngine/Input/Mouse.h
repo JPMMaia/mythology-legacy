@@ -15,7 +15,12 @@ namespace GameEngine
 
 	public:
 		Mouse();
+		Mouse(const Mouse&) = delete;
+		Mouse& operator=(const Mouse&) = delete;
+		Mouse(Mouse&&) = default;
+		Mouse& operator=(Mouse&&) = default;
 
+	public:
 		void Update();
 
 		void SetKeysState(bool left, bool middle, bool right);

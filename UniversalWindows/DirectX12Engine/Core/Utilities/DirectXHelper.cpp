@@ -2,6 +2,11 @@
 #include "DirectXHelper.h"
 #include "Common/EngineException.h"
 
+bool DX::Failed(HRESULT hr)
+{
+	return hr < 0;
+}
+
 void DX::ThrowIfFailed(HRESULT hr)
 {
 	if (FAILED(hr))

@@ -8,6 +8,11 @@ BaseComponent::BaseComponent() :
 {
 }
 
+BaseComponent::BaseComponent(const std::shared_ptr<TransformComponent>& transform) :
+	m_transform(transform)
+{
+}
+
 void BaseComponent::FixedUpdate(const Common::Timer& timer)
 {
 	m_transform->FixedUpdate(timer);
@@ -29,4 +34,14 @@ const TransformComponent& BaseComponent::GetTransform() const
 TransformComponent& BaseComponent::GetTransform()
 {
 	return *m_transform;
+}
+
+const std::shared_ptr<TransformComponent>& BaseComponent::GetSharedTransform() const
+{
+	return m_transform;
+}
+
+void BaseComponent::SetTransform(const std::shared_ptr<TransformComponent>& transform)
+{
+	m_transform = transform;
 }

@@ -50,7 +50,7 @@ namespace GameEngine
 		QuaternionCRType GetLocalRotation() const;
 		void SetLocalRotation(QuaternionCRType localRotation);
 
-		Vector3CRType GetLocalScaling() const;
+		Vector3CRType GetLocalScale() const;
 		void SetLocalScaling(Vector3CRType localScaling);
 
 		Vector3Type GetWorldPosition() const;
@@ -70,7 +70,7 @@ namespace GameEngine
 		void SetWorldTransform(const TransformType& worldTransform);
 
 	private:
-		TransformType GetParentsTransform() const;
+		TransformType GetParentWorldTransform() const;
 		void UpdateTransformValuesToHoldWorldTransform(const std::shared_ptr<TransformComponent>& parent, bool isNewParent);
 		void InvalidateWorldTransform();
 		void SetLocalTransform(const TransformType& localTransform, bool invalidateWorldTransform);
@@ -81,7 +81,7 @@ namespace GameEngine
 		IDType m_id;
 		Vector3Type m_localPosition;
 		QuaternionType m_localRotation;
-		Vector3Type m_localScaling;
+		Vector3Type m_localScale;
 
 		std::weak_ptr<TransformComponent> m_parent;
 		std::unordered_map<IDType, std::weak_ptr<TransformComponent>> m_children;

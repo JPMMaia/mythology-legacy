@@ -34,6 +34,12 @@ namespace GameEngine
 		StandardAllocatorNode() = default;
 		~StandardAllocatorNode() = default;
 
+		StandardAllocatorNode(StandardAllocatorNode&& other) :
+			m_state(std::move(other.m_state)),
+			m_initialized(other.m_initialized)
+		{
+		}
+
 		template<typename... ArgumentsType>
 		explicit StandardAllocatorNode(ArgumentsType&&... arguments) :
 			m_state(std::forward<ArgumentsType>(arguments)...),
@@ -181,6 +187,17 @@ namespace GameEngine
 		}
 
 	public:
+
+		void clear() noexcept
+		{
+			m_front = nullptr;
+			m_storage.clear();
+		}
+
+		void shrink_to_fit()
+		{
+			m_storage.shrink_to_fit();
+		}
 
 		value_type* allocate(std::size_t n)
 		{

@@ -9,6 +9,11 @@
 #include "GameEngine/Component/Meshes/SkinnedMeshComponent.h"
 #include "Common/Helpers.h"
 #include "Interfaces/IFileSystem.h"
+#include "GameEngine/Commands/MaterialEventsQueue.h"
+#include "GameEngine/Commands/InstanceEventsQueue.h"
+#include "GameEngine/Component/Physics/RigidStaticComponent.h"
+#include "GameEngine/Component/Physics/RigidDynamicComponent.h"
+#include "GameEngine/Commands/Render/RenderCommandList.h"
 
 #include <cmath>
 
@@ -19,28 +24,35 @@ using namespace Mythology;
 using namespace physx;
 
 MythologyGame::MythologyGame(const std::shared_ptr<IFileSystem>& fileSystem) :
-	m_fileSystem(fileSystem),
-	m_physicsScene(m_physicsManager.CreateScene())
+	m_fileSystem(fileSystem)
 {
-	Initialize();
 }
 
-void MythologyGame::Initialize()
+void MythologyGame::Initialize(const std::shared_ptr<IRenderScene>& renderScene)
 {
-	m_gameManager = std::make_shared<GameEngine::GameManager>();
+	m_gameManager = std::make_shared<GameEngine::GameManager>(renderScene);
 
-	m_physicsMaterial = m_physicsManager->createMaterial(0.5f, 0.5f, 0.6f);
+	auto& meshRepository = m_gameManager->GetMeshRepository();
+	auto& materialRepository = m_gameManager->GetMaterialRepository();
+
+	auto& physicsManager = m_gameManager->GetPhysicsManager();
+	auto& physicsScene = m_gameManager->GetPhysicsScene();
+
+	RenderCommandList renderCommandList(m_gameManager->GetRenderScene());
+
+	physicsScene->lockWrite();
+	physicsScene.AddMaterial("Default", PhysicsUtilities::MakeSharedPointer(physicsManager->createMaterial(0.5f, 0.5f, 0.6f)));
 
 	// Meshes:
 	{
 		{
 			auto mesh = MeshComponent<BoxGeometry>::CreateSharedPointer("Box", BoxGeometry(1.0f, 1.0f, 1.0f, 0));
-			m_meshes.emplace(mesh->GetName(), mesh);
+			meshRepository.Add(renderCommandList, mesh->GetName(), mesh);
 		}
 
 		{
 			auto mesh = MeshComponent<RectangleGeometry>::CreateSharedPointer("Floor", RectangleGeometry(0.0f, 0.0f, 20.0f, 20.0f, 0.0f, 0));
-			m_meshes.emplace(mesh->GetName(), mesh);
+			meshRepository.Add(renderCommandList, mesh->GetName(), mesh);
 		}
 	}
 
@@ -48,79 +60,44 @@ void MythologyGame::Initialize()
 	{
 		{
 			auto material = StandardMaterial::CreateSharedPointer("Wood", Vector4f(1.0f, 1.0f, 1.0f, 1.0f), L"Resources/bamboo-wood/bamboo-wood-semigloss-albedo.dds", 0.0f, 0.8f, L"Resources/white.dds");
-			m_materials.emplace(material->GetName(), material);
+			materialRepository.Add(renderCommandList, material->GetName(), material);
 		}
 
 		{
 			auto material = StandardMaterial::CreateSharedPointer("Red", Vector4f(1.0f, 0.0f, 0.0f, 1.0f), L"Resources/white.dds", 0.0f, 0.5f, L"Resources/white.dds");
-			m_materials.emplace(material->GetName(), material);
+			materialRepository.Add(renderCommandList, material->GetName(), material);
 		}
 
 		{
 			auto material = StandardMaterial::CreateSharedPointer("Green", Vector4f(0.0f, 1.0f, 0.0f, 1.0f), L"Resources/white.dds", 0.0f, 0.5f, L"Resources/white.dds");
-			m_materials.emplace(material->GetName(), material);
+			materialRepository.Add(renderCommandList, material->GetName(), material);
 		}
 
 		{
 			auto material = StandardMaterial::CreateSharedPointer("Blue", Vector4f(0.0f, 0.0f, 1.0f, 1.0f), L"Resources/white.dds", 0.0f, 0.5f, L"Resources/white.dds");
-			m_materials.emplace(material->GetName(), material);
+			materialRepository.Add(renderCommandList, material->GetName(), material);
 		}
 	}
 
 	// Person:
-	{
-		m_person.AddComponent("Box", m_meshes.at("Box")->CreateInstance(m_materials.at("Wood")));
-
-		{
-			auto component = PointLightComponent::CreateSharedPointer(Eigen::Vector3f(0.8f, 0.8f, 0.8f), 10.0f, 50.0f);
-			component->GetTransform().SetLocalPosition(3.0f * Vector3f(0.0f, 1.0f, -2.0f));
-			m_person.AddComponent("Light", component);
-		}
-
-		{
-			auto component = CameraComponent::CreateSharedPointer();
-			component->GetTransform().SetLocalRotation(Quaternionf::FromTwoVectors(Vector3f::UnitZ(), Vector3f(0.0f, -1.0f, 2.0f)));
-			component->GetTransform().SetLocalPosition(3.0f * Vector3f(0.0f, 1.0f, -2.0f));
-			m_person.AddComponent("Camera", component);
-		}
-	}
+	m_person = Person(*m_gameManager);
 
 	// Axis:
-	{
-		auto& box = m_meshes.at("Box");
-
-		{
-			auto instance = box->CreateInstance(m_materials.at("Red"));
-			instance->GetTransform().SetLocalScaling({ 2.0f, 0.1f, 0.1f });
-			instance->GetTransform().SetLocalPosition({ 1.0f, 0.0f, 0.0f });
-			m_axis.AddComponent("X-axis", instance);
-		}
-
-		{
-			auto instance = box->CreateInstance(m_materials.at("Green"));
-			instance->GetTransform().SetLocalScaling({ 0.1f, 2.0f, 0.1f });
-			instance->GetTransform().SetLocalPosition({ 0.0f, 1.0f, 0.0f });
-			m_axis.AddComponent("Y-axis", instance);
-		}
-
-		{
-			auto instance = box->CreateInstance(m_materials.at("Blue"));
-			instance->GetTransform().SetLocalScaling({ 0.1f, 0.1f, 2.0f });
-			instance->GetTransform().SetLocalPosition({ 0.0f, 0.0f, 1.0f });
-			m_axis.AddComponent("Z-axis", instance);
-		}
-	}
+	m_axis = Axis(*m_gameManager);
 
 	// Floor:
 	{
-		auto physicsPlane = PhysicsUtilities::MakeSharedPointer<PxRigidStatic>(PxCreatePlane(*m_physicsManager.GetPhysics(), PxPlane(0.0f, 1.0f, 0.0f, 0.0f), *m_physicsMaterial));
-		m_physicsScene->addActor(*physicsPlane);
-		m_floor = GameObject(PhysicsComponent::CreateSharedPointer(physicsPlane));
+		m_floor.AddRootComponent("Root", std::make_shared<TransformComponent>());
 
-		auto instance = m_meshes.at("Floor")->CreateInstance(m_materials.at("Wood"));
+		std::string meshName("Floor");
+		auto instance = meshRepository.Get(meshName)->CreateInstance(renderCommandList, materialRepository.Get("Wood"));
 		auto rotation90 = std::sqrt(2.0f) / 2.0f;
 		instance->GetTransform().SetLocalRotation(Quaternionf(rotation90, 0.0f, rotation90, 0.0f));
 		m_floor.AddComponent("Mesh", instance);
+
+		auto physicsPlane = PhysicsUtilities::MakeSharedPointer<PxRigidStatic>(PxCreatePlane(*physicsManager.GetPhysics(), PxPlane(0.0f, 1.0f, 0.0f, 0.0f), *physicsScene.GetMaterial("Default")));
+		physicsScene->addActor(*physicsPlane);
+		m_floor.AddComponent("RigidStatic", RigidStaticComponent::CreateSharedPointer(m_floor.GetSharedTransform(), physicsPlane));
 	}
 
 	{
@@ -128,7 +105,7 @@ void MythologyGame::Initialize()
 		std::string modelName = "test";
 		SceneImporter::ImportedScene scene;
 		SceneImporter::Import(basePath + L"test4.fbx", scene);
-		
+
 		auto skinnedMeshComponent = SkinnedMeshComponent::CreateSharedPointer(modelName);
 
 		const auto& object = scene.Objects[0];
@@ -141,11 +118,11 @@ void MythologyGame::Initialize()
 			//const auto& albedoMap = basePath + Helpers::GetFilename(Helpers::StringToWString(material.DiffuseTexturePath)) + L".dds";
 			const auto& baseColorTextureName = basePath + L"white.dds";
 			auto standardMaterial = StandardMaterial::CreateSharedPointer(modelName + std::to_string(i), Vector4f(baseColor[0], baseColor[1], baseColor[2], 1.0f), baseColorTextureName, 0.0f, 0.5f, L"Resources/white.dds");
-			m_materials.emplace(standardMaterial->GetName(), standardMaterial);
+			materialRepository.Add(renderCommandList, standardMaterial->GetName(), standardMaterial);
 
 			skinnedMeshComponent->AddMesh(CustomGeometry<EigenMeshData>(std::move(geometry.MeshData)), standardMaterial);
 		}
-		
+
 		auto& importedArmature = scene.Armatures.at(object.ArmatureIndex);
 		auto armature = std::make_shared<Armature>(std::move(importedArmature.BoneHierarchy), std::move(importedArmature.BoneTransforms), std::move(importedArmature.Animations));
 		m_armatures.emplace(importedArmature.Bones.front(), armature);
@@ -153,7 +130,7 @@ void MythologyGame::Initialize()
 		auto instance = skinnedMeshComponent->CreateInstance(armature, object.MeshToParentOfBoneRoot);
 		instance->GetTransform().SetLocalRotation(Quaternionf(AngleAxisf(static_cast<float>(-M_PI_2), Vector3f::UnitX())));
 		//instance->GetTransform().SetLocalScaling(Vector3f(1.0f, 1.0f, 1.0f) * 0.01f);
-		m_box.AddComponent("AnimationInstance", instance);
+		m_box.AddRootComponent("AnimationInstance", instance);
 
 		m_skinnedMeshes.emplace(modelName, skinnedMeshComponent);
 	}
@@ -162,51 +139,46 @@ void MythologyGame::Initialize()
 	{
 		auto stackZ = 10.0f;
 		for (std::size_t i = 0; i < 5; ++i)
-			CreateStack(PxTransform(PxVec3(0, 0.0f, stackZ -= 10.0f)), 5, *m_physicsMaterial);
+			CreateStack(PxTransform(PxVec3(0, 0.0f, stackZ -= 10.0f)), 5, *physicsScene.GetMaterial("Default"));
 	}
 
 	auto& keyboard = m_gameManager->GetKeyboard();
 	keyboard.OnKeyPress += {"CreateProjectile", this, &MythologyGame::CreateProjectile};
+	keyboard.OnKeyPress += {"CreateAxis", this, &MythologyGame::CreateAxis};
+	keyboard.OnKeyPress += {"DestroyAxis", this, &MythologyGame::DestroyAxis};
+
+	m_gameManager->GetRenderCommandQueue().Submit(renderCommandList);
+
+	physicsScene->unlockWrite();
 }
 
 void MythologyGame::ProcessInput()
 {
+	auto& physicsScene = m_gameManager->GetPhysicsScene();
+	physicsScene->lockWrite();
+	
 	m_gameManager->ProcessInput();
+	
+	physicsScene->unlockWrite();
 }
 void MythologyGame::FixedUpdate(const Common::Timer& timer)
 {
-	m_physicsScene.FixedUpdate(timer);
-
+	auto& physicsScene = m_gameManager->GetPhysicsScene();
+	physicsScene->lockWrite();
+	
 	m_gameManager->FixedUpdate(timer);
+	m_person.FixedUpdate(timer, *m_gameManager);
+	
+	physicsScene->unlockWrite();
 }
 void MythologyGame::FrameUpdate(const Common::Timer& timer)
 {
+	auto& physicsScene = m_gameManager->GetPhysicsScene();
+	physicsScene->lockRead();
+
 	m_gameManager->FrameUpdate(timer);
 
-	auto& cameraTransform = m_person.GetTransform();
-
-	static constexpr auto movementSensibility = 0.125f;
-	auto& keyboard = m_gameManager->GetKeyboard();
-	if (keyboard.IsKeyDown('W'))
-		cameraTransform.MoveLocalZ(movementSensibility);
-	if (keyboard.IsKeyDown('A'))
-		cameraTransform.MoveLocalX(movementSensibility);
-	if (keyboard.IsKeyDown('S'))
-		cameraTransform.MoveLocalZ(-movementSensibility);
-	if (keyboard.IsKeyDown('D'))
-		cameraTransform.MoveLocalX(-movementSensibility);
-
-	static constexpr auto tiltSensibility = 0.0625f;
-	if (keyboard.IsKeyDown('Q'))
-		cameraTransform.Rotate(Vector3f::UnitZ(), -tiltSensibility);
-	if (keyboard.IsKeyDown('E'))
-		cameraTransform.Rotate(Vector3f::UnitZ(), tiltSensibility);
-
-	static constexpr auto mouseSensibility = 1.0f / 512.0f;
-	auto& mouse = m_gameManager->GetMouse();
-	auto deltaMovement = mouse.DeltaMovement();
-	cameraTransform.Rotate(Vector3f::UnitX(), mouseSensibility * deltaMovement[1]);
-	cameraTransform.Rotate(Vector3f::UnitY(), -mouseSensibility * deltaMovement[0]);
+	physicsScene->unlockRead();
 }
 
 std::shared_ptr<GameManager> MythologyGame::GameManager() const
@@ -216,35 +188,20 @@ std::shared_ptr<GameManager> MythologyGame::GameManager() const
 
 GameObject::PointerType<CameraComponent> MythologyGame::GetMainCamera() const
 {
-	return m_person.GetComponent<CameraComponent>("Camera");
+	return m_person.GetCamera();
 }
 
 void MythologyGame::CreateStack(const physx::PxTransform& transform, std::size_t size, const physx::PxMaterial& material)
 {
-	// Create shape and material:
-	auto halfExtent = 0.5f;
-	auto shape = PhysicsUtilities::MakeSharedPointer<PxShape>(
-		m_physicsManager->createShape(PxBoxGeometry(halfExtent, halfExtent, halfExtent), material)
-		);
-
 	for (std::size_t i = 0; i < size; ++i)
 	{
 		for (std::size_t j = 0; j < size - i; ++j)
 		{
 			// Calculate the local transform:
-			PxTransform localTransform(PxVec3(PxReal(j * 2) - PxReal(size - i), PxReal(i * 2 + 1), 0) * halfExtent);
+			PxTransform localTransform(PxVec3(PxReal(j * 2) - PxReal(size - i), PxReal(i * 2 + 1), 0) * 0.5f);
 
-			// Create rigid dynamic:
-			auto body = PhysicsUtilities::CreateRigidDynamic(*m_physicsManager.GetPhysics(), transform.transform(localTransform), *shape, 10.0f);
-			m_physicsScene->addActor(*body);
-
-			// Create box with physics component:
-			GameObject boxObject(PhysicsComponent::CreateSharedPointer(body));
-
-			// Add mesh to the object:
-			boxObject.AddComponent("Mesh", m_meshes.at("Box")->CreateInstance(m_materials.at("Wood")));
-
-			m_boxes.emplace_back(boxObject);
+			// Create box:
+			m_boxes.emplace_back(*m_gameManager, transform.transform(localTransform));
 		}
 	}
 }
@@ -254,17 +211,46 @@ void MythologyGame::CreateProjectile(std::uint8_t key)
 	if (key != ' ')
 		return;
 
-	const auto& cameraTransform = GetMainCamera()->GetTransform();
-	PxTransform transform(PhysicsUtilities::ToPhysX(cameraTransform.GetWorldTransform()));
-	PxSphereGeometry geometry(3.0f);
-	PxVec3 velocity(PhysicsUtilities::ToPhysX(cameraTransform.GetWorldZ() * 20.0f));
+	auto& meshRepository = m_gameManager->GetMeshRepository();
+	auto& materialRepository = m_gameManager->GetMaterialRepository();
+	auto& physicsManager = m_gameManager->GetPhysicsManager();
+	auto& physicsScene = m_gameManager->GetPhysicsScene();
 
-	auto body = PhysicsUtilities::MakeSharedPointer<PxRigidDynamic>(PxCreateDynamic(*m_physicsManager.GetPhysics(), transform, geometry, *m_physicsMaterial, 10.0f));
-	body->setAngularDamping(0.5f);
-	body->setLinearVelocity(velocity);
-	m_physicsScene->addActor(*body);
+	RenderCommandList renderCommandList(m_gameManager->GetRenderScene());
 
-	GameObject boxObject(PhysicsComponent::CreateSharedPointer(body));
-	boxObject.AddComponent("Mesh", m_meshes.at("Box")->CreateInstance(m_materials.at("Wood")));
-	m_boxes.emplace_back(boxObject);
+	GameObject boxObject;
+	std::string meshName("Box");
+	auto instance = meshRepository.Get(meshName)->CreateInstance(renderCommandList, materialRepository.Get("Wood"));
+	boxObject.AddRootComponent("Mesh", instance);
+
+	{
+		const auto& cameraTransform = GetMainCamera()->GetTransform();
+		PxTransform transform(PhysicsUtilities::ToPhysX(cameraTransform.GetWorldTransform()));
+		PxSphereGeometry geometry(3.0f);
+		PxVec3 velocity(PhysicsUtilities::ToPhysX(cameraTransform.GetWorldZ() * 20.0f));
+
+		auto body = PhysicsUtilities::MakeSharedPointer<PxRigidDynamic>(PxCreateDynamic(*physicsManager.GetPhysics(), transform, geometry, *physicsScene.GetMaterial("Default"), 10.0f));
+		body->setAngularDamping(0.5f);
+		body->setLinearVelocity(velocity);
+		physicsScene->addActor(*body);
+		boxObject.AddComponent("RigidDynamic", RigidDynamicComponent::CreateSharedPointer(boxObject.GetSharedTransform(), body));
+	}
+
+	m_projectiles.emplace_back(std::move(boxObject));
+
+	m_gameManager->GetRenderCommandQueue().Submit(renderCommandList);
+}
+void MythologyGame::CreateAxis(std::uint8_t key)
+{
+	if (key != 'K')
+		return;
+
+	m_axis = Axis(*m_gameManager.get());
+}
+void MythologyGame::DestroyAxis(std::uint8_t key)
+{
+	if (key != 'L')
+		return;
+
+	m_axis = Axis();
 }

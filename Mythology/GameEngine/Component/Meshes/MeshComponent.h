@@ -3,31 +3,38 @@
 #include "GameEngine/Component/Base/BaseComponent.h"
 #include "GameEngine/Component/Meshes/InstancedMeshComponent.h"
 #include "GameEngine/Memory/StandardAllocator.h"
+#include "GameEngine/Geometry/EigenGeometry.h"
+#include "GameEngine/Commands/InstanceEventsQueue.h"
 
 namespace GameEngine
 {
+	class RenderCommandList;
+
 	class BaseMeshComponent
 	{
 	public:
-		explicit BaseMeshComponent(const std::string& name) :
-			m_name(name)
-		{
-		}
+		explicit BaseMeshComponent(const std::string& name);
 
+	protected:
+		virtual ~BaseMeshComponent();
+
+	public:
+		virtual EigenMeshData GenerateMeshData() const = 0;
+
+	public:
 		template<typename... ArgumentsTypes>
-		std::shared_ptr<InstancedMeshComponent> CreateInstance(ArgumentsTypes&& ...arguments)
+		std::shared_ptr<InstancedMeshComponent> CreateInstance(RenderCommandList& renderCommandList, ArgumentsTypes&& ...arguments)
 		{
 			auto pointer = m_instances.allocate(sizeof(InstancedMeshComponent));
-
-			auto deleter = [this](void* pointer)
-			{
-				m_instances.deallocate(reinterpret_cast<InstancedMeshComponent*>(pointer), sizeof(InstancedMeshComponent));
-			};
 			new (reinterpret_cast<void*>(pointer)) InstancedMeshComponent(std::forward<ArgumentsTypes>(arguments)...);
 
-			return std::shared_ptr<InstancedMeshComponent>(pointer, deleter);
+			return CreateInstance(renderCommandList, pointer);
 		}
 
+	private:
+		std::shared_ptr<InstancedMeshComponent> CreateInstance(RenderCommandList& renderCommandList, InstancedMeshComponent* instancePointer);
+
+	public:
 		StandardAllocatorIterator<InstancedMeshComponent> InstancesBegin()
 		{
 			return m_instances.begin();
@@ -71,6 +78,12 @@ namespace GameEngine
 		GeometryType& GetGeometry()
 		{
 			return m_geometry;
+		}
+
+	public:
+		EigenMeshData GenerateMeshData() const override
+		{
+			return m_geometry.GenerateMeshData<EigenMeshData>();
 		}
 
 	private:

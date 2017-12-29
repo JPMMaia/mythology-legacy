@@ -13,6 +13,13 @@ namespace GameEngine
 		Common::Event<Keyboard, std::string, std::uint8_t> OnKeyRelease;
 
 	public:
+		Keyboard() = default;
+		Keyboard(const Keyboard&) = delete;
+		Keyboard& operator=(const Keyboard&) = delete;
+		Keyboard(Keyboard&&) = default;
+		Keyboard& operator=(Keyboard&&) = default;
+
+	public:
 		void PressKey(std::uint8_t virtualKey);
 		void ReleaseKey(std::uint8_t virtualKey);
 

@@ -29,6 +29,7 @@
     <ClCompile Include="Core\Textures\Texture.cpp" />
     <ClCompile Include="Core\RenderItem\Specific\RenderRectangle.cpp" />
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="Core\Scene\Standard\FramesResources.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Command\CommandListManager.h" />
@@ -45,7 +46,6 @@
     <ClInclude Include="Core\Scene\StandardScene.h" />
     <ClInclude Include="Core\Shader\Shader.h" />
     <ClInclude Include="Core\Shader\ShaderBufferTypes.h" />
-    <ClInclude Include="Core\Utilities\d3dx12.h" />
     <ClInclude Include="Core\Utilities\DirectXHelper.h" />
     <ClInclude Include="Core\Utilities\UploadBuffer.h" />
     <ClInclude Include="Core\Renderer.h" />
@@ -65,6 +65,9 @@
     <ClInclude Include="Core\IRenderer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Core\Resources\GPUResource.h" />
+    <ClInclude Include="Core\Utilities\UnmappedUploadBuffer.h" />
+    <ClInclude Include="Core\Scene\Standard\FramesResources.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\Standard\GBufferPassVertexShader.hlsl" />

@@ -7,6 +7,7 @@ using namespace WindowsApp;
 using namespace Windows::Foundation;
 using namespace Windows::System::Threading;
 using namespace Concurrency;
+using namespace std;
 
 namespace WindowsApp
 {
@@ -23,7 +24,7 @@ namespace WindowsApp
 	
 
 WindowsAppMain::WindowsAppMain() :
-	m_timer(std::chrono::milliseconds(12)),
+	m_timer(std::chrono::microseconds(31250)),
 	m_game(std::make_shared<Mythology::MythologyGame>(std::make_shared<FileSystem>()))
 {
 }
@@ -34,8 +35,13 @@ void WindowsAppMain::CreateRenderers(const std::shared_ptr<DirectX12Engine::Devi
 	m_deviceResources = deviceResources;
 	m_renderer = std::make_unique<DirectX12Engine::Renderer>(deviceResources);
 	m_scene = std::make_shared<DirectX12Engine::StandardScene>(deviceResources, m_renderer->GetCommandListManager(), m_game);
-	m_scene->CreateDeviceDependentResources();
+	
+	m_game->Initialize(m_scene);
+
+	m_renderer->CreateDeviceDependentResources();
 	m_renderer->SetScene(m_scene);
+
+	m_scene->CreateDeviceDependentResources();
 
 	OnWindowSizeChanged();
 
@@ -46,13 +52,22 @@ bool WindowsAppMain::UpdateAndRender()
 {
 	using namespace std::placeholders;
 
-	return m_timer.UpdateAndRender(
+	m_timer.Update();
+
+	if (!FrameUpdate(m_timer))
+		return false;
+
+	Render(m_timer);
+
+	return true;
+
+	/*return m_timer.UpdateAndRender(
 		std::bind(&WindowsAppMain::FixedUpdate, this, _1), 
 		std::bind(&WindowsAppMain::FrameUpdate, this, _1), 
 		std::bind(&WindowsAppMain::Render, this, _1), 
 		std::bind(&WindowsAppMain::ProcessInput, this), 
 		std::bind(&WindowsAppMain::ProcessFrameStatistics, this, _1)
-	);
+	);*/
 }
 
 // Updates application state when the window's size changes (e.g. device orientation change)
@@ -91,6 +106,45 @@ void WindowsAppMain::OnDeviceRemoved()
 	//m_sceneRenderer = nullptr;
 }
 
+void WindowsAppMain::RunUpdate()
+{
+	{
+		unique_lock<shared_mutex> lock(m_updateMutex);
+		m_update = true;
+	}
+
+	auto update = [&]()
+	{
+		while (true)
+		{
+			{
+				shared_lock<shared_mutex> lock(m_updateMutex);
+				if (!m_update)
+					break;
+			}
+
+			// Process input:
+			ProcessInput();
+
+			m_timer.RunFixedUpdate([&](const Timer& timer)
+			{
+				FixedUpdate(timer);
+			});
+		}
+	};
+
+	m_updateThread = std::thread(update);
+}
+void WindowsAppMain::StopUpdate()
+{
+	{
+		unique_lock<shared_mutex> lock(m_updateMutex);
+		m_update = false;
+	}
+
+	m_updateThread.join();
+}
+
 bool WindowsAppMain::ProcessInput()
 {
 	m_game->ProcessInput();
@@ -103,10 +157,16 @@ void WindowsAppMain::FixedUpdate(const Common::Timer& timer)
 {
 	m_game->FixedUpdate(timer);
 }
-void WindowsAppMain::FrameUpdate(const Common::Timer& timer)
+bool WindowsAppMain::FrameUpdate(const Common::Timer& timer)
 {
 	m_game->FrameUpdate(timer);
-	m_renderer->FrameUpdate(timer);
+	
+	if (!m_renderer->FrameUpdate(timer))
+	{
+		return false;
+	}
+
+	return true;
 }
 void WindowsAppMain::Render(const Common::Timer& timer)
 {	

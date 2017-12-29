@@ -3,12 +3,16 @@
 #include "GameObject/GameObject.h"
 
 #include "GameEngine/Component/Cameras/CameraComponent.h"
+#include "GameEngine/Component/Physics/RigidDynamicComponent.h"
 #include "GameEngine/Component/Meshes/SkinnedMeshComponent.h"
+#include "GameEngine/Commands/Render/RenderCommandList.h"
 
 using namespace Common;
 using namespace GameEngine;
 
-GameManager::GameManager()
+GameManager::GameManager(const std::shared_ptr<IRenderScene>& renderScene) :
+	m_renderScene(renderScene),
+	m_physicsScene(m_physicsManager.CreateScene())
 {
 }
 
@@ -25,8 +29,15 @@ void FixedUpdate(const Timer& timer)
 		element.FixedUpdate(timer);
 	});
 }
-void GameManager::FixedUpdate(const Common::Timer& timer) const
+void GameManager::FixedUpdate(const Common::Timer& timer)
 {
+	m_physicsScene.FixedUpdate(timer);
+
+	{
+		physx::PxU32 activeActorsCount;
+		m_physicsScene->getActiveActors(activeActorsCount);
+	}
+
 	::FixedUpdate<CameraComponent>(timer);
 }
 
@@ -38,9 +49,9 @@ void FrameUpdate(const Timer& timer)
 		element.FrameUpdate(timer);
 	});
 }
-void GameManager::FrameUpdate(const Common::Timer& timer) const
+void GameManager::FrameUpdate(const Common::Timer& timer)
 {
-	::FrameUpdate<PhysicsComponent>(timer);
+	::FrameUpdate<RigidDynamicComponent>(timer);
 
 	std::for_each(SkinnedMeshComponent::begin(), SkinnedMeshComponent::end(), [&timer](SkinnedMeshComponent& mesh)
 	{

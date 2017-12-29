@@ -3,12 +3,7 @@
 #include "Common/EngineException.h"
 
 #include <algorithm>
-
-#ifndef ANDROID_NDK
-#include <codecvt>
-#else
 #include <sstream>
-#endif
 
 using namespace Common;
 
@@ -55,37 +50,11 @@ std::wstring Helpers::GetFilePath(const std::wstring& filename)
 
 std::wstring Helpers::StringToWString(const std::string& str)
 {
-#ifdef ANDROID_NDK
-	{
-		std::wstringstream ss;
-		ss << str.c_str();
-		return ss.str();
-	}
-#else
-	{
-		using convertType = std::codecvt_utf8<wchar_t>;
-		std::wstring_convert<convertType, wchar_t> converter;
-
-		return converter.from_bytes(str);
-	}
-#endif
+	return std::wstring(str.begin(), str.end());
 }
 
 std::string Helpers::WStringToString(const std::wstring& wstr)
 {
-#ifdef ANDROID_NDK
-	{
-		std::stringstream ss;
-		ss << wstr.c_str();
-		return ss.str();
-	}
-#else
-	{
-		using convertType = std::codecvt_utf8<wchar_t>;
-		std::wstring_convert<convertType, wchar_t> converter;
-
-		return converter.to_bytes(wstr);
-	}
-#endif
+	return std::string(wstr.begin(), wstr.end());
 }
 

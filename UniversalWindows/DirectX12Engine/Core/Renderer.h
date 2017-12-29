@@ -25,7 +25,7 @@ namespace DirectX12Engine
 		void LoadState() override;
 
 		void ProcessInput() const;
-		void FrameUpdate(const Common::Timer& timer) override;
+		bool FrameUpdate(const Common::Timer& timer) override;
 		bool Render(const Common::Timer& timer) override;
 
 	public:

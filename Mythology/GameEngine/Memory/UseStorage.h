@@ -13,6 +13,12 @@ namespace GameEngine
 		using Allocator = StandardAllocator<Type>;
 
 	public:
+		static void Clear()
+		{
+			s_storage.clear();
+			s_storage.shrink_to_fit();
+		}
+
 		static void Deleter(void* rawPointer) noexcept
 		{
 			s_storage.deallocate(reinterpret_cast<typename Allocator::value_type*>(rawPointer), sizeof(Type));

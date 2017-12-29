@@ -90,8 +90,12 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Libraries\DirectXTK12\Include;$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Include;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USING_DIRECTX;USING_WINDOWS;NOMINMAX;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12;$(ProjectDir)Libraries\DirectXTK12\Include;$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Include;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\include;%(AdditionalIncludeDirectories);($SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USING_DIRECTX;USING_WINDOWS;NOMINMAX;_USE_MATH_DEFINES;_SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ConformanceMode>false</ConformanceMode>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -112,8 +116,12 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Libraries\DirectXTK12\Include;$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Include;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USING_DIRECTX;USING_WINDOWS;NOMINMAX;_USE_MATH_DEFINES;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12;$(ProjectDir)Libraries\DirectXTK12\Include;$(SolutionDir)Mythology\Libraries\assimp\Include;$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Include;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\include;%(AdditionalIncludeDirectories);($SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USING_DIRECTX;USING_WINDOWS;NOMINMAX;_USE_MATH_DEFINES;_SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ConformanceMode>false</ConformanceMode>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,8 +142,12 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Libraries\DirectXTK12\Include;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\Eigen\Include;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USING_DIRECTX;USING_WINDOWS;NOMINMAX;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12;$(ProjectDir)Libraries\DirectXTK12\Include;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\Eigen\Include;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories);($SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USING_DIRECTX;USING_WINDOWS;NOMINMAX;_USE_MATH_DEFINES;_SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ConformanceMode>false</ConformanceMode>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,8 +168,12 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Libraries\DirectXTK12\Include;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\Eigen\Include;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USING_DIRECTX;USING_WINDOWS;NOMINMAX;_USE_MATH_DEFINES;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12;$(ProjectDir)Libraries\DirectXTK12\Include;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\Eigen\Include;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories);($SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USING_DIRECTX;USING_WINDOWS;NOMINMAX;_USE_MATH_DEFINES;_SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ConformanceMode>false</ConformanceMode>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -198,16 +214,18 @@
     <ClInclude Include="Core\RenderItem\StandardRenderItem.h" />
     <ClInclude Include="Core\Resources\DescriptorHeap.h" />
     <ClInclude Include="Core\Resources\GPUAllocator.h" />
+    <ClInclude Include="Core\Resources\GPUResource.h" />
     <ClInclude Include="Core\Scene\IScene.h" />
     <ClInclude Include="Core\Scene\RenderLayers.h" />
     <ClInclude Include="Core\Scene\StandardScene.h" />
+    <ClInclude Include="Core\Scene\Standard\FramesResources.h" />
     <ClInclude Include="Core\ShaderStructures.h" />
     <ClInclude Include="Core\Shader\Shader.h" />
     <ClInclude Include="Core\Shader\ShaderBufferTypes.h" />
     <ClInclude Include="Core\Textures\Texture.h" />
     <ClInclude Include="Core\Textures\Samplers.h" />
-    <ClInclude Include="Core\Utilities\d3dx12.h" />
     <ClInclude Include="Core\Utilities\DirectXHelper.h" />
+    <ClInclude Include="Core\Utilities\UnmappedUploadBuffer.h" />
     <ClInclude Include="Core\Utilities\UploadBuffer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
@@ -232,6 +250,7 @@
     <ClCompile Include="Core\RenderItem\StandardRenderItem.cpp" />
     <ClCompile Include="Core\Resources\DescriptorHeap.cpp" />
     <ClCompile Include="Core\Scene\StandardScene.cpp" />
+    <ClCompile Include="Core\Scene\Standard\FramesResources.cpp" />
     <ClCompile Include="Core\Shader\Shader.cpp" />
     <ClCompile Include="Core\Textures\Texture.cpp" />
     <ClCompile Include="Core\Textures\Samplers.cpp" />

@@ -1,8 +1,9 @@
 ﻿#pragma once
 
 #include "GameEngine/Component/IComponent.h"
-#include "GameEngine/Component/Physics/PhysicsComponent.h"
+#include "GameEngine/Component/Base/BaseComponent.h"
 
+#include <memory>
 #include <unordered_map>
 
 namespace GameEngine
@@ -16,10 +17,11 @@ namespace GameEngine
 		using IComponentPointerCR = const IComponentPointer&;
 
 	public:
-		GameObject();
-		explicit GameObject(const std::shared_ptr<PhysicsComponent>& physics);
+		GameObject() = default;
 
 	public:
+		void AddRootComponent(const std::string& name, const std::shared_ptr<BaseComponent>& component);
+		void AddRootComponent(const std::string& name, const std::shared_ptr<TransformComponent>& component);
 		void AddComponent(const std::string& name, IComponentPointerCR component, bool worldTransformStays = false);
 		void RemoveComponent(const std::string& name, bool worldTransformStays = false);
 		
@@ -36,9 +38,11 @@ namespace GameEngine
 	public:
 		const TransformComponent& GetTransform() const;
 		TransformComponent& GetTransform();
+		const std::shared_ptr<TransformComponent>& GetSharedTransform() const;
 
 	private:
-		std::shared_ptr<PhysicsComponent> m_physics;
+		std::string m_rootName;
+		std::shared_ptr<TransformComponent> m_transform;
 		std::unordered_map<std::string, std::shared_ptr<IComponent>> m_components;
 	};
 }

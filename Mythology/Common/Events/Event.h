@@ -56,7 +56,7 @@ namespace Common
 		}
 
 	private:
-		void operator()(ParametersTypes... arguments)
+		void operator()(ParametersTypes... arguments) const
 		{
 			auto localBindingsCopy = m_bindings;
 			for (const auto& binding : localBindingsCopy)

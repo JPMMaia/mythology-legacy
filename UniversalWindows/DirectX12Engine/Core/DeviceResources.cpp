@@ -128,9 +128,12 @@ void DeviceResources::CreateDeviceResources()
 #if defined(_DEBUG)
 	// If the project is in a debug build, enable debugging via SDK Layers:
 	{
-		ComPtr<ID3D12Debug> debugController;
-		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
-			debugController->EnableDebugLayer();
+		ComPtr<ID3D12Debug> debugController0;
+		DX::ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController0)));
+		
+		ComPtr<ID3D12Debug> debugController1;
+		debugController0->QueryInterface(IID_PPV_ARGS(&debugController1));
+		debugController1->EnableDebugLayer();
 	}
 #endif
 
@@ -286,7 +289,9 @@ void DeviceResources::Present()
 	{
 		DX::ThrowIfFailed(hr);
 
-		MoveToNextFrame();
+		// Schedule a Signal command in the queue.
+		const auto currentFenceValue = m_fenceValues[m_currentFrame];
+		DX::ThrowIfFailed(m_commandQueue->Signal(m_fence.Get(), currentFenceValue));
 	}
 }
 void DeviceResources::WaitForGpu()
@@ -301,24 +306,20 @@ void DeviceResources::WaitForGpu()
 	// Increment the fence value for the current frame.
 	m_fenceValues[m_currentFrame]++;
 }
-void DeviceResources::MoveToNextFrame()
+bool DeviceResources::MoveToNextFrame()
 {
-	// Schedule a Signal command in the queue.
+	// Check to see if the next frame is ready to start:
 	const auto currentFenceValue = m_fenceValues[m_currentFrame];
-	DX::ThrowIfFailed(m_commandQueue->Signal(m_fence.Get(), currentFenceValue));
-
-	// Advance the frame index.
 	m_currentFrame = m_swapChain->GetCurrentBackBufferIndex();
-
-	// Check to see if the next frame is ready to start.
-	if (m_fence->GetCompletedValue() < m_fenceValues[m_currentFrame])
+	if (currentFenceValue != 3 && m_fence->GetCompletedValue() < m_fenceValues[m_currentFrame])
 	{
-		DX::ThrowIfFailed(m_fence->SetEventOnCompletion(m_fenceValues[m_currentFrame], m_fenceEvent));
-		WaitForSingleObjectEx(m_fenceEvent, INFINITE, FALSE);
+		return false;
 	}
 
-	// Set the fence value for the next frame.
+	// Set the fence value for the next frame:
 	m_fenceValues[m_currentFrame] = currentFenceValue + 1;
+
+	return true;
 }
 
 DXGI_MODE_ROTATION DeviceResources::ComputeDisplayRotation() const
