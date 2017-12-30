@@ -4,3 +4,6 @@
 [submodule "ThirdParty/DirectX-Graphics-Samples"]
 	path = ThirdParty/DirectX-Graphics-Samples
 	url = https://github.com/Microsoft/DirectX-Graphics-Samples.git
+[submodule "ThirdParty/eigen"]
+	path = ThirdParty/eigen
+	url = https://github.com/eigenteam/eigen-git-mirror.git
