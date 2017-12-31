@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{67b6849f-0a35-41af-bd0f-f68d4c3d8363}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Geometry\MeshGenerator.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)RenderEngine\Geometry\MeshData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)RenderEngine\Geometry\MeshGenerator.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)RenderEngine\Geometry\SkinnedMeshData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)RenderEngine\Geometry\SkinnedVertex.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)RenderEngine\Geometry\Vertex.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)RenderEngine\Instances\Instance.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)RenderEngine\IRenderer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)RenderEngine\IScene.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)RenderEngine\Materials\Material.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)RenderEngine\Geometry\MeshData.cpp" />
+  </ItemGroup>
+</Project>

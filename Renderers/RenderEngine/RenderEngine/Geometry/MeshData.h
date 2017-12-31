@@ -16,5 +16,11 @@ namespace RenderEngine
 	public:
 		std::vector<VertexType> Vertices;
 		std::vector<IndexType> Indices;
+
+	public:
+		static MeshData Subdivide(const MeshData& meshData);
+
+	private:
+		static VertexType CalculateMidlleVertex(const VertexType& vertex0, const VertexType& vertex1);
 	};
 }
