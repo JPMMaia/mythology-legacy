@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Core\D3DBase.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="DirectX12Engine\Command\CommandListManager.cpp" />
+    <ClCompile Include="DirectX12Engine\Geometry\Buffers\BaseGeometryBuffer.cpp" />
+    <ClCompile Include="DirectX12Engine\Geometry\Buffers\IndexBuffer.cpp" />
+    <ClCompile Include="DirectX12Engine\Geometry\Buffers\VertexBuffer.cpp" />
+    <ClCompile Include="DirectX12Engine\Geometry\ImmutableMesh.cpp" />
+    <ClCompile Include="DirectX12Engine\Geometry\Submesh.cpp" />
+    <ClCompile Include="DirectX12Engine\Geometry\VertexTypes.cpp" />
+    <ClCompile Include="DirectX12Engine\Pipeline\PipelineStateManager.cpp" />
+    <ClCompile Include="DirectX12Engine\Pipeline\RootSignatureManager.cpp" />
+    <ClCompile Include="DirectX12Engine\RenderItem\Specific\RenderRectangle.cpp" />
+    <ClCompile Include="DirectX12Engine\RenderItem\StandardRenderItem.cpp" />
+    <ClCompile Include="DirectX12Engine\Resources\DescriptorHeap.cpp" />
+    <ClCompile Include="DirectX12Engine\Scene\Standard\FramesResources.cpp" />
+    <ClCompile Include="DirectX12Engine\Scene\StandardScene.cpp" />
+    <ClCompile Include="DirectX12Engine\Shaders\Shader.cpp" />
+    <ClCompile Include="DirectX12Engine\Textures\Samplers.cpp" />
+    <ClCompile Include="DirectX12Engine\Textures\Texture.cpp" />
+    <ClCompile Include="DirectX12Engine\Utilities\DirectXHelper.cpp" />
+    <ClCompile Include="DirectX12Engine\DeviceResources.cpp" />
+    <ClCompile Include="DirectX12Engine\Renderer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Core\D3DBase.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="DirectX12Engine\Command\CommandListManager.h" />
+    <ClInclude Include="DirectX12Engine\Geometry\Buffers\BaseGeometryBuffer.h" />
+    <ClInclude Include="DirectX12Engine\Geometry\Buffers\IndexBuffer.h" />
+    <ClInclude Include="DirectX12Engine\Geometry\Buffers\VertexBuffer.h" />
+    <ClInclude Include="DirectX12Engine\Geometry\IMesh.h" />
+    <ClInclude Include="DirectX12Engine\Geometry\ImmutableMesh.h" />
+    <ClInclude Include="DirectX12Engine\Geometry\Submesh.h" />
+    <ClInclude Include="DirectX12Engine\Geometry\VertexTypes.h" />
+    <ClInclude Include="DirectX12Engine\Pipeline\PipelineStateManager.h" />
+    <ClInclude Include="DirectX12Engine\Pipeline\RootSignatureManager.h" />
+    <ClInclude Include="DirectX12Engine\RenderItem\Specific\RenderRectangle.h" />
+    <ClInclude Include="DirectX12Engine\RenderItem\IRenderItem.h" />
+    <ClInclude Include="DirectX12Engine\RenderItem\StandardRenderItem.h" />
+    <ClInclude Include="DirectX12Engine\Resources\DescriptorHeap.h" />
+    <ClInclude Include="DirectX12Engine\Resources\GPUAllocator.h" />
+    <ClInclude Include="DirectX12Engine\Resources\GPUResource.h" />
+    <ClInclude Include="DirectX12Engine\Scene\Standard\FramesResources.h" />
+    <ClInclude Include="DirectX12Engine\Scene\RenderLayers.h" />
+    <ClInclude Include="DirectX12Engine\Scene\StandardScene.h" />
+    <ClInclude Include="DirectX12Engine\Shaders\Shader.h" />
+    <ClInclude Include="DirectX12Engine\Shaders\ShaderBufferTypes.h" />
+    <ClInclude Include="DirectX12Engine\Textures\Samplers.h" />
+    <ClInclude Include="DirectX12Engine\Textures\Texture.h" />
+    <ClInclude Include="DirectX12Engine\Utilities\DirectXHelper.h" />
+    <ClInclude Include="DirectX12Engine\Utilities\UnmappedUploadBuffer.h" />
+    <ClInclude Include="DirectX12Engine\Utilities\UploadBuffer.h" />
+    <ClInclude Include="DirectX12Engine\DeviceResources.h" />
+    <ClInclude Include="DirectX12Engine\DisplayOrientations.h" />
+    <ClInclude Include="DirectX12Engine\IWindow.h" />
+    <ClInclude Include="DirectX12Engine\Renderer.h" />
+    <ClInclude Include="DirectX12Engine\ShaderStructures.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="DirectX12Engine\HLSL\Standard\GBufferPassPixelShader.hlsl" />
+    <FxCompile Include="DirectX12Engine\HLSL\Standard\GBufferPassVertexShader.hlsl" />
+    <FxCompile Include="DirectX12Engine\HLSL\Standard\LightingPassPixelShader.hlsl" />
+    <FxCompile Include="DirectX12Engine\HLSL\Standard\LightingPassVertexShader.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="DirectX12Engine\HLSL\Common\InstanceData.hlsli" />
+    <None Include="DirectX12Engine\HLSL\Common\LightingUtils.hlsli" />
+    <None Include="DirectX12Engine\HLSL\Common\MaterialData.hlsli" />
+    <None Include="DirectX12Engine\HLSL\Common\PassData.hlsli" />
+    <None Include="DirectX12Engine\HLSL\Common\Samplers.hlsli" />
+    <None Include="DirectX12Engine\HLSL\Common\SkinnedData.hlsli" />
+  </ItemGroup>
+</Project>
