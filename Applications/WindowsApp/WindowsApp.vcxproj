@@ -1,0 +1,260 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|ARM">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM">
+      <Configuration>Release</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{e5640350-6929-4593-8c7c-50bd85225414}</ProjectGuid>
+    <Keyword>DirectXApp</Keyword>
+    <RootNamespace>WindowsApp</RootNamespace>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <AppContainerApplication>true</AppContainerApplication>
+    <ApplicationType>Windows Store</ApplicationType>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.16299.0</WindowsTargetPlatformMinVersion>
+    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v141</PlatformToolset>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v141</PlatformToolset>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VSINSTALLDIR)\Common7\IDE\Extensions\Microsoft\VsGraphics\ImageContentTask.props" />
+    <Import Project="$(VSINSTALLDIR)\Common7\IDE\Extensions\Microsoft\VsGraphics\MeshContentTask.props" />
+    <Import Project="$(VSINSTALLDIR)\Common7\IDE\Extensions\Microsoft\VsGraphics\ShaderGraphContentTask.props" />
+  </ImportGroup>
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <PackageCertificateKeyFile>WindowsApp_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>0D1C8E84BD51906FBAF13A39EC3B2AC0248A5511</PackageCertificateThumbprint>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <Link>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;assimp.lib;DirectXTK12.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Lib\vc14win64;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\lib\vc14win64;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Lib\$(Platform)\$(Configuration);$(SolutionDir)Mythology\Libraries\assimp\Lib\$(Platform)\$(Configuration);$(VCInstallDir)\lib\store\arm;$(VCInstallDir)\lib\arm</AdditionalLibraryDirectories>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+    <ClCompile>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)Renderers\RenderEngine;$(SolutionDir)Renderers\DirectX12Engine;$(SolutionDir)Common;$(SolutionDir)GameEngine;$(SolutionDir)Mythology;$(SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\eigen;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)UniversalWindows\DirectX12Engine\Shaders" "$(LayoutDir)\Shaders\" /E /Y
+xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <Link>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;assimp.lib;DirectXTK12.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Lib\vc14win64;$(SolutionDir)Mythology\Libraries\PhysX\PxShared\lib\vc14win64;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Lib\$(Platform)\$(Configuration);$(SolutionDir)Mythology\Libraries\assimp\Lib\$(Platform)\$(Configuration);$(VCInstallDir)\lib\store\arm;$(VCInstallDir)\lib\arm</AdditionalLibraryDirectories>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+    <ClCompile>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)Renderers\RenderEngine;$(SolutionDir)Renderers\DirectX12Engine;$(SolutionDir)Common;$(SolutionDir)GameEngine;$(SolutionDir)Mythology;$(SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\eigen;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)UniversalWindows\DirectX12Engine\Shaders" "$(LayoutDir)\Shaders\" /E /Y
+xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;assimp.lib;DirectXTK12.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Lib\vc14win64;$(SolutionDir)ThirdParty\PhysX\PxShared\lib\vc14win64;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Lib\$(Platform)\$(Configuration);$(SolutionDir)ThirdParty\assimp\Lib\$(Platform)\$(Configuration);$(VCInstallDir)\lib\store\amd64;$(VCInstallDir)\lib\amd64</AdditionalLibraryDirectories>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+    <ClCompile>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)Renderers\RenderEngine;$(SolutionDir)Renderers\DirectX12Engine;$(SolutionDir)Common;$(SolutionDir)GameEngine;$(SolutionDir)Mythology;$(SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\eigen;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <PostBuildEvent>
+      <Command>xcopy /D /Y /S /I "$(SolutionDir)UniversalWindows\DirectX12Engine\Shaders\*" "$(ProjectDir)Working Directory\Shaders"
+xcopy /D /Y /S "$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"
+xcopy /D /Y /S "$(SolutionDir)ThirdParty\PhysX\PxShared\bin\vc14win64\*.dll" "$(TargetDir)"
+</Command>
+    </PostBuildEvent>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+    </PreLinkEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Link>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;assimp.lib;DirectXTK12.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Lib\vc14win64;$(SolutionDir)ThirdParty\PhysX\PxShared\lib\vc14win64;$(SolutionDir)UniversalWindows\DirectX12Engine\Libraries\DirectXTK12\Lib\$(Platform)\$(Configuration);$(SolutionDir)ThirdParty\assimp\Lib\$(Platform)\$(Configuration);$(VCInstallDir)\lib\store\amd64;$(VCInstallDir)\lib\amd64</AdditionalLibraryDirectories>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+    <ClCompile>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)Renderers\RenderEngine;$(SolutionDir)Renderers\DirectX12Engine;$(SolutionDir)Common;$(SolutionDir)GameEngine;$(SolutionDir)Mythology;$(SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\eigen;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <PostBuildEvent>
+      <Command>xcopy /D /Y /S /I "$(SolutionDir)UniversalWindows\DirectX12Engine\Shaders\*" "$(ProjectDir)Working Directory\Shaders"
+xcopy /D /Y /S "$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Bin\vc14win64\*.dll" "$(TargetDir)"
+xcopy /D /Y /S "$(SolutionDir)ThirdParty\PhysX\PxShared\bin\vc14win64\*.dll" "$(TargetDir)"
+</Command>
+    </PostBuildEvent>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+    </PreLinkEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Image Include="Assets\LockScreenLogo.scale-200.png" />
+    <Image Include="Assets\SplashScreen.scale-200.png" />
+    <Image Include="Assets\Square150x150Logo.scale-200.png" />
+    <Image Include="Assets\Square44x44Logo.scale-200.png" />
+    <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Image Include="Assets\StoreLogo.png" />
+    <Image Include="Assets\Wide310x150Logo.scale-200.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="App.h" />
+    <ClInclude Include="Converters.h" />
+    <ClInclude Include="WindowsAppMain.h" />
+    <ClInclude Include="Common\StepTimer.h" />
+    <ClInclude Include="pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="App.cpp" />
+    <ClCompile Include="WindowsAppMain.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="nvToolsExt64_1.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PhysX3CharacterKinematicDEBUG_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PhysX3CharacterKinematicPROFILE_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PhysX3CommonDEBUG_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PhysX3CommonPROFILE_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PhysX3CookingPROFILE_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PhysX3DEBUG_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PhysX3GpuDEBUG_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PhysX3GpuPROFILE_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PhysX3PROFILE_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PhysXDevice64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PxFoundationDEBUG_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PxFoundationPROFILE_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PxPvdSDKDEBUG_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="PxPvdSDKPROFILE_x64.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="WindowsApp_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Renderers\DirectX12Engine\DirectX12Engine.vcxproj">
+      <Project>{013d0b39-e219-4e07-afe5-ddab959d4810}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VSINSTALLDIR)\Common7\IDE\Extensions\Microsoft\VsGraphics\ImageContentTask.targets" />
+    <Import Project="$(VSINSTALLDIR)\Common7\IDE\Extensions\Microsoft\VsGraphics\MeshContentTask.targets" />
+    <Import Project="$(VSINSTALLDIR)\Common7\IDE\Extensions\Microsoft\VsGraphics\ShaderGraphContentTask.targets" />
+  </ImportGroup>
+</Project>

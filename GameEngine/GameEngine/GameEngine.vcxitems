@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{5a44055d-aeb0-4e6b-920e-c7e6674b8ddb}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)assimp\config.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\CommandList.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\CommandQueue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\ICommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\CreateInstanceCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\CreateMaterialCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\CreateMeshCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\DeleteInstanceCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\DeleteMaterialCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\DeleteMeshCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\RenderCommandList.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\RenderCommandQueue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Commands\Render\UpdateInstanceCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Animations\SkinnedAnimationComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Base\BaseComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CameraComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CubeMappingCamera.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\IComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\DirectionalLightComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\PointLightComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\SpotLightComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\InstancedMeshComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\MeshComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\RenderInfo.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\SkinnedMeshComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\StandardMaterial.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidDynamicComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidStaticComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Component\Transforms\TransformComponent.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameEngineIncludes.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\AnimationClip.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\Armature.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\BoneAnimation.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\Keyframe.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\EigenGeometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Importer\SceneImporter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\MeshData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\MeshGenerator.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Primitives\BoxGeometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Primitives\CustomGeometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Primitives\RectangleGeometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\VertexData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Input\Keyboard.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Input\Mouse.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Memory\StandardAllocator.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Memory\UseStorage.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsScene.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsUtilities.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MaterialRepository.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MeshRepository.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Animations\SkinnedAnimationComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Base\BaseComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CameraComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Cameras\CubeMappingCamera.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\DirectionalLightComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\PointLightComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Lights\SpotLightComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\InstancedMeshComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\MeshComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\SkinnedMeshComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Meshes\StandardMaterial.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidDynamicComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Physics\RigidStaticComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Component\Transforms\TransformComponent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\GameManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\GameObject\GameObject.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\AnimationClip.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\Armature.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Animation\BoneAnimation.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\EigenGeometry.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Geometry\Importer\SceneImporter.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Input\Keyboard.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Input\Mouse.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsScene.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Physics\PhysicsUtilities.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MaterialRepository.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameEngine\Repositories\MeshRepository.cpp" />
+  </ItemGroup>
+</Project>
