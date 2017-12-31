@@ -11,6 +11,6 @@ namespace RenderEngine
 	{
 		Eigen::Affine3f Transform;
 		mutable std::size_t Index;
-		std::shared_ptr<Material> Material;
+		const Material* Material;
 	};
 }

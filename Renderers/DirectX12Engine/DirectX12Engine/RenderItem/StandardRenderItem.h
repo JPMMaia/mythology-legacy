@@ -20,8 +20,8 @@ namespace DirectX12Engine
 
 		void ReserveSpaceForInstances(FramesResources& frameResources, std::size_t newCapacity);
 		void AddInstance(FramesResources& frameResources, const std::shared_ptr<RenderEngine::Instance>& instance, const ShaderBufferTypes::InstanceData& instanceData);
-		void UpdateInstance(FramesResources& frameResources, const std::shared_ptr<RenderEngine::Instance>& instance, const ShaderBufferTypes::InstanceData& instanceData);
-		void DeleteInstance(FramesResources& frameResources, std::size_t index);
+		void UpdateInstance(FramesResources& frameResources, const RenderEngine::Instance& instance, const ShaderBufferTypes::InstanceData& instanceData);
+		void DeleteInstance(FramesResources& frameResources, const RenderEngine::Instance& instance);
 		std::size_t GetInstanceCount(FramesResources& frameResources) const;
 		void SetInstanceCount(FramesResources& frameResources, std::size_t count);
 

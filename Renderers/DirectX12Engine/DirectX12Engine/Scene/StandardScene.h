@@ -39,8 +39,8 @@ namespace DirectX12Engine
 		void DeleteMaterial(const std::string& name) override;
 
 		void CreateInstance(const std::string& meshName, const std::shared_ptr<RenderEngine::Instance>& instance) override;
-		void UpdateInstance(const std::string& meshName, const std::shared_ptr<RenderEngine::Instance>& instance) override;
-		void DeleteInstance(const std::string& meshName, const std::size_t index) override;
+		void UpdateInstance(const std::string& meshName, const RenderEngine::Instance& instance) override;
+		void DeleteInstance(const std::string& meshName, const RenderEngine::Instance& instance) override;
 
 	private:
 		template<class MeshType>

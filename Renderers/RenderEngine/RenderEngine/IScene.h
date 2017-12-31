@@ -35,7 +35,7 @@ namespace RenderEngine
 		virtual void DeleteMaterial(const std::string& name) = 0;
 
 		virtual void CreateInstance(const std::string& meshName, const std::shared_ptr<RenderEngine::Instance>& instance) = 0;
-		virtual void UpdateInstance(const std::string& meshName, const std::shared_ptr<RenderEngine::Instance>& instance) = 0;
-		virtual void DeleteInstance(const std::string& meshName, const std::size_t index) = 0;
+		virtual void UpdateInstance(const std::string& meshName, const RenderEngine::Instance& instance) = 0;
+		virtual void DeleteInstance(const std::string& meshName, const RenderEngine::Instance& instance) = 0;
 	};
 }

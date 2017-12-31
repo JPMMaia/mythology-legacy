@@ -192,19 +192,19 @@ void StandardScene::CreateInstance(const std::string& meshName, const std::share
 	auto renderItem = m_renderItemsPerGeometry.at(meshName);
 	renderItem->AddInstance(m_framesResources, instance, shaderData);
 }
-void StandardScene::UpdateInstance(const std::string& meshName, const std::shared_ptr<RenderEngine::Instance>& instance)
+void StandardScene::UpdateInstance(const std::string& meshName, const RenderEngine::Instance& instance)
 {
 	ShaderBufferTypes::InstanceData shaderData;
-	shaderData.MaterialIndex = static_cast<std::uint32_t>(instance->Material->Index);
-	shaderData.ModelMatrix = instance->Transform;
+	shaderData.MaterialIndex = static_cast<std::uint32_t>(instance.Material->Index);
+	shaderData.ModelMatrix = instance.Transform;
 
 	auto renderItem = m_renderItemsPerGeometry.at(meshName);
 	renderItem->UpdateInstance(m_framesResources, instance, shaderData);
 }
-void StandardScene::DeleteInstance(const std::string& meshName, const std::size_t index)
+void StandardScene::DeleteInstance(const std::string& meshName, const RenderEngine::Instance& instance)
 {
 	auto renderItem = m_renderItemsPerGeometry.at(meshName);
-	renderItem->DeleteInstance(m_framesResources, index);
+	renderItem->DeleteInstance(m_framesResources, instance);
 }
 
 template<>

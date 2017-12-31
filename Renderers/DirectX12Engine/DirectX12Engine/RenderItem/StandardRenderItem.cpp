@@ -51,17 +51,17 @@ void StandardRenderItem::AddInstance(FramesResources& frameResources, const std:
 	m_instancesIndices.emplace(bufferIndex, instance);
 	instance->Index = bufferIndex;
 }
-void StandardRenderItem::UpdateInstance(FramesResources& frameResources, const std::shared_ptr<RenderEngine::Instance>& instance, const ShaderBufferTypes::InstanceData& instanceData)
+void StandardRenderItem::UpdateInstance(FramesResources& frameResources, const RenderEngine::Instance& instance, const ShaderBufferTypes::InstanceData& instanceData)
 {
 	// Update the data associated with the instance:
 	auto& instancesBuffer = frameResources.GetInstancesBuffer(m_name);
-	auto bufferIndex = instance->Index;
+	auto bufferIndex = instance.Index;
 	instancesBuffer.Set(bufferIndex, instanceData);
 }
-void StandardRenderItem::DeleteInstance(FramesResources & frameResources, std::size_t index)
+void StandardRenderItem::DeleteInstance(FramesResources& frameResources, const RenderEngine::Instance& instance)
 {
 	// Delete the data associated with the instance:
-	auto bufferIndexToDelete = index;
+	auto bufferIndexToDelete = instance.Index;
 	auto& instancesBuffer = frameResources.GetInstancesBuffer(m_name);
 	auto swapped = instancesBuffer.SwapWithBackAndErase(bufferIndexToDelete);
 
