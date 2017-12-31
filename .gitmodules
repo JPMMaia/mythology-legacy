@@ -7,3 +7,6 @@
 [submodule "ThirdParty/eigen"]
 	path = ThirdParty/eigen
 	url = https://github.com/eigenteam/eigen-git-mirror.git
+[submodule "ThirdParty/assimp"]
+	path = ThirdParty/assimp
+	url = https://github.com/assimp/assimp.git
