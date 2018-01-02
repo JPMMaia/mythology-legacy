@@ -6,7 +6,7 @@ If(!(test-path $folderName))
 }
 
 # Generate cmake files inside the folder:
-cd "assimp"
+Set-Location "assimp"
 cmake ../../assimp -G"Visual Studio 15 2017 Win64" -DASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT=FALSE -DASSIMP_BUILD_FBX_IMPORTER=TRUE -DASSIMP_BUILD_GLTF_IMPORTER=TRUE
 
 # Start Developer Command Prompt:
@@ -23,4 +23,4 @@ devenv Assimp.sln /build Debug /project assimp
 devenv Assimp.sln /build Release /project assimp
 
 # Return to the original folder:
-cd ../
+Set-Location ../

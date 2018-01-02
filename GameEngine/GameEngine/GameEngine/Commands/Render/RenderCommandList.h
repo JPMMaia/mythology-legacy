@@ -49,15 +49,15 @@ namespace GameEngine
 	public:
 		void CreateInstance(const std::string& name, const Pointer<InstancedMeshComponent>& instance)
 		{
-			m_commands.emplace_back(std::make_unique<CreateInstanceCommand>(m_scene, instance));
+			m_commands.emplace_back(std::make_unique<CreateInstanceCommand>(m_scene, name, instance));
 		}
 		void UpdateInstance(const std::string& name, const Pointer<InstancedMeshComponent>& instance)
 		{
-			m_commands.emplace_back(std::make_unique<UpdateInstanceCommand>(m_scene, instance));
+			m_commands.emplace_back(std::make_unique<UpdateInstanceCommand>(m_scene, name, instance));
 		}
-		void DeleteInstance(const std::string& name, const Pointer<InstancedMeshComponent>& instance)
+		void DeleteInstance(const std::string& name, const std::shared_ptr<RenderEngine::Instance>& instanceData)
 		{
-			m_commands.emplace_back(std::make_unique<DeleteInstanceCommand>(m_scene, instance));
+			m_commands.emplace_back(std::make_unique<DeleteInstanceCommand>(m_scene, name, instanceData));
 		}
 
 	private:

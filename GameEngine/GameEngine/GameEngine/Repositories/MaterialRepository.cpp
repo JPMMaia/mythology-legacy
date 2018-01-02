@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "MaterialRepository.h"
 
-#include "GameEngine/Commands/MaterialEventsQueue.h"
-
 using namespace GameEngine;
 
 void MaterialRepository::Add(RenderCommandList& renderCommandList, const std::string& name, const std::shared_ptr<StandardMaterial>& material)
@@ -17,6 +15,6 @@ const std::shared_ptr<StandardMaterial>& MaterialRepository::Get(const std::stri
 void MaterialRepository::Delete(RenderCommandList& renderCommandList, const std::string& name)
 {
 	auto materialIt = m_materials.find(name);
-	MaterialEventsQueue::Delete(materialIt->second);
+	renderCommandList.DeleteMaterial(materialIt->second);
 	m_materials.erase(materialIt);
 }

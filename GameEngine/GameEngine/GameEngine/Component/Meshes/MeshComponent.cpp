@@ -12,12 +12,12 @@ BaseMeshComponent::~BaseMeshComponent()
 {
 }
 
-std::shared_ptr<InstancedMeshComponent> BaseMeshComponent::CreateInstance(RenderCommandList& renderCommandList, InstancedMeshComponent * instancePointer)
+std::shared_ptr<InstancedMeshComponent> BaseMeshComponent::CreateInstance(RenderCommandList& renderCommandList, InstancedMeshComponent* instancePointer)
 {
 	auto deleter = [this, &renderCommandList](void* instancePointer)
 	{
 		auto instance = reinterpret_cast<InstancedMeshComponent*>(instancePointer);
-		renderCommandList.DeleteInstance(m_name, instance->GetRenderInfo());
+		renderCommandList.DeleteInstance(m_name, instance->GetInstanceData());
 		m_instances.deallocate(instance, sizeof(InstancedMeshComponent));
 	};
 

@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "MeshRepository.h"
-#include "GameEngine/Commands/MeshEventsQueue.h"
 
 using namespace GameEngine;
 
