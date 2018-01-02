@@ -1,22 +1,37 @@
-# Cache the root folder:
-$rootFolder = (Get-Item -Path ".\" -Verbose).FullName
-
-# Create libraries folder:
-$librariesDestinationFolder = $rootFolder + "\PhysX\Libaries\x64"
-If(!(test-path $librariesDestinationFolder))
-{
-	New-Item -ItemType Directory -Force -Path $librariesDestinationFolder
+function Create-Folders ($Paths) {
+  $Paths | ForEach-Object { .\create_folder.ps1 $_ }
 }
 
-# Create binaries folder:
-$binariesDestinationFolder = $rootFolder + "\PhysX\Binaries\x64"
-If(!(test-path $binariesDestinationFolder))
-{
-	New-Item -ItemType Directory -Force -Path $binariesDestinationFolder
+function Move-Checked-Items ($Source, $Destination) {
+  Get-ChildItem -Recurse -Path $Source | Where-Object {($_ -like '*CHECKED*')} | Move-Item -Destination $Destination
 }
 
-# Chache the PhysX root folder:
-$physXRootFolder = $rootFolder + "\..\PhysX"
+function Move-Release-Items ($Source, $Destination) {
+  Get-ChildItem -Recurse -Path $Source | Where-Object {($_ -notlike '*CHECKED*' -and $_ -notlike '*DEBUG*' -and $_ -notlike '*PROFILE*')} | Move-Item -Destination $Destination
+}
+
+# Cache key folders:
+$rootFolder = (Get-Item -Path ".\" -Verbose).FullName + "\"
+$physXRootFolder = $rootFolder + "\..\PhysX\"
+$x64Folder = "x64\"
+$debugFolder = "Debug\"
+$releaseFolder = "Release\"
+
+# Create libraries folders:
+$librariesDestinationFolders = @{}
+$librariesDestinationFolders.root = $rootFolder + "PhysX\Libaries\"
+$librariesDestinationFolders.x64 = $librariesDestinationFolders.root + $x64Folder
+$librariesDestinationFolders.x64Debug = $librariesDestinationFolders.x64 + $debugFolder
+$librariesDestinationFolders.x64Release = $librariesDestinationFolders.x64 + $releaseFolder
+Create-Folders -Paths $librariesDestinationFolders.Values
+
+# Create binaries folders:
+$binariesDestinationFolders = @{}
+$binariesDestinationFolders.root = $rootFolder + "PhysX\Binaries\"
+$binariesDestinationFolders.x64 = $binariesDestinationFolders.root + $x64Folder
+$binariesDestinationFolders.x64Debug = $binariesDestinationFolders.x64 + $debugFolder
+$binariesDestinationFolders.x64Release = $binariesDestinationFolders.x64 + $releaseFolder
+Create-Folders -Paths $binariesDestinationFolders.Values
 
 # Start Developer Command Prompt:
 $installationPath = ./vswhere.exe -prerelease -latest -property installationPath
@@ -28,11 +43,11 @@ if ($installationPath -and (test-path "$installationPath\Common7\Tools\vsdevcmd.
 }
 
 # Copy PxShared projects:
-$pxSharedCompilerFolder = "..\PhysX\PxShared\src\compiler\vc14win64"
+$pxSharedCompilerFolder = "..\PhysX\PxShared\src\compiler\vc14win64\"
 Copy-Item -Path "PhysX\PxShared\*" -Destination $pxSharedCompilerFolder -Recurse -Force
 
 # Copy PhysX projects:
-$physXCompilerFolder = "..\PhysX\PhysX_3.4\Source\compiler\vc14win64"
+$physXCompilerFolder = "..\PhysX\PhysX_3.4\Source\compiler\vc14win64\"
 Copy-Item -Path "PhysX\PhysX\*" -Destination $physXCompilerFolder -Recurse -Force
 
 # Build everything:
@@ -42,12 +57,20 @@ devenv PhysX.sln /build release /project PhysX
 
 # Copy libraries:
 Set-Location $physXRootFolder
-Copy-Item -Path "PhysX_3.4\Lib\vc14win64\*" -Destination $librariesDestinationFolder -Recurse -Force
-Copy-Item -Path "PxShared\lib\vc14win64\*" -Destination $librariesDestinationFolder -Recurse -Force
+$physXLibrariesFolder = "PhysX_3.4\Lib\vc14win64\"
+$pxSharedLibrariesFolder = "PxShared\Lib\vc14win64\"
+Move-Checked-Items -Source $physXLibrariesFolder -Destination $librariesDestinationFolders.x64Debug
+Move-Checked-Items -Source $pxSharedLibrariesFolder -Destination $librariesDestinationFolders.x64Debug
+Move-Release-Items -Source $physXLibrariesFolder -Destination $librariesDestinationFolders.x64Release
+Move-Release-Items -Source $pxSharedLibrariesFolder -Destination $librariesDestinationFolders.x64Release
 
 # Copy binaries:
-Copy-Item -Path "PhysX_3.4\Bin\vc14win64\*" -Destination $binariesDestinationFolder -Recurse -Force
-Copy-Item -Path "PxShared\bin\vc14win64\*" -Destination $binariesDestinationFolder -Recurse -Force
+$physXBinariesFolder = "PhysX_3.4\Bin\vc14win64\"
+$pxSharedBinariesFolder = "PxShared\bin\vc14win64\"
+Move-Checked-Items -Source $physXBinariesFolder -Destination $binariesDestinationFolders.x64Debug
+Move-Checked-Items -Source $pxSharedBinariesFolder -Destination $binariesDestinationFolders.x64Debug
+Move-Release-Items -Source $physXBinariesFolder -Destination $binariesDestinationFolders.x64Release
+Move-Release-Items -Source $pxSharedBinariesFolder -Destination $binariesDestinationFolders.x64Release
 
 # Clean up everything:
 Set-Location $physXRootFolder
