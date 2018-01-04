@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{a3eff805-8cb3-4451-9b8b-9af047bd8077}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)PhysXEngine\Actors\PhysXActorFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PhysXEngine\Actors\PhysXRigidDynamic.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PhysXEngine\Actors\PhysXRigidStatic.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PhysXEngine\Geometries\PhysXGeometryFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PhysXEngine\Helpers\PhysicsHelpers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PhysXEngine\Materials\PhysXMaterialFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PhysXEngine\PhysXManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PhysXEngine\PhysXScene.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PhysXEngine\PhysXTraits.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)PhysXEngine\Actors\PhysXActorFactory.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)PhysXEngine\Helpers\PhysicsHelpers.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)PhysXEngine\PhysXManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)PhysXEngine\PhysXScene.cpp" />
+  </ItemGroup>
+</Project>

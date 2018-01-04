@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{cca99150-0ee2-42c1-aa40-f0ddf7f2af5c}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)PhysicsEngine\Actors\IActor.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PhysicsEngine\Actors\IActorFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PhysicsEngine\Actors\IRigidDynamic.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PhysicsEngine\Geometries\IGeometryFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PhysicsEngine\IManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PhysicsEngine\Actors\IRigidStatic.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PhysicsEngine\IScene.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PhysicsEngine\Materials\IMaterialFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PhysicsEngine\PhysicsTraits.h" />
+  </ItemGroup>
+</Project>
