@@ -23,10 +23,6 @@ TransformComponent::TransformComponent(Vector3CRType localPosition, QuaternionCR
 {
 }
 
-void TransformComponent::FixedUpdate(const Common::Timer& timer)
-{
-}
-
 void TransformComponent::Move(Vector3CRType axis, float scalar)
 {
 	SetLocalPosition(GetLocalPosition() + scalar * axis);

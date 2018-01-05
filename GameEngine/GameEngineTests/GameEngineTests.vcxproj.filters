@@ -21,9 +21,21 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PhysicsTraitsImplementation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngine\Component\Lights\DirectionalLightComponentTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngine\Component\Lights\PointLightComponentTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngine\Component\Lights\SpotLightComponentTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameEngine\Component\CameraComponentTests.cpp">
@@ -44,17 +56,10 @@
     <ClCompile Include="GameEngine\Memory\StandardAllocatorTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameEngine\Component\Lights\DirectionalLightComponentTests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameEngine\Component\Lights\PointLightComponentTests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameEngine\Component\Lights\SpotLightComponentTests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\test.fbx" />
+    <Content Include="Resources\test.fbx">
+      <Filter>Resource Files</Filter>
+    </Content>
   </ItemGroup>
 </Project>

@@ -238,6 +238,13 @@ bool Renderer::Render(const Common::Timer& timer)
 	return true;
 }
 
+bool Renderer::IsNextFrameAvailable()
+{
+	UINT nextFrame;
+	UINT64 currentFenceValue;
+	return m_deviceResources->IsNextFrameAvailable(nextFrame, currentFenceValue);
+}
+
 const std::shared_ptr<IScene>& Renderer::GetScene() const
 {
 	return m_scene;

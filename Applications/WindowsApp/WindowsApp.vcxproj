@@ -61,7 +61,13 @@
     <Import Project="$(VSINSTALLDIR)\Common7\IDE\Extensions\Microsoft\VsGraphics\MeshContentTask.props" />
     <Import Project="$(VSINSTALLDIR)\Common7\IDE\Extensions\Microsoft\VsGraphics\ShaderGraphContentTask.props" />
   </ImportGroup>
-  <ImportGroup Label="Shared" />
+  <ImportGroup Label="Shared">
+    <Import Project="..\..\Common\Common\Common.vcxitems" Label="Shared" />
+    <Import Project="..\..\GameEngine\GameEngine\GameEngine.vcxitems" Label="Shared" />
+    <Import Project="..\..\Physics\PhysicsEngine\PhysicsEngine.vcxitems" Label="Shared" />
+    <Import Project="..\..\Physics\PhysXEngine\PhysXEngine.vcxitems" Label="Shared" />
+    <Import Project="..\..\Renderers\RenderEngine\RenderEngine.vcxitems" Label="Shared" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -124,7 +130,7 @@ xcopy /Y /S "$(SolutionDir)Mythology\Libraries\PhysX\PhysX_3.4\Bin\vc14win64\*.d
     <ClCompile>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)Renderers\RenderEngine;$(SolutionDir)Renderers\DirectX12Engine;$(SolutionDir)Common;$(SolutionDir)GameEngine;$(SolutionDir)Mythology;$(SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\eigen;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)Renderers\DirectX12Engine;$(SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\eigen;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -148,7 +154,7 @@ xcopy /D /Y /S "$(SolutionDir)ThirdParty\PhysX\PxShared\bin\vc14win64\*.dll" "$(
     <ClCompile>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)Renderers\RenderEngine;$(SolutionDir)Renderers\DirectX12Engine;$(SolutionDir)Common;$(SolutionDir)GameEngine;$(SolutionDir)Mythology;$(SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\eigen;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)Renderers\DirectX12Engine;$(SolutionDir)ThirdParty\DirectX-Graphics-Samples\Libraries\D3DX12;$(SolutionDir)ThirdParty\assimp\Include;$(SolutionDir)ThirdParty\eigen;$(SolutionDir)ThirdParty\PhysX\PhysX_3.4\Include;$(SolutionDir)ThirdParty\PhysX\PxShared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <PreprocessorDefinitions>USING_DIRECTX;_USE_MATH_DEFINES;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -200,48 +206,6 @@ xcopy /D /Y /S "$(SolutionDir)ThirdParty\PhysX\PxShared\bin\vc14win64\*.dll" "$(
   </ItemGroup>
   <ItemGroup>
     <None Include="nvToolsExt64_1.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="PhysX3CharacterKinematicDEBUG_x64.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="PhysX3CharacterKinematicPROFILE_x64.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="PhysX3CommonDEBUG_x64.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="PhysX3CommonPROFILE_x64.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="PhysX3CookingPROFILE_x64.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="PhysX3DEBUG_x64.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="PhysX3GpuDEBUG_x64.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="PhysX3GpuPROFILE_x64.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="PhysX3PROFILE_x64.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="PhysXDevice64.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="PxFoundationDEBUG_x64.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="PxFoundationPROFILE_x64.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="PxPvdSDKDEBUG_x64.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="PxPvdSDKPROFILE_x64.dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="WindowsApp_TemporaryKey.pfx" />

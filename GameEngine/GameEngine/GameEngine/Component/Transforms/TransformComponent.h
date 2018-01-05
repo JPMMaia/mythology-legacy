@@ -22,9 +22,6 @@ namespace GameEngine
 		TransformComponent(Vector3CRType localPosition, QuaternionCRType localRotation, Vector3CRType localScaling);
 
 	public:
-		void FixedUpdate(const Common::Timer& timer);
-
-	public:
 		void Move(Vector3CRType axis, float scalar);
 		void MoveLocalX(float scalar);
 		void MoveLocalY(float scalar);

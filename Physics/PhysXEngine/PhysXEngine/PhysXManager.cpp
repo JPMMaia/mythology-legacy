@@ -19,11 +19,6 @@ PhysXManager::PhysXManager()
 
 void PhysXManager::Initialize()
 {
-	auto deleter = [](auto* object)
-	{
-		object->release();
-	};
-
 	// Create foundation
 	m_foundation = MakeUniquePointer<PxFoundation>(PxCreateFoundation(PX_FOUNDATION_VERSION, s_defaultAllocatorCallback, s_defaultErrorCallback));
 	if (!m_foundation)

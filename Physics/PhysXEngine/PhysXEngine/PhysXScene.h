@@ -22,6 +22,9 @@ namespace PhysXEngine
 		void FixedUpdate(const Common::Timer& timer) const override;
 
 	public:
+		std::vector<PhysicsEngine::IRigidDynamic<>*> GetActiveActors() const override;
+
+	public:
 		void AddActor(PhysicsEngine::IActor<>& actor) override;
 		void RemoveActor(PhysicsEngine::IActor<>& actor) override;
 

@@ -22,6 +22,7 @@ namespace DirectX12Engine
 		void SetDpi(float dpi);
 		void ValidateDevice();
 		void Present();
+		bool IsNextFrameAvailable(UINT& nextFrame, UINT64& currentFenceValue) const;
 		bool MoveToNextFrame();
 		void WaitForGpu();
 

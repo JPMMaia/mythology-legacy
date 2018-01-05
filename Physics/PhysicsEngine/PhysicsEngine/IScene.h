@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PhysicsEngine/Actors/IActor.h"
+#include "PhysicsEngine/Actors/IRigidDynamic.h"
 
 #include <Eigen/Eigen>
 
@@ -14,6 +15,9 @@ namespace PhysicsEngine
 
 	public:
 		virtual void FixedUpdate(const Common::Timer& timer) const = 0;
+
+	public:
+		virtual std::vector<IRigidDynamic<T>*> GetActiveActors() const = 0;
 
 	public:
 		virtual void AddActor(IActor<T>& actor) = 0;

@@ -16,9 +16,6 @@ namespace GameEngine
 		explicit BaseComponent(const std::shared_ptr<TransformComponent>& transform);
 
 	public:
-		void FixedUpdate(const Common::Timer& timer);
-
-	public:
 		void SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldTransformStays = false);
 		void UnsetParent(bool worldTransformStays = false);
 

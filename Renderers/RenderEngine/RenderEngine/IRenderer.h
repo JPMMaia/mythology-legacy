@@ -19,5 +19,8 @@ namespace RenderEngine
 	public:
 		virtual bool FrameUpdate(const Common::Timer& timer) = 0;
 		virtual bool Render(const Common::Timer& timer) = 0;
+
+	public:
+		virtual bool IsNextFrameAvailable() = 0;
 	};
 }

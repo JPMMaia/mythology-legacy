@@ -26,6 +26,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)PhysXEngine\Actors\PhysXActorFactory.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)PhysXEngine\Actors\PhysXRigidDynamic.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)PhysXEngine\Actors\PhysXRigidStatic.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PhysXEngine\Helpers\PhysicsHelpers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PhysXEngine\PhysXManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PhysXEngine\PhysXScene.cpp" />

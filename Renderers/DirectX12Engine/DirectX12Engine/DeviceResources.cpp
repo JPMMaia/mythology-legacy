@@ -306,17 +306,27 @@ void DeviceResources::WaitForGpu()
 	// Increment the fence value for the current frame.
 	m_fenceValues[m_currentFrame]++;
 }
-bool DeviceResources::MoveToNextFrame()
+bool DeviceResources::IsNextFrameAvailable(UINT& nextFrame, UINT64& currentFenceValue) const
 {
 	// Check to see if the next frame is ready to start:
-	const auto currentFenceValue = m_fenceValues[m_currentFrame];
-	m_currentFrame = m_swapChain->GetCurrentBackBufferIndex();
-	if (currentFenceValue != 3 && m_fence->GetCompletedValue() < m_fenceValues[m_currentFrame])
+	currentFenceValue = m_fenceValues[m_currentFrame];
+	nextFrame = m_swapChain->GetCurrentBackBufferIndex();
+	if (currentFenceValue != 3 && m_fence->GetCompletedValue() < m_fenceValues[nextFrame])
 	{
 		return false;
 	}
 
+	return true;
+}
+bool DeviceResources::MoveToNextFrame()
+{
+	UINT nextFrame;
+	UINT64 currentFenceValue;
+	if (!IsNextFrameAvailable(nextFrame, currentFenceValue))
+		return false;
+
 	// Set the fence value for the next frame:
+	m_currentFrame = nextFrame;
 	m_fenceValues[m_currentFrame] = currentFenceValue + 1;
 
 	return true;

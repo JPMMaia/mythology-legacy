@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "GameObject.h"
+#include "GameEngine/Component/Meshes/InstancedMeshComponent.h"
 
 using namespace GameEngine;
 
@@ -19,6 +20,10 @@ void GameObject::AddComponent(const std::string& name, IComponentPointerCR compo
 {
 	m_components.emplace(name, component);
 }
+void GameObject::AddComponent(const std::string& name, const std::shared_ptr<InstancedMeshComponent>& component)
+{
+	m_instances.emplace(name, component);
+}
 void GameObject::RemoveComponent(const std::string& name, bool worldTransformStays)
 {
 	if (m_rootName == name)
@@ -37,6 +42,11 @@ GameObject::IComponentPointerCR GameObject::GetComponent(const std::string& name
 bool GameObject::HasComponent(const std::string& name) const
 {
 	return m_components.find(name) != m_components.end();
+}
+
+const std::unordered_map<std::string, std::shared_ptr<InstancedMeshComponent>>& GameObject::GetInstances() const
+{
+	return m_instances;
 }
 
 const TransformComponent& GameObject::GetTransform() const

@@ -3,15 +3,15 @@
 
 using namespace GameEngine;
 
-RigidStaticComponent::RigidStaticComponent(const std::shared_ptr<TransformComponent>& transform, const PhysXSharedPointer<physx::PxRigidStatic>& rigidStatic) :
-	BaseComponent(transform),
-	m_rigidStatic(rigidStatic)
+RigidStaticComponent::RigidStaticComponent(std::unique_ptr<PhysicsEngine::IRigidStatic<>>&& rigidStatic, const std::shared_ptr<TransformComponent>& transform) :
+	m_rigidStatic(std::move(rigidStatic))
 {
-	auto globalPose = m_rigidStatic->getGlobalPose();
+	m_rigidStatic->SetUserData(this);
 
-	const auto& position = globalPose.p;
-	transform->SetLocalPosition(Eigen::Vector3f(position.x, position.y, position.z));
+	Eigen::Vector3f position;
+	Eigen::Quaternionf rotation;
+	m_rigidStatic->GetGlobalPose(position, rotation);
 
-	const auto& rotation = globalPose.q;
-	transform->SetLocalRotation(Eigen::Quaternionf(rotation.w, rotation.x, rotation.y, rotation.z));
+	transform->SetWorldPosition(position);
+	transform->SetWorldRotation(rotation);
 }

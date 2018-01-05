@@ -228,14 +228,15 @@ void MythologyGame::CreateProjectile(std::uint8_t key)
 		PxTransform transform(PhysicsUtilities::ToPhysX(cameraTransform.GetWorldTransform()));
 		PxSphereGeometry geometry(3.0f);
 		PxVec3 velocity(PhysicsUtilities::ToPhysX(cameraTransform.GetWorldZ() * 20.0f));
-
+		
 		auto body = PhysicsUtilities::MakeSharedPointer<PxRigidDynamic>(PxCreateDynamic(*physicsManager.GetPhysics(), transform, geometry, *physicsScene.GetMaterial("Default"), 10.0f));
 		body->setAngularDamping(0.5f);
 		body->setLinearVelocity(velocity);
 		physicsScene->addActor(*body);
+
 		boxObject.AddComponent("RigidDynamic", RigidDynamicComponent::CreateSharedPointer(boxObject.GetSharedTransform(), body));
 	}
-
+	
 	m_projectiles.emplace_back(std::move(boxObject));
 
 	m_gameManager->GetRenderCommandQueue().Submit(renderCommandList);

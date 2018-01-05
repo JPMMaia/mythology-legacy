@@ -6,6 +6,7 @@ namespace PhysicsEngine
 	class PhysicsTraits
 	{
 	public:
+		using Actor = typename T::Actor;
 		using Geometry = typename T::Geometry;
 		using Material = typename T::Material;
 	};

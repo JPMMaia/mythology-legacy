@@ -95,7 +95,6 @@ namespace MythologyTestProject
 			Quaternionf rotation(AngleAxisf(pi / 2.0f, Vector3::UnitY()));
 			camera.GetTransform().SetLocalPosition(position);
 			camera.GetTransform().SetLocalRotation(rotation);
-			camera.FixedUpdate(timer);
 
 			auto viewMatrix = CalculateViewMatrix(position, rotation);
 			Assert::IsTrue(camera.GetViewMatrix().isApprox(viewMatrix));
@@ -107,7 +106,6 @@ namespace MythologyTestProject
 			parent->SetLocalRotation(parentRotation);
 
 			camera.SetParent(parent, false);
-			camera.FixedUpdate(timer);
 
 			auto worldViewMatrix = CalculateViewMatrix({ 5.0f, 5.0f, 8.0f }, parentRotation * rotation);
 			Assert::IsTrue(camera.GetViewMatrix().isApprox(worldViewMatrix));

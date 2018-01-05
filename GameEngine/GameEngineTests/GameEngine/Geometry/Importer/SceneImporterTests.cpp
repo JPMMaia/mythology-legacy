@@ -33,7 +33,7 @@ namespace MythologyTestProject
 		TEST_METHOD(SceneImporterTest1)
 		{
 			SceneImporter::ImportedScene scene;
-			SceneImporter::Import(L"test.fbx", scene);
+			SceneImporter::Import(L"Resources/test.fbx", scene);
 
 			Assert::AreEqual(std::size_t(1), scene.Objects.size());
 			Assert::AreEqual(std::size_t(2), scene.Materials.size());
@@ -60,7 +60,7 @@ namespace MythologyTestProject
 					aiProcess_ValidateDataStructure |
 					aiProcess_FlipUVs |
 					aiProcess_SortByPType;
-				auto scene2 = importer.ReadFile("test.fbx", flags);
+				auto scene2 = importer.ReadFile("Resources/test.fbx", flags);
 				Assert::IsTrue(scene2 != nullptr);
 
 				auto armatureNode = scene2->mRootNode->FindNode("Armature");

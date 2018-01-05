@@ -13,11 +13,6 @@ BaseComponent::BaseComponent(const std::shared_ptr<TransformComponent>& transfor
 {
 }
 
-void BaseComponent::FixedUpdate(const Common::Timer& timer)
-{
-	m_transform->FixedUpdate(timer);
-}
-
 void BaseComponent::SetParent(const std::weak_ptr<TransformComponent>& parent, bool worldTransformStays)
 {
 	m_transform->SetParent(parent, worldTransformStays);

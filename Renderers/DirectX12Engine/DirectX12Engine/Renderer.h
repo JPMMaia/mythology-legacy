@@ -27,6 +27,9 @@ namespace DirectX12Engine
 		bool Render(const Common::Timer& timer) override;
 
 	public:
+		bool IsNextFrameAvailable() override;
+
+	public:
 		const std::shared_ptr<RenderEngine::IScene>& GetScene() const;
 		void SetScene(const std::shared_ptr<RenderEngine::IScene>& scene);
 

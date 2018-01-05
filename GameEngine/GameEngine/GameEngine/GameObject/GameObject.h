@@ -8,6 +8,8 @@
 
 namespace GameEngine
 {
+	class InstancedMeshComponent;
+
 	class GameObject
 	{
 	public:
@@ -23,6 +25,7 @@ namespace GameEngine
 		void AddRootComponent(const std::string& name, const std::shared_ptr<BaseComponent>& component);
 		void AddRootComponent(const std::string& name, const std::shared_ptr<TransformComponent>& component);
 		void AddComponent(const std::string& name, IComponentPointerCR component, bool worldTransformStays = false);
+		void AddComponent(const std::string& name, const std::shared_ptr<InstancedMeshComponent>& component);
 		void RemoveComponent(const std::string& name, bool worldTransformStays = false);
 		
 		IComponentPointerCR GetComponent(const std::string& name) const;
@@ -35,6 +38,8 @@ namespace GameEngine
 		
 		bool HasComponent(const std::string& name) const;
 
+		const std::unordered_map<std::string, std::shared_ptr<InstancedMeshComponent>>&  GetInstances() const;
+
 	public:
 		const TransformComponent& GetTransform() const;
 		TransformComponent& GetTransform();
@@ -44,5 +49,6 @@ namespace GameEngine
 		std::string m_rootName;
 		std::shared_ptr<TransformComponent> m_transform;
 		std::unordered_map<std::string, std::shared_ptr<IComponent>> m_components;
+		std::unordered_map<std::string, std::shared_ptr<InstancedMeshComponent>> m_instances;
 	};
 }

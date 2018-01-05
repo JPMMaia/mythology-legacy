@@ -10,9 +10,9 @@
 using namespace Common;
 using namespace GameEngine;
 
-GameManager::GameManager(const std::shared_ptr<RenderEngine::IScene>& renderScene) :
-	m_renderScene(renderScene),
-	m_physicsScene(m_physicsManager.CreateScene())
+GameManager::GameManager(std::unique_ptr<RenderEngine::IRenderer>&& renderer, std::unique_ptr<PhysicsEngine::IManager<>>&& physicsManager) :
+	m_renderer(std::move(renderer)),
+	m_physicsManager(std::move(physicsManager))
 {
 }
 
@@ -31,14 +31,11 @@ void FixedUpdate(const Timer& timer)
 }
 void GameManager::FixedUpdate(const Common::Timer& timer)
 {
-	m_physicsScene.FixedUpdate(timer);
+	// Simulate physics:
+	m_physicsScene->FixedUpdate(timer);
 
-	{
-		physx::PxU32 activeActorsCount;
-		m_physicsScene->getActiveActors(activeActorsCount);
-	}
-
-	::FixedUpdate<CameraComponent>(timer);
+	// Update all rigid dynamics:
+	m_rigidDynamicManager.FixedUpdate(timer, *m_physicsScene);
 }
 
 template<class T>
@@ -49,10 +46,19 @@ void FrameUpdate(const Timer& timer)
 		element.FrameUpdate(timer);
 	});
 }
-void GameManager::FrameUpdate(const Common::Timer& timer)
+bool GameManager::FrameUpdate(const Common::Timer& timer)
 {
-	::FrameUpdate<RigidDynamicComponent>(timer);
+	// Return if next frame is not available:
+	if (!m_renderer->IsNextFrameAvailable())
+		return false;
 
+	// Execute all pending commands:
+	m_renderCommandQueue.Execute();
+
+	// Update all objects that moved during this frame:
+	m_rigidDynamicManager.FrameUpdate(timer, *m_renderScene);
+
+	// Update skinned meshes:
 	std::for_each(SkinnedMeshComponent::begin(), SkinnedMeshComponent::end(), [&timer](SkinnedMeshComponent& mesh)
 	{
 		std::for_each(mesh.GetInstancesBegin(), mesh.GetInstancesEnd(), [&timer](SkinnedMeshInstance& instance)
@@ -60,4 +66,12 @@ void GameManager::FrameUpdate(const Common::Timer& timer)
 			instance.GetAnimation().FrameUpdate(timer);
 		});
 	});
+
+	// Update renderer:
+	m_renderer->FrameUpdate(timer);
+
+	// Render:
+	m_renderer->Render(timer);
+
+	return true;
 }

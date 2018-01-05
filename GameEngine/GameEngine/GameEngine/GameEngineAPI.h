@@ -1,7 +1,5 @@
 #pragma once
 
-#pragma once
-
 #include <array>
 #include <deque>
 #include <cstdint>
@@ -20,5 +18,3 @@
 #include <Eigen/Eigen>
 
 #include "Common/Timers/Timer.h"
-
-#include "PxPhysicsAPI.h"
