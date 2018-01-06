@@ -4,9 +4,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Helpers\VulkanHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanRenderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanInstance.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Helpers\DebugMessageHandler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanRenderer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanInstance.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Helpers\DebugMessageHandler.cpp" />
   </ItemGroup>
 </Project>

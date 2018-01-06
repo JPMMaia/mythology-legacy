@@ -8,6 +8,10 @@
 #include "VulkanEngine/Helpers/VulkanHelpers.h"
 #include "VulkanEngine/VulkanInstance.h"
 
+#if !defined(NDEBUG)
+#include "VulkanEngine/Helpers/DebugMessageHandler.h"
+#endif
+
 namespace VulkanEngine
 {
 	class Renderer : public RenderEngine::IRenderer
@@ -31,5 +35,9 @@ namespace VulkanEngine
 
 	private:
 		VulkanInstance m_instance;
+		
+#if !defined(NDEBUG)
+		DebugMessageHandler m_debugMessageHandler;
+#endif
 	};
 }

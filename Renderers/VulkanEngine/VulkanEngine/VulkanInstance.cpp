@@ -44,6 +44,11 @@ VulkanInstance::~VulkanInstance()
 	vkDestroyInstance(m_instance, nullptr);
 }
 
+VulkanInstance::operator VkInstance() const
+{
+	return m_instance;
+}
+
 bool VulkanInstance::CheckValidationLayerSupport(const std::vector<const char*>& validationLayers)
 {
 	std::uint32_t layerCount;

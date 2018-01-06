@@ -13,6 +13,9 @@ namespace VulkanEngine
 		explicit VulkanInstance(const std::vector<const char*>& enabledExtensions);
 		~VulkanInstance();
 
+	public:
+		operator VkInstance() const;
+
 	private:
 		bool CheckValidationLayerSupport(const std::vector<const char*>& validationLayers);
 

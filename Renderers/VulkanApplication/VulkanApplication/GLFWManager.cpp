@@ -19,9 +19,15 @@ std::vector<const char*> GLFWManager::GetExtensions() const
 	std::uint32_t count;
 	auto extensions = glfwGetRequiredInstanceExtensions(&count);
 
-	std::vector<const char*> output(count);
+	std::vector<const char*> output;
+	output.reserve(count + 1);
+
 	for (std::uint32_t i = 0; i < count; ++i)
-		output[i] = extensions[i];
+		output.emplace_back(extensions[i]);
+
+#if !defined(NDEBUG)
+	output.emplace_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+#endif
 
 	return output;
 }

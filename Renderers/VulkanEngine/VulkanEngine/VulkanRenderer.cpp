@@ -8,6 +8,9 @@ using namespace VulkanEngine;
 
 Renderer::Renderer(const std::vector<const char*>& enabledExtensions) :
 	m_instance(enabledExtensions)
+#if !defined(NDEBUG)
+	,m_debugMessageHandler(m_instance)
+#endif
 {
 }
 
