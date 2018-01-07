@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "GLFWManager.h"
+#include "GLFWSurfaceBuilder.h"
 
 #include <GLFW/glfw3.h>
 
@@ -30,4 +31,9 @@ std::vector<const char*> GLFWManager::GetExtensions() const
 #endif
 
 	return output;
+}
+
+std::unique_ptr<VulkanEngine::ISurfaceBuilder> GLFWManager::CreateSurfaceBuilder(GLFWwindow& window) const
+{
+	return std::make_unique<GLFWSurfaceBuilder>(window);
 }

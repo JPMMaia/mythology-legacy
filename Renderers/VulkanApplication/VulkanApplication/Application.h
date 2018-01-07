@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GLFWManager.h"
+#include "GLFW/GLFWManager.h"
 #include "VulkanEngine/VulkanRenderer.h"
 #include "VulkanEngine/Helpers/VulkanHelpers.h"
 

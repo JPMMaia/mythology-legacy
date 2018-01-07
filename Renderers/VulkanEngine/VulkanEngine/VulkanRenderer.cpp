@@ -6,11 +6,13 @@
 
 using namespace VulkanEngine;
 
-Renderer::Renderer(const std::vector<const char*>& enabledExtensions) :
-	m_instance(enabledExtensions)
+Renderer::Renderer(const std::vector<const char*>& enabledExtensions, const ISurfaceBuilder& surfaceBuilder) :
+	m_instance(enabledExtensions),
 #if !defined(NDEBUG)
-	,m_debugMessageHandler(m_instance)
+	m_debugMessageHandler(m_instance),
 #endif
+	m_surface(surfaceBuilder, m_instance),
+	m_physicalDeviceManager(m_instance)
 {
 }
 

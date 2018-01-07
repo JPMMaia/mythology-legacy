@@ -24,12 +24,7 @@ VulkanInstance::VulkanInstance(const std::vector<const char*>& enabledExtensions
 	createInfo.ppEnabledExtensionNames = enabledExtensions.data();
 
 #if !defined(NDEBUG)
-	constexpr bool enableValidationLayers = true;
-
-	const std::vector<const char*> validationLayers = {
-		"VK_LAYER_LUNARG_standard_validation"
-	};
-
+	auto validationLayers = GetValidationLayers();
 	if (!CheckValidationLayerSupport(validationLayers))
 		throw std::runtime_error("Failed to enable validation layer support");
 
@@ -47,6 +42,13 @@ VulkanInstance::~VulkanInstance()
 VulkanInstance::operator VkInstance() const
 {
 	return m_instance;
+}
+
+std::vector<const char*> VulkanInstance::GetValidationLayers() const
+{
+	return {
+		"VK_LAYER_LUNARG_standard_validation"
+	};
 }
 
 bool VulkanInstance::CheckValidationLayerSupport(const std::vector<const char*>& validationLayers)

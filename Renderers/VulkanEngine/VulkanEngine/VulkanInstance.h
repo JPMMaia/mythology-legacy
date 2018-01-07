@@ -16,6 +16,9 @@ namespace VulkanEngine
 	public:
 		operator VkInstance() const;
 
+	public:
+		std::vector<const char*> GetValidationLayers() const;
+
 	private:
 		bool CheckValidationLayerSupport(const std::vector<const char*>& validationLayers);
 

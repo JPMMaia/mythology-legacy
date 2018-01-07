@@ -16,11 +16,16 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Helpers\DebugMessageHandler.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Helpers\VulkanHelpers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\DeviceManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanInstance.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanRenderer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Surfaces\ISurfaceBuilder.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Surfaces\Surface.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Helpers\DebugMessageHandler.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\DeviceManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Surfaces\Surface.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanInstance.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanRenderer.cpp" />
   </ItemGroup>

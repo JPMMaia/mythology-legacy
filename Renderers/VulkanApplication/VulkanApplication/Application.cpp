@@ -39,7 +39,7 @@ void Application::InitializeWindow()
 }
 void Application::InitializeRenderer()
 {
-	m_renderer = std::make_unique<Renderer>(m_glfw.GetExtensions());
+	m_renderer = std::make_unique<Renderer>(m_glfw.GetExtensions(), *m_glfw.CreateSurfaceBuilder(*m_window));
 	m_renderer->CreateDeviceDependentResources();
 	m_renderer->CreateWindowSizeDependentResources();
 }

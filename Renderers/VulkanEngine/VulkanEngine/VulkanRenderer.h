@@ -7,6 +7,8 @@
 #include "RenderEngine/IRenderer.h"
 #include "VulkanEngine/Helpers/VulkanHelpers.h"
 #include "VulkanEngine/VulkanInstance.h"
+#include "VulkanEngine/DeviceManager.h"
+#include "VulkanEngine/Surfaces/Surface.h"
 
 #if !defined(NDEBUG)
 #include "VulkanEngine/Helpers/DebugMessageHandler.h"
@@ -17,7 +19,7 @@ namespace VulkanEngine
 	class Renderer : public RenderEngine::IRenderer
 	{
 	public:
-		explicit Renderer(const std::vector<const char*>& enabledExtensions);
+		explicit Renderer(const std::vector<const char*>& enabledExtensions, const ISurfaceBuilder& surfaceBuilder);
 
 	public:
 		void CreateDeviceDependentResources() override;
@@ -35,9 +37,10 @@ namespace VulkanEngine
 
 	private:
 		VulkanInstance m_instance;
-		
 #if !defined(NDEBUG)
 		DebugMessageHandler m_debugMessageHandler;
 #endif
+		Surface m_surface;
+		DeviceManager m_physicalDeviceManager;
 	};
 }
