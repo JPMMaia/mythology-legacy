@@ -7,8 +7,9 @@
 #include "RenderEngine/IRenderer.h"
 #include "VulkanEngine/Helpers/VulkanHelpers.h"
 #include "VulkanEngine/VulkanInstance.h"
-#include "VulkanEngine/DeviceManager.h"
+#include "VulkanEngine/Devices/DeviceManager.h"
 #include "VulkanEngine/Surfaces/Surface.h"
+#include "VulkanEngine/SwapChains/SwapChain.h"
 
 #if !defined(NDEBUG)
 #include "VulkanEngine/Helpers/DebugMessageHandler.h"
@@ -41,6 +42,7 @@ namespace VulkanEngine
 		DebugMessageHandler m_debugMessageHandler;
 #endif
 		Surface m_surface;
-		DeviceManager m_physicalDeviceManager;
+		DeviceManager m_deviceManager;
+		SwapChain m_swapChain;
 	};
 }

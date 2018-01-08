@@ -13,6 +13,7 @@ namespace VulkanApplication
 
 	public:
 		VkSurfaceKHR CreateSurface(VkInstance instance) const override;
+		std::pair<int, int> GetSurfaceSize() const override;
 
 	private:
 		GLFWwindow& m_window;

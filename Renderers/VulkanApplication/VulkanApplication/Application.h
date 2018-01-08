@@ -24,5 +24,9 @@ namespace VulkanApplication
 		GLFWManager m_glfw;
 		VulkanEngine::VulkanUniquePointer<GLFWwindow> m_window;
 		std::unique_ptr<VulkanEngine::Renderer> m_renderer;
+
+	private:
+		static constexpr int c_width = 800;
+		static constexpr int c_height = 600;
 	};
 }

@@ -14,9 +14,12 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Devices\QueueFamilyIndices.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Helpers\DebugMessageHandler.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Helpers\VulkanHelpers.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\DeviceManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Devices\DeviceManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\SwapChains\SwapChain.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\SwapChains\SwapChainSupportDetails.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanInstance.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanRenderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Surfaces\ISurfaceBuilder.h" />
@@ -24,8 +27,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Helpers\DebugMessageHandler.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\DeviceManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Devices\DeviceManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Surfaces\Surface.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\SwapChains\SwapChain.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanInstance.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanRenderer.cpp" />
   </ItemGroup>

@@ -18,7 +18,7 @@ void Application::Run()
 	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
 
 	std::cout << extensionCount << " extensions supported" << std::endl;
-
+	
 	while (!glfwWindowShouldClose(m_window.get())) 
 	{
 		glfwPollEvents();
@@ -27,9 +27,6 @@ void Application::Run()
 
 void Application::InitializeWindow()
 {
-	constexpr int c_width = 800;
-	constexpr int c_height = 600;
-
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	m_window = VulkanUniquePointer<GLFWwindow>(
