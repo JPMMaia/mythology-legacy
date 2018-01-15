@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Renderers", "Renderers", "{DB4EBF0D-4249-4B16-AD20-47135276CAFD}"
 EndProject
@@ -41,12 +41,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Mythology", "Mythology\Myth
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VulkanEngine", "Renderers\VulkanEngine\VulkanEngine.vcxitems", "{42D2D459-03FF-4282-A1AB-F7638D00F45A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VulkanApplication", "Renderers\VulkanApplication\VulkanApplication.vcxproj", "{F7247CA5-5104-4F22-BC4E-CF760D3DC8A9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VulkanApplication", "Applications\VulkanApplication\VulkanApplication.vcxproj", "{F7247CA5-5104-4F22-BC4E-CF760D3DC8A9}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Common\Common\Common.vcxitems*{013d0b39-e219-4e07-afe5-ddab959d4810}*SharedItemsImports = 4
-		Renderers\RenderEngine\RenderEngine.vcxitems*{013d0b39-e219-4e07-afe5-ddab959d4810}*SharedItemsImports = 4
 		Common\Common\Common.vcxitems*{159483d3-5f4a-4ea2-8d6a-7c5ec7965eaa}*SharedItemsImports = 4
 		Mythology\Mythology\Mythology.vcxitems*{1760089c-ee07-43b5-aee0-aaa905f3cd8a}*SharedItemsImports = 9
 		Renderers\VulkanEngine\VulkanEngine.vcxitems*{42d2d459-03ff-4282-a1ab-f7638d00f45a}*SharedItemsImports = 9
@@ -170,7 +168,7 @@ Global
 		{6B53E383-6AE3-4E15-B523-053DBBDAA804} = {D7CBD742-934E-4E1E-A1A2-F6CDB7B50C60}
 		{1760089C-EE07-43B5-AEE0-AAA905F3CD8A} = {024DECDF-2B29-4D31-811B-216C75D3D05F}
 		{42D2D459-03FF-4282-A1AB-F7638D00F45A} = {DB4EBF0D-4249-4B16-AD20-47135276CAFD}
-		{F7247CA5-5104-4F22-BC4E-CF760D3DC8A9} = {DB4EBF0D-4249-4B16-AD20-47135276CAFD}
+		{F7247CA5-5104-4F22-BC4E-CF760D3DC8A9} = {0A70C81F-2680-4066-AB54-ADFDA724261F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1879294F-B0D6-4969-81C3-EC4BAE447C77}

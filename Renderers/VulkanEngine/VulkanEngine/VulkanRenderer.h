@@ -10,6 +10,7 @@
 #include "VulkanEngine/Devices/DeviceManager.h"
 #include "VulkanEngine/Surfaces/Surface.h"
 #include "VulkanEngine/SwapChains/SwapChain.h"
+#include "VulkanEngine/Pipeline/PipelineStateManager.h"
 
 #if !defined(NDEBUG)
 #include "VulkanEngine/Helpers/DebugMessageHandler.h"
@@ -44,5 +45,6 @@ namespace VulkanEngine
 		Surface m_surface;
 		DeviceManager m_deviceManager;
 		SwapChain m_swapChain;
+		PipelineStateManager m_pipelineStateManager;
 	};
 }

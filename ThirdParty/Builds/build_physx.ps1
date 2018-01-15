@@ -38,15 +38,6 @@ $binariesDestinationFolders.x64Debug = $binariesDestinationFolders.x64 + $debugF
 $binariesDestinationFolders.x64Release = $binariesDestinationFolders.x64 + $releaseFolder
 Create-Folders -Paths $binariesDestinationFolders.Values
 
-# Start Developer Command Prompt:
-$installationPath = ./vswhere.exe -prerelease -latest -property installationPath
-if ($installationPath -and (test-path "$installationPath\Common7\Tools\vsdevcmd.bat")) {
-  & "${env:COMSPEC}" /s /c "`"$installationPath\Common7\Tools\vsdevcmd.bat`" -no_logo && set" | foreach-object {
-    $name, $value = $_ -split '=', 2
-    set-content env:\"$name" $value
-  }
-}
-
 # Copy PxShared projects:
 $pxSharedCompilerFolder = "..\PhysX\PxShared\src\compiler\vc14win64\"
 Copy-Item -Path "PhysX\PxShared\*" -Destination $pxSharedCompilerFolder -Recurse -Force

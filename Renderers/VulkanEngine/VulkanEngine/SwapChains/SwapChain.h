@@ -21,10 +21,14 @@ namespace VulkanEngine
 		VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, std::uint32_t width, std::uint32_t height);
 
 	private:
+		void CreateImageViews();
+
+	private:
 		VkDevice m_device;
 		VkSwapchainKHR m_swapChain;
 		std::vector<VkImage> m_swapChainImages;
 		VkFormat m_swapChainImageFormat;
 		VkExtent2D m_swapChainExtent;
+		std::vector<VkImageView> m_swapChainImageViews;
 	};
 }

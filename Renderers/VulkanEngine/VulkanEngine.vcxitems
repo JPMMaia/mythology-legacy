@@ -15,6 +15,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Devices\QueueFamilyIndices.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\PipelineStateManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Shader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Helpers\DebugMessageHandler.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Helpers\VulkanHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Devices\DeviceManager.h" />
@@ -26,11 +28,23 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Surfaces\Surface.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\PipelineStateManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Shader.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Helpers\DebugMessageHandler.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Devices\DeviceManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Surfaces\Surface.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\SwapChains\SwapChain.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanInstance.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanRenderer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)VulkanEngine\Shaders\Shader.vert">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)VulkanEngine\Shaders\Shader.frag">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
 </Project>

@@ -34,8 +34,8 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="Shared">
-    <Import Project="..\RenderEngine\RenderEngine.vcxitems" Label="Shared" />
-    <Import Project="..\VulkanEngine\VulkanEngine.vcxitems" Label="Shared" />
+    <Import Project="..\..\Renderers\RenderEngine\RenderEngine.vcxitems" Label="Shared" />
+    <Import Project="..\..\Renderers\VulkanEngine\VulkanEngine.vcxitems" Label="Shared" />
     <Import Project="..\..\Common\Common\Common.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -61,6 +61,10 @@
       <AdditionalDependencies>$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SolutionDir)ThirdParty\Builds\glfw\$(IntDir)*.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <PostBuildEvent>
+      <Command>powershell -ExecutionPolicy Unrestricted -File "$(SolutionDir)Renderers\VulkanEngine\VulkanEngine\Shaders\Compile-Shaders.ps1" $(ProjectDir)WorkingDirectory\Shaders $(SolutionDir)Renderers\VulkanEngine\VulkanEngine\Shaders\
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -81,6 +85,10 @@
       <AdditionalDependencies>$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SolutionDir)ThirdParty\Builds\glfw\$(IntDir)*.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <PostBuildEvent>
+      <Command>powershell -ExecutionPolicy Unrestricted -File "$(SolutionDir)Renderers\VulkanEngine\VulkanEngine\Shaders\Compile-Shaders.ps1" $(ProjectDir)WorkingDirectory\Shaders $(SolutionDir)Renderers\VulkanEngine\VulkanEngine\Shaders\
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="VulkanApplication\Application.cpp" />

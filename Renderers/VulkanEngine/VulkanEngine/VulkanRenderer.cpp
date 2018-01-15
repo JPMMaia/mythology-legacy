@@ -13,7 +13,8 @@ Renderer::Renderer(const std::vector<const char*>& enabledExtensions, const ISur
 #endif
 	m_surface(surfaceBuilder, m_instance),
 	m_deviceManager(m_instance, m_surface),
-	m_swapChain(m_deviceManager.GetDevice(), m_surface, m_deviceManager.QuerySwapChainSupport(m_deviceManager.GetPhysicalDevice(), m_surface), m_deviceManager.GetQueueFamilyIndices())
+	m_swapChain(m_deviceManager.GetDevice(), m_surface, m_deviceManager.QuerySwapChainSupport(m_deviceManager.GetPhysicalDevice(), m_surface), m_deviceManager.GetQueueFamilyIndices()),
+	m_pipelineStateManager(m_deviceManager.GetDevice())
 {
 }
 
