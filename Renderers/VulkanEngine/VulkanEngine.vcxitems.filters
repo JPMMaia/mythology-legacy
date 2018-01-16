@@ -13,6 +13,17 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Devices\QueueFamilyIndices.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Shader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\PipelineStateManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\RasterizerState.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\MultisampleState.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ColorBlendState.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ViewportState.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ShaderStage.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\VertexInputState.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\InputAssemblyState.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\DynamicState.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Layout\PipelineLayout.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\RenderPass\RenderPass.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ColorBlendAttachment.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanRenderer.cpp" />
@@ -23,6 +34,17 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Devices\DeviceManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Shader.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\PipelineStateManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\RasterizerState.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\MultisampleState.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ColorBlendState.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ViewportState.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ShaderStage.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\VertexInputState.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\InputAssemblyState.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\DynamicState.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Layout\PipelineLayout.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\RenderPass\RenderPass.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ColorBlendAttachment.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)VulkanEngine\Shaders\Shader.vert" />

@@ -68,6 +68,15 @@ SwapChain::~SwapChain()
 		vkDestroySwapchainKHR(m_device, m_swapChain, nullptr);
 }
 
+VkFormat SwapChain::GetFormat() const
+{
+	return m_swapChainImageFormat;
+}
+VkExtent2D SwapChain::GetExtent() const
+{
+	return m_swapChainExtent;
+}
+
 VkSurfaceFormatKHR SwapChain::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
 {
 	if (availableFormats.size() == 1 && availableFormats[0].format == VK_FORMAT_UNDEFINED)

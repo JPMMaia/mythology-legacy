@@ -15,6 +15,10 @@ namespace VulkanEngine
 		SwapChain(VkDevice device, const Surface& surface, const SwapChainSupportDetails& swapChainSupport, const QueueFamilyIndices& indices);
 		~SwapChain();
 
+	public:
+		VkFormat GetFormat() const;
+		VkExtent2D GetExtent() const;
+
 	private:
 		VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 		VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> availablePresentModes);
