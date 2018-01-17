@@ -8,7 +8,12 @@ namespace VulkanEngine
 	{
 	public:
 		explicit RenderPass(VkDevice device, VkFormat format);
+		RenderPass(const RenderPass&) = delete;
+		RenderPass(RenderPass&&) = default;
 		~RenderPass();
+
+		RenderPass& operator=(const RenderPass&) = delete;
+		RenderPass& operator=(RenderPass&&) = default;
 
 	public:
 		operator VkRenderPass() const;

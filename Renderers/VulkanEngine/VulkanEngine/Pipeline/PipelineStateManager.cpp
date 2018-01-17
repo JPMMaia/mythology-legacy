@@ -29,6 +29,11 @@ PipelineStateManager::~PipelineStateManager()
 		vkDestroyPipeline(m_device, m_graphicsPipeline, nullptr);
 }
 
+const RenderPass& PipelineStateManager::GetRenderPass() const
+{
+	return m_renderPass;
+}
+
 std::unordered_map<std::string, Shader> PipelineStateManager::CreateShaders(VkDevice device)
 {
 	vector<pair<string, wstring>> shadersInfo =

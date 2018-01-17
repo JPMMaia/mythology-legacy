@@ -5,7 +5,8 @@ using namespace VulkanEngine;
 
 Surface::Surface(const ISurfaceBuilder& surfaceBuilder, VkInstance instance) :
 	m_instance(instance),
-	m_surface(surfaceBuilder.CreateSurface(instance))
+	m_surface(surfaceBuilder.CreateSurface(instance)),
+	m_surfaceSize(surfaceBuilder.GetSurfaceSize())
 {
 }
 Surface::~Surface()
@@ -15,11 +16,11 @@ Surface::~Surface()
 
 int Surface::GetWidth() const
 {
-	return m_width;
+	return m_surfaceSize.first;
 }
 int Surface::GetHeight() const
 {
-	return m_height;
+	return m_surfaceSize.second;
 }
 
 Surface::operator VkSurfaceKHR() const

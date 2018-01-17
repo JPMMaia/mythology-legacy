@@ -20,7 +20,6 @@ namespace VulkanEngine
 	private:
 		VkInstance m_instance;
 		VkSurfaceKHR m_surface;
-		int m_width;
-		int m_height;
+		std::pair<int, int> m_surfaceSize;
 	};
 }

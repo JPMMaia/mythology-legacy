@@ -44,7 +44,7 @@ namespace VulkanEngine
 #endif
 		Surface m_surface;
 		DeviceManager m_deviceManager;
-		SwapChain m_swapChain;
 		PipelineStateManager m_pipelineStateManager;
+		SwapChain m_swapChain;
 	};
 }

@@ -18,6 +18,9 @@ namespace VulkanEngine
 		explicit PipelineStateManager(VkDevice device, VkFormat format, float width, float height, VkExtent2D extent);
 		~PipelineStateManager();
 
+	public:
+		const RenderPass& GetRenderPass() const;
+
 	private:
 		static std::unordered_map<std::string, Shader> CreateShaders(VkDevice device);
 		static VkPipeline CreateGraphicsPipeline(VkDevice device, const RenderPass& renderPass, const PipelineLayout& pipelineLayout, const ShaderContainer& shaders, float width, float height, VkExtent2D extent);
