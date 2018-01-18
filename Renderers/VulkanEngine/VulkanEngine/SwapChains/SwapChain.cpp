@@ -27,6 +27,11 @@ SwapChain::~SwapChain()
 		vkDestroySwapchainKHR(m_device, m_swapChain, nullptr);
 }
 
+VkFramebuffer SwapChain::GetFrameBuffer(std::size_t index) const
+{
+	return m_framebuffers[index];
+}
+
 VkSwapchainKHR SwapChain::CreateSwapChain(VkDevice device, VkSurfaceKHR surface, const DeviceManager& deviceManager)
 {
 	VkSwapchainCreateInfoKHR createInfo = {};

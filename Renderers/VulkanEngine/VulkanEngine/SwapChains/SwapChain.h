@@ -16,6 +16,9 @@ namespace VulkanEngine
 		SwapChain(VkDevice device, const Surface& surface, const DeviceManager& deviceManager, VkRenderPass renderPass);
 		~SwapChain();
 
+	public:
+		VkFramebuffer GetFrameBuffer(std::size_t index) const;
+
 	private:
 		static VkSwapchainKHR CreateSwapChain(VkDevice device, VkSurfaceKHR surface, const DeviceManager& deviceManager);
 		static std::vector<VkImage> CreateImages(VkDevice device, VkSwapchainKHR swapChain);

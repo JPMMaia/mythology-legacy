@@ -20,6 +20,7 @@ namespace VulkanEngine
 
 	public:
 		const RenderPass& GetRenderPass() const;
+		VkPipeline GetGraphicsPipeline() const;
 
 	private:
 		static std::unordered_map<std::string, Shader> CreateShaders(VkDevice device);

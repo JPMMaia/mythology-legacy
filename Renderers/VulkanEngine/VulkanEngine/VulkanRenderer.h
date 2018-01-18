@@ -3,6 +3,7 @@
 #include "vulkan/vulkan.h"
 
 #include <memory>
+#include <vector>
 
 #include "RenderEngine/IRenderer.h"
 #include "VulkanEngine/Helpers/VulkanHelpers.h"
@@ -11,6 +12,7 @@
 #include "VulkanEngine/Surfaces/Surface.h"
 #include "VulkanEngine/SwapChains/SwapChain.h"
 #include "VulkanEngine/Pipeline/PipelineStateManager.h"
+#include "VulkanEngine/Commands/CommandPool.h"
 
 #if !defined(NDEBUG)
 #include "VulkanEngine/Helpers/DebugMessageHandler.h"
@@ -35,7 +37,11 @@ namespace VulkanEngine
 		bool IsNextFrameAvailable() override;
 
 	private:
-		void EnumerateAvailableExtensions();
+		static std::vector<VkCommandBuffer> CreateCommandBuffers(VkDevice device, VkCommandPool commandPool, std::uint32_t count);
+		void RecordCommands();
+
+	private:
+		static void EnumerateAvailableExtensions();
 
 	private:
 		VulkanInstance m_instance;
@@ -46,5 +52,7 @@ namespace VulkanEngine
 		DeviceManager m_deviceManager;
 		PipelineStateManager m_pipelineStateManager;
 		SwapChain m_swapChain;
+		CommandPool m_commandPool;
+		std::vector<VkCommandBuffer> m_commandBuffers;
 	};
 }

@@ -33,6 +33,10 @@ const RenderPass& PipelineStateManager::GetRenderPass() const
 {
 	return m_renderPass;
 }
+VkPipeline PipelineStateManager::GetGraphicsPipeline() const
+{
+	return m_graphicsPipeline;
+}
 
 std::unordered_map<std::string, Shader> PipelineStateManager::CreateShaders(VkDevice device)
 {
