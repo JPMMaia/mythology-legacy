@@ -19,6 +19,9 @@ namespace VulkanEngine
 	public:
 		VkFramebuffer GetFrameBuffer(std::size_t index) const;
 
+	public:
+		operator VkSwapchainKHR() const;
+
 	private:
 		static VkSwapchainKHR CreateSwapChain(VkDevice device, VkSurfaceKHR surface, const DeviceManager& deviceManager);
 		static std::vector<VkImage> CreateImages(VkDevice device, VkSwapchainKHR swapChain);

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Application.h"
+#include "Common/Timers/Timer.h"
 
 #include <iostream>
 
@@ -19,9 +20,18 @@ void Application::Run()
 
 	std::cout << extensionCount << " extensions supported" << std::endl;
 	
+	Common::Timer timer;
+	timer.Reset();
+
 	while (!glfwWindowShouldClose(m_window.get())) 
 	{
 		glfwPollEvents();
+
+		if (m_renderer->IsNextFrameAvailable())
+		{
+			m_renderer->FrameUpdate(timer);
+			m_renderer->Render(timer);
+		}
 	}
 }
 

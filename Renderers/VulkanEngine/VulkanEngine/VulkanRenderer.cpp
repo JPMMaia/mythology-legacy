@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "VulkanRenderer.h"
 
+#include <array>
 #include <iostream>
 #include <vector>
 
@@ -16,9 +17,15 @@ Renderer::Renderer(const std::vector<const char*>& enabledExtensions, const ISur
 	m_pipelineStateManager(m_deviceManager.GetDevice(), m_deviceManager.GetSwapSurfaceFormat().format, static_cast<float>(m_surface.GetWidth()), static_cast<float>(m_surface.GetHeight()), m_deviceManager.GetSwapExtent()),
 	m_swapChain(m_deviceManager.GetDevice(), m_surface, m_deviceManager, m_pipelineStateManager.GetRenderPass()),
 	m_commandPool(m_deviceManager.GetDevice(), m_deviceManager.GetQueueFamilyIndices()),
-	m_commandBuffers(CreateCommandBuffers(m_deviceManager.GetDevice(), m_commandPool, m_deviceManager.GetImageCount()))
+	m_commandBuffers(CreateCommandBuffers(m_deviceManager.GetDevice(), m_commandPool, m_deviceManager.GetImageCount())),
+	m_imageAvailableSemaphore(m_deviceManager.GetDevice()),
+	m_renderFinishedSemaphore(m_deviceManager.GetDevice())
 {
 	RecordCommands();
+}
+Renderer::~Renderer()
+{
+	vkDeviceWaitIdle(m_deviceManager.GetDevice());
 }
 
 void Renderer::CreateDeviceDependentResources()
@@ -30,11 +37,54 @@ void Renderer::CreateWindowSizeDependentResources()
 
 bool Renderer::FrameUpdate(const Common::Timer& timer)
 {
-	return false;
+	return true;
 }
 bool Renderer::Render(const Common::Timer& timer)
 {
-	return false;
+	auto presentQueue = m_deviceManager.GetPresentQueue();
+	vkQueueWaitIdle(presentQueue);
+
+	uint32_t imageIndex;
+	ThrowIfFailed(vkAcquireNextImageKHR(m_deviceManager.GetDevice(), m_swapChain, std::numeric_limits<uint64_t>::max(), m_imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex));
+
+	std::array<VkSemaphore, 1> signalSemaphores = { m_renderFinishedSemaphore };
+
+	{
+		VkSubmitInfo submitInfo = {};
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+		std::array<VkSemaphore, 1> waitSemaphores = { m_imageAvailableSemaphore };
+		std::array<VkPipelineStageFlags, 1> waitStages = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+		submitInfo.waitSemaphoreCount = static_cast<std::uint32_t>(waitSemaphores.size());
+		submitInfo.pWaitSemaphores = waitSemaphores.data();
+		submitInfo.pWaitDstStageMask = waitStages.data();
+
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &m_commandBuffers[imageIndex];
+
+		submitInfo.signalSemaphoreCount = static_cast<std::uint32_t>(signalSemaphores.size());
+		submitInfo.pSignalSemaphores = signalSemaphores.data();
+
+		ThrowIfFailed(vkQueueSubmit(m_deviceManager.GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE));
+	}
+
+	{
+		VkPresentInfoKHR presentInfo = {};
+		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+		presentInfo.waitSemaphoreCount = static_cast<std::uint32_t>(signalSemaphores.size());;
+		presentInfo.pWaitSemaphores = signalSemaphores.data();
+
+		std::array<VkSwapchainKHR, 1> swapChains = { m_swapChain };
+		presentInfo.swapchainCount = static_cast<std::uint32_t>(swapChains.size());
+		presentInfo.pSwapchains = swapChains.data();
+		presentInfo.pImageIndices = &imageIndex;
+		presentInfo.pResults = nullptr;
+
+		vkQueuePresentKHR(presentQueue, &presentInfo);
+	}
+
+	return true;
 }
 
 bool Renderer::IsNextFrameAvailable()
@@ -56,6 +106,7 @@ std::vector<VkCommandBuffer> Renderer::CreateCommandBuffers(VkDevice device, VkC
 
 	return commandBuffers;
 }
+
 void Renderer::RecordCommands()
 {
 	for (size_t i = 0; i < m_commandBuffers.size(); ++i)

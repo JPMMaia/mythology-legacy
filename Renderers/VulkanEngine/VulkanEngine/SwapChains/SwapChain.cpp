@@ -32,6 +32,11 @@ VkFramebuffer SwapChain::GetFrameBuffer(std::size_t index) const
 	return m_framebuffers[index];
 }
 
+SwapChain::operator VkSwapchainKHR() const
+{
+	return m_swapChain;
+}
+
 VkSwapchainKHR SwapChain::CreateSwapChain(VkDevice device, VkSurfaceKHR surface, const DeviceManager& deviceManager)
 {
 	VkSwapchainCreateInfoKHR createInfo = {};

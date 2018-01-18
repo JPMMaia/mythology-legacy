@@ -13,6 +13,7 @@
 #include "VulkanEngine/SwapChains/SwapChain.h"
 #include "VulkanEngine/Pipeline/PipelineStateManager.h"
 #include "VulkanEngine/Commands/CommandPool.h"
+#include "VulkanEngine/Synchronization/Semaphore.h"
 
 #if !defined(NDEBUG)
 #include "VulkanEngine/Helpers/DebugMessageHandler.h"
@@ -24,6 +25,7 @@ namespace VulkanEngine
 	{
 	public:
 		explicit Renderer(const std::vector<const char*>& enabledExtensions, const ISurfaceBuilder& surfaceBuilder);
+		virtual ~Renderer();
 
 	public:
 		void CreateDeviceDependentResources() override;
@@ -38,6 +40,8 @@ namespace VulkanEngine
 
 	private:
 		static std::vector<VkCommandBuffer> CreateCommandBuffers(VkDevice device, VkCommandPool commandPool, std::uint32_t count);
+
+	private:
 		void RecordCommands();
 
 	private:
@@ -54,5 +58,7 @@ namespace VulkanEngine
 		SwapChain m_swapChain;
 		CommandPool m_commandPool;
 		std::vector<VkCommandBuffer> m_commandBuffers;
+		Semaphore m_imageAvailableSemaphore;
+		Semaphore m_renderFinishedSemaphore;
 	};
 }

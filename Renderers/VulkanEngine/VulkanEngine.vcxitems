@@ -34,6 +34,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ViewportState.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\SwapChains\SwapChain.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\SwapChains\SwapChainSupportDetails.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Synchronization\Semaphore.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanInstance.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanRenderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Surfaces\ISurfaceBuilder.h" />
@@ -58,6 +59,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ViewportState.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Surfaces\Surface.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\SwapChains\SwapChain.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Synchronization\Semaphore.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanInstance.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanRenderer.cpp" />
   </ItemGroup>
