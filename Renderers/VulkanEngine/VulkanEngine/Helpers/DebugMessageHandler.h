@@ -1,20 +1,21 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
-
 namespace VulkanEngine
 {
 	class DebugMessageHandler
 	{
 	public:
-		static VKAPI_ATTR VkBool32 VKAPI_CALL Callback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj, size_t location, int32_t code, const char* layerPrefix, const char* msg, void* userData);
+		static VKAPI_ATTR VkBool32 VKAPI_CALL Callback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, std::uint64_t obj, std::size_t location, std::int32_t code, const char* layerPrefix, const char* msg, void* userData);
 
 	public:
-		DebugMessageHandler(VkInstance instance);
+		explicit DebugMessageHandler(const vk::Instance& instance);
 		~DebugMessageHandler();
 
 	private:
-		VkInstance m_instance;
+		static VkDebugReportCallbackEXT CreateDebugReportCallback(const vk::Instance& instance);
+
+	private:
+		vk::Instance m_instance;
 		VkDebugReportCallbackEXT m_callback;
 	};
 }

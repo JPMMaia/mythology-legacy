@@ -1,23 +1,19 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
-
 namespace VulkanEngine
 {
 	class Semaphore
 	{
 	public:
-		explicit Semaphore(VkDevice device);
-		~Semaphore();
+		explicit Semaphore(const vk::Device& device);
 
 	public:
-		operator VkSemaphore() const;
+		operator const vk::Semaphore&() const;
 
 	private:
-		static VkSemaphore CreateSemaphore(VkDevice device);
+		static vk::UniqueSemaphore CreateSemaphore(const vk::Device& device);
 
 	private:
-		VkDevice m_device;
-		VkSemaphore m_semaphore;
+		vk::UniqueSemaphore m_semaphore;
 	};
 }

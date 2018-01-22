@@ -1,7 +1,6 @@
 #pragma once
 
 #include "VulkanEngine/Devices/QueueFamilyIndices.h"
-#include "VulkanEngine/VulkanInstance.h"
 #include "VulkanEngine/Surfaces/Surface.h"
 #include "VulkanEngine/SwapChains/SwapChainSupportDetails.h"
 
@@ -13,52 +12,51 @@ namespace VulkanEngine
 	class DeviceManager
 	{
 	public:
-		DeviceManager(const VulkanInstance& instance, const Surface& surface);
-		~DeviceManager();
+		DeviceManager(const vk::Instance& instance, const Surface& surface);
 
 	public:
-		VkPhysicalDevice GetPhysicalDevice() const;
+		const vk::PhysicalDevice& GetPhysicalDevice() const;
 		const QueueFamilyIndices& GetQueueFamilyIndices() const;
-		VkDevice GetDevice() const;
-		VkQueue GetGraphicsQueue() const;
-		VkQueue GetPresentQueue() const;
+		const vk::Device& GetDevice() const;
+		const vk::Queue& GetGraphicsQueue() const;
+		const vk::Queue& GetPresentQueue() const;
 		const SwapChainSupportDetails& GetSwapChainSupportDetails() const;
-		VkSurfaceFormatKHR GetSwapSurfaceFormat() const;
-		VkSurfaceTransformFlagBitsKHR GetPreTransform() const;
-		VkPresentModeKHR GetSwapPresentMode() const;
-		VkExtent2D GetSwapExtent() const;
+		const vk::SurfaceFormatKHR& GetSwapSurfaceFormat() const;
+		vk::SurfaceTransformFlagBitsKHR GetPreTransform() const;
+		vk::PresentModeKHR GetSwapPresentMode() const;
+		const vk::Extent2D& GetSwapExtent() const;
 		std::uint32_t GetImageCount() const;
 
 	private:
-		static VkPhysicalDevice QueryPhysicalDevices(const VulkanInstance& instance, VkSurfaceKHR surface);
-		static std::size_t RateDeviceSuitability(VkPhysicalDevice device, VkSurfaceKHR surface);
-		static bool CheckDeviceExtensionSupport(VkPhysicalDevice device);
+		static vk::PhysicalDevice QueryPhysicalDevices(const vk::Instance& instance, const vk::SurfaceKHR& surface);
+		static std::size_t RateDeviceSuitability(const vk::PhysicalDevice& device, const vk::SurfaceKHR& surface);
+		static bool CheckDeviceExtensionSupport(const vk::PhysicalDevice& device);
 
 	private:
-		static VkDevice CreateLogicalDevice(const VulkanInstance& instance, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, const QueueFamilyIndices& queueFamilyIndices);
+		static vk::UniqueDevice CreateLogicalDevice(const vk::Instance& instance, const vk::PhysicalDevice& physicalDevice, const vk::SurfaceKHR& surface, const QueueFamilyIndices& queueFamilyIndices);
 
 	private:
-		static QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface);
-		static VkQueue CreateGraphicsQueue(VkDevice device, int graphicsFamily);
-		static VkQueue CreatePresentQueue(VkDevice device, int presentFamily);		
+		static QueueFamilyIndices FindQueueFamilies(const vk::PhysicalDevice& device, const vk::SurfaceKHR& surface);
+		static vk::Queue CreateGraphicsQueue(const vk::Device& device, int graphicsFamily);
+		static vk::Queue CreatePresentQueue(const vk::Device& device, int presentFamily);
 
 	private:
-		static SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface);
-		static VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
-		static VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> availablePresentModes);
-		static VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, std::uint32_t width, std::uint32_t height);
-		static std::uint32_t ChooseImageCount(const VkSurfaceCapabilitiesKHR& capabilities);
+		static SwapChainSupportDetails QuerySwapChainSupport(const vk::PhysicalDevice& device, const vk::SurfaceKHR& surface);
+		static vk::SurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats);
+		static vk::PresentModeKHR ChooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& availablePresentModes);
+		static vk::Extent2D ChooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities, std::uint32_t width, std::uint32_t height);
+		static std::uint32_t ChooseImageCount(const vk::SurfaceCapabilitiesKHR& capabilities);
 
 	private:
-		VkPhysicalDevice m_physicalDevice;
+		vk::PhysicalDevice m_physicalDevice;
 		QueueFamilyIndices m_queueFamilyIndices;
-		VkDevice m_device;
-		VkQueue m_graphicsQueue;
-		VkQueue m_presentQueue;
+		vk::UniqueDevice m_device;
+		vk::Queue m_graphicsQueue;
+		vk::Queue m_presentQueue;
 		SwapChainSupportDetails m_swapChainSupportDetails;
-		VkSurfaceFormatKHR m_swapSurfaceFormat;
-		VkPresentModeKHR m_swapPresentMode;
-		VkExtent2D m_swapExtent;
+		vk::SurfaceFormatKHR m_swapSurfaceFormat;
+		vk::PresentModeKHR m_swapPresentMode;
+		vk::Extent2D m_swapExtent;
 		std::uint32_t m_imageCount;
 
 	private:

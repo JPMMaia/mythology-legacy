@@ -15,32 +15,26 @@
 using namespace std;
 using namespace VulkanEngine;
 
-PipelineStateManager::PipelineStateManager(VkDevice device, VkFormat format, float width, float height, VkExtent2D extent) :
-	m_device(device),
+PipelineStateManager::PipelineStateManager(const vk::Device& device, vk::Format format, float width, float height, const vk::Extent2D& extent) :
 	m_renderPass(device, format),
 	m_pipelineLayout(device),
 	m_shaders(CreateShaders(device)),
 	m_graphicsPipeline(CreateGraphicsPipeline(device, m_renderPass, m_pipelineLayout, m_shaders, width, height, extent))
 {
 }
-PipelineStateManager::~PipelineStateManager()
-{
-	if(m_graphicsPipeline)
-		vkDestroyPipeline(m_device, m_graphicsPipeline, nullptr);
-}
 
 const RenderPass& PipelineStateManager::GetRenderPass() const
 {
 	return m_renderPass;
 }
-VkPipeline PipelineStateManager::GetGraphicsPipeline() const
+const vk::Pipeline& PipelineStateManager::GetGraphicsPipeline() const
 {
-	return m_graphicsPipeline;
+	return m_graphicsPipeline.get();
 }
 
-std::unordered_map<std::string, Shader> PipelineStateManager::CreateShaders(VkDevice device)
+std::unordered_map<std::string, Shader> PipelineStateManager::CreateShaders(const vk::Device& device)
 {
-	vector<pair<string, wstring>> shadersInfo =
+	std::vector<std::pair<std::string, std::wstring>> shadersInfo =
 	{
 		{ "StandardVertexShader", L"Shaders/vert.spv" },
 		{ "StandardFragmentShader", L"Shaders/frag.spv" }
@@ -59,52 +53,49 @@ std::unordered_map<std::string, Shader> PipelineStateManager::CreateShaders(VkDe
 	return shaders;
 }
 
-VkPipeline VulkanEngine::PipelineStateManager::CreateGraphicsPipeline(VkDevice device, const RenderPass& renderPass, const PipelineLayout& pipelineLayout, const ShaderContainer& shaders, float width, float height, VkExtent2D extent)
+vk::UniquePipeline PipelineStateManager::CreateGraphicsPipeline(const vk::Device& device, const RenderPass& renderPass, const PipelineLayout& pipelineLayout, const ShaderContainer& shaders, float width, float height, const vk::Extent2D& extent)
 {
-	std::vector<VkPipelineShaderStageCreateInfo> shaderStages =
+	std::vector<vk::PipelineShaderStageCreateInfo> shaderStages =
 	{
-		ShaderStage::Vertex(shaders.at("StandardVertexShader").GetShaderModule(), "main"),
-		ShaderStage::Fragment(shaders.at("StandardFragmentShader").GetShaderModule(), "main")
+		ShaderStage::Vertex(shaders.at("StandardVertexShader"), "main"),
+		ShaderStage::Fragment(shaders.at("StandardFragmentShader"), "main")
 	};
 
 	auto vertexInputState = VertexInputState::Default();
-	auto inputAssembly = InputAssemblyState::Default();
+	auto inputAssembly = InputAssemblyState::TriangleList();
 	auto viewportState = ViewportState::Default(width, height, extent);
 	auto rasterizer = RasterizerState::Default();
 	auto multisampling = MultisampleState::Default();
 
-	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments =
+	std::vector<vk::PipelineColorBlendAttachmentState> colorBlendAttachments =
 	{
 		ColorBlendAttachment::Default()
 	};
 	auto colorBlendState = ColorBlendState::Default(colorBlendAttachments);
 
-	std::vector<VkDynamicState> dynamicStates =
+	std::vector<vk::DynamicState> dynamicStates =
 	{
-		VK_DYNAMIC_STATE_VIEWPORT,
-		VK_DYNAMIC_STATE_LINE_WIDTH
+		vk::DynamicState::eViewport,
+		vk::DynamicState::eLineWidth
 	};
 	auto dynamicState = DynamicState::Default(dynamicStates);
 
-	VkGraphicsPipelineCreateInfo pipelineInfo = {};
-	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-	pipelineInfo.stageCount = static_cast<std::uint32_t>(shaderStages.size());
-	pipelineInfo.pStages = shaderStages.data();
-	pipelineInfo.pVertexInputState = &vertexInputState;
-	pipelineInfo.pInputAssemblyState = &inputAssembly;
-	pipelineInfo.pViewportState = &viewportState;
-	pipelineInfo.pRasterizationState = &rasterizer;
-	pipelineInfo.pMultisampleState = &multisampling;
-	pipelineInfo.pDepthStencilState = nullptr;
-	pipelineInfo.pColorBlendState = &colorBlendState;
-	pipelineInfo.pDynamicState = nullptr;
-	pipelineInfo.layout = pipelineLayout;
-	pipelineInfo.renderPass = renderPass;
-	pipelineInfo.subpass = 0;
-	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
-	pipelineInfo.basePipelineIndex = -1;
+	vk::GraphicsPipelineCreateInfo pipelineInfo(
+		{},
+		static_cast<std::uint32_t>(shaderStages.size()), shaderStages.data(),
+		&vertexInputState,
+		&inputAssembly,
+		nullptr,
+		&viewportState,
+		&rasterizer,
+		&multisampling,
+		nullptr,
+		&colorBlendState,
+		&dynamicState,
+		pipelineLayout,
+		renderPass,
+		0
+	);
 
-	VkPipeline graphicsPipeline;
-	ThrowIfFailed(vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline));
-	return graphicsPipeline;
+	return device.createGraphicsPipelineUnique({}, pipelineInfo);
 }

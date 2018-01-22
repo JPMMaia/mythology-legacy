@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 #include <vector>
 
@@ -8,8 +8,8 @@ namespace VulkanEngine
 {
 	struct SwapChainSupportDetails
 	{
-		VkSurfaceCapabilitiesKHR Capabilities;
-		std::vector<VkSurfaceFormatKHR> Formats;
-		std::vector<VkPresentModeKHR> PresentModes;
+		vk::SurfaceCapabilitiesKHR Capabilities;
+		std::vector<vk::SurfaceFormatKHR> Formats;
+		std::vector<vk::PresentModeKHR> PresentModes;
 	};
 }

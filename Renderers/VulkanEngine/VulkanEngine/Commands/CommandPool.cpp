@@ -4,30 +4,22 @@
 
 using namespace VulkanEngine;
 
-CommandPool::CommandPool(VkDevice device, const QueueFamilyIndices& queueFamilyIndices) :
-	m_device(device),
+CommandPool::CommandPool(vk::Device device, const QueueFamilyIndices& queueFamilyIndices) :
 	m_commandPool(CreateCommandPool(device, queueFamilyIndices))
 {
 }
-CommandPool::~CommandPool()
+
+CommandPool::operator const vk::CommandPool&() const
 {
-	if(m_commandPool)
-		vkDestroyCommandPool(m_device, m_commandPool, nullptr);
+	return m_commandPool.get();
 }
 
-CommandPool::operator VkCommandPool() const
+vk::UniqueCommandPool CommandPool::CreateCommandPool(vk::Device device, const QueueFamilyIndices& queueFamilyIndices)
 {
-	return m_commandPool;
-}
+	vk::CommandPoolCreateInfo poolInfo(
+		vk::CommandPoolCreateFlags(),
+		queueFamilyIndices.GraphicsFamily
+	);
 
-VkCommandPool CommandPool::CreateCommandPool(VkDevice device, const QueueFamilyIndices& queueFamilyIndices)
-{
-	VkCommandPoolCreateInfo poolInfo = {};
-	poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-	poolInfo.queueFamilyIndex = queueFamilyIndices.GraphicsFamily;
-	poolInfo.flags = 0;
-
-	VkCommandPool commandPool;
-	ThrowIfFailed(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool));
-	return commandPool;
+	return device.createCommandPoolUnique(poolInfo);
 }

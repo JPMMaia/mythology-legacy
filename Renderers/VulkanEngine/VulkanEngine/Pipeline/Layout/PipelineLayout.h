@@ -1,23 +1,21 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace VulkanEngine
 {
 	class PipelineLayout
 	{
 	public:
-		explicit PipelineLayout(VkDevice device);
-		~PipelineLayout();
+		explicit PipelineLayout(const vk::Device& device);
 
 	public:
-		operator VkPipelineLayout() const;
+		operator const vk::PipelineLayout&() const;
 
 	private:
-		static VkPipelineLayout CreatePipelineLayout(VkDevice device);
+		static vk::UniquePipelineLayout CreatePipelineLayout(const vk::Device& device);
 
 	private:
-		VkDevice m_device;
-		VkPipelineLayout m_pipelineLayout;
+		vk::UniquePipelineLayout m_pipelineLayout;
 	};
 }

@@ -12,11 +12,11 @@ GLFWSurfaceBuilder::GLFWSurfaceBuilder(GLFWwindow& window) :
 {
 }
 
-VkSurfaceKHR GLFWSurfaceBuilder::CreateSurface(VkInstance instance) const
+vk::UniqueSurfaceKHR GLFWSurfaceBuilder::CreateSurface(const vk::Instance& instance) const
 {
 	VkSurfaceKHR surface;
 	ThrowIfFailed(glfwCreateWindowSurface(instance, &m_window, nullptr, &surface));
-	return surface;
+	return vk::UniqueSurfaceKHR(surface, vk::SurfaceKHRDeleter(instance));
 }
 
 std::pair<int, int> GLFWSurfaceBuilder::GetSurfaceSize() const

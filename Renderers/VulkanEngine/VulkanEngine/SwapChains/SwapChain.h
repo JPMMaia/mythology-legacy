@@ -5,34 +5,29 @@
 #include "VulkanEngine/Devices/QueueFamilyIndices.h"
 #include "VulkanEngine/Devices/DeviceManager.h"
 
-#include <vulkan/vulkan.h>
-#include <vector>
-
 namespace VulkanEngine
 {
 	class SwapChain
 	{
 	public:
-		SwapChain(VkDevice device, const Surface& surface, const DeviceManager& deviceManager, VkRenderPass renderPass);
-		~SwapChain();
+		SwapChain(const vk::Device& device, const Surface& surface, const DeviceManager& deviceManager, const vk::RenderPass& renderPass);
 
 	public:
-		VkFramebuffer GetFrameBuffer(std::size_t index) const;
+		const vk::Framebuffer& GetFrameBuffer(std::size_t index) const;
 
 	public:
-		operator VkSwapchainKHR() const;
+		operator const vk::SwapchainKHR&() const;
 
 	private:
-		static VkSwapchainKHR CreateSwapChain(VkDevice device, VkSurfaceKHR surface, const DeviceManager& deviceManager);
-		static std::vector<VkImage> CreateImages(VkDevice device, VkSwapchainKHR swapChain);
-		static std::vector<VkImageView> CreateImageViews(VkDevice device, const std::vector<VkImage>& images, VkFormat imageFormat);
-		static std::vector<VkFramebuffer> CreateFrameBuffers(VkDevice device, const std::vector<VkImageView>& imageViews, std::uint32_t width, std::uint32_t height, VkRenderPass renderPass);
+		static vk::UniqueSwapchainKHR CreateSwapChain(const vk::Device& device, const vk::SurfaceKHR& surface, const DeviceManager& deviceManager);
+		static std::vector<vk::Image> CreateImages(const vk::Device& device, const vk::SwapchainKHR& swapChain);
+		static std::vector<vk::UniqueImageView> CreateImageViews(const vk::Device& device, const std::vector<vk::Image>& images, vk::Format imageFormat);
+		static std::vector<vk::UniqueFramebuffer> CreateFrameBuffers(const vk::Device& device, const std::vector<vk::UniqueImageView>& imageViews, std::uint32_t width, std::uint32_t height, const vk::RenderPass& renderPass);
 
 	private:
-		VkDevice m_device;
-		VkSwapchainKHR m_swapChain;
-		std::vector<VkImage> m_images;
-		std::vector<VkImageView> m_imageViews;
-		std::vector<VkFramebuffer> m_framebuffers;
+		vk::UniqueSwapchainKHR m_swapChain;
+		std::vector<vk::Image> m_images;
+		std::vector<vk::UniqueImageView> m_imageViews;
+		std::vector<vk::UniqueFramebuffer> m_framebuffers;
 	};
 }

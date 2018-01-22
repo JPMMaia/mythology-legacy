@@ -1,28 +1,26 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace VulkanEngine
 {
 	class RenderPass
 	{
 	public:
-		explicit RenderPass(VkDevice device, VkFormat format);
+		explicit RenderPass(const vk::Device& device, vk::Format format);
 		RenderPass(const RenderPass&) = delete;
 		RenderPass(RenderPass&&) = default;
-		~RenderPass();
 
 		RenderPass& operator=(const RenderPass&) = delete;
 		RenderPass& operator=(RenderPass&&) = default;
 
 	public:
-		operator VkRenderPass() const;
+		operator const vk::RenderPass&() const;
 
 	private:
-		static VkRenderPass CreateRenderPass(VkDevice device, VkFormat format);
+		static vk::UniqueRenderPass CreateRenderPass(const vk::Device& device, vk::Format format);
 
 	private:
-		VkDevice m_device;
-		VkRenderPass m_renderPass;
+		vk::UniqueRenderPass m_renderPass;
 	};
 }

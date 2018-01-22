@@ -1,10 +1,6 @@
 #include "pch.h"
 #include "VulkanRenderer.h"
 
-#include <array>
-#include <iostream>
-#include <vector>
-
 using namespace VulkanEngine;
 
 Renderer::Renderer(const std::vector<const char*>& enabledExtensions, const ISurfaceBuilder& surfaceBuilder) :
@@ -41,47 +37,42 @@ bool Renderer::FrameUpdate(const Common::Timer& timer)
 }
 bool Renderer::Render(const Common::Timer& timer)
 {
+	auto device = m_deviceManager.GetDevice();
+
 	auto presentQueue = m_deviceManager.GetPresentQueue();
-	vkQueueWaitIdle(presentQueue);
+	presentQueue.waitIdle();
 
-	uint32_t imageIndex;
-	ThrowIfFailed(vkAcquireNextImageKHR(m_deviceManager.GetDevice(), m_swapChain, std::numeric_limits<uint64_t>::max(), m_imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex));
+	std::uint32_t imageIndex;
+	device.acquireNextImageKHR(m_swapChain, std::numeric_limits<std::uint64_t>::max(), m_imageAvailableSemaphore, {}, &imageIndex);
 
-	std::array<VkSemaphore, 1> signalSemaphores = { m_renderFinishedSemaphore };
+	std::array<vk::Semaphore, 1> signalSemaphores = { m_renderFinishedSemaphore };
 
 	{
-		VkSubmitInfo submitInfo = {};
-		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		std::array<vk::Semaphore, 1> waitSemaphores = { m_imageAvailableSemaphore };
+		std::array<vk::PipelineStageFlags, 1> waitStages = { vk::PipelineStageFlagBits::eColorAttachmentOutput };
 
-		std::array<VkSemaphore, 1> waitSemaphores = { m_imageAvailableSemaphore };
-		std::array<VkPipelineStageFlags, 1> waitStages = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-		submitInfo.waitSemaphoreCount = static_cast<std::uint32_t>(waitSemaphores.size());
-		submitInfo.pWaitSemaphores = waitSemaphores.data();
-		submitInfo.pWaitDstStageMask = waitStages.data();
+		vk::SubmitInfo submitInfo(
+			static_cast<std::uint32_t>(waitSemaphores.size()), waitSemaphores.data(),
+			waitStages.data(),
+			1, &m_commandBuffers[imageIndex].get(),
+			static_cast<std::uint32_t>(signalSemaphores.size()), signalSemaphores.data()
+		);
 
-		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &m_commandBuffers[imageIndex];
-
-		submitInfo.signalSemaphoreCount = static_cast<std::uint32_t>(signalSemaphores.size());
-		submitInfo.pSignalSemaphores = signalSemaphores.data();
-
-		ThrowIfFailed(vkQueueSubmit(m_deviceManager.GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE));
+		auto graphicsQueue = m_deviceManager.GetGraphicsQueue();
+		graphicsQueue.submit(1, &submitInfo, {});
 	}
 
 	{
-		VkPresentInfoKHR presentInfo = {};
-		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		std::array<vk::SwapchainKHR, 1> swapChains = { m_swapChain };
 
-		presentInfo.waitSemaphoreCount = static_cast<std::uint32_t>(signalSemaphores.size());;
-		presentInfo.pWaitSemaphores = signalSemaphores.data();
+		vk::PresentInfoKHR presentInfo(
+			static_cast<std::uint32_t>(signalSemaphores.size()), signalSemaphores.data(),
+			static_cast<std::uint32_t>(swapChains.size()), swapChains.data(),
+			&imageIndex,
+			nullptr
+		);
 
-		std::array<VkSwapchainKHR, 1> swapChains = { m_swapChain };
-		presentInfo.swapchainCount = static_cast<std::uint32_t>(swapChains.size());
-		presentInfo.pSwapchains = swapChains.data();
-		presentInfo.pImageIndices = &imageIndex;
-		presentInfo.pResults = nullptr;
-
-		vkQueuePresentKHR(presentQueue, &presentInfo);
+		presentQueue.presentKHR(presentInfo);		
 	}
 
 	return true;
@@ -92,66 +83,59 @@ bool Renderer::IsNextFrameAvailable()
 	return true;
 }
 
-std::vector<VkCommandBuffer> Renderer::CreateCommandBuffers(VkDevice device, VkCommandPool commandPool, std::uint32_t count)
+std::vector<vk::UniqueCommandBuffer> Renderer::CreateCommandBuffers(const vk::Device& device, const vk::CommandPool& commandPool, std::uint32_t count)
 {
-	std::vector<VkCommandBuffer> commandBuffers(count);
-
-	VkCommandBufferAllocateInfo commandBufferInfo = {};
-	commandBufferInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	commandBufferInfo.commandPool = commandPool;
-	commandBufferInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	commandBufferInfo.commandBufferCount = (uint32_t)commandBuffers.size();
-
-	ThrowIfFailed(vkAllocateCommandBuffers(device, &commandBufferInfo, commandBuffers.data()));	
-
-	return commandBuffers;
+	vk::CommandBufferAllocateInfo commandBufferInfo(
+		commandPool,
+		vk::CommandBufferLevel::ePrimary,
+		count
+	);
+	return device.allocateCommandBuffersUnique(commandBufferInfo);
 }
 
 void Renderer::RecordCommands()
 {
-	for (size_t i = 0; i < m_commandBuffers.size(); ++i)
+	for (std::size_t i = 0; i < m_commandBuffers.size(); ++i)
 	{
-		auto& commandBuffer = m_commandBuffers[i];
+		auto& commandBuffer = m_commandBuffers[i].get();
 
-		VkCommandBufferBeginInfo beginInfo = {};
-		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-		beginInfo.pInheritanceInfo = nullptr;
-
-		vkBeginCommandBuffer(commandBuffer, &beginInfo);
-
-		VkRenderPassBeginInfo renderPassInfo = {};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass = m_pipelineStateManager.GetRenderPass();
-		renderPassInfo.framebuffer = m_swapChain.GetFrameBuffer(i);
-		renderPassInfo.renderArea.offset = { 0, 0 };
-		renderPassInfo.renderArea.extent = m_deviceManager.GetSwapExtent();
-
-		VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
-		renderPassInfo.clearValueCount = 1;
-		renderPassInfo.pClearValues = &clearColor;
-
-		vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineStateManager.GetGraphicsPipeline());
-		vkCmdDraw(commandBuffer, 3, 1, 0, 0);
-
-		vkCmdEndRenderPass(commandBuffer);
-
-		ThrowIfFailed(vkEndCommandBuffer(commandBuffer));
+		vk::CommandBufferBeginInfo beginInfo(
+			vk::CommandBufferUsageFlagBits::eSimultaneousUse
+		);
+		commandBuffer.begin(beginInfo);
+		{
+			vk::ClearValue clearColor(vk::ClearColorValue(std::array<float, 4> { 0.0f, 0.0f, 0.0f, 1.0f }));
+			vk::RenderPassBeginInfo renderPassInfo(
+				m_pipelineStateManager.GetRenderPass(),
+				m_swapChain.GetFrameBuffer(i),
+				vk::Rect2D({ 0, 0 }, m_deviceManager.GetSwapExtent()),
+				1, &clearColor
+			);
+			commandBuffer.beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
+			{
+				std::array<vk::Viewport, 1> viewports = 
+				{
+					vk::Viewport(
+						0.0f, 0.0f, 
+						static_cast<float>(m_surface.GetWidth()), static_cast<float>(m_surface.GetHeight()), 
+						0.0f, 1.0f
+					)
+				};
+				commandBuffer.setViewport(0, viewports);
+				commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_pipelineStateManager.GetGraphicsPipeline());
+				commandBuffer.draw(3, 1, 0, 0);
+			}
+			commandBuffer.endRenderPass();
+		}
+		commandBuffer.end();
 	}
 }
 
 void Renderer::EnumerateAvailableExtensions()
 {
-	std::uint32_t extensionCount = 0;
-	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-
-	std::vector<VkExtensionProperties> extensions(extensionCount);
-	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
+	auto extensions = vk::enumerateInstanceExtensionProperties();
 
 	std::cout << "available extensions:" << std::endl;
-
 	for (const auto& extension : extensions)
 		std::cout << "\t" << extension.extensionName << std::endl;
 }

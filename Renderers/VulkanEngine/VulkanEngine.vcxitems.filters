@@ -26,6 +26,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ColorBlendAttachment.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\CommandPool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Synchronization\Semaphore.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Resources\DepthBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Configurations\ValidationLayers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanRenderer.cpp" />
@@ -49,6 +51,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ColorBlendAttachment.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\CommandPool.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Synchronization\Semaphore.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Configurations\ValidationLayers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)VulkanEngine\Shaders\Shader.vert" />

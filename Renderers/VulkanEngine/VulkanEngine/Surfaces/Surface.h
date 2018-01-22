@@ -7,19 +7,17 @@ namespace VulkanEngine
 	class Surface
 	{
 	public:
-		Surface(const ISurfaceBuilder& surfaceBuilder, VkInstance instance);
-		~Surface();
+		Surface(const ISurfaceBuilder& surfaceBuilder, const vk::Instance& instance);
 
 	public:
 		int GetWidth() const;
 		int GetHeight() const;
 
 	public:
-		operator VkSurfaceKHR() const;
+		operator const vk::SurfaceKHR&() const;
 
 	private:
-		VkInstance m_instance;
-		VkSurfaceKHR m_surface;
+		vk::UniqueSurfaceKHR m_surface;
 		std::pair<int, int> m_surfaceSize;
 	};
 }

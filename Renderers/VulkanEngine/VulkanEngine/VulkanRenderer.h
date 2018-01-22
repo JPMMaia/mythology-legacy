@@ -1,10 +1,5 @@
 #pragma once
 
-#include "vulkan/vulkan.h"
-
-#include <memory>
-#include <vector>
-
 #include "RenderEngine/IRenderer.h"
 #include "VulkanEngine/Helpers/VulkanHelpers.h"
 #include "VulkanEngine/VulkanInstance.h"
@@ -39,7 +34,7 @@ namespace VulkanEngine
 		bool IsNextFrameAvailable() override;
 
 	private:
-		static std::vector<VkCommandBuffer> CreateCommandBuffers(VkDevice device, VkCommandPool commandPool, std::uint32_t count);
+		static std::vector<vk::UniqueCommandBuffer> CreateCommandBuffers(const vk::Device& device, const vk::CommandPool& commandPool, std::uint32_t count);
 
 	private:
 		void RecordCommands();
@@ -57,7 +52,7 @@ namespace VulkanEngine
 		PipelineStateManager m_pipelineStateManager;
 		SwapChain m_swapChain;
 		CommandPool m_commandPool;
-		std::vector<VkCommandBuffer> m_commandBuffers;
+		std::vector<vk::UniqueCommandBuffer> m_commandBuffers;
 		Semaphore m_imageAvailableSemaphore;
 		Semaphore m_renderFinishedSemaphore;
 	};

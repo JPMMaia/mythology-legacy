@@ -1,32 +1,20 @@
 #include "pch.h"
 #include "Semaphore.h"
 
-#include "VulkanEngine/Helpers/VulkanHelpers.h"
-
 using namespace VulkanEngine;
 
-Semaphore::Semaphore(VkDevice device) :
-	m_device(device),
+Semaphore::Semaphore(const vk::Device& device) :
 	m_semaphore(CreateSemaphore(device))
 {
 }
-Semaphore::~Semaphore()
+
+Semaphore::operator const vk::Semaphore&() const
 {
-	if (m_semaphore)
-		vkDestroySemaphore(m_device, m_semaphore, nullptr);
+	return m_semaphore.get();
 }
 
-Semaphore::operator VkSemaphore() const
+vk::UniqueSemaphore Semaphore::CreateSemaphore(const vk::Device& device)
 {
-	return m_semaphore;
-}
-
-VkSemaphore Semaphore::CreateSemaphore(VkDevice device)
-{
-	VkSemaphoreCreateInfo semaphoreInfo = {};
-	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-
-	VkSemaphore semaphore;
-	ThrowIfFailed(vkCreateSemaphore(device, &semaphoreInfo, nullptr, &semaphore));
-	return semaphore;
+	vk::SemaphoreCreateInfo semaphoreInfo;
+	return device.createSemaphoreUnique(semaphoreInfo);
 }

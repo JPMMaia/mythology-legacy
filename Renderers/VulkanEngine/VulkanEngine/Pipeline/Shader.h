@@ -1,24 +1,19 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
-
-#include <string>
-
 namespace VulkanEngine
 {
 	class Shader
 	{
 	public:
-		Shader(VkDevice device, const std::wstring& filename);
-		~Shader();
+		Shader(const vk::Device& device, const std::wstring& filename);
 
-		VkShaderModule GetShaderModule() const;
-
-	private:
-		VkShaderModule CreateShaderModule(const std::wstring& filename);
+	public:
+		operator const vk::ShaderModule&() const;
 
 	private:
-		VkDevice m_device;
-		VkShaderModule m_shaderModule;
+		static vk::UniqueShaderModule CreateShaderModule(const vk::Device& device, const std::wstring& filename);
+
+	private:
+		vk::UniqueShaderModule m_shaderModule;
 	};
 }

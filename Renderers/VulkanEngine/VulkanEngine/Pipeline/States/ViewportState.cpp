@@ -3,25 +3,22 @@
 
 using namespace VulkanEngine;
 
-VkPipelineViewportStateCreateInfo ViewportState::Default(float width, float height, VkExtent2D extent)
+vk::PipelineViewportStateCreateInfo ViewportState::Default(float width, float height, const vk::Extent2D& extent)
 {
-	VkViewport viewport = {};
-	viewport.x = 0.0f;
-	viewport.y = 0.0f;
-	viewport.width = width;
-	viewport.height = height;
-	viewport.minDepth = 0.0f;
-	viewport.maxDepth = 1.0f;
+	vk::Viewport viewport(
+		0.0f, 0.0f,
+		width, height,
+		0.0f, 1.0f
+	);
 
-	VkRect2D scissor = {};
-	scissor.offset = { 0, 0 };
-	scissor.extent = extent;
+	vk::Rect2D scissor(
+		{ 0, 0 },
+		extent
+	);
 
-	VkPipelineViewportStateCreateInfo viewportState = {};
-	viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-	viewportState.viewportCount = 1;
-	viewportState.pViewports = &viewport;
-	viewportState.scissorCount = 1;
-	viewportState.pScissors = &scissor;
-	return viewportState;
+	return vk::PipelineViewportStateCreateInfo(
+		{},
+		1, &viewport,
+		1, &scissor
+	);
 }

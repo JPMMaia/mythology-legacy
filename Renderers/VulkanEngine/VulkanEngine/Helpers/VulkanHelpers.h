@@ -4,7 +4,7 @@
 #include <functional>
 #include <memory>
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace VulkanEngine
 {	

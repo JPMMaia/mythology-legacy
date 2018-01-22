@@ -3,15 +3,10 @@
 
 using namespace VulkanEngine;
 
-Surface::Surface(const ISurfaceBuilder& surfaceBuilder, VkInstance instance) :
-	m_instance(instance),
+Surface::Surface(const ISurfaceBuilder& surfaceBuilder, const vk::Instance& instance) :
 	m_surface(surfaceBuilder.CreateSurface(instance)),
 	m_surfaceSize(surfaceBuilder.GetSurfaceSize())
 {
-}
-Surface::~Surface()
-{
-	vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
 }
 
 int Surface::GetWidth() const
@@ -23,7 +18,7 @@ int Surface::GetHeight() const
 	return m_surfaceSize.second;
 }
 
-Surface::operator VkSurfaceKHR() const
+Surface::operator const vk::SurfaceKHR&() const
 {
-	return m_surface;
+	return m_surface.get();
 }
