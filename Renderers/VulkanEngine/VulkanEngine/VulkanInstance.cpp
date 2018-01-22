@@ -18,7 +18,13 @@ VulkanInstance::operator const vk::Instance&() const
 
 vk::UniqueInstance VulkanInstance::CreateInstance(const std::vector<const char*>& enabledExtensions)
 {
-	vk::ApplicationInfo applicationInfo("Vulkan Application", 1);
+	vk::ApplicationInfo applicationInfo(
+		"Vulkan Application",
+		VK_MAKE_VERSION(1, 0, 0),
+		"Vulkan Engine",
+		VK_MAKE_VERSION(1, 0, 0),
+		VK_API_VERSION_1_0
+		);
 
 	auto validationLayers = ValidationLayers::Get();
 	vk::InstanceCreateInfo createInfo(

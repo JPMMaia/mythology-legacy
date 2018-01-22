@@ -14,9 +14,12 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\VertexBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\CommandPool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Configurations\ValidationLayers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Devices\QueueFamilyIndices.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Geometry\SubmeshGeometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Geometry\Vertex.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Layout\PipelineLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\PipelineStateManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\RenderPass\RenderPass.h" />
@@ -33,7 +36,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ShaderStage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\VertexInputState.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ViewportState.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Resources\DepthBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\RenderItems\RenderItem.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\SwapChains\SwapChain.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\SwapChains\SwapChainSupportDetails.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Synchronization\Semaphore.h" />
@@ -43,6 +46,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Surfaces\Surface.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\VertexBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\CommandPool.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Configurations\ValidationLayers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Layout\PipelineLayout.cpp" />
@@ -60,6 +64,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ShaderStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\VertexInputState.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ViewportState.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\RenderItems\RenderItem.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Surfaces\Surface.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\SwapChains\SwapChain.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Synchronization\Semaphore.cpp" />

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "VulkanRenderer.h"
 
+#include "VulkanEngine/Geometry/Vertex.h"
+
 using namespace VulkanEngine;
 
 Renderer::Renderer(const std::vector<const char*>& enabledExtensions, const ISurfaceBuilder& surfaceBuilder) :
@@ -15,7 +17,8 @@ Renderer::Renderer(const std::vector<const char*>& enabledExtensions, const ISur
 	m_commandPool(m_deviceManager.GetDevice(), m_deviceManager.GetQueueFamilyIndices()),
 	m_commandBuffers(CreateCommandBuffers(m_deviceManager.GetDevice(), m_commandPool, m_deviceManager.GetImageCount())),
 	m_imageAvailableSemaphore(m_deviceManager.GetDevice()),
-	m_renderFinishedSemaphore(m_deviceManager.GetDevice())
+	m_renderFinishedSemaphore(m_deviceManager.GetDevice()),
+	m_triangle(CreateTriangle(m_deviceManager))
 {
 	RecordCommands();
 }
@@ -92,6 +95,23 @@ std::vector<vk::UniqueCommandBuffer> Renderer::CreateCommandBuffers(const vk::De
 	);
 	return device.allocateCommandBuffersUnique(commandBufferInfo);
 }
+RenderItem Renderer::CreateTriangle(const DeviceManager& deviceManager)
+{
+	auto device = deviceManager.GetDevice();
+
+	static const std::vector<Vertex> vertices = 
+	{
+		{ { -0.5f, -0.5f },{ 1.0f, 1.0f, 1.0f } },
+		{ { 0.5f, -0.5f },{ 0.0f, 1.0f, 0.0f } },
+		{ { 0.0f, 0.5f },{ 0.0f, 0.0f, 1.0f } }
+	};
+	
+	VertexBuffer vertexBuffer(deviceManager, static_cast<vk::DeviceSize>(vertices.size() * sizeof(Vertex)));
+	vertexBuffer.CopyData(device, vertices.data());
+
+	SubmeshGeometry submesh = { static_cast<std::uint32_t>(vertices.size()), 1, 0, 0 };
+	return RenderItem(std::move(vertexBuffer), submesh);
+}
 
 void Renderer::RecordCommands()
 {
@@ -113,7 +133,7 @@ void Renderer::RecordCommands()
 			);
 			commandBuffer.beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
 			{
-				std::array<vk::Viewport, 1> viewports = 
+				static std::array<vk::Viewport, 1> viewports = 
 				{
 					vk::Viewport(
 						0.0f, 0.0f, 
@@ -122,8 +142,15 @@ void Renderer::RecordCommands()
 					)
 				};
 				commandBuffer.setViewport(0, viewports);
+
+				static std::array<vk::Rect2D, 1> scissors =
+				{
+					vk::Rect2D(vk::Offset2D(0, 0), m_deviceManager.GetSwapExtent())
+				};
+				commandBuffer.setScissor(0, scissors);
+				
 				commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_pipelineStateManager.GetGraphicsPipeline());
-				commandBuffer.draw(3, 1, 0, 0);
+				m_triangle.Draw(commandBuffer);
 			}
 			commandBuffer.endRenderPass();
 		}

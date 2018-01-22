@@ -5,6 +5,6 @@ namespace VulkanEngine
 	class ViewportState
 	{
 	public:
-		static vk::PipelineViewportStateCreateInfo Default(float width, float height, const vk::Extent2D& extent);
+		static vk::PipelineViewportStateCreateInfo Default(const vk::Viewport& viewport, const vk::Rect2D& scissor);
 	};
 }

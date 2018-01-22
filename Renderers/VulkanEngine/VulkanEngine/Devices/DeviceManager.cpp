@@ -27,6 +27,20 @@ DeviceManager::DeviceManager(const vk::Instance& instance, const Surface& surfac
 {
 }
 
+std::uint32_t DeviceManager::FindBufferMemoryIndexType(std::uint32_t typeFilter, vk::MemoryPropertyFlags properties) const
+{
+	auto memoryProperties = m_physicalDevice.getMemoryProperties();
+	for (std::uint32_t i = 0; i < memoryProperties.memoryTypeCount; i++)
+	{
+		if ((typeFilter & (1 << i)) && (memoryProperties.memoryTypes[i].propertyFlags & properties) == properties)
+		{
+			return i;
+		}
+	}
+
+	throw std::runtime_error("Failed to find a suitable memory index type!");
+}
+
 const vk::PhysicalDevice& DeviceManager::GetPhysicalDevice() const
 {
 	return m_physicalDevice;

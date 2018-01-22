@@ -9,6 +9,7 @@
 #include "VulkanEngine/Pipeline/PipelineStateManager.h"
 #include "VulkanEngine/Commands/CommandPool.h"
 #include "VulkanEngine/Synchronization/Semaphore.h"
+#include "VulkanEngine/RenderItems/RenderItem.h"
 
 #if !defined(NDEBUG)
 #include "VulkanEngine/Helpers/DebugMessageHandler.h"
@@ -35,6 +36,7 @@ namespace VulkanEngine
 
 	private:
 		static std::vector<vk::UniqueCommandBuffer> CreateCommandBuffers(const vk::Device& device, const vk::CommandPool& commandPool, std::uint32_t count);
+		static RenderItem CreateTriangle(const DeviceManager& deviceManager);
 
 	private:
 		void RecordCommands();
@@ -55,5 +57,6 @@ namespace VulkanEngine
 		std::vector<vk::UniqueCommandBuffer> m_commandBuffers;
 		Semaphore m_imageAvailableSemaphore;
 		Semaphore m_renderFinishedSemaphore;
+		RenderItem m_triangle;
 	};
 }

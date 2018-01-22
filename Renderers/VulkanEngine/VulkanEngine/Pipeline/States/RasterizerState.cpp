@@ -10,7 +10,7 @@ vk::PipelineRasterizationStateCreateInfo RasterizerState::Default()
 		VK_FALSE,
 		VK_FALSE,
 		vk::PolygonMode::eFill,
-		vk::CullModeFlagBits::eBack,
+		vk::CullModeFlagBits::eNone,
 		vk::FrontFace::eCounterClockwise,
 		VK_FALSE,
 		0.0f,

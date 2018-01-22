@@ -12,14 +12,18 @@
 #include "States/VertexInputState.h"
 #include "States/ViewportState.h"
 
+#include "VulkanEngine/Geometry/Vertex.h"
+
 using namespace std;
 using namespace VulkanEngine;
 
 PipelineStateManager::PipelineStateManager(const vk::Device& device, vk::Format format, float width, float height, const vk::Extent2D& extent) :
+	m_viewport(0.0f, 0.0f, width, height, 0.0f, 1.0f),
+	m_scissor({ 0, 0 }, extent),
 	m_renderPass(device, format),
 	m_pipelineLayout(device),
 	m_shaders(CreateShaders(device)),
-	m_graphicsPipeline(CreateGraphicsPipeline(device, m_renderPass, m_pipelineLayout, m_shaders, width, height, extent))
+	m_graphicsPipeline(CreateGraphicsPipeline(device, m_viewport, m_scissor, m_renderPass, m_pipelineLayout, m_shaders, width, height, extent))
 {
 }
 
@@ -53,7 +57,7 @@ std::unordered_map<std::string, Shader> PipelineStateManager::CreateShaders(cons
 	return shaders;
 }
 
-vk::UniquePipeline PipelineStateManager::CreateGraphicsPipeline(const vk::Device& device, const RenderPass& renderPass, const PipelineLayout& pipelineLayout, const ShaderContainer& shaders, float width, float height, const vk::Extent2D& extent)
+vk::UniquePipeline PipelineStateManager::CreateGraphicsPipeline(const vk::Device& device, const vk::Viewport& viewport, const vk::Rect2D& scissor, const RenderPass& renderPass, const PipelineLayout& pipelineLayout, const ShaderContainer& shaders, float width, float height, const vk::Extent2D& extent)
 {
 	std::vector<vk::PipelineShaderStageCreateInfo> shaderStages =
 	{
@@ -61,9 +65,11 @@ vk::UniquePipeline PipelineStateManager::CreateGraphicsPipeline(const vk::Device
 		ShaderStage::Fragment(shaders.at("StandardFragmentShader"), "main")
 	};
 
-	auto vertexInputState = VertexInputState::Default();
+	auto vertexBindingDescription = Vertex::GetBindingDescription();
+	auto vertexAttributeDescriptions = Vertex::GetAttributeDescriptions();
+	auto vertexInputState = VertexInputState::Default(vertexBindingDescription, vertexAttributeDescriptions);
 	auto inputAssembly = InputAssemblyState::TriangleList();
-	auto viewportState = ViewportState::Default(width, height, extent);
+	auto viewportState = ViewportState::Default(viewport, scissor);
 	auto rasterizer = RasterizerState::Default();
 	auto multisampling = MultisampleState::Default();
 

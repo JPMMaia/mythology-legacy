@@ -15,6 +15,9 @@ namespace VulkanEngine
 		DeviceManager(const vk::Instance& instance, const Surface& surface);
 
 	public:
+		std::uint32_t FindBufferMemoryIndexType(std::uint32_t typeFilter, vk::MemoryPropertyFlags properties) const;
+
+	public:
 		const vk::PhysicalDevice& GetPhysicalDevice() const;
 		const QueueFamilyIndices& GetQueueFamilyIndices() const;
 		const vk::Device& GetDevice() const;
