@@ -42,9 +42,6 @@ bool Renderer::Render(const Common::Timer& timer)
 {
 	auto device = m_deviceManager.GetDevice();
 
-	auto presentQueue = m_deviceManager.GetPresentQueue();
-	presentQueue.waitIdle();
-
 	std::uint32_t imageIndex;
 	device.acquireNextImageKHR(m_swapChain, std::numeric_limits<std::uint64_t>::max(), m_imageAvailableSemaphore, {}, &imageIndex);
 
@@ -61,7 +58,7 @@ bool Renderer::Render(const Common::Timer& timer)
 			static_cast<std::uint32_t>(signalSemaphores.size()), signalSemaphores.data()
 		);
 
-		auto graphicsQueue = m_deviceManager.GetGraphicsQueue();
+		const auto& graphicsQueue = m_deviceManager.GetGraphicsQueue();
 		graphicsQueue.submit(1, &submitInfo, {});
 	}
 
@@ -75,7 +72,9 @@ bool Renderer::Render(const Common::Timer& timer)
 			nullptr
 		);
 
-		presentQueue.presentKHR(presentInfo);		
+		const auto& presentQueue = m_deviceManager.GetPresentQueue();
+		presentQueue.presentKHR(presentInfo);	
+		presentQueue.waitIdle();
 	}
 
 	return true;
@@ -101,9 +100,9 @@ RenderItem Renderer::CreateTriangle(const DeviceManager& deviceManager)
 
 	static const std::vector<Vertex> vertices = 
 	{
-		{ { -0.5f, -0.5f },{ 1.0f, 1.0f, 1.0f } },
-		{ { 0.5f, -0.5f },{ 0.0f, 1.0f, 0.0f } },
-		{ { 0.0f, 0.5f },{ 0.0f, 0.0f, 1.0f } }
+		{ { -0.5f, 0.5f },{ 1.0f, 1.0f, 1.0f } },
+		{ { 0.5f, 0.5f },{ 0.0f, 1.0f, 0.0f } },
+		{ { 0.0f, -0.5f },{ 0.0f, 0.0f, 1.0f } }
 	};
 	
 	VertexBuffer vertexBuffer(deviceManager, static_cast<vk::DeviceSize>(vertices.size() * sizeof(Vertex)));
@@ -124,12 +123,13 @@ void Renderer::RecordCommands()
 		);
 		commandBuffer.begin(beginInfo);
 		{
-			vk::ClearValue clearColor(vk::ClearColorValue(std::array<float, 4> { 0.0f, 0.0f, 0.0f, 1.0f }));
+			std::array<float, 4> clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+			vk::ClearValue clearValue(clearColor);
 			vk::RenderPassBeginInfo renderPassInfo(
 				m_pipelineStateManager.GetRenderPass(),
 				m_swapChain.GetFrameBuffer(i),
 				vk::Rect2D({ 0, 0 }, m_deviceManager.GetSwapExtent()),
-				1, &clearColor
+				1, &clearValue
 			);
 			commandBuffer.beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
 			{

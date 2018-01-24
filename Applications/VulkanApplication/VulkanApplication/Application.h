@@ -4,8 +4,6 @@
 #include "VulkanEngine/VulkanRenderer.h"
 #include "VulkanEngine/Helpers/VulkanHelpers.h"
 
-#include <GLFW/glfw3.h>
-
 namespace VulkanApplication
 {
 	class Application

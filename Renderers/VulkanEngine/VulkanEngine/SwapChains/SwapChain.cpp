@@ -81,7 +81,7 @@ std::vector<vk::UniqueFramebuffer> SwapChain::CreateFrameBuffers(const vk::Devic
 {
 	std::vector<vk::UniqueFramebuffer> frameBuffers(imageViews.size());
 
-	for (size_t i = 0; i < frameBuffers.size(); i++)
+	for (std::size_t i = 0; i < frameBuffers.size(); i++)
 	{
 		std::array<vk::ImageView, 1> attachments = 
 		{

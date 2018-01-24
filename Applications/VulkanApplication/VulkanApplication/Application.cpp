@@ -2,8 +2,6 @@
 #include "Application.h"
 #include "Common/Timers/Timer.h"
 
-#include <iostream>
-
 using namespace VulkanApplication;
 using namespace VulkanEngine;
 
@@ -41,7 +39,7 @@ void Application::InitializeWindow()
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	m_window = VulkanUniquePointer<GLFWwindow>(
 		glfwCreateWindow(c_width, c_height, "Vulkan window", nullptr, nullptr),
-		[](GLFWwindow* window) { glfwDestroyWindow(window); 	}
+		[](GLFWwindow* window) { glfwDestroyWindow(window); }
 	);
 }
 void Application::InitializeRenderer()

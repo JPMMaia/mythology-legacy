@@ -13,7 +13,11 @@ VKAPI_ATTR VkBool32 VKAPI_CALL DebugMessageHandler::Callback(VkDebugReportFlagsE
 	std::cerr << "Validation layer: " << msg << std::endl;
 
 #if !defined(NDEBUG)
-	throw std::runtime_error(msg);
+	if (flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_DEBUG_BIT_EXT
+		|| flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_ERROR_BIT_EXT
+		|| flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_WARNING_BIT_EXT
+		|| flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT)
+		throw std::runtime_error(msg);
 #endif
 
 	return VK_FALSE;
@@ -38,7 +42,7 @@ VkDebugReportCallbackEXT DebugMessageHandler::CreateDebugReportCallback(const vk
 {
 	VkDebugReportCallbackCreateInfoEXT createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
-	createInfo.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT;
+	createInfo.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_INFORMATION_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
 	createInfo.pfnCallback = Callback;
 
 	auto createCallback = reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>(vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT"));

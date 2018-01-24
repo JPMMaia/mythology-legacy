@@ -1,17 +1,13 @@
 #include "pch.h"
 #include "VulkanApplication/Application.h"
 
-#include <exception>
-#include <iostream>
-
 using namespace VulkanApplication;
 
 int main()
 {
-	Application application;
-
 	try
 	{
+		Application application;
 		application.Run();
 	}
 	catch (const std::runtime_error& error)

@@ -2,8 +2,6 @@
 #include "GLFWManager.h"
 #include "GLFWSurfaceBuilder.h"
 
-#include <GLFW/glfw3.h>
-
 using namespace VulkanApplication;
 
 GLFWManager::GLFWManager()

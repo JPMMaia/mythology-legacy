@@ -22,8 +22,7 @@ PipelineStateManager::PipelineStateManager(const vk::Device& device, vk::Format 
 	m_scissor({ 0, 0 }, extent),
 	m_renderPass(device, format),
 	m_pipelineLayout(device),
-	m_shaders(CreateShaders(device)),
-	m_graphicsPipeline(CreateGraphicsPipeline(device, m_viewport, m_scissor, m_renderPass, m_pipelineLayout, m_shaders, width, height, extent))
+	m_graphicsPipeline(CreateGraphicsPipeline(device, m_viewport, m_scissor, m_renderPass, m_pipelineLayout, width, height, extent))
 {
 }
 
@@ -57,8 +56,9 @@ std::unordered_map<std::string, Shader> PipelineStateManager::CreateShaders(cons
 	return shaders;
 }
 
-vk::UniquePipeline PipelineStateManager::CreateGraphicsPipeline(const vk::Device& device, const vk::Viewport& viewport, const vk::Rect2D& scissor, const RenderPass& renderPass, const PipelineLayout& pipelineLayout, const ShaderContainer& shaders, float width, float height, const vk::Extent2D& extent)
+vk::UniquePipeline PipelineStateManager::CreateGraphicsPipeline(const vk::Device& device, const vk::Viewport& viewport, const vk::Rect2D& scissor, const RenderPass& renderPass, const PipelineLayout& pipelineLayout, float width, float height, const vk::Extent2D& extent)
 {
+	auto shaders = CreateShaders(device);
 	std::vector<vk::PipelineShaderStageCreateInfo> shaderStages =
 	{
 		ShaderStage::Vertex(shaders.at("StandardVertexShader"), "main"),

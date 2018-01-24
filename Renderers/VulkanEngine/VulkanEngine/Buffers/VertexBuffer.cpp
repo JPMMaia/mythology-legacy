@@ -4,6 +4,7 @@
 using namespace VulkanEngine;
 
 VertexBuffer::VertexBuffer(const DeviceManager& deviceManager, vk::DeviceSize size) :
+	m_device(deviceManager.GetDevice()),
 	m_size(size),
 	m_buffer(CreateBuffer(deviceManager.GetDevice(), size)),
 	m_deviceMemory(AllocateDeviceMemory(deviceManager, m_buffer.get()))

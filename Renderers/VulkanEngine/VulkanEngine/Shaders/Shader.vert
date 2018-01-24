@@ -1,6 +1,4 @@
 #version 450
-#extension GL_ARB_explicit_attrib_location : enable
-#extension GL_ARB_separate_shader_objects : enable
 
 // Input:
 layout(location = 0) in vec2 in_positionW;

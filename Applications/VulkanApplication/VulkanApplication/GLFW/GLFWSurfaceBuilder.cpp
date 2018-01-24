@@ -2,8 +2,6 @@
 #include "GLFWSurfaceBuilder.h"
 #include "VulkanEngine/Helpers/VulkanHelpers.h"
 
-#include <GLFW/glfw3.h>
-
 using namespace VulkanApplication;
 using namespace VulkanEngine;
 

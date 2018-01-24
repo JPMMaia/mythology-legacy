@@ -21,6 +21,7 @@ namespace VulkanEngine
 		void BindBufferMemory(const vk::Device& device);
 
 	private:
+		vk::Device m_device;
 		vk::DeviceSize m_size;
 		vk::UniqueBuffer m_buffer;
 		vk::UniqueDeviceMemory m_deviceMemory;

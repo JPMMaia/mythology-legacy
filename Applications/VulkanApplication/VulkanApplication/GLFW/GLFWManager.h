@@ -2,11 +2,6 @@
 
 #include "VulkanEngine/Surfaces/ISurfaceBuilder.h"
 
-#include <GLFW/glfw3.h>
-
-#include <memory>
-#include <vector>
-
 namespace VulkanApplication
 {
 	class GLFWManager

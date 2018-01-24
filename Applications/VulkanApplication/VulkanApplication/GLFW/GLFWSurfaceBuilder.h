@@ -2,8 +2,6 @@
 
 #include "VulkanEngine/Surfaces/ISurfaceBuilder.h"
 
-#include <GLFW/glfw3.h>
-
 namespace VulkanApplication
 {
 	class GLFWSurfaceBuilder : public VulkanEngine::ISurfaceBuilder
