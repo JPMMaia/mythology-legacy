@@ -11,6 +11,7 @@ namespace VulkanEngine
 		RenderPass(const RenderPass&) = delete;
 		RenderPass(RenderPass&&) = default;
 
+	public:
 		RenderPass& operator=(const RenderPass&) = delete;
 		RenderPass& operator=(RenderPass&&) = default;
 

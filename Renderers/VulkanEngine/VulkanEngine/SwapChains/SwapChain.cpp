@@ -4,14 +4,34 @@
 
 using namespace VulkanEngine;
 
-SwapChain::SwapChain(const vk::Device& device, const Surface& surface, const DeviceManager& deviceManager, const vk::RenderPass& renderPass) :
-	m_swapChain(CreateSwapChain(device, surface, deviceManager)),
+SwapChain::SwapChain(vk::Device device, const Surface& surface, const SwapChainSupportDetails& supportDetails, const QueueFamilyIndices& queueFamilyIndices, const vk::RenderPass& renderPass, vk::SwapchainKHR oldSwapChain) :
+	m_extent(ChooseExtent(supportDetails, surface.GetExtent())),
+	m_surfaceFormat(ChooseSurfaceFormat(supportDetails)),
+	m_presentMode(ChoosePresentMode(supportDetails)),
+	m_imageCount(ChooseImageCount(supportDetails)),
+	m_swapChain(CreateSwapChain(device, surface, queueFamilyIndices, m_extent, m_surfaceFormat, m_presentMode, m_imageCount, supportDetails.Capabilities.currentTransform, oldSwapChain)),
 	m_images(CreateImages(device, m_swapChain.get())),
-	m_imageViews(CreateImageViews(device, m_images, deviceManager.GetSwapSurfaceFormat().format)),
-	m_framebuffers(CreateFrameBuffers(device, m_imageViews, surface.GetWidth(), surface.GetHeight(), renderPass))
+	m_imageViews(CreateImageViews(device, m_images, m_surfaceFormat.format)),
+	m_framebuffers(CreateFrameBuffers(device, m_imageViews, m_extent, renderPass))
 {
 }
 
+const vk::Extent2D& SwapChain::GetExtent() const
+{
+	return m_extent;
+}
+const vk::SurfaceFormatKHR& SwapChain::GetSurfaceFormat() const
+{
+	return m_surfaceFormat;
+}
+vk::PresentModeKHR SwapChain::GetPresentMode() const
+{
+	return m_presentMode;
+}
+std::uint32_t SwapChain::GetImageCount() const
+{
+	return m_imageCount;
+}
 const vk::Framebuffer& SwapChain::GetFrameBuffer(std::size_t index) const
 {
 	return m_framebuffers[index].get();
@@ -22,34 +42,84 @@ SwapChain::operator const vk::SwapchainKHR&() const
 	return m_swapChain.get();
 }
 
-vk::UniqueSwapchainKHR SwapChain::CreateSwapChain(const vk::Device& device, const vk::SurfaceKHR& surface, const DeviceManager& deviceManager)
+vk::Extent2D SwapChain::ChooseExtent(const SwapChainSupportDetails& supportDetails, vk::Extent2D surfaceExtent)
 {
-	auto surfaceFormat = deviceManager.GetSwapSurfaceFormat();
+	const auto& capabilities = supportDetails.Capabilities;
+	if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
+		return surfaceExtent;
 
-	auto indices = deviceManager.GetQueueFamilyIndices();
-	std::array<std::uint32_t, 2> queueFamilyIndices =
+	vk::Extent2D actualExtent = surfaceExtent;
+	actualExtent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
+	actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
+	return actualExtent;
+}
+vk::SurfaceFormatKHR SwapChain::ChooseSurfaceFormat(const SwapChainSupportDetails& supportDetails)
+{
+	const auto& availableFormats = supportDetails.Formats;
+
+	if (availableFormats.size() == 1 && availableFormats[0].format == vk::Format::eUndefined)
+		return { vk::Format::eB8G8R8A8Unorm, vk::ColorSpaceKHR::eSrgbNonlinear };
+
+	for (const auto& availableFormat : availableFormats)
 	{
-		static_cast<std::uint32_t>(indices.GraphicsFamily),
-		static_cast<std::uint32_t>(indices.PresentFamily)
+		if (availableFormat.format == vk::Format::eB8G8R8A8Unorm && availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear)
+			return availableFormat;
+	}
+
+	return availableFormats[0];
+}
+vk::PresentModeKHR SwapChain::ChoosePresentMode(const SwapChainSupportDetails& supportDetails)
+{
+	const auto& availablePresentModes = supportDetails.PresentModes;
+
+	auto bestMode = vk::PresentModeKHR::eFifo;
+
+	for (const auto& availablePresentMode : availablePresentModes)
+	{
+		if (availablePresentMode == vk::PresentModeKHR::eMailbox)
+			return availablePresentMode;
+		else if (availablePresentMode == vk::PresentModeKHR::eImmediate)
+			bestMode = availablePresentMode;
+	}
+
+	return bestMode;
+}
+std::uint32_t SwapChain::ChooseImageCount(const SwapChainSupportDetails& supportDetails)
+{
+	const auto& capabilities = supportDetails.Capabilities;
+
+	auto imageCount = capabilities.minImageCount + 1;
+	if (capabilities.maxImageCount > 0 && imageCount > capabilities.maxImageCount)
+		imageCount = capabilities.maxImageCount;
+
+	return imageCount;
+}
+
+vk::UniqueSwapchainKHR SwapChain::CreateSwapChain(const vk::Device& device, const vk::SurfaceKHR& surface, const QueueFamilyIndices& queueFamilyIndices, const vk::Extent2D& extent, const vk::SurfaceFormatKHR& surfaceFormat, vk::PresentModeKHR presentMode, std::uint32_t imageCount, vk::SurfaceTransformFlagBitsKHR preTransform, vk::SwapchainKHR oldSwapChain)
+{
+	std::array<std::uint32_t, 2> indices =
+	{
+		static_cast<std::uint32_t>(queueFamilyIndices.GraphicsFamily),
+		static_cast<std::uint32_t>(queueFamilyIndices.PresentFamily)
 	};
 
 	vk::SwapchainCreateInfoKHR createInfo(
 		{},
 		surface,
-		deviceManager.GetImageCount(),
+		imageCount,
 		surfaceFormat.format,
 		surfaceFormat.colorSpace,
-		deviceManager.GetSwapExtent(),
+		extent,
 		1,
 		vk::ImageUsageFlagBits::eColorAttachment,
-		indices.GraphicsFamily != indices.PresentFamily ? vk::SharingMode::eConcurrent : vk::SharingMode::eExclusive,
-		indices.GraphicsFamily != indices.PresentFamily ? static_cast<std::uint32_t>(queueFamilyIndices.size()) : 0,
-		indices.GraphicsFamily != indices.PresentFamily ? queueFamilyIndices.data() : nullptr,
-		deviceManager.GetPreTransform(),
+		indices[0] != indices[1] ? vk::SharingMode::eConcurrent : vk::SharingMode::eExclusive,
+		indices[0] != indices[1] ? static_cast<std::uint32_t>(indices.size()) : 0,
+		indices[0] != indices[1] ? indices.data() : nullptr,
+		preTransform,
 		vk::CompositeAlphaFlagBitsKHR::eOpaque,
-		deviceManager.GetSwapPresentMode(),
+		presentMode,
 		VK_TRUE,
-		{}
+		oldSwapChain
 	);
 	
 	return device.createSwapchainKHRUnique(createInfo);
@@ -77,7 +147,7 @@ std::vector<vk::UniqueImageView> SwapChain::CreateImageViews(const vk::Device& d
 
 	return imageViews;
 }
-std::vector<vk::UniqueFramebuffer> SwapChain::CreateFrameBuffers(const vk::Device& device, const std::vector<vk::UniqueImageView>& imageViews, std::uint32_t width, std::uint32_t height, const vk::RenderPass& renderPass)
+std::vector<vk::UniqueFramebuffer> SwapChain::CreateFrameBuffers(const vk::Device& device, const std::vector<vk::UniqueImageView>& imageViews, const vk::Extent2D& extent, const vk::RenderPass& renderPass)
 {
 	std::vector<vk::UniqueFramebuffer> frameBuffers(imageViews.size());
 
@@ -92,7 +162,7 @@ std::vector<vk::UniqueFramebuffer> SwapChain::CreateFrameBuffers(const vk::Devic
 			{},
 			renderPass,
 			static_cast<std::uint32_t>(attachments.size()), attachments.data(),
-			width, height,
+			extent.width, extent.height,
 			1
 		);
 

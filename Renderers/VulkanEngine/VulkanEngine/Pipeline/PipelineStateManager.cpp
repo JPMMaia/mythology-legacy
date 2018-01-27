@@ -17,19 +17,12 @@
 using namespace std;
 using namespace VulkanEngine;
 
-PipelineStateManager::PipelineStateManager(const vk::Device& device, vk::Format format, float width, float height, const vk::Extent2D& extent) :
-	m_viewport(0.0f, 0.0f, width, height, 0.0f, 1.0f),
-	m_scissor({ 0, 0 }, extent),
-	m_renderPass(device, format),
+PipelineStateManager::PipelineStateManager(const vk::Device& device, const RenderPass& renderPass) :
 	m_pipelineLayout(device),
-	m_graphicsPipeline(CreateGraphicsPipeline(device, m_viewport, m_scissor, m_renderPass, m_pipelineLayout, width, height, extent))
+	m_graphicsPipeline(CreateGraphicsPipeline(device, renderPass, m_pipelineLayout))
 {
 }
 
-const RenderPass& PipelineStateManager::GetRenderPass() const
-{
-	return m_renderPass;
-}
 const vk::Pipeline& PipelineStateManager::GetGraphicsPipeline() const
 {
 	return m_graphicsPipeline.get();
@@ -56,7 +49,7 @@ std::unordered_map<std::string, Shader> PipelineStateManager::CreateShaders(cons
 	return shaders;
 }
 
-vk::UniquePipeline PipelineStateManager::CreateGraphicsPipeline(const vk::Device& device, const vk::Viewport& viewport, const vk::Rect2D& scissor, const RenderPass& renderPass, const PipelineLayout& pipelineLayout, float width, float height, const vk::Extent2D& extent)
+vk::UniquePipeline PipelineStateManager::CreateGraphicsPipeline(const vk::Device& device, const RenderPass& renderPass, const PipelineLayout& pipelineLayout)
 {
 	auto shaders = CreateShaders(device);
 	std::vector<vk::PipelineShaderStageCreateInfo> shaderStages =
@@ -69,7 +62,7 @@ vk::UniquePipeline PipelineStateManager::CreateGraphicsPipeline(const vk::Device
 	auto vertexAttributeDescriptions = Vertex::GetAttributeDescriptions();
 	auto vertexInputState = VertexInputState::Default(vertexBindingDescription, vertexAttributeDescriptions);
 	auto inputAssembly = InputAssemblyState::TriangleList();
-	auto viewportState = ViewportState::Default(viewport, scissor);
+	auto viewportState = ViewportState::Default();
 	auto rasterizer = RasterizerState::Default();
 	auto multisampling = MultisampleState::Default();
 
@@ -82,7 +75,7 @@ vk::UniquePipeline PipelineStateManager::CreateGraphicsPipeline(const vk::Device
 	std::vector<vk::DynamicState> dynamicStates =
 	{
 		vk::DynamicState::eViewport,
-		vk::DynamicState::eLineWidth
+		vk::DynamicState::eScissor
 	};
 	auto dynamicState = DynamicState::Default(dynamicStates);
 

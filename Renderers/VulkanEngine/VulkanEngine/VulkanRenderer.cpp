@@ -5,17 +5,20 @@
 
 using namespace VulkanEngine;
 
-Renderer::Renderer(const std::vector<const char*>& enabledExtensions, const ISurfaceBuilder& surfaceBuilder) :
+Renderer::Renderer(const std::vector<const char*>& enabledExtensions, std::unique_ptr<ISurface> surfaceInterface) :
 	m_instance(enabledExtensions),
 #if !defined(NDEBUG)
 	m_debugMessageHandler(m_instance),
 #endif
-	m_surface(surfaceBuilder, m_instance),
+	m_surface(std::move(surfaceInterface), m_instance),
 	m_deviceManager(m_instance, m_surface),
-	m_pipelineStateManager(m_deviceManager.GetDevice(), m_deviceManager.GetSwapSurfaceFormat().format, static_cast<float>(m_surface.GetWidth()), static_cast<float>(m_surface.GetHeight()), m_deviceManager.GetSwapExtent()),
-	m_swapChain(m_deviceManager.GetDevice(), m_surface, m_deviceManager, m_pipelineStateManager.GetRenderPass()),
+	m_renderPass(m_deviceManager.GetDevice(), vk::Format::eB8G8R8A8Unorm), // TODO change hardcoded
+	m_pipelineStateManager(m_deviceManager.GetDevice(), m_renderPass),
+	m_swapChain(m_deviceManager.GetDevice(), m_surface, m_deviceManager.QuerySwapChainSupport(m_surface), m_deviceManager.GetQueueFamilyIndices(), m_renderPass),
+	m_viewport(CreateViewport(m_swapChain.GetExtent())),
+	m_scissor(CreateScissor(m_swapChain.GetExtent())),
 	m_commandPool(m_deviceManager.GetDevice(), m_deviceManager.GetQueueFamilyIndices()),
-	m_commandBuffers(CreateCommandBuffers(m_deviceManager.GetDevice(), m_commandPool, m_deviceManager.GetImageCount())),
+	m_commandBuffers(CreateCommandBuffers(m_deviceManager.GetDevice(), m_commandPool, m_swapChain.GetImageCount())),
 	m_imageAvailableSemaphore(m_deviceManager.GetDevice()),
 	m_renderFinishedSemaphore(m_deviceManager.GetDevice()),
 	m_triangle(CreateTriangle(m_deviceManager))
@@ -24,7 +27,7 @@ Renderer::Renderer(const std::vector<const char*>& enabledExtensions, const ISur
 }
 Renderer::~Renderer()
 {
-	vkDeviceWaitIdle(m_deviceManager.GetDevice());
+	m_deviceManager.GetDevice().waitIdle();
 }
 
 void Renderer::CreateDeviceDependentResources()
@@ -32,6 +35,21 @@ void Renderer::CreateDeviceDependentResources()
 }
 void Renderer::CreateWindowSizeDependentResources()
 {
+	const auto& device = m_deviceManager.GetDevice();
+
+	// Wait for the GPU to complete all the work:
+	device.waitIdle();
+
+	// Create a new swap chain:
+	m_swapChain = SwapChain(device, m_surface, m_deviceManager.QuerySwapChainSupport(m_surface), m_deviceManager.GetQueueFamilyIndices(), m_renderPass, m_swapChain);
+
+	// Update viewport and scissor:
+	m_viewport = CreateViewport(m_swapChain.GetExtent());
+	m_scissor = CreateScissor(m_swapChain.GetExtent());
+
+	// Recreate command buffers:
+	m_commandBuffers = CreateCommandBuffers(device, m_commandPool, m_swapChain.GetImageCount());
+	RecordCommands();
 }
 
 bool Renderer::FrameUpdate(const Common::Timer& timer)
@@ -73,7 +91,8 @@ bool Renderer::Render(const Common::Timer& timer)
 		);
 
 		const auto& presentQueue = m_deviceManager.GetPresentQueue();
-		presentQueue.presentKHR(presentInfo);	
+		presentQueue.presentKHR(presentInfo);
+
 		presentQueue.waitIdle();
 	}
 
@@ -83,6 +102,19 @@ bool Renderer::Render(const Common::Timer& timer)
 bool Renderer::IsNextFrameAvailable()
 {
 	return true;
+}
+
+vk::Viewport Renderer::CreateViewport(const vk::Extent2D& extent)
+{
+	return vk::Viewport(
+		0.0f, 0.0f,
+		static_cast<float>(extent.width), static_cast<float>(extent.height),
+		0.0f, 1.0f
+	);
+}
+vk::Rect2D Renderer::CreateScissor(const vk::Extent2D& extent)
+{
+	return vk::Rect2D({ 0, 0 }, extent);
 }
 
 std::vector<vk::UniqueCommandBuffer> Renderer::CreateCommandBuffers(const vk::Device& device, const vk::CommandPool& commandPool, std::uint32_t count)
@@ -98,13 +130,13 @@ RenderItem Renderer::CreateTriangle(const DeviceManager& deviceManager)
 {
 	auto device = deviceManager.GetDevice();
 
-	static const std::vector<Vertex> vertices = 
+	static const std::vector<Vertex> vertices =
 	{
 		{ { -0.5f, 0.5f },{ 1.0f, 1.0f, 1.0f } },
 		{ { 0.5f, 0.5f },{ 0.0f, 1.0f, 0.0f } },
 		{ { 0.0f, -0.5f },{ 0.0f, 0.0f, 1.0f } }
 	};
-	
+
 	VertexBuffer vertexBuffer(deviceManager, static_cast<vk::DeviceSize>(vertices.size() * sizeof(Vertex)));
 	vertexBuffer.CopyData(device, vertices.data());
 
@@ -126,29 +158,25 @@ void Renderer::RecordCommands()
 			std::array<float, 4> clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
 			vk::ClearValue clearValue(clearColor);
 			vk::RenderPassBeginInfo renderPassInfo(
-				m_pipelineStateManager.GetRenderPass(),
+				m_renderPass,
 				m_swapChain.GetFrameBuffer(i),
-				vk::Rect2D({ 0, 0 }, m_deviceManager.GetSwapExtent()),
+				m_scissor,
 				1, &clearValue
 			);
 			commandBuffer.beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
 			{
-				static std::array<vk::Viewport, 1> viewports = 
+				static std::array<vk::Viewport, 1> viewports =
 				{
-					vk::Viewport(
-						0.0f, 0.0f, 
-						static_cast<float>(m_surface.GetWidth()), static_cast<float>(m_surface.GetHeight()), 
-						0.0f, 1.0f
-					)
+					m_viewport
 				};
 				commandBuffer.setViewport(0, viewports);
 
 				static std::array<vk::Rect2D, 1> scissors =
 				{
-					vk::Rect2D(vk::Offset2D(0, 0), m_deviceManager.GetSwapExtent())
+					m_scissor
 				};
 				commandBuffer.setScissor(0, scissors);
-				
+
 				commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_pipelineStateManager.GetGraphicsPipeline());
 				m_triangle.Draw(commandBuffer);
 			}

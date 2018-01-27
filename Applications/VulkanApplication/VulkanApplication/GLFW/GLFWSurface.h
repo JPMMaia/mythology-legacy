@@ -4,14 +4,14 @@
 
 namespace VulkanApplication
 {
-	class GLFWSurfaceBuilder : public VulkanEngine::ISurfaceBuilder
+	class GLFWSurface : public VulkanEngine::ISurface
 	{
 	public:
-		explicit GLFWSurfaceBuilder(GLFWwindow& window);
+		explicit GLFWSurface(GLFWwindow& window);
 
 	public:
 		vk::UniqueSurfaceKHR CreateSurface(const vk::Instance& instance) const override;
-		std::pair<int, int> GetSurfaceSize() const override;
+		vk::Extent2D GetSurfaceExtent() const override;
 
 	private:
 		GLFWwindow& m_window;

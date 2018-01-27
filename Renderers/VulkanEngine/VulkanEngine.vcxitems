@@ -22,7 +22,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Geometry\Vertex.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Layout\PipelineLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\PipelineStateManager.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\RenderPass\RenderPass.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\RenderPass\RenderPass.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Shader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Helpers\DebugMessageHandler.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Helpers\VulkanHelpers.h" />
@@ -51,7 +51,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Configurations\ValidationLayers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Layout\PipelineLayout.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\PipelineStateManager.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\RenderPass\RenderPass.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\RenderPass\RenderPass.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Shader.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Helpers\DebugMessageHandler.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Devices\DeviceManager.cpp" />

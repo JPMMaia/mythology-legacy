@@ -97,7 +97,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(ProjectDir);$(VULKAN_SDK)\Include;$(SolutionDir)ThirdParty\eigen;$(SolutionDir)ThirdParty\glfw\include</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>GLFW_INCLUDE_VULKAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLFW_INCLUDE_VULKAN;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -128,7 +128,8 @@
   <ItemGroup>
     <ClCompile Include="VulkanApplication\Application.cpp" />
     <ClCompile Include="VulkanApplication\GLFW\GLFWManager.cpp" />
-    <ClCompile Include="VulkanApplication\GLFW\GLFWSurfaceBuilder.cpp" />
+    <ClCompile Include="VulkanApplication\GLFW\GLFWSurface.cpp" />
+    <ClCompile Include="VulkanApplication\GLFW\Window.cpp" />
     <ClCompile Include="VulkanApplication\main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -139,7 +140,8 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="VulkanApplication\Application.h" />
     <ClInclude Include="VulkanApplication\GLFW\GLFWManager.h" />
-    <ClInclude Include="VulkanApplication\GLFW\GLFWSurfaceBuilder.h" />
+    <ClInclude Include="VulkanApplication\GLFW\GLFWSurface.h" />
+    <ClInclude Include="VulkanApplication\GLFW\Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

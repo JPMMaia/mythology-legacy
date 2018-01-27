@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "GLFWManager.h"
-#include "GLFWSurfaceBuilder.h"
+#include "GLFWSurface.h"
 
 using namespace VulkanApplication;
 
@@ -31,7 +31,7 @@ std::vector<const char*> GLFWManager::GetExtensions() const
 	return output;
 }
 
-std::unique_ptr<VulkanEngine::ISurfaceBuilder> GLFWManager::CreateSurfaceBuilder(GLFWwindow& window) const
+std::unique_ptr<VulkanEngine::ISurface> GLFWManager::CreateSurfaceBuilder(GLFWwindow& window) const
 {
-	return std::make_unique<GLFWSurfaceBuilder>(window);
+	return std::make_unique<GLFWSurface>(window);
 }

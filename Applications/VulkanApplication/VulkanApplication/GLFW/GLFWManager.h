@@ -12,6 +12,6 @@ namespace VulkanApplication
 
 	public:
 		std::vector<const char*> GetExtensions() const;
-		std::unique_ptr<VulkanEngine::ISurfaceBuilder> CreateSurfaceBuilder(GLFWwindow& window) const;
+		std::unique_ptr<VulkanEngine::ISurface> CreateSurfaceBuilder(GLFWwindow& window) const;
 	};
 }

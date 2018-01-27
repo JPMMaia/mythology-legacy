@@ -18,12 +18,7 @@ DeviceManager::DeviceManager(const vk::Instance& instance, const Surface& surfac
 	m_queueFamilyIndices(FindQueueFamilies(m_physicalDevice, surface)),
 	m_device(CreateLogicalDevice(instance, m_physicalDevice, surface, m_queueFamilyIndices)),
 	m_graphicsQueue(CreateGraphicsQueue(m_device.get(), m_queueFamilyIndices.GraphicsFamily)),
-	m_presentQueue(CreatePresentQueue(m_device.get(), m_queueFamilyIndices.PresentFamily)),
-	m_swapChainSupportDetails(QuerySwapChainSupport(m_physicalDevice, surface)),
-	m_swapSurfaceFormat(ChooseSwapSurfaceFormat(m_swapChainSupportDetails.Formats)),
-	m_swapPresentMode(ChooseSwapPresentMode(m_swapChainSupportDetails.PresentModes)),
-	m_swapExtent(ChooseSwapExtent(m_swapChainSupportDetails.Capabilities, surface.GetWidth(), surface.GetHeight())),
-	m_imageCount(ChooseImageCount(m_swapChainSupportDetails.Capabilities))
+	m_presentQueue(CreatePresentQueue(m_device.get(), m_queueFamilyIndices.PresentFamily))
 {
 }
 
@@ -39,6 +34,11 @@ std::uint32_t DeviceManager::FindBufferMemoryIndexType(std::uint32_t typeFilter,
 	}
 
 	throw std::runtime_error("Failed to find a suitable memory index type!");
+}
+
+SwapChainSupportDetails DeviceManager::QuerySwapChainSupport(const vk::SurfaceKHR& surface) const
+{
+	return QuerySwapChainSupport(m_physicalDevice, surface);
 }
 
 const vk::PhysicalDevice& DeviceManager::GetPhysicalDevice() const
@@ -60,30 +60,6 @@ const vk::Queue& DeviceManager::GetGraphicsQueue() const
 const vk::Queue& DeviceManager::GetPresentQueue() const
 {
 	return m_presentQueue;
-}
-const SwapChainSupportDetails& DeviceManager::GetSwapChainSupportDetails() const
-{
-	return m_swapChainSupportDetails;
-}
-const vk::SurfaceFormatKHR& DeviceManager::GetSwapSurfaceFormat() const
-{
-	return m_swapSurfaceFormat;
-}
-vk::SurfaceTransformFlagBitsKHR DeviceManager::GetPreTransform() const
-{
-	return m_swapChainSupportDetails.Capabilities.currentTransform;
-}
-vk::PresentModeKHR DeviceManager::GetSwapPresentMode() const
-{
-	return m_swapPresentMode;
-}
-const vk::Extent2D& DeviceManager::GetSwapExtent() const
-{
-	return m_swapExtent;
-}
-std::uint32_t DeviceManager::GetImageCount() const
-{
-	return m_imageCount;
 }
 
 vk::PhysicalDevice DeviceManager::QueryPhysicalDevices(const vk::Instance& instance, const vk::SurfaceKHR& surface)
@@ -138,6 +114,16 @@ bool DeviceManager::CheckDeviceExtensionSupport(const vk::PhysicalDevice& device
 		requiredExtensions.erase(extension.extensionName);
 
 	return requiredExtensions.empty();
+}
+SwapChainSupportDetails DeviceManager::QuerySwapChainSupport(const vk::PhysicalDevice& device, const vk::SurfaceKHR & surface)
+{
+	SwapChainSupportDetails details;
+
+	details.Capabilities = device.getSurfaceCapabilitiesKHR(surface);
+	details.Formats = device.getSurfaceFormatsKHR(surface);
+	details.PresentModes = device.getSurfacePresentModesKHR(surface);
+
+	return details;
 }
 
 vk::UniqueDevice DeviceManager::CreateLogicalDevice(const vk::Instance& instance, const vk::PhysicalDevice& physicalDevice, const vk::SurfaceKHR& surface, const QueueFamilyIndices& queueFamilyIndices)
@@ -205,60 +191,4 @@ vk::Queue DeviceManager::CreateGraphicsQueue(const vk::Device& device, int graph
 vk::Queue DeviceManager::CreatePresentQueue(const vk::Device& device, int presentFamily)
 {
 	return device.getQueue(presentFamily, 0);
-}
-
-SwapChainSupportDetails DeviceManager::QuerySwapChainSupport(const vk::PhysicalDevice& device, const vk::SurfaceKHR& surface)
-{
-	SwapChainSupportDetails details;
-
-	details.Capabilities = device.getSurfaceCapabilitiesKHR(surface);	
-	details.Formats = device.getSurfaceFormatsKHR(surface);
-	details.PresentModes = device.getSurfacePresentModesKHR(surface);
-
-	return details;
-}
-vk::SurfaceFormatKHR DeviceManager::ChooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats)
-{
-	if (availableFormats.size() == 1 && availableFormats[0].format == vk::Format::eUndefined)
-		return { vk::Format::eB8G8R8A8Unorm, vk::ColorSpaceKHR::eSrgbNonlinear };
-
-	for (const auto& availableFormat : availableFormats)
-	{
-		if (availableFormat.format == vk::Format::eB8G8R8A8Unorm && availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear)
-			return availableFormat;
-	}
-
-	return availableFormats[0];
-}
-vk::PresentModeKHR DeviceManager::ChooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& availablePresentModes)
-{
-	auto bestMode = vk::PresentModeKHR::eFifo;
-
-	for (const auto& availablePresentMode : availablePresentModes)
-	{
-		if (availablePresentMode == vk::PresentModeKHR::eMailbox)
-			return availablePresentMode;
-		else if (availablePresentMode == vk::PresentModeKHR::eImmediate)
-			bestMode = availablePresentMode;
-	}
-
-	return bestMode;
-}
-vk::Extent2D DeviceManager::ChooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities, std::uint32_t width, std::uint32_t height)
-{
-	if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
-		return capabilities.currentExtent;
-
-	vk::Extent2D actualExtent(width, height);
-	actualExtent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
-	actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
-	return actualExtent;
-}
-std::uint32_t DeviceManager::ChooseImageCount(const vk::SurfaceCapabilitiesKHR& capabilities)
-{
-	auto imageCount = capabilities.minImageCount + 1;
-	if (capabilities.maxImageCount > 0 && imageCount > capabilities.maxImageCount)
-		imageCount = capabilities.maxImageCount;
-
-	return imageCount;
 }

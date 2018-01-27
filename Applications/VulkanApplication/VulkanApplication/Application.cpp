@@ -5,10 +5,12 @@
 using namespace VulkanApplication;
 using namespace VulkanEngine;
 
-Application::Application()
+Application::Application() :
+	m_glfw(),
+	m_window("Vulkan Application", 800, 600),
+	m_renderer(CreateRenderer(m_glfw, *m_window.get()))
 {
-	InitializeWindow();
-	InitializeRenderer();
+	m_window.OnResize += { "Application", this, &Application::OnWindowResizeCallback };
 }
 
 void Application::Run()
@@ -17,11 +19,11 @@ void Application::Run()
 	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
 
 	std::cout << extensionCount << " extensions supported" << std::endl;
-	
+
 	Common::Timer timer;
 	timer.Reset();
 
-	while (!glfwWindowShouldClose(m_window.get())) 
+	while (!glfwWindowShouldClose(m_window.get()))
 	{
 		glfwPollEvents();
 
@@ -33,18 +35,15 @@ void Application::Run()
 	}
 }
 
-void Application::InitializeWindow()
+std::unique_ptr<VulkanEngine::Renderer> Application::CreateRenderer(const GLFWManager& glfw, GLFWwindow& window)
 {
-	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-	m_window = VulkanUniquePointer<GLFWwindow>(
-		glfwCreateWindow(c_width, c_height, "Vulkan window", nullptr, nullptr),
-		[](GLFWwindow* window) { glfwDestroyWindow(window); }
-	);
+	return std::make_unique<Renderer>(
+		glfw.GetExtensions(),
+		glfw.CreateSurfaceBuilder(window)
+		);
 }
-void Application::InitializeRenderer()
+
+void Application::OnWindowResizeCallback(int width, int height)
 {
-	m_renderer = std::make_unique<Renderer>(m_glfw.GetExtensions(), *m_glfw.CreateSurfaceBuilder(*m_window));
-	m_renderer->CreateDeviceDependentResources();
 	m_renderer->CreateWindowSizeDependentResources();
 }

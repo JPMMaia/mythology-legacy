@@ -1,25 +1,25 @@
 #include "pch.h"
-#include "GLFWSurfaceBuilder.h"
+#include "GLFWSurface.h"
 #include "VulkanEngine/Helpers/VulkanHelpers.h"
 
 using namespace VulkanApplication;
 using namespace VulkanEngine;
 
-GLFWSurfaceBuilder::GLFWSurfaceBuilder(GLFWwindow& window) :
+GLFWSurface::GLFWSurface(GLFWwindow& window) :
 	m_window(window)
 {
 }
 
-vk::UniqueSurfaceKHR GLFWSurfaceBuilder::CreateSurface(const vk::Instance& instance) const
+vk::UniqueSurfaceKHR GLFWSurface::CreateSurface(const vk::Instance& instance) const
 {
 	VkSurfaceKHR surface;
 	ThrowIfFailed(glfwCreateWindowSurface(instance, &m_window, nullptr, &surface));
 	return vk::UniqueSurfaceKHR(surface, vk::SurfaceKHRDeleter(instance));
 }
 
-std::pair<int, int> GLFWSurfaceBuilder::GetSurfaceSize() const
+vk::Extent2D GLFWSurface::GetSurfaceExtent() const
 {
 	int width, height;
 	glfwGetWindowSize(&m_window, &width, &height);
-	return std::make_pair(width, height);
+	return { static_cast<std::uint32_t>(width), static_cast<std::uint32_t>(height) };
 }

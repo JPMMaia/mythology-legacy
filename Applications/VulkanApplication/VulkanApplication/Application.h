@@ -1,8 +1,8 @@
 #pragma once
 
 #include "GLFW/GLFWManager.h"
+#include "GLFW/Window.h"
 #include "VulkanEngine/VulkanRenderer.h"
-#include "VulkanEngine/Helpers/VulkanHelpers.h"
 
 namespace VulkanApplication
 {
@@ -15,12 +15,14 @@ namespace VulkanApplication
 		void Run();
 
 	private:
-		void InitializeWindow();
-		void InitializeRenderer();
+		static std::unique_ptr<VulkanEngine::Renderer> CreateRenderer(const GLFWManager& glfw, GLFWwindow& window);
+
+	private:
+		void OnWindowResizeCallback(int width, int height);
 
 	private:
 		GLFWManager m_glfw;
-		VulkanEngine::VulkanUniquePointer<GLFWwindow> m_window;
+		Window m_window;
 		std::unique_ptr<VulkanEngine::Renderer> m_renderer;
 
 	private:

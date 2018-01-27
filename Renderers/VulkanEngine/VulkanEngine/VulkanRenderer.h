@@ -20,7 +20,7 @@ namespace VulkanEngine
 	class Renderer : public RenderEngine::IRenderer
 	{
 	public:
-		explicit Renderer(const std::vector<const char*>& enabledExtensions, const ISurfaceBuilder& surfaceBuilder);
+		explicit Renderer(const std::vector<const char*>& enabledExtensions, std::unique_ptr<ISurface> surfaceInterface);
 		virtual ~Renderer();
 
 	public:
@@ -35,6 +35,8 @@ namespace VulkanEngine
 		bool IsNextFrameAvailable() override;
 
 	private:
+		static vk::Viewport CreateViewport(const vk::Extent2D& extent);
+		static vk::Rect2D CreateScissor(const vk::Extent2D& extent);
 		static std::vector<vk::UniqueCommandBuffer> CreateCommandBuffers(const vk::Device& device, const vk::CommandPool& commandPool, std::uint32_t count);
 		static RenderItem CreateTriangle(const DeviceManager& deviceManager);
 
@@ -51,8 +53,11 @@ namespace VulkanEngine
 #endif
 		Surface m_surface;
 		DeviceManager m_deviceManager;
+		RenderPass m_renderPass;
 		PipelineStateManager m_pipelineStateManager;
 		SwapChain m_swapChain;
+		vk::Viewport m_viewport;
+		vk::Rect2D m_scissor;
 		CommandPool m_commandPool;
 		std::vector<vk::UniqueCommandBuffer> m_commandBuffers;
 		Semaphore m_imageAvailableSemaphore;

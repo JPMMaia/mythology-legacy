@@ -22,7 +22,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\InputAssemblyState.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\DynamicState.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Layout\PipelineLayout.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\RenderPass\RenderPass.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ColorBlendAttachment.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\CommandPool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Synchronization\Semaphore.h" />
@@ -31,6 +30,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\VertexBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\RenderItems\RenderItem.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Geometry\SubmeshGeometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\RenderPass\RenderPass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanRenderer.cpp" />
@@ -50,13 +50,13 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\InputAssemblyState.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\DynamicState.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Layout\PipelineLayout.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\RenderPass\RenderPass.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ColorBlendAttachment.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\CommandPool.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Synchronization\Semaphore.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Configurations\ValidationLayers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\VertexBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\RenderItems\RenderItem.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\RenderPass\RenderPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)VulkanEngine\Shaders\Shader.vert" />
