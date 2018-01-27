@@ -17,7 +17,7 @@ namespace VulkanEngine
 		const vk::SurfaceFormatKHR& GetSurfaceFormat() const;
 		vk::PresentModeKHR GetPresentMode() const;
 		std::uint32_t GetImageCount() const;
-		const vk::Framebuffer& GetFrameBuffer(std::size_t index) const;
+		const std::vector<vk::UniqueImageView>& GetImageViews() const;
 
 	public:
 		operator const vk::SwapchainKHR&() const;
@@ -30,7 +30,6 @@ namespace VulkanEngine
 		static vk::UniqueSwapchainKHR CreateSwapChain(const vk::Device& device, const vk::SurfaceKHR& surface, const QueueFamilyIndices& queueFamilyIndices, const vk::Extent2D& extent, const vk::SurfaceFormatKHR& surfaceFormat, vk::PresentModeKHR presentMode, std::uint32_t imageCount, vk::SurfaceTransformFlagBitsKHR preTransform, vk::SwapchainKHR oldSwapChain);
 		static std::vector<vk::Image> CreateImages(const vk::Device& device, const vk::SwapchainKHR& swapChain);
 		static std::vector<vk::UniqueImageView> CreateImageViews(const vk::Device& device, const std::vector<vk::Image>& images, vk::Format imageFormat);
-		static std::vector<vk::UniqueFramebuffer> CreateFrameBuffers(const vk::Device& device, const std::vector<vk::UniqueImageView>& imageViews, const vk::Extent2D& extent, const vk::RenderPass& renderPass);
 
 	private:
 		vk::Extent2D m_extent;
@@ -40,6 +39,5 @@ namespace VulkanEngine
 		vk::UniqueSwapchainKHR m_swapChain;
 		std::vector<vk::Image> m_images;
 		std::vector<vk::UniqueImageView> m_imageViews;
-		std::vector<vk::UniqueFramebuffer> m_framebuffers;
 	};
 }

@@ -35,6 +35,7 @@ namespace VulkanEngine
 		bool IsNextFrameAvailable() override;
 
 	private:
+		static std::vector<vk::UniqueFramebuffer> CreateFrameBuffers(const vk::Device& device, const std::vector<vk::UniqueImageView>& imageViews, const vk::Extent2D& extent, const vk::RenderPass& renderPass);
 		static vk::Viewport CreateViewport(const vk::Extent2D& extent);
 		static vk::Rect2D CreateScissor(const vk::Extent2D& extent);
 		static std::vector<vk::UniqueCommandBuffer> CreateCommandBuffers(const vk::Device& device, const vk::CommandPool& commandPool, std::uint32_t count);
@@ -53,9 +54,10 @@ namespace VulkanEngine
 #endif
 		Surface m_surface;
 		DeviceManager m_deviceManager;
+		SwapChain m_swapChain;
 		RenderPass m_renderPass;
 		PipelineStateManager m_pipelineStateManager;
-		SwapChain m_swapChain;
+		std::vector<vk::UniqueFramebuffer> m_framebuffers;
 		vk::Viewport m_viewport;
 		vk::Rect2D m_scissor;
 		CommandPool m_commandPool;

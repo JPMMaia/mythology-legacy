@@ -12,9 +12,10 @@ Renderer::Renderer(const std::vector<const char*>& enabledExtensions, std::uniqu
 #endif
 	m_surface(std::move(surfaceInterface), m_instance),
 	m_deviceManager(m_instance, m_surface),
-	m_renderPass(m_deviceManager.GetDevice(), vk::Format::eB8G8R8A8Unorm), // TODO change hardcoded
-	m_pipelineStateManager(m_deviceManager.GetDevice(), m_renderPass),
 	m_swapChain(m_deviceManager.GetDevice(), m_surface, m_deviceManager.QuerySwapChainSupport(m_surface), m_deviceManager.GetQueueFamilyIndices(), m_renderPass),
+	m_renderPass(m_deviceManager.GetDevice(), m_swapChain.GetSurfaceFormat().format),
+	m_pipelineStateManager(m_deviceManager.GetDevice(), m_renderPass),
+	m_framebuffers(CreateFrameBuffers(m_deviceManager.GetDevice(), m_swapChain.GetImageViews(), m_swapChain.GetExtent(), m_renderPass)),
 	m_viewport(CreateViewport(m_swapChain.GetExtent())),
 	m_scissor(CreateScissor(m_swapChain.GetExtent())),
 	m_commandPool(m_deviceManager.GetDevice(), m_deviceManager.GetQueueFamilyIndices()),
@@ -43,11 +44,14 @@ void Renderer::CreateWindowSizeDependentResources()
 	// Create a new swap chain:
 	m_swapChain = SwapChain(device, m_surface, m_deviceManager.QuerySwapChainSupport(m_surface), m_deviceManager.GetQueueFamilyIndices(), m_renderPass, m_swapChain);
 
+	// Create new frame buffers:
+	m_framebuffers = CreateFrameBuffers(device, m_swapChain.GetImageViews(), m_swapChain.GetExtent(), m_renderPass);
+
 	// Update viewport and scissor:
 	m_viewport = CreateViewport(m_swapChain.GetExtent());
 	m_scissor = CreateScissor(m_swapChain.GetExtent());
 
-	// Recreate command buffers:
+	// Create command buffers:
 	m_commandBuffers = CreateCommandBuffers(device, m_commandPool, m_swapChain.GetImageCount());
 	RecordCommands();
 }
@@ -104,6 +108,30 @@ bool Renderer::IsNextFrameAvailable()
 	return true;
 }
 
+std::vector<vk::UniqueFramebuffer> Renderer::CreateFrameBuffers(const vk::Device& device, const std::vector<vk::UniqueImageView>& imageViews, const vk::Extent2D& extent, const vk::RenderPass& renderPass)
+{
+	std::vector<vk::UniqueFramebuffer> frameBuffers(imageViews.size());
+
+	for (std::size_t i = 0; i < frameBuffers.size(); i++)
+	{
+		std::array<vk::ImageView, 1> attachments =
+		{
+			imageViews[i].get()
+		};
+
+		vk::FramebufferCreateInfo framebufferInfo(
+			{},
+			renderPass,
+			static_cast<std::uint32_t>(attachments.size()), attachments.data(),
+			extent.width, extent.height,
+			1
+		);
+
+		frameBuffers[i] = device.createFramebufferUnique(framebufferInfo);
+	}
+
+	return frameBuffers;
+}
 vk::Viewport Renderer::CreateViewport(const vk::Extent2D& extent)
 {
 	return vk::Viewport(
@@ -159,7 +187,7 @@ void Renderer::RecordCommands()
 			vk::ClearValue clearValue(clearColor);
 			vk::RenderPassBeginInfo renderPassInfo(
 				m_renderPass,
-				m_swapChain.GetFrameBuffer(i),
+				m_framebuffers[i].get(),
 				m_scissor,
 				1, &clearValue
 			);

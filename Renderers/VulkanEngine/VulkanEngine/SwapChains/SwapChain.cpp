@@ -11,8 +11,7 @@ SwapChain::SwapChain(vk::Device device, const Surface& surface, const SwapChainS
 	m_imageCount(ChooseImageCount(supportDetails)),
 	m_swapChain(CreateSwapChain(device, surface, queueFamilyIndices, m_extent, m_surfaceFormat, m_presentMode, m_imageCount, supportDetails.Capabilities.currentTransform, oldSwapChain)),
 	m_images(CreateImages(device, m_swapChain.get())),
-	m_imageViews(CreateImageViews(device, m_images, m_surfaceFormat.format)),
-	m_framebuffers(CreateFrameBuffers(device, m_imageViews, m_extent, renderPass))
+	m_imageViews(CreateImageViews(device, m_images, m_surfaceFormat.format))
 {
 }
 
@@ -32,9 +31,9 @@ std::uint32_t SwapChain::GetImageCount() const
 {
 	return m_imageCount;
 }
-const vk::Framebuffer& SwapChain::GetFrameBuffer(std::size_t index) const
+const std::vector<vk::UniqueImageView>& SwapChain::GetImageViews() const
 {
-	return m_framebuffers[index].get();
+	return m_imageViews;
 }
 
 SwapChain::operator const vk::SwapchainKHR&() const
@@ -146,28 +145,4 @@ std::vector<vk::UniqueImageView> SwapChain::CreateImageViews(const vk::Device& d
 	}
 
 	return imageViews;
-}
-std::vector<vk::UniqueFramebuffer> SwapChain::CreateFrameBuffers(const vk::Device& device, const std::vector<vk::UniqueImageView>& imageViews, const vk::Extent2D& extent, const vk::RenderPass& renderPass)
-{
-	std::vector<vk::UniqueFramebuffer> frameBuffers(imageViews.size());
-
-	for (std::size_t i = 0; i < frameBuffers.size(); i++)
-	{
-		std::array<vk::ImageView, 1> attachments = 
-		{
-			imageViews[i].get()
-		};
-
-		vk::FramebufferCreateInfo framebufferInfo(
-			{},
-			renderPass,
-			static_cast<std::uint32_t>(attachments.size()), attachments.data(),
-			extent.width, extent.height,
-			1
-		);
-
-		frameBuffers[i] = device.createFramebufferUnique(framebufferInfo);
-	}
-
-	return frameBuffers;
 }
