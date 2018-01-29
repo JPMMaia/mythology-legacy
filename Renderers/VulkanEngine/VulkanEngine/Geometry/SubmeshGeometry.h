@@ -6,9 +6,10 @@ namespace VulkanEngine
 {
 	struct SubmeshGeometry
 	{
-		std::uint32_t VertexCount;
+		std::uint32_t IndexCount;
 		std::uint32_t InstanceCount;
-		std::uint32_t FirstVertex;
+		std::uint32_t FirstIndex;
+		std::uint32_t VertexOffset;
 		std::uint32_t FirstInstance;
 	};
 }

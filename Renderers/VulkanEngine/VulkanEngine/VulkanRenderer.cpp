@@ -152,33 +152,44 @@ RenderItem Renderer::CreateTriangle(const DeviceManager& deviceManager, UploadDa
 {
 	static const std::vector<Vertex> vertices =
 	{
-		{ { -0.5f, 0.5f },{ 1.0f, 1.0f, 1.0f } },
-	{ { 0.5f, 0.5f },{ 0.0f, 1.0f, 0.0f } },
-	{ { 0.0f, -0.5f },{ 0.0f, 0.0f, 1.0f } }
+		{ { -0.5f, -0.5f },{ 1.0f, 0.0f, 0.0f } },
+		{ { -0.5f, 0.5f },{ 0.0f, 1.0f, 0.0f } },
+		{ { 0.5f, -0.5f },{ 0.0f, 0.0f, 1.0f } },
+		{ { 0.5f, 0.5f },{ 1.0f, 1.0f, 1.0f } }
 	};
-	auto bufferSize = static_cast<vk::DeviceSize>(vertices.size() * sizeof(Vertex));
-	VertexBuffer vertexBuffer(deviceManager, bufferSize);
+	auto vertexBufferSize = static_cast<vk::DeviceSize>(vertices.size() * sizeof(Vertex));
+	VertexBuffer vertexBuffer(deviceManager, vertexBufferSize);
 
-	{		
-		// Create upload buffer:
-		auto& uploadBuffer = uploadDataManager.CreateUploadBuffer(deviceManager, bufferSize);
+	using IndexType = std::uint16_t;
+	static const std::vector<IndexType> indices =
+	{
+		0, 1, 2,
+		2, 1, 3,
+	};
+	auto indexBufferSize = static_cast<vk::DeviceSize>(indices.size() * sizeof(IndexType));
+	IndexBuffer indexBuffer(deviceManager, indexBufferSize, vk::IndexType::eUint16);
 
-		// Set the values of the buffer:
-		uploadBuffer.SetData(deviceManager.GetDevice(), vertices.data());
+	{				
+		auto& vertexUploadBuffer = uploadDataManager.CreateUploadBuffer(deviceManager, vertexBufferSize);
+		vertexUploadBuffer.SetData(deviceManager.GetDevice(), vertices.data());
+
+		auto& indexUploadBuffer = uploadDataManager.CreateUploadBuffer(deviceManager, indexBufferSize);
+		indexUploadBuffer.SetData(deviceManager.GetDevice(), indices.data());
 
 		// Submit commands in order to copy the values from the upload buffer to the vertex buffer:
 		{
 			auto commandBuffer = uploadDataManager.CreateCommandBuffer(vk::CommandBufferLevel::ePrimary);
 			commandBuffer.begin(vk::CommandBufferBeginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit));
 
-			uploadBuffer.CopyTo(deviceManager.GetDevice(), commandBuffer, vertexBuffer.Get());
+			vertexUploadBuffer.CopyTo(deviceManager.GetDevice(), commandBuffer, *vertexBuffer);
+			indexUploadBuffer.CopyTo(deviceManager.GetDevice(), commandBuffer, *indexBuffer);
 
 			commandBuffer.end();
 		}		
 	}
 
-	SubmeshGeometry submesh = { static_cast<std::uint32_t>(vertices.size()), 1, 0, 0 };
-	return RenderItem(std::move(vertexBuffer), submesh);
+	SubmeshGeometry submesh = { static_cast<std::uint32_t>(indices.size()), 1, 0, 0, 0 };
+	return RenderItem(std::move(vertexBuffer), std::move(indexBuffer), submesh);
 }
 
 void Renderer::RecordCommands()

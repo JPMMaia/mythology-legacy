@@ -10,7 +10,7 @@ namespace VulkanEngine
 		Buffer(const DeviceManager& deviceManager, vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags memoryProperties);
 
 	public:
-		vk::Buffer Get();
+		vk::Buffer operator*();
 
 	private:
 		static vk::UniqueBuffer CreateBuffer(vk::Device device, vk::DeviceSize size, vk::BufferUsageFlags usage);

@@ -11,7 +11,7 @@ Buffer::Buffer(const DeviceManager& deviceManager, vk::DeviceSize size, vk::Buff
 	BindBufferMemory(deviceManager.GetDevice());
 }
 
-vk::Buffer Buffer::Get()
+vk::Buffer Buffer::operator*()
 {
 	return m_buffer.get();
 }

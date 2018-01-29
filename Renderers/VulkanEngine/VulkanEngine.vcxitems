@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\Buffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\IndexBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\UploadBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\UploadDataManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\VertexBuffer.h" />
@@ -50,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\Buffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\IndexBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\UploadBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\VertexBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\CommandPool.cpp" />
