@@ -9,9 +9,9 @@ RenderItem::RenderItem(VertexBuffer&& vertexBuffer, const SubmeshGeometry& subme
 {
 }
 
-void RenderItem::Draw(const vk::CommandBuffer& commandBuffer)
+void RenderItem::Draw(vk::Device device, vk::CommandBuffer commandBuffer)
 {
-	m_vertexBuffer.Bind(commandBuffer);
+	m_vertexBuffer.Bind(device, commandBuffer);
 
 	commandBuffer.draw(
 		m_submesh.VertexCount, 

@@ -14,6 +14,9 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\Buffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\UploadBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\UploadDataManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\VertexBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\CommandPool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Configurations\ValidationLayers.h" />
@@ -46,8 +49,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Surfaces\Surface.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\Buffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\UploadBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\VertexBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\CommandPool.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\UploadDataManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Configurations\ValidationLayers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Layout\PipelineLayout.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\PipelineStateManager.cpp" />

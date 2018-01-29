@@ -18,13 +18,16 @@ Renderer::Renderer(const std::vector<const char*>& enabledExtensions, std::uniqu
 	m_framebuffers(CreateFrameBuffers(m_deviceManager.GetDevice(), m_swapChain.GetImageViews(), m_swapChain.GetExtent(), m_renderPass)),
 	m_viewport(CreateViewport(m_swapChain.GetExtent())),
 	m_scissor(CreateScissor(m_swapChain.GetExtent())),
-	m_commandPool(m_deviceManager.GetDevice(), m_deviceManager.GetQueueFamilyIndices()),
-	m_commandBuffers(CreateCommandBuffers(m_deviceManager.GetDevice(), m_commandPool, m_swapChain.GetImageCount())),
+	m_defaultCommandPool(CommandPool::CreateDefaultCommandPool(m_deviceManager.GetDevice(), m_deviceManager.GetQueueFamilyIndices())),
+	m_temporaryCommandPool(CommandPool::CreateTemporaryCommandPool(m_deviceManager.GetDevice(), m_deviceManager.GetQueueFamilyIndices())),
+	m_commandBuffers(m_defaultCommandPool.CreateCommandBuffers(m_deviceManager.GetDevice(), vk::CommandBufferLevel::ePrimary, m_swapChain.GetImageCount())),
+	m_uploadDataManager(m_deviceManager.GetDevice(), m_temporaryCommandPool),
 	m_imageAvailableSemaphore(m_deviceManager.GetDevice()),
 	m_renderFinishedSemaphore(m_deviceManager.GetDevice()),
-	m_triangle(CreateTriangle(m_deviceManager))
+	m_triangle(CreateTriangle(m_deviceManager, m_uploadDataManager))
 {
 	RecordCommands();
+	m_uploadDataManager.SubmitAllAndWait(m_deviceManager.GetGraphicsQueue());
 }
 Renderer::~Renderer()
 {
@@ -52,7 +55,7 @@ void Renderer::CreateWindowSizeDependentResources()
 	m_scissor = CreateScissor(m_swapChain.GetExtent());
 
 	// Create command buffers:
-	m_commandBuffers = CreateCommandBuffers(device, m_commandPool, m_swapChain.GetImageCount());
+	m_commandBuffers = m_defaultCommandPool.CreateCommandBuffers(device, vk::CommandBufferLevel::ePrimary, m_swapChain.GetImageCount());
 	RecordCommands();
 }
 
@@ -145,28 +148,34 @@ vk::Rect2D Renderer::CreateScissor(const vk::Extent2D& extent)
 	return vk::Rect2D({ 0, 0 }, extent);
 }
 
-std::vector<vk::UniqueCommandBuffer> Renderer::CreateCommandBuffers(const vk::Device& device, const vk::CommandPool& commandPool, std::uint32_t count)
+RenderItem Renderer::CreateTriangle(const DeviceManager& deviceManager, UploadDataManager& uploadDataManager)
 {
-	vk::CommandBufferAllocateInfo commandBufferInfo(
-		commandPool,
-		vk::CommandBufferLevel::ePrimary,
-		count
-	);
-	return device.allocateCommandBuffersUnique(commandBufferInfo);
-}
-RenderItem Renderer::CreateTriangle(const DeviceManager& deviceManager)
-{
-	auto device = deviceManager.GetDevice();
-
 	static const std::vector<Vertex> vertices =
 	{
 		{ { -0.5f, 0.5f },{ 1.0f, 1.0f, 1.0f } },
-		{ { 0.5f, 0.5f },{ 0.0f, 1.0f, 0.0f } },
-		{ { 0.0f, -0.5f },{ 0.0f, 0.0f, 1.0f } }
+	{ { 0.5f, 0.5f },{ 0.0f, 1.0f, 0.0f } },
+	{ { 0.0f, -0.5f },{ 0.0f, 0.0f, 1.0f } }
 	};
+	auto bufferSize = static_cast<vk::DeviceSize>(vertices.size() * sizeof(Vertex));
+	VertexBuffer vertexBuffer(deviceManager, bufferSize);
 
-	VertexBuffer vertexBuffer(deviceManager, static_cast<vk::DeviceSize>(vertices.size() * sizeof(Vertex)));
-	vertexBuffer.CopyData(device, vertices.data());
+	{		
+		// Create upload buffer:
+		auto& uploadBuffer = uploadDataManager.CreateUploadBuffer(deviceManager, bufferSize);
+
+		// Set the values of the buffer:
+		uploadBuffer.SetData(deviceManager.GetDevice(), vertices.data());
+
+		// Submit commands in order to copy the values from the upload buffer to the vertex buffer:
+		{
+			auto commandBuffer = uploadDataManager.CreateCommandBuffer(vk::CommandBufferLevel::ePrimary);
+			commandBuffer.begin(vk::CommandBufferBeginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit));
+
+			uploadBuffer.CopyTo(deviceManager.GetDevice(), commandBuffer, vertexBuffer.Get());
+
+			commandBuffer.end();
+		}		
+	}
 
 	SubmeshGeometry submesh = { static_cast<std::uint32_t>(vertices.size()), 1, 0, 0 };
 	return RenderItem(std::move(vertexBuffer), submesh);
@@ -206,7 +215,7 @@ void Renderer::RecordCommands()
 				commandBuffer.setScissor(0, scissors);
 
 				commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_pipelineStateManager.GetGraphicsPipeline());
-				m_triangle.Draw(commandBuffer);
+				m_triangle.Draw(m_deviceManager.GetDevice(), commandBuffer);
 			}
 			commandBuffer.endRenderPass();
 		}

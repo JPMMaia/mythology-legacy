@@ -11,7 +11,7 @@ namespace VulkanEngine
 		explicit RenderItem(VertexBuffer&& vertexBuffer, const SubmeshGeometry& submesh);
 
 	public:
-		void Draw(const vk::CommandBuffer& commandBuffer);
+		void Draw(vk::Device device, vk::CommandBuffer commandBuffer);
 
 	private:
 		VertexBuffer m_vertexBuffer;

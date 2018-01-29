@@ -31,6 +31,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\RenderItems\RenderItem.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Geometry\SubmeshGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\RenderPass\RenderPass.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\Buffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\UploadBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\UploadDataManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\VulkanRenderer.cpp" />
@@ -57,6 +60,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\VertexBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\RenderItems\RenderItem.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\RenderPass\RenderPass.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\Buffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\UploadBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\UploadDataManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)VulkanEngine\Shaders\Shader.vert" />
