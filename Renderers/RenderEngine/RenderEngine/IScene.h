@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Geometry/MeshData.h"
+#include "Geometry/Vertex.h"
 #include "Materials/Material.h"
 #include "Instances/Instance.h"
 
@@ -11,7 +12,7 @@ namespace Common
 
 namespace RenderEngine
 {
-	enum class RenderLayer;
+	struct RenderParameters;
 
 	class IScene
 	{
@@ -19,15 +20,16 @@ namespace RenderEngine
 		virtual ~IScene() = default;
 
 	public:
-		virtual void CreateDeviceDependentResources() = 0;
-		virtual void CreateWindowSizeDependentResources() = 0;
+		virtual void RecreateDeviceDependentResources() = 0;
+		virtual void RecreateWindowSizeDependentResources() = 0;
 
 	public:
 		virtual void FrameUpdate(const Common::Timer& timer) = 0;
-		virtual bool Render(const Common::Timer& timer, RenderLayer renderLayer) = 0;
+		virtual bool Render(const RenderParameters& renderParameters) = 0;
 
 	public:
-		virtual void CreateMesh(const std::string& name, const MeshData& meshData) = 0;
+		virtual void CreateMesh(const std::string& name, const MeshData<RenderEngine::Vertex, std::uint16_t>& meshData) = 0;
+		virtual void CreateMesh(const std::string& name, const MeshData<RenderEngine::Vertex, std::uint32_t>& meshData) = 0;
 		virtual void DeleteMesh(const std::string& name) = 0;
 		
 		virtual void CreateMaterial(const std::string& name, const Material& material) = 0;

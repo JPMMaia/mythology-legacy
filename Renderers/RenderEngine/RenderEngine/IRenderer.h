@@ -13,8 +13,8 @@ namespace RenderEngine
 		virtual ~IRenderer() = default;
 
 	public:
-		virtual void CreateDeviceDependentResources() = 0;
-		virtual void CreateWindowSizeDependentResources() = 0;
+		virtual void RecreateDeviceDependentResources() = 0;
+		virtual void RecreateWindowSizeDependentResources() = 0;
 
 	public:
 		virtual bool FrameUpdate(const Common::Timer& timer) = 0;

@@ -1,7 +1,8 @@
 #include "pch.h"
-#include "VulkanRenderer.h"
+#include "Renderer.h"
 
 #include "VulkanEngine/Geometry/Vertex.h"
+#include "VulkanEngine/Scenes/RenderParameters.h"
 
 using namespace VulkanEngine;
 
@@ -23,21 +24,18 @@ Renderer::Renderer(const std::vector<const char*>& enabledExtensions, std::uniqu
 	m_commandBuffers(m_defaultCommandPool.CreateCommandBuffers(m_deviceManager.GetDevice(), vk::CommandBufferLevel::ePrimary, m_swapChain.GetImageCount())),
 	m_uploadDataManager(m_deviceManager.GetDevice(), m_temporaryCommandPool),
 	m_imageAvailableSemaphore(m_deviceManager.GetDevice()),
-	m_renderFinishedSemaphore(m_deviceManager.GetDevice()),
-	m_triangle(CreateTriangle(m_deviceManager, m_uploadDataManager))
+	m_renderFinishedSemaphore(m_deviceManager.GetDevice())
 {
-	RecordCommands();
-	m_uploadDataManager.SubmitAllAndWait(m_deviceManager.GetGraphicsQueue());
 }
 Renderer::~Renderer()
 {
 	m_deviceManager.GetDevice().waitIdle();
 }
 
-void Renderer::CreateDeviceDependentResources()
+void Renderer::RecreateDeviceDependentResources()
 {
 }
-void Renderer::CreateWindowSizeDependentResources()
+void Renderer::RecreateWindowSizeDependentResources()
 {
 	const auto& device = m_deviceManager.GetDevice();
 
@@ -111,6 +109,14 @@ bool Renderer::IsNextFrameAvailable()
 	return true;
 }
 
+void Renderer::SetScene(std::shared_ptr<RenderEngine::IScene> scene)
+{
+	m_scene = std::move(scene);
+
+	RecordCommands();
+	m_uploadDataManager.SubmitAllAndWait(m_deviceManager.GetGraphicsQueue());
+}
+
 std::vector<vk::UniqueFramebuffer> Renderer::CreateFrameBuffers(const vk::Device& device, const std::vector<vk::UniqueImageView>& imageViews, const vk::Extent2D& extent, const vk::RenderPass& renderPass)
 {
 	std::vector<vk::UniqueFramebuffer> frameBuffers(imageViews.size());
@@ -157,8 +163,6 @@ RenderItem Renderer::CreateTriangle(const DeviceManager& deviceManager, UploadDa
 		{ { 0.5f, -0.5f },{ 0.0f, 0.0f, 1.0f } },
 		{ { 0.5f, 0.5f },{ 1.0f, 1.0f, 1.0f } }
 	};
-	auto vertexBufferSize = static_cast<vk::DeviceSize>(vertices.size() * sizeof(Vertex));
-	VertexBuffer vertexBuffer(deviceManager, vertexBufferSize);
 
 	using IndexType = std::uint16_t;
 	static const std::vector<IndexType> indices =
@@ -166,30 +170,29 @@ RenderItem Renderer::CreateTriangle(const DeviceManager& deviceManager, UploadDa
 		0, 1, 2,
 		2, 1, 3,
 	};
+
+	auto vertexBufferSize = static_cast<vk::DeviceSize>(vertices.size() * sizeof(Vertex));
 	auto indexBufferSize = static_cast<vk::DeviceSize>(indices.size() * sizeof(IndexType));
-	IndexBuffer indexBuffer(deviceManager, indexBufferSize, vk::IndexType::eUint16);
+	GeometryBuffer geometryBuffer(deviceManager, vertexBufferSize, indexBufferSize, vk::IndexType::eUint16);
 
 	{				
-		auto& vertexUploadBuffer = uploadDataManager.CreateUploadBuffer(deviceManager, vertexBufferSize);
-		vertexUploadBuffer.SetData(deviceManager.GetDevice(), vertices.data());
-
-		auto& indexUploadBuffer = uploadDataManager.CreateUploadBuffer(deviceManager, indexBufferSize);
-		indexUploadBuffer.SetData(deviceManager.GetDevice(), indices.data());
+		auto& uploadBuffer = uploadDataManager.CreateUploadBuffer(deviceManager, geometryBuffer.GetSize());
+		uploadBuffer.SetData(deviceManager.GetDevice(), indices.data(), 0, indexBufferSize);
+		uploadBuffer.SetData(deviceManager.GetDevice(), vertices.data(), indexBufferSize, vertexBufferSize);
 
 		// Submit commands in order to copy the values from the upload buffer to the vertex buffer:
 		{
 			auto commandBuffer = uploadDataManager.CreateCommandBuffer(vk::CommandBufferLevel::ePrimary);
 			commandBuffer.begin(vk::CommandBufferBeginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit));
 
-			vertexUploadBuffer.CopyTo(deviceManager.GetDevice(), commandBuffer, *vertexBuffer);
-			indexUploadBuffer.CopyTo(deviceManager.GetDevice(), commandBuffer, *indexBuffer);
+			uploadBuffer.CopyTo(deviceManager.GetDevice(), commandBuffer, *geometryBuffer);
 
 			commandBuffer.end();
 		}		
 	}
 
 	SubmeshGeometry submesh = { static_cast<std::uint32_t>(indices.size()), 1, 0, 0, 0 };
-	return RenderItem(std::move(vertexBuffer), std::move(indexBuffer), submesh);
+	return RenderItem(std::move(geometryBuffer), std::move(submesh));
 }
 
 void Renderer::RecordCommands()
@@ -226,7 +229,7 @@ void Renderer::RecordCommands()
 				commandBuffer.setScissor(0, scissors);
 
 				commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_pipelineStateManager.GetGraphicsPipeline());
-				m_triangle.Draw(m_deviceManager.GetDevice(), commandBuffer);
+				m_scene->Render({ commandBuffer, RenderLayer::Opaque });
 			}
 			commandBuffer.endRenderPass();
 		}

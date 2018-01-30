@@ -16,6 +16,11 @@ vk::Buffer Buffer::operator*()
 	return m_buffer.get();
 }
 
+vk::DeviceSize Buffer::GetSize() const
+{
+	return m_size;
+}
+
 vk::UniqueBuffer Buffer::CreateBuffer(vk::Device device, vk::DeviceSize size, vk::BufferUsageFlags usage)
 {
 	vk::BufferCreateInfo createInfo(

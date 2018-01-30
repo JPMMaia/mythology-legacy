@@ -3,17 +3,15 @@
 
 using namespace VulkanEngine;
 
-RenderItem::RenderItem(VertexBuffer vertexBuffer, IndexBuffer indexBuffer, const SubmeshGeometry& submesh) :
-	m_vertexBuffer(std::move(vertexBuffer)),
-	m_indexBuffer(std::move(indexBuffer)),
-	m_submesh(submesh)
+RenderItem::RenderItem(GeometryBuffer geometryBuffer, SubmeshGeometry submesh) :
+	m_geometryBuffer(std::move(geometryBuffer)),
+	m_submesh(std::move(submesh))
 {
 }
 
 void RenderItem::Draw(vk::Device device, vk::CommandBuffer commandBuffer)
 {
-	m_vertexBuffer.Bind(device, commandBuffer);
-	m_indexBuffer.Bind(device, commandBuffer);
+	m_geometryBuffer.Bind(device, commandBuffer);
 
 	commandBuffer.drawIndexed(
 		m_submesh.IndexCount,

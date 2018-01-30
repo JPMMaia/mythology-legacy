@@ -1,22 +1,22 @@
 #include "pch.h"
-#include "VulkanInstance.h"
+#include "Instance.h"
 #include "VulkanEngine/Configurations/ValidationLayers.h"
 
 #include <cstring>
 
 using namespace VulkanEngine;
 
-VulkanInstance::VulkanInstance(const std::vector<const char*>& enabledExtensions) :
+Instance::Instance(const std::vector<const char*>& enabledExtensions) :
 	m_instance(CreateInstance(enabledExtensions))
 {
 }
 
-VulkanInstance::operator const vk::Instance&() const
+Instance::operator const vk::Instance&() const
 {
 	return m_instance.get();
 }
 
-vk::UniqueInstance VulkanInstance::CreateInstance(const std::vector<const char*>& enabledExtensions)
+vk::UniqueInstance Instance::CreateInstance(const std::vector<const char*>& enabledExtensions)
 {
 	vk::ApplicationInfo applicationInfo(
 		"Vulkan Application",
@@ -38,7 +38,7 @@ vk::UniqueInstance VulkanInstance::CreateInstance(const std::vector<const char*>
 
 	return vk::createInstanceUnique(createInfo);
 }
-bool VulkanInstance::CheckValidationLayerSupport(const std::vector<const char*>& validationLayers)
+bool Instance::CheckValidationLayerSupport(const std::vector<const char*>& validationLayers)
 {
 	std::uint32_t layerCount;
 	vkEnumerateInstanceLayerProperties(&layerCount, nullptr);

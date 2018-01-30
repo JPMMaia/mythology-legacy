@@ -1,7 +1,6 @@
 #pragma once
 
-#include "VulkanEngine/Buffers/VertexBuffer.h"
-#include "VulkanEngine/Buffers/IndexBuffer.h"
+#include "VulkanEngine/Buffers/GeometryBuffer.h"
 #include "VulkanEngine/Geometry/SubmeshGeometry.h"
 
 namespace VulkanEngine
@@ -9,14 +8,13 @@ namespace VulkanEngine
 	class RenderItem
 	{
 	public:
-		RenderItem(VertexBuffer vertexBuffer, IndexBuffer indexBuffer, const SubmeshGeometry& submesh);
+		RenderItem(GeometryBuffer geometryBuffer, SubmeshGeometry submesh);
 
 	public:
 		void Draw(vk::Device device, vk::CommandBuffer commandBuffer);
 
 	private:
-		VertexBuffer m_vertexBuffer;
-		IndexBuffer m_indexBuffer;
+		GeometryBuffer m_geometryBuffer;
 		SubmeshGeometry m_submesh;
 	};
 }

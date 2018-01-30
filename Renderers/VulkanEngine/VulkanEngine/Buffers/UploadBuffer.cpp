@@ -8,13 +8,13 @@ UploadBuffer::UploadBuffer(const DeviceManager& deviceManager, vk::DeviceSize si
 {
 }
 
-void UploadBuffer::SetData(vk::Device device, const void* source)
+void UploadBuffer::SetData(vk::Device device, const void* source, vk::DeviceSize offset, vk::DeviceSize size)
 {
 	// Map:
-	void* destination = device.mapMemory(m_deviceMemory.get(), 0, m_size, {});
+	void* destination = device.mapMemory(m_deviceMemory.get(), offset, size, {});
 
 	// Copy:
-	std::memcpy(destination, source, m_size);
+	std::memcpy(destination, source, size);
 
 	// Unmap:
 	device.unmapMemory(m_deviceMemory.get());

@@ -2,11 +2,11 @@
 
 namespace VulkanEngine
 {
-	class VulkanInstance
+	class Instance
 	{
 	public:
-		VulkanInstance() = default;
-		explicit VulkanInstance(const std::vector<const char*>& enabledExtensions);
+		Instance() = default;
+		explicit Instance(const std::vector<const char*>& enabledExtensions);
 
 	public:
 		operator const vk::Instance&() const;

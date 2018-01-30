@@ -25,7 +25,4 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)RenderEngine\IScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)RenderEngine\Materials\Material.h" />
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)RenderEngine\Geometry\MeshData.cpp" />
-  </ItemGroup>
 </Project>

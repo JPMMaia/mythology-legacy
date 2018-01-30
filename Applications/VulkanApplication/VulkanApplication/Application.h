@@ -2,7 +2,8 @@
 
 #include "GLFW/GLFWManager.h"
 #include "GLFW/Window.h"
-#include "VulkanEngine/VulkanRenderer.h"
+#include "VulkanEngine/Renderer.h"
+#include "VulkanEngine/Scenes/Scene.h"
 
 namespace VulkanApplication
 {
@@ -15,7 +16,8 @@ namespace VulkanApplication
 		void Run();
 
 	private:
-		static std::unique_ptr<VulkanEngine::Renderer> CreateRenderer(const GLFWManager& glfw, GLFWwindow& window);
+		static std::shared_ptr<VulkanEngine::Renderer> CreateRenderer(const GLFWManager& glfw, GLFWwindow& window);
+		static std::shared_ptr<VulkanEngine::Scene> CreateScene(const std::shared_ptr<VulkanEngine::Renderer>& renderer);
 
 	private:
 		void OnWindowResizeCallback(int width, int height);
@@ -23,7 +25,8 @@ namespace VulkanApplication
 	private:
 		GLFWManager m_glfw;
 		Window m_window;
-		std::unique_ptr<VulkanEngine::Renderer> m_renderer;
+		std::shared_ptr<VulkanEngine::Renderer> m_renderer;
+		std::shared_ptr<VulkanEngine::Scene> m_scene;
 
 	private:
 		static constexpr int c_width = 800;
