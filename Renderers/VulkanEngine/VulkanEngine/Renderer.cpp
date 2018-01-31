@@ -52,6 +52,9 @@ void Renderer::RecreateWindowSizeDependentResources()
 	m_viewport = CreateViewport(m_swapChain.GetExtent());
 	m_scissor = CreateScissor(m_swapChain.GetExtent());
 
+	// Recreate scene window size dependent resources:
+	m_scene->RecreateWindowSizeDependentResources();
+
 	// Create command buffers:
 	m_commandBuffers = m_defaultCommandPool.CreateCommandBuffers(device, vk::CommandBufferLevel::ePrimary, m_swapChain.GetImageCount());
 	RecordCommands();
@@ -112,6 +115,8 @@ bool Renderer::IsNextFrameAvailable()
 void Renderer::SetScene(std::shared_ptr<RenderEngine::IScene> scene)
 {
 	m_scene = std::move(scene);
+	m_scene->RecreateDeviceDependentResources();
+	m_scene->RecreateWindowSizeDependentResources();
 
 	RecordCommands();
 	m_uploadDataManager.SubmitAllAndWait(m_deviceManager.GetGraphicsQueue());

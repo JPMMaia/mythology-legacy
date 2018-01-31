@@ -5,12 +5,32 @@
 
 namespace RenderEngine
 {
-	template<class VertexType, class IndexType>
+	template<class VertexT, class IndexT>
 	struct MeshData
 	{
 	public:
+		using VertexType = VertexT;
+		using IndexType = IndexT;
+
+	public:
 		std::vector<VertexType> Vertices;
 		std::vector<IndexType> Indices;
+
+	public:
+		MeshData() = default;
+
+		MeshData(std::vector<VertexType> vertices, std::vector<IndexType> indices) :
+			Vertices(std::move(vertices)),
+			Indices(std::move(indices))
+		{
+		}
+
+		template <class InputIterator0, class InputIterator1>
+		MeshData(InputIterator0 firstVertex, InputIterator0 lastVertex, InputIterator1 firstIndex, InputIterator1 lastIndex) :
+			Vertices(firstVertex, lastVertex),
+			Indices(firstIndex, lastIndex)
+		{
+		}
 
 	public:
 		std::size_t GetVertexDataByteSize() const

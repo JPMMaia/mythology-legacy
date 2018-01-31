@@ -16,7 +16,9 @@ Scene::Scene(std::shared_ptr<Renderer> renderer) :
 }
 
 void Scene::RecreateDeviceDependentResources()
-{
+{	
+	DestroyRenderItems();
+	CreateRenderItems();
 }
 void Scene::RecreateWindowSizeDependentResources()
 {
@@ -35,41 +37,25 @@ bool Scene::Render(const RenderEngine::RenderParameters& renderParameters)
 	return true;
 }
 
-template <class IndexType>
-void Scene::CreateMesh(const std::string& name, const RenderEngine::MeshData<RenderEngine::Vertex, IndexType>& meshData)
+template <class VertexType0, class VertexType1, class IndexType>
+void Scene::CreateMesh(MeshContainer<VertexType0, IndexType>& meshes, const std::string& name, const RenderEngine::MeshData<VertexType1, IndexType>& meshData)
 {
-	RenderEngine::MeshData<Vertex, IndexType> specificMeshData;
-	specificMeshData.Vertices = Vertex::CreateFromVertexData(meshData.Vertices);
-	specificMeshData.Indices = meshData.Indices;
-
-	auto vertexBufferSize = specificMeshData.GetVertexDataByteSize();
-	auto indexBufferSize = specificMeshData.GetIndexDataByteSize();
-	GeometryBuffer geometryBuffer(m_renderer->GetDeviceManager(), vertexBufferSize, indexBufferSize, ToVulkanIndexType<IndexType>());
-
-	// TODO move this to set function of renderer
-	m_renderer->UploadBufferData(geometryBuffer, vertexBufferSize, indexBufferSize, specificMeshData);
-
-	SubmeshGeometry submesh(
-		static_cast<std::uint32_t>(specificMeshData.Indices.size()),
-		1,
-		0,
-		0,
-		0
-	);
-
-	AddRenderItem(std::make_unique<RenderItem>(std::move(geometryBuffer), std::move(submesh)), { RenderLayer::Opaque });
+	auto vertices = typename VertexType0::CreateFromVertexData(meshData.Vertices);
+	const auto& indices = meshData.Indices;
+	meshes.emplace(name, RenderEngine::MeshData<VertexType0, IndexType>(vertices, indices));
 }
 void Scene::CreateMesh(const std::string& name, const RenderEngine::MeshData<RenderEngine::Vertex, std::uint16_t>& meshData)
 {
-	CreateMesh<std::uint16_t>(name, meshData);
+	CreateMesh(m_smallMeshes, name, meshData);
 }
 void Scene::CreateMesh(const std::string& name, const RenderEngine::MeshData<RenderEngine::Vertex, std::uint32_t>& meshData)
 {
-	CreateMesh<std::uint32_t>(name, meshData);
+	CreateMesh(m_largeMeshes, name, meshData);
 }
 void Scene::DeleteMesh(const std::string& name)
 {
-	RemoveRenderItem();
+	m_smallMeshes.erase(name);
+	m_largeMeshes.erase(name);
 }
 
 void Scene::CreateMaterial(const std::string& name, const RenderEngine::Material& material)
@@ -92,14 +78,49 @@ void Scene::DeleteInstance(const std::string& meshName, const RenderEngine::Inst
 {
 }
 
+void Scene::CreateRenderItems()
+{
+	auto createRenderItems = [this](const auto& meshes)
+	{
+		for (const auto& nameMeshPair : meshes)
+		{
+			const auto& mesh = nameMeshPair.second;
+
+			// Calculate vertex and index data sizes:
+			auto vertexBufferSize = mesh.GetVertexDataByteSize();
+			auto indexBufferSize = mesh.GetIndexDataByteSize();
+
+			// Create the geometry buffer and schedule an upload of buffer data:
+			GeometryBuffer geometryBuffer(m_renderer->GetDeviceManager(), vertexBufferSize, indexBufferSize, ToVulkanIndexType<std::remove_reference_t<decltype(mesh)>::IndexType>());
+			m_renderer->UploadBufferData(geometryBuffer, vertexBufferSize, indexBufferSize, mesh);
+
+			// Specify submesh parameters:
+			SubmeshGeometry submesh(
+				static_cast<std::uint32_t>(mesh.Indices.size()),
+				1,
+				0,
+				0,
+				0
+			);
+
+			// Create render item:
+			AddRenderItem(std::make_unique<RenderItem>(std::move(geometryBuffer), std::move(submesh)), { RenderLayer::Opaque });
+		}
+	};
+
+	createRenderItems(m_smallMeshes);
+	createRenderItems(m_largeMeshes);
+}
+void Scene::DestroyRenderItems()
+{
+	m_renderItemsPerLayer.clear();
+	m_renderItems.clear();
+}
+
 void Scene::AddRenderItem(std::unique_ptr<RenderItem> renderItem, std::initializer_list<RenderLayer> renderLayers)
 {
 	for (auto renderLayer : renderLayers)
 		m_renderItemsPerLayer[renderLayer].emplace_back(renderItem.get());	
 		
 	m_renderItems.emplace_back(std::move(renderItem));
-}
-void Scene::RemoveRenderItem()
-{
-	// TODO
 }
