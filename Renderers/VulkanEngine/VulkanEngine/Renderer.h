@@ -56,7 +56,8 @@ namespace VulkanEngine
 		}
 
 	public:
-		DeviceManager & GetDeviceManager() { return m_deviceManager; }
+		DeviceManager& GetDeviceManager() { return m_deviceManager; }
+		DescriptorManager& GetDescriptorManager() { return m_descriptorManager; }
 
 	public:
 		void SetScene(std::shared_ptr<RenderEngine::IScene> scene);
@@ -81,6 +82,7 @@ namespace VulkanEngine
 		Surface m_surface;
 		DeviceManager m_deviceManager;
 		SwapChain m_swapChain;
+		DescriptorManager m_descriptorManager;
 		RenderPass m_renderPass;
 		PipelineStateManager m_pipelineStateManager;
 		std::vector<vk::UniqueFramebuffer> m_framebuffers;

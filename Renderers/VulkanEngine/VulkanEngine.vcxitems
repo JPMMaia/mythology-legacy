@@ -16,6 +16,7 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\Buffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\GeometryBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\UniformBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\UploadBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\UploadDataManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\CommandPool.h" />
@@ -23,7 +24,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Devices\QueueFamilyIndices.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Geometry\SubmeshGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Geometry\Vertex.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Layout\PipelineLayout.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\DescriptorManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\PipelineStateManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\RenderPass\RenderPass.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Shader.h" />
@@ -43,6 +44,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Scenes\RenderLayer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Scenes\RenderParameters.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Scenes\Scene.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\ShaderData\InstanceData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\ShaderData\PassData.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\SwapChains\SwapChain.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\SwapChains\SwapChainSupportDetails.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Synchronization\Semaphore.h" />
@@ -54,11 +57,12 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\Buffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\GeometryBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\UniformBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\UploadBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\CommandPool.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\UploadDataManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Configurations\ValidationLayers.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Layout\PipelineLayout.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\DescriptorManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\PipelineStateManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\RenderPass\RenderPass.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Shader.cpp" />

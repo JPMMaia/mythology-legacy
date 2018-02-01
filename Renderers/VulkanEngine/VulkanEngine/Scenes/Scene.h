@@ -3,6 +3,7 @@
 #include "RenderEngine/IScene.h"
 #include "RenderLayer.h"
 #include "VulkanEngine/Geometry/Vertex.h"
+#include "VulkanEngine/Buffers/UniformBuffer.h"
 
 namespace VulkanEngine
 {
@@ -50,10 +51,12 @@ namespace VulkanEngine
 		void AddRenderItem(std::unique_ptr<RenderItem> renderItem, std::initializer_list<RenderLayer> renderLayers);	
 
 	private:
-		std::shared_ptr<Renderer> m_renderer;
+		std::weak_ptr<Renderer> m_renderer;
 		std::vector<std::unique_ptr<RenderItem>> m_renderItems;
 		std::unordered_map<RenderLayer, std::vector<RenderItem*>> m_renderItemsPerLayer;
 		MeshContainer<Vertex, std::uint16_t> m_smallMeshes;
 		MeshContainer<Vertex, std::uint32_t> m_largeMeshes;
+		std::vector<UniformBuffer> m_passDataBuffers;
+		std::vector<UniformBuffer> m_instanceDataBuffers;
 	};
 }

@@ -19,7 +19,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\VertexInputState.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\InputAssemblyState.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\DynamicState.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Layout\PipelineLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ColorBlendAttachment.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\CommandPool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Synchronization\Semaphore.h" />
@@ -37,6 +36,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Renderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Instance.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Scenes\RenderParameters.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\ShaderData\InstanceData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\ShaderData\PassData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\UniformBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\DescriptorManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Helpers\DebugMessageHandler.cpp" />
@@ -53,7 +56,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\VertexInputState.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\InputAssemblyState.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\DynamicState.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\Layout\PipelineLayout.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\States\ColorBlendAttachment.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Commands\CommandPool.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Synchronization\Semaphore.cpp" />
@@ -67,6 +69,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Scenes\Scene.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Renderer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Instance.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\UniformBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\DescriptorManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)VulkanEngine\Shaders\Shader.vert" />

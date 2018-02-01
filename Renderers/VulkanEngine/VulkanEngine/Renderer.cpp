@@ -14,8 +14,9 @@ Renderer::Renderer(const std::vector<const char*>& enabledExtensions, std::uniqu
 	m_surface(std::move(surfaceInterface), m_instance),
 	m_deviceManager(m_instance, m_surface),
 	m_swapChain(m_deviceManager.GetDevice(), m_surface, m_deviceManager.QuerySwapChainSupport(m_surface), m_deviceManager.GetQueueFamilyIndices(), m_renderPass),
+	m_descriptorManager(m_deviceManager.GetDevice()),
 	m_renderPass(m_deviceManager.GetDevice(), m_swapChain.GetSurfaceFormat().format),
-	m_pipelineStateManager(m_deviceManager.GetDevice(), m_renderPass),
+	m_pipelineStateManager(m_deviceManager.GetDevice(), m_descriptorManager, m_renderPass),
 	m_framebuffers(CreateFrameBuffers(m_deviceManager.GetDevice(), m_swapChain.GetImageViews(), m_swapChain.GetExtent(), m_renderPass)),
 	m_viewport(CreateViewport(m_swapChain.GetExtent())),
 	m_scissor(CreateScissor(m_swapChain.GetExtent())),
@@ -62,6 +63,8 @@ void Renderer::RecreateWindowSizeDependentResources()
 
 bool Renderer::FrameUpdate(const Common::Timer& timer)
 {
+	m_scene->FrameUpdate(timer);
+
 	return true;
 }
 bool Renderer::Render(const Common::Timer& timer)
@@ -221,18 +224,30 @@ void Renderer::RecordCommands()
 			);
 			commandBuffer.beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
 			{
+				// Set viewport:
 				static std::array<vk::Viewport, 1> viewports =
 				{
 					m_viewport
 				};
 				commandBuffer.setViewport(0, viewports);
 
+				// Set scissor:
 				static std::array<vk::Rect2D, 1> scissors =
 				{
 					m_scissor
 				};
 				commandBuffer.setScissor(0, scissors);
 
+				// Bind descriptor sets:
+				const auto& descriptorSets = m_descriptorManager.GetDescriptorSets();
+				commandBuffer.bindDescriptorSets(
+					vk::PipelineBindPoint::eGraphics, 
+					m_pipelineStateManager.GetPipelineLayout(), 
+					0, static_cast<std::uint32_t>(descriptorSets.size()), descriptorSets.data(), 
+					0, nullptr
+				);
+
+				// Bind pipeline and render scene:
 				commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_pipelineStateManager.GetGraphicsPipeline());
 				m_scene->Render({ commandBuffer, RenderLayer::Opaque });
 			}
