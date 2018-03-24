@@ -4,6 +4,7 @@
 #include "RenderLayer.h"
 #include "VulkanEngine/Geometry/Vertex.h"
 #include "VulkanEngine/Buffers/UniformBuffer.h"
+#include "VulkanEngine/Images/TextureImage.h"
 
 namespace VulkanEngine
 {
@@ -16,6 +17,8 @@ namespace VulkanEngine
 	public:
 		template <class VertexType, class IndexType>
 		using MeshContainer = std::unordered_map<std::string, RenderEngine::MeshData<VertexType, IndexType>>;
+
+		using MaterialContainer = std::unordered_map<std::string, RenderEngine::Material>;
 
 	public:
 		explicit Scene(std::shared_ptr<Renderer> renderer);
@@ -50,13 +53,21 @@ namespace VulkanEngine
 		void DestroyRenderItems();
 		void AddRenderItem(std::unique_ptr<RenderItem> renderItem, std::initializer_list<RenderLayer> renderLayers);	
 
+		void CreateBuffers();
+		void DestroyBuffers();
+
+		void CreateTextureImages();
+		void DestroyTextureImages();
+
 	private:
 		std::weak_ptr<Renderer> m_renderer;
-		std::vector<std::unique_ptr<RenderItem>> m_renderItems;
-		std::unordered_map<RenderLayer, std::vector<RenderItem*>> m_renderItemsPerLayer;
 		MeshContainer<Vertex, std::uint16_t> m_smallMeshes;
 		MeshContainer<Vertex, std::uint32_t> m_largeMeshes;
+		MaterialContainer m_materials;
+		std::vector<std::unique_ptr<RenderItem>> m_renderItems;
+		std::unordered_map<RenderLayer, std::vector<RenderItem*>> m_renderItemsPerLayer;
 		std::vector<UniformBuffer> m_passDataBuffers;
 		std::vector<UniformBuffer> m_instanceDataBuffers;
+		std::vector<TextureImage> m_textureImages;
 	};
 }

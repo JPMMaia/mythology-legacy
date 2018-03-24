@@ -115,6 +115,37 @@ bool Renderer::IsNextFrameAvailable()
 	return true;
 }
 
+void Renderer::UploadTextureData(vk::Image image, vk::DeviceSize textureSize, vk::Extent3D extent, const void* textureData)
+{
+	auto& uploadBuffer = m_uploadDataManager.CreateUploadBuffer(m_deviceManager, textureSize);
+	uploadBuffer.SetData(m_deviceManager.GetDevice(), textureData, 0, textureSize);
+	
+	{
+		auto commandBuffer = m_uploadDataManager.CreateCommandBuffer(vk::CommandBufferLevel::ePrimary);
+		commandBuffer.begin(vk::CommandBufferBeginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit));
+
+		ImageLayoutTransition(
+			commandBuffer, image, 
+			vk::ImageLayout::eUndefined, vk::ImageLayout::eTransferDstOptimal,
+			{}, vk::AccessFlagBits::eTransferWrite,
+			vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eTransfer
+		);
+		{
+			vk::ImageSubresourceLayers layers(vk::ImageAspectFlagBits::eColor, 0, 0, 1);
+			vk::BufferImageCopy region(0, 0, 0, layers, {}, extent);
+			commandBuffer.copyBufferToImage(*uploadBuffer, image, vk::ImageLayout::eTransferDstOptimal, 1, &region);
+		}
+		ImageLayoutTransition(
+			commandBuffer, image, 
+			vk::ImageLayout::eTransferDstOptimal, vk::ImageLayout::eShaderReadOnlyOptimal,
+			vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead,
+			vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eFragmentShader
+		);
+
+		commandBuffer.end();
+	}
+}
+
 void Renderer::SetScene(std::shared_ptr<RenderEngine::IScene> scene)
 {
 	m_scene = std::move(scene);
@@ -255,6 +286,29 @@ void Renderer::RecordCommands()
 		}
 		commandBuffer.end();
 	}
+}
+void Renderer::ImageLayoutTransition(vk::CommandBuffer commandBuffer, vk::Image image, vk::ImageLayout oldLayout, vk::ImageLayout newLayout, vk::AccessFlags sourceAccessFlags, vk::AccessFlagBits destinationAccessFlags, vk::PipelineStageFlags sourceStageFlags, vk::PipelineStageFlags destinationStageFlags)
+{
+	vk::ImageSubresourceRange range(
+		vk::ImageAspectFlagBits::eColor,
+		0, 1, 0, 1
+	);
+
+	vk::ImageMemoryBarrier barrier(
+		sourceAccessFlags, destinationAccessFlags,
+		oldLayout, newLayout, 
+		0, 0,
+		image,
+		range
+		);
+
+	commandBuffer.pipelineBarrier(
+		sourceStageFlags, destinationStageFlags,
+		{},
+		0, nullptr,
+		0, nullptr,
+		1, &barrier
+	);
 }
 
 void Renderer::EnumerateAvailableExtensions()

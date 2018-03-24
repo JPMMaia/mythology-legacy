@@ -61,7 +61,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(ProjectDir);$(VULKAN_SDK)\Include;$(SolutionDir)ThirdParty\eigen;$(SolutionDir)ThirdParty\glfw\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(ProjectDir);$(VULKAN_SDK)\Include;$(SolutionDir)ThirdParty\eigen;$(SolutionDir)ThirdParty\glfw\include;$(SolutionDir)ThirdParty\stb</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLFW_INCLUDE_VULKAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -102,7 +102,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(ProjectDir);$(VULKAN_SDK)\Include;$(SolutionDir)ThirdParty\eigen;$(SolutionDir)ThirdParty\glfw\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(ProjectDir);$(VULKAN_SDK)\Include;$(SolutionDir)ThirdParty\eigen;$(SolutionDir)ThirdParty\glfw\include;$(SolutionDir)ThirdParty\stb</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLFW_INCLUDE_VULKAN;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>

@@ -71,6 +71,10 @@ std::shared_ptr<VulkanEngine::Scene> Application::CreateScene(const std::shared_
 	
 	scene->CreateMesh("Triangle", meshData);
 
+	RenderEngine::Material material {};
+	material.BaseColorTextureName = L"Textures/texture.jpg";
+	scene->CreateMaterial("Default", material);
+
 	return scene;
 }
 

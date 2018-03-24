@@ -40,6 +40,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\ShaderData\PassData.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\UniformBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\DescriptorManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanEngine\Images\TextureImage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Helpers\DebugMessageHandler.cpp" />
@@ -71,6 +72,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Instance.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Buffers\UniformBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Pipeline\DescriptorManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanEngine\Images\TextureImage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)VulkanEngine\Shaders\Shader.vert" />

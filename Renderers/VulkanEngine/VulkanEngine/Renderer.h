@@ -54,6 +54,7 @@ namespace VulkanEngine
 				commandBuffer.end();
 			}
 		}
+		void UploadTextureData(vk::Image image, vk::DeviceSize textureSize, vk::Extent3D extent, const void* textureData);
 
 	public:
 		DeviceManager& GetDeviceManager() { return m_deviceManager; }
@@ -70,6 +71,7 @@ namespace VulkanEngine
 
 	private:
 		void RecordCommands();
+		void ImageLayoutTransition(vk::CommandBuffer commandBuffer, vk::Image image, vk::ImageLayout oldLayout, vk::ImageLayout newLayout, vk::AccessFlags sourceAccessFlags, vk::AccessFlagBits destinationAccessFlags, vk::PipelineStageFlags sourceStageFlags, vk::PipelineStageFlags destinationStageFlags);
 
 	private:
 		static void EnumerateAvailableExtensions();
